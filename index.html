@@ -440,13 +440,8 @@ function showAbout() {
   ws.style.display = 'flex';
   ws.querySelector('h2').textContent = 'FortiBOM v2.0';
   ws.querySelector('p').textContent = 'Cross-product Bill of Materials generator for Fortinet deployments. Build BOMs per product, then combine them into a Project BOM.';
-  ws.querySelector('p').insertAdjacentHTML('afterend', `
-    <p style="font-size: 0.9em; color: #888; margin-top: 12px;">
-      <strong>Disclaimer:</strong> FortiBOM is an independent, community-built tool and is not an officially sanctioned Fortinet product.
-      Always validate generated BOMs against the official Fortinet product ordering guides before use.
-      Found a bug or have a suggestion? <a href="https://github.com/msalty/FortiBOM/issues" target="_blank" rel="noopener noreferrer">Report an issue on GitHub</a>.
-    </p>
-  `);
+  ws.querySelector('p').innerHTML += '<br><br><small>Disclaimer: FortiBOM is not an officially sanctioned Fortinet product. Always validate output against the official Fortinet product ordering guides.</small>';
+  ws.querySelector('p').innerHTML += '<br><br><small><a href="https://github.com/msalty/FortiBOM/issues" target="_blank" rel="noopener noreferrer">Report an issue on GitHub</a></small>';
 }
 
 // ── postMessage RECEIVER ─────────────────────────────────────────────────────
