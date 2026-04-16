@@ -118,13 +118,13 @@
 
   /* BOM table */
   table.bt{width:100%;border-collapse:collapse;font-size:12px;}
-  table.bt thead th{background:var(--c-th);border:1px solid var(--c-border);padding:6px 10px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--c-text2);white-space:nowrap;}
+  table.bt thead th{background:var(--c-th);border:1px solid var(--c-border);padding:6px 10px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#4A5268;white-space:nowrap;}
   table.bt tbody td{border:1px solid var(--c-border);padding:6px 10px;vertical-align:top;font-size:12px;}
   table.bt tbody tr:nth-child(even) td{background:var(--c-sh);}
   table.bt tbody tr:hover td{background:#EEF1F6;}
   .sr td{background:#EAECF3!important;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--c-text2);padding:4px 10px;border-top:2px solid #C5CAD9;}
   .sk{font-family:'Courier New',monospace;font-size:11px;color:#1A4E82;font-weight:700;white-space:nowrap;}
-  .qc{text-align:center;font-weight:700;}
+  .qc{text-align:center;font-weight:700;color:var(--c-textm);}
   .nc{color:var(--c-textm);font-size:11px;}
   .br{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:2px;padding:1px 4px;}
   .br-r{background:#FEF0EE;color:#C0392B;border:1px solid #F5C6C2;}
@@ -146,7 +146,7 @@
   .drag-handle svg{pointer-events:none;}
 
   /* BOM Group header rows (user-created section dividers) */
-  .bom-group-row{background:var(--forti-content-bg);border:1px solid var(--c-border);border-radius:4px;display:flex;align-items:stretch;gap:0;overflow:hidden;cursor:default;}
+  .bom-group-row{background:#D8DCE6;border:1px solid #B4BAC8;border-radius:4px;display:flex;align-items:stretch;gap:0;overflow:hidden;cursor:default;}
   .bom-group-row.dragging{opacity:.45;box-shadow:0 4px 18px rgba(0,0,0,.18);}
   .bom-group-row.drag-over{outline:2px dashed var(--forti-red);outline-offset:2px;}
   .bgr-accent{width:4px;background:var(--forti-red);flex-shrink:0;}
@@ -369,6 +369,7 @@ const CATALOG = [
   { file:'fortimanager-bomgen.html', label:'FortiManager',   cat:'Management' },
   { file: 'fortiaiops-bomgen.html', label: 'FortiAIOps', cat: 'Management' },
   { file:'fortiflex-bomgen.html', label:'FortiFlex', cat:'Management' },
+  { file:'custom-sku-bomgen.html', label:'Custom SKU', cat:'Custom' },
   { file:'placeholder-bomgen.html',  label:'Placeholder',    cat:'Demo' },
 ];
 
@@ -494,7 +495,6 @@ function renderGroups() {
       const el = document.createElement('div');
       el.className = 'bom-group-row';
       el.dataset.id = entry.id;
-      el.draggable = true;
       el.innerHTML = `
         <div class="bgr-accent"></div>
         <div class="drag-handle" title="Drag to reorder">
@@ -524,7 +524,6 @@ function renderGroups() {
       const el = document.createElement('div');
       el.className = 'bg';
       el.dataset.id = entry.id;
-      el.draggable = true;
       el.innerHTML = `
         <div class="bgh">
           <div class="drag-handle" title="Drag to reorder">
@@ -555,7 +554,12 @@ function renderGroups() {
 let dragSrcId = null;
 
 function addDragListeners(el) {
+  // Only allow drag when the mousedown originated on the drag handle
+  el.addEventListener('mousedown', e => {
+    el.draggable = !!e.target.closest('.drag-handle');
+  });
   el.addEventListener('dragstart', e => {
+    if (!el.draggable) { e.preventDefault(); return; }
     dragSrcId = Number(el.dataset.id);
     el.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
