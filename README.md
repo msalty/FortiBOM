@@ -6,7 +6,7 @@
 
 ## Overview
 
-FortiBOM is a client-side web application that helps Sales Engineers build and export structured Bill of Materials quotes for Fortinet network security deployments. Select from 13+ supported products, configure hardware models, support tiers, and licenses, then combine everything into a single exportable project BOM — no backend server or external dependencies required.
+FTNxT-BOMGen is a client-side web application that helps Sales Engineers build and export structured Bill of Materials quotes for Fortinet network security deployments. Select from 13+ supported products, configure hardware models, support tiers, and licenses, then combine everything into a single exportable project BOM — no backend server or external dependencies required.
 
 ## Features
 
