@@ -1,4 +1,4 @@
-# FortiBOM
+# FTNxT-BOMGen
 
 **Cross-product Bill of Materials generator for Fortinet deployments**
 
