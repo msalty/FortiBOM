@@ -314,29 +314,52 @@ tbody tr:nth-child(even) td { background: var(--forti-table-stripe); }
 
     <!-- Netflow -->
     <div style="margin-bottom:14px;">
-      <div style="font-size:12px; font-weight:700; color:var(--forti-text); margin-bottom:8px;">FortiMonitor Cloud Netflow</div>
-      <div class="addon-grid" id="netflow-group">
-        <div class="addon-item" id="ao-netflow-15" onclick="toggleNetflow('15')">
-          <input type="checkbox" id="cb-netflow-15">
-          <div class="addon-label">
-            <strong>Netflow — 5,000 FPS · 15-day Retention</strong>
-            <span>Cloud-hosted, charged on flows/sec<br><code>FC1-10-MNCLD-760-01-DD</code></span>
+      <div style="font-size:12px; font-weight:700; color:var(--forti-text); margin-bottom:8px;">
+        FortiMonitor Cloud Netflow
+        <span style="font-size:11px; font-weight:400; color:var(--forti-text-muted);">— SKUs stack · each unit = 5,000 FPS</span>
+      </div>
+      <div class="callout info" style="margin-bottom:10px; margin-top:0;">
+        <span class="callout-icon">ℹ</span>
+        <span>Enter total FPS needed for each retention tier. The BOM will auto-stack the required number of 5,000-FPS units (e.g. 12,000 FPS → 3 × SKU). Leave at 0 to omit.</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(min(220px,100%),1fr)); gap:12px;">
+
+        <div style="border:1px solid var(--forti-border); border-radius:4px; padding:12px; background:white;">
+          <div style="font-size:12px; font-weight:600; margin-bottom:6px;">15-day Retention</div>
+          <div style="font-size:10px; font-family:'Courier New',monospace; color:#1A4E82; margin-bottom:8px;">FC1-10-MNCLD-760-01-DD</div>
+          <div class="form-group">
+            <label style="font-size:11px;">Required FPS</label>
+            <input type="number" id="f-nf15-fps" min="0" value="0" step="1000" oninput="updateNetflowIndicator('15')">
+          </div>
+          <div class="band-indicator" id="nf15-ind">
+            <span id="nf15-ind-text"></span>
           </div>
         </div>
-        <div class="addon-item" id="ao-netflow-30" onclick="toggleNetflow('30')">
-          <input type="checkbox" id="cb-netflow-30">
-          <div class="addon-label">
-            <strong>Netflow — 5,000 FPS · 30-day Retention</strong>
-            <span>Cloud-hosted, charged on flows/sec<br><code>FC1-10-MNCLD-761-01-DD</code></span>
+
+        <div style="border:1px solid var(--forti-border); border-radius:4px; padding:12px; background:white;">
+          <div style="font-size:12px; font-weight:600; margin-bottom:6px;">30-day Retention</div>
+          <div style="font-size:10px; font-family:'Courier New',monospace; color:#1A4E82; margin-bottom:8px;">FC1-10-MNCLD-761-01-DD</div>
+          <div class="form-group">
+            <label style="font-size:11px;">Required FPS</label>
+            <input type="number" id="f-nf30-fps" min="0" value="0" step="1000" oninput="updateNetflowIndicator('30')">
+          </div>
+          <div class="band-indicator" id="nf30-ind">
+            <span id="nf30-ind-text"></span>
           </div>
         </div>
-        <div class="addon-item" id="ao-netflow-90" onclick="toggleNetflow('90')">
-          <input type="checkbox" id="cb-netflow-90">
-          <div class="addon-label">
-            <strong>Netflow — 5,000 FPS · 90-day Retention</strong>
-            <span>Cloud-hosted, charged on flows/sec<br><code>FC1-10-MNCLD-762-01-DD</code></span>
+
+        <div style="border:1px solid var(--forti-border); border-radius:4px; padding:12px; background:white;">
+          <div style="font-size:12px; font-weight:600; margin-bottom:6px;">90-day Retention</div>
+          <div style="font-size:10px; font-family:'Courier New',monospace; color:#1A4E82; margin-bottom:8px;">FC1-10-MNCLD-762-01-DD</div>
+          <div class="form-group">
+            <label style="font-size:11px;">Required FPS</label>
+            <input type="number" id="f-nf90-fps" min="0" value="0" step="1000" oninput="updateNetflowIndicator('90')">
+          </div>
+          <div class="band-indicator" id="nf90-ind">
+            <span id="nf90-ind-text"></span>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -423,21 +446,19 @@ let _lastRows  = [];
 let _lastLabel = '';
 let _lastMeta  = {};
 
-// ─── Netflow toggle (only one retention tier at a time) ──────────────────────
-function toggleNetflow(tier) {
-  const tiers = ['15','30','90'];
-  tiers.forEach(t => {
-    const cb = document.getElementById('cb-netflow-' + t);
-    if (t === tier) {
-      cb.checked = !cb.checked;
-    } else {
-      cb.checked = false;
-    }
-  });
+// ─── Netflow live indicator ──────────────────────────────────────────────────────
+function updateNetflowIndicator(tier) {
+  var fps   = getNum('f-nf' + tier + '-fps');
+  var ind   = document.getElementById('nf' + tier + '-ind');
+  var txt   = document.getElementById('nf' + tier + '-ind-text');
+  if (fps <= 0) { ind.style.display = 'none'; return; }
+  var units = Math.ceil(fps / 5000);
+  txt.textContent = units + ' × 5,000 FPS unit' + (units > 1 ? 's' : '') + ' = ' + (units * 5000).toLocaleString() + ' FPS total';
+  ind.style.display = 'block';
 }
 
 function toggleTraining() {
-  const cb = document.getElementById('cb-training');
+  var cb = document.getElementById('cb-training');
   cb.checked = !cb.checked;
 }
 
@@ -499,9 +520,9 @@ function generateBOM() {
 
   // At least one subscription required
   if (devices === 0 && containers === 0 && fortigate === 0 && lanedge === 0 && agents === 0 && stm === 0 && hw100f === 0) {
-    const allNone = !document.getElementById('cb-netflow-15').checked
-                 && !document.getElementById('cb-netflow-30').checked
-                 && !document.getElementById('cb-netflow-90').checked
+    const allNone = getNum('f-nf15-fps') === 0
+                 && getNum('f-nf30-fps') === 0
+                 && getNum('f-nf90-fps') === 0
                  && document.getElementById('f-bps').value === 'none'
                  && !document.getElementById('cb-training').checked;
     if (allNone) {
@@ -605,15 +626,23 @@ function generateBOM() {
     rows.push({ sku: 'FMN-100F', desc: 'FortiMonitor 100F Appliance — OnSight vCollector hardware form factor', qty: hw100f, kind: 'req', note: 'Requires active FortiMonitor subscription · no term suffix' });
   }
 
-  // ── Netflow ────────────────────────────────────────────────────────────────
-  const nf15 = document.getElementById('cb-netflow-15').checked;
-  const nf30 = document.getElementById('cb-netflow-30').checked;
-  const nf90 = document.getElementById('cb-netflow-90').checked;
-  if (nf15 || nf30 || nf90) {
+  // ── Netflow (stackable · each unit = 5,000 FPS · round up) ────────────────
+  const nfTiers = [
+    { id: 'f-nf15-fps', sku: 'FC1-10-MNCLD-760-01-DD', retention: '15-day' },
+    { id: 'f-nf30-fps', sku: 'FC1-10-MNCLD-761-01-DD', retention: '30-day' },
+    { id: 'f-nf90-fps', sku: 'FC1-10-MNCLD-762-01-DD', retention: '90-day' },
+  ];
+  const nfRows = [];
+  nfTiers.forEach(function(t) {
+    const fps = getNum(t.id);
+    if (fps > 0) {
+      const units = Math.ceil(fps / 5000);
+      nfRows.push({ sku: t.sku, desc: 'FortiMonitor Cloud Netflow — 5,000 FPS · ' + t.retention + ' Retention (' + units + ' unit' + (units > 1 ? 's' : '') + ' = ' + (units * 5000).toLocaleString() + ' FPS)', qty: units, kind: 'opt', note: units + ' \xd7 5,000 FPS · co-term -DD' });
+    }
+  });
+  if (nfRows.length > 0) {
     rows.push({ section: 'Cloud Netflow Add-On' });
-    if (nf15) rows.push({ sku: 'FC1-10-MNCLD-760-01-DD', desc: 'FortiMonitor Cloud Netflow — 5,000 FPS · 15-day Retention', qty: 1, kind: 'opt', note: 'Co-term -DD' });
-    if (nf30) rows.push({ sku: 'FC1-10-MNCLD-761-01-DD', desc: 'FortiMonitor Cloud Netflow — 5,000 FPS · 30-day Retention', qty: 1, kind: 'opt', note: 'Co-term -DD' });
-    if (nf90) rows.push({ sku: 'FC1-10-MNCLD-762-01-DD', desc: 'FortiMonitor Cloud Netflow — 5,000 FPS · 90-day Retention', qty: 1, kind: 'opt', note: 'Co-term -DD' });
+    nfRows.forEach(function(r) { rows.push(r); });
   }
 
   // ── BPS Onboarding ─────────────────────────────────────────────────────────
@@ -719,7 +748,7 @@ function resetForm() {
   document.getElementById('f-stm').value        = '0';
   document.getElementById('f-hw100f').value     = '0';
   document.getElementById('f-bps').value        = 'none';
-  ['15','30','90'].forEach(t => { document.getElementById('cb-netflow-' + t).checked = false; });
+  ['15','30','90'].forEach(function(t) { document.getElementById('f-nf'+t+'-fps').value='0'; updateNetflowIndicator(t); });
   document.getElementById('cb-training').checked = false;
   document.getElementById('bom-section').style.display = 'none';
   document.getElementById('bom-tbody').innerHTML = '';
