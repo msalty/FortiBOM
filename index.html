@@ -873,7 +873,9 @@ function parseCSV(text) {
     }
     if (currentEntry && sku) {
       const qn = qty !== '' ? (isNaN(Number(qty)) ? qty : Number(qty)) : undefined;
-      currentEntry.rows.push({ sku, desc, qty:qn, kind, note });
+      // Normalize SKU back to -DD so term substitution works after import
+      const normSku = meta.term !== 'DD' ? sku.replace(new RegExp(`-${meta.term}$`, 'i'), '-DD') : sku;
+      currentEntry.rows.push({ sku: normSku, desc, qty:qn, kind, note });
     }
   }
   const prodCount = items.filter(i=>!i._type).length;
