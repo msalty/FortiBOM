@@ -243,6 +243,11 @@
   .sp-empty h3{font-size:16px;font-weight:500;color:var(--c-text2);}
   .sp-empty p{font-size:13px;max-width:320px;line-height:1.6;}
 
+  /* Saved Pricing upload drop zone */
+  #pricing-drop{border:2px dashed var(--c-ib);border-radius:4px;padding:32px 20px;text-align:center;color:var(--c-text2);font-size:13px;cursor:pointer;transition:border-color .15s,background .15s;}
+  #pricing-drop:hover,#pricing-drop.over{border-color:var(--forti-red);background:#FFF5F4;}
+  #pricing-drop p{margin-top:6px;font-size:11px;color:var(--c-textm);}
+
   /* Print */
   @media print {
     body{background:#fff;overflow:auto;height:auto;}
@@ -389,10 +394,18 @@
         </div>
         <div id="spv-content" class="lcb"></div>
       </div>
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 1h5l6 6-5 5-6-6V1z" stroke="#6B7589" stroke-width="1.1" stroke-linejoin="round"/><circle cx="4" cy="4" r="1" fill="#6B7589"/></svg>
+          <h2>Saved Pricing</h2>
+        </div>
+        <div id="pricing-content" class="lcb"></div>
+      </div>
     </div>
   </div>
 </div>
 
+<input type="file" id="pricing-file" accept=".csv" style="display:none" onchange="pricingFileChosen(this)">
 <div id="toast"></div>
 
 <!-- Copy/Export dropdown menu (position:fixed so it escapes overflow-y:auto parents) -->
@@ -877,6 +890,7 @@ function showSavedProjects() {
   document.getElementById('pbv').style.display = 'none';
   document.getElementById('spv').style.display = 'flex';
   renderSavedProjects();
+  renderPricingSection();
 }
 
 function renderSavedProjects() {
@@ -1191,6 +1205,193 @@ function doImport() {
   if (grpCount)  parts.push(`${grpCount} group header${grpCount!==1?'s':''}`);
   toast('✓ Imported ' + (parts.join(' + ') || 'project'));
   showPBV();
+}
+
+// ── PRICING (IndexedDB) ────────────────────────────────────────────────────────
+let _pricingDb = null;
+
+function openPricingDB() {
+  if (_pricingDb) return Promise.resolve(_pricingDb);
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('fabricbom_pricing', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('pricing');
+    req.onsuccess = e => { _pricingDb = e.target.result; resolve(_pricingDb); };
+    req.onerror = e => reject(e.target.error);
+  });
+}
+async function savePricingIDB(data) {
+  const db = await openPricingDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('pricing', 'readwrite');
+    tx.objectStore('pricing').put(data, 'current');
+    tx.oncomplete = resolve;
+    tx.onerror = e => reject(e.target.error);
+  });
+}
+async function getPricingIDB() {
+  const db = await openPricingDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('pricing', 'readonly');
+    const req = tx.objectStore('pricing').get('current');
+    req.onsuccess = e => resolve(e.target.result || null);
+    req.onerror = e => reject(e.target.error);
+  });
+}
+async function deletePricingIDB() {
+  const db = await openPricingDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('pricing', 'readwrite');
+    tx.objectStore('pricing').delete('current');
+    tx.oncomplete = resolve;
+    tx.onerror = e => reject(e.target.error);
+  });
+}
+
+function parsePricingLine(line) {
+  const cells = []; let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (inQ) {
+      if (c === '"' && line[i+1] === '"') { cur += '"'; i++; }
+      else if (c === '"') { inQ = false; }
+      else { cur += c; }
+    } else {
+      if (c === '"') { inQ = true; }
+      else if (c === ',') { cells.push(cur); cur = ''; }
+      else { cur += c; }
+    }
+  }
+  cells.push(cur);
+  return cells;
+}
+
+function parsePricingCSV(text) {
+  const rawLines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  let name = '', effectiveDate = '', headerRowIdx = -1, foundDate = false;
+
+  for (let i = 0; i < Math.min(rawLines.length, 30); i++) {
+    const cells = parsePricingLine(rawLines[i]);
+    const first = cells[0].trim();
+
+    if (first.startsWith('Effective Date:')) {
+      effectiveDate = first.replace('Effective Date:', '').trim();
+      foundDate = true;
+      continue;
+    }
+    // Name row: before effective date, first cell non-empty, all others empty
+    if (!name && !foundDate && first && cells.slice(1).every(c => !c.trim())) {
+      name = first;
+      continue;
+    }
+    // Header row: first cell is "Comments" and row contains "SKU"
+    const lc = cells.map(c => c.trim().toLowerCase());
+    if (lc[0] === 'comments' && lc.includes('sku')) {
+      headerRowIdx = i;
+      break;
+    }
+  }
+
+  if (headerRowIdx === -1) {
+    return { ok: false, error: 'Could not find the pricing header row. Please verify this is a Fortinet price list CSV.' };
+  }
+
+  const headers = parsePricingLine(rawLines[headerRowIdx]).map(h => h.trim());
+  const rows = [];
+  for (let i = headerRowIdx + 1; i < rawLines.length; i++) {
+    if (!rawLines[i].trim()) continue;
+    const cells = parsePricingLine(rawLines[i]);
+    if (cells.every(c => !c.trim())) continue;
+    const row = {};
+    headers.forEach((hdr, idx) => { if (hdr) row[hdr] = (cells[idx] || '').trim(); });
+    rows.push(row);
+  }
+
+  if (!rows.length) {
+    return { ok: false, error: 'No pricing data rows found after the header row.' };
+  }
+
+  return {
+    ok: true,
+    name: name || 'Fortinet Price List',
+    effectiveDate: effectiveDate || '',
+    headers,
+    rows,
+    uploadedAt: new Date().toISOString()
+  };
+}
+
+async function renderPricingSection() {
+  const el = document.getElementById('pricing-content');
+  if (!el) return;
+  try {
+    const data = await getPricingIDB();
+    if (!data) {
+      el.innerHTML = `
+        <div id="pricing-drop" onclick="document.getElementById('pricing-file').click()"
+             ondragover="pricingDragOver(event)" ondragleave="pricingDragLeave(event)" ondrop="pricingDrop(event)">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="opacity:.35"><rect x="4" y="4" width="24" height="24" rx="3" stroke="#6B7589" stroke-width="1.5"/><path d="M10 16h12M16 10v12" stroke="#6B7589" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div style="font-weight:600;color:var(--c-text);margin-top:8px;">Drop a Fortinet Pricing CSV here or click to browse</div>
+          <p>The price list name and effective date will be read automatically from the file header.</p>
+        </div>`;
+    } else {
+      const when = new Date(data.uploadedAt).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+      const rowCount = data.rows.length.toLocaleString();
+      el.innerHTML = `
+        <div class="sp-list">
+          <div class="sp-card">
+            <div class="sp-accent"></div>
+            <div class="sp-body">
+              <div class="sp-name">${h(data.name)}</div>
+              <div class="sp-meta">Effective: ${h(data.effectiveDate || '—')} &middot; ${rowCount} items &middot; Uploaded ${when}</div>
+            </div>
+            <div class="sp-actions">
+              <button class="btn bd" onclick="deletePricing()">
+                <svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>`;
+    }
+  } catch(e) {
+    el.innerHTML = `<div style="font-size:12px;color:#C0392B;padding:12px;">Error loading pricing data: ${h(e.message)}</div>`;
+  }
+}
+
+function pricingDragOver(e) { e.preventDefault(); const d=document.getElementById('pricing-drop'); if(d) d.classList.add('over'); }
+function pricingDragLeave() { const d=document.getElementById('pricing-drop'); if(d) d.classList.remove('over'); }
+function pricingDrop(e) { e.preventDefault(); const d=document.getElementById('pricing-drop'); if(d) d.classList.remove('over'); const f=e.dataTransfer.files[0]; if(f) handlePricingFile(f); }
+function pricingFileChosen(inp) { if(inp.files[0]) handlePricingFile(inp.files[0]); inp.value=''; }
+
+function handlePricingFile(file) {
+  const el = document.getElementById('pricing-content');
+  if (el) el.innerHTML = `<div style="padding:20px;text-align:center;font-size:13px;color:var(--c-text2);">Processing pricing data…</div>`;
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const result = parsePricingCSV(ev.target.result);
+    if (!result.ok) { toast('⚠ ' + result.error); renderPricingSection(); return; }
+    try {
+      await savePricingIDB(result);
+      toast(`✓ Pricing saved: "${result.name}"`);
+      renderPricingSection();
+    } catch(e) {
+      toast('⚠ Could not save pricing data: ' + e.message);
+      renderPricingSection();
+    }
+  };
+  reader.onerror = () => { toast('⚠ Could not read file.'); renderPricingSection(); };
+  reader.readAsText(file);
+}
+
+async function deletePricing() {
+  if (!confirm('Delete the saved pricing data?')) return;
+  try {
+    await deletePricingIDB();
+    toast('✓ Pricing data deleted');
+    renderPricingSection();
+  } catch(e) {
+    toast('⚠ Could not delete pricing data: ' + e.message);
+  }
 }
 
 // ── TOAST ────────────────────────────────────────────────────────────────────
