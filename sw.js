@@ -1,4 +1,4 @@
-const CACHE = 'fortibom-v1';
+const CACHE = 'fabricbom-v1';
 
 const SHELL = [
   './',
@@ -27,6 +27,7 @@ const SHELL = [
   './products/fortimonitor-bomgen.html',
   './products/fortisiem-bomgen.html',
   './products/fortiflex-bomgen.html',
+  './products/fortiedr-bomgen.html',
   './products/custom-sku-bomgen.html',
 ];
 
