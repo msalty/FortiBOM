@@ -746,7 +746,7 @@ async function renderGroups() {
         </div>
         <div class="bt-wrap"><table class="bt"><thead><tr>
           <th style="width:200px;">Part Number</th><th>Description</th>
-          <th style="width:50px;text-align:center;">Qty</th><th style="width:100px;">Type</th><th>Notes</th>${hasPricing ? '<th style="width:110px;text-align:right;">List Price</th><th style="width:120px;text-align:right;">Total Price</th>' : ''}
+          <th style="width:50px;text-align:center;">Qty</th><th style="width:100px;">Type</th><th>Notes</th>${hasPricing ? '<th style="width:110px;text-align:right;color:var(--c-text);">List Price</th><th style="width:120px;text-align:right;color:var(--c-text);">Total Price</th>' : ''}
         </tr></thead><tbody>${rows}</tbody></table></div>`;
       addDragListeners(el);
       c.appendChild(el);
