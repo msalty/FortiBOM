@@ -6,7 +6,7 @@
 
 ## Overview
 
-FTNxT-BOMGen is a client-side web application that helps Sales Engineers build and export structured Bill of Materials quotes for Fortinet network security deployments. Select from 13+ supported products, configure hardware models, support tiers, and licenses, then combine everything into a single exportable project BOM — no backend server or external dependencies required.
+FTNxT-BOMGen is a client-side web application that helps Sales Engineers and Partner Engineers build and export structured Bill of Materials quotes for Fortinet network security deployments. Select from 15+ supported products, configure hardware models, support tiers, and licenses, then combine everything into a single exportable project BOM — no backend server or external dependencies required.  Designed to be run offline as a PWA.  Disclaimer: FortiBOM is not an officially sanctioned Fortinet product. Always validate output against the official Fortinet product ordering guides.  All source and reference materials used in the creation of this product are public.
 
 ## Features
 
