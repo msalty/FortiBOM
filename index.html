@@ -66,6 +66,12 @@
   .ni-badge.on{display:block;}
   .n-sep{height:1px;background:var(--forti-border);margin:8px 0;}
   .n-load{padding:12px 16px;font-size:12px;color:var(--forti-text-muted);font-style:italic;}
+  .nav-search-wrap{padding:0 12px 8px;position:relative;}
+  #nav-search-input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid var(--forti-border);border-radius:3px;color:var(--forti-text-primary);font-size:12px;padding:6px 26px 6px 10px;outline:none;font-family:inherit;}
+  #nav-search-input::placeholder{color:var(--forti-text-muted);}
+  #nav-search-input:focus{border-color:rgba(238,49,36,.5);background:rgba(255,255,255,.08);}
+  #nav-search-clear{position:absolute;right:18px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--forti-text-muted);font-size:16px;padding:0;line-height:1;display:none;}
+  #nav-search-clear:hover{color:var(--forti-text-secondary);}
 
   /* CONTENT */
   #content{flex:1;background:var(--forti-content-bg);overflow:hidden;display:flex;flex-direction:column;min-height:0;}
@@ -285,6 +291,10 @@
     </div>
     <div class="n-sep" style="margin-top:8px;"></div>
     <div class="nsl">Products</div>
+    <div class="nav-search-wrap">
+      <input id="nav-search-input" type="text" placeholder="Filter products…" oninput="filterNav(this.value)" autocomplete="off" spellcheck="false">
+      <button id="nav-search-clear" onclick="clearNavSearch()" title="Clear">&times;</button>
+    </div>
     <div id="nav-items"><div class="n-load">Scanning products…</div></div>
     <div class="n-sep"></div>
     <div class="nsl">Info</div>
@@ -543,6 +553,19 @@ async function buildNav() {
   if (!any) c.innerHTML = `<div class="n-load">No product files found in products/</div>`;
 }
 async function exists(path) { try { return (await fetch(path,{method:'HEAD'})).ok; } catch { return false; } }
+function filterNav(q) {
+  document.getElementById('nav-search-clear').style.display = q ? 'block' : 'none';
+  const term = q.toLowerCase();
+  document.querySelectorAll('#nav-items .ni').forEach(el => {
+    el.style.display = (!term || el.querySelector('.ni-label').textContent.toLowerCase().includes(term)) ? '' : 'none';
+  });
+  document.querySelectorAll('#nav-items .nsl').forEach(lbl => {
+    let sib = lbl.nextElementSibling, anyVisible = false;
+    while (sib && !sib.classList.contains('nsl')) { if (sib.style.display !== 'none') anyVisible = true; sib = sib.nextElementSibling; }
+    lbl.style.display = anyVisible ? '' : 'none';
+  });
+}
+function clearNavSearch() { const i=document.getElementById('nav-search-input'); i.value=''; filterNav(''); i.focus(); }
 
 // ── MOBILE SIDEBAR TOGGLE ─────────────────────────────────────────────────────
 function toggleSidebar() {
