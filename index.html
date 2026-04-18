@@ -727,7 +727,7 @@ async function renderGroups() {
           const listPrice = priceMap.get(r.sku || '');
           const listPriceNum = listPrice ? parseFloat(String(listPrice).replace(/[^0-9.]/g, '')) : NaN;
           const totalNum = (!isNaN(listPriceNum) && typeof r.qty === 'number') ? listPriceNum * r.qty : NaN;
-          priceCells = `<td style="text-align:right;white-space:nowrap;">${listPrice ? h(listPrice) : ''}</td><td style="text-align:right;white-space:nowrap;">${!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : ''}</td>`;
+          priceCells = `<td class="nc" style="text-align:right;white-space:nowrap;">${listPrice ? h(listPrice) : ''}</td><td class="nc" style="text-align:right;white-space:nowrap;">${!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : ''}</td>`;
         }
         return `<tr><td><span class="sk">${h(r.sku||'')}</span></td><td class="nc">${h(r.desc||'')}</td><td class="qc">${r.qty??''}</td><td>${bm[r.kind]||''}</td><td class="nc">${h(r.note||'')}</td>${priceCells}</tr>`;
       }).join('');
@@ -746,7 +746,7 @@ async function renderGroups() {
         </div>
         <div class="bt-wrap"><table class="bt"><thead><tr>
           <th style="width:200px;">Part Number</th><th>Description</th>
-          <th style="width:50px;text-align:center;">Qty</th><th style="width:100px;">Type</th><th>Notes</th>${hasPricing ? '<th style="width:110px;text-align:right;color:var(--c-text);">List Price</th><th style="width:120px;text-align:right;color:var(--c-text);">Total Price</th>' : ''}
+          <th style="width:50px;text-align:center;">Qty</th><th style="width:100px;">Type</th><th>Notes</th>${hasPricing ? '<th style="width:110px;text-align:right;">List Price</th><th style="width:120px;text-align:right;">Total Price</th>' : ''}
         </tr></thead><tbody>${rows}</tbody></table></div>`;
       addDragListeners(el);
       c.appendChild(el);
