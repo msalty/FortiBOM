@@ -671,7 +671,16 @@ function removeFromCart(id) { cart = cart.filter(c=>c.id!==id); updateBadges(); 
 function clearCart() { if (!confirm('Clear all items from the Project BOM?')) return; cart=[]; seq=0; updateBadges(); renderGroups(); saveCart(); }
 
 // ── RENDER ───────────────────────────────────────────────────────────────────
-function renderGroups() {
+async function renderGroups() {
+  let priceMap = null;
+  try {
+    const pricingRaw = await getPricingIDB();
+    if (pricingRaw && pricingRaw.rows && pricingRaw.rows.length) {
+      priceMap = new Map(pricingRaw.rows.map(r => [r['SKU'], r['Price']]));
+    }
+  } catch(e) { /* pricing unavailable */ }
+  const hasPricing = priceMap !== null;
+  const colSpan = hasPricing ? 7 : 5;
   const c = document.getElementById('bgc');
   const ec = document.getElementById('ec');
   const sbar = document.getElementById('sbar');
@@ -710,10 +719,17 @@ function renderGroups() {
       let lines=0, qty=0;
       const displayRows = rowsWithTerm(entry.rows);
       const rows = displayRows.map(r => {
-        if (r.section!==undefined) return `<tr class="sr"><td colspan="5">${h(r.section)}</td></tr>`;
+        if (r.section!==undefined) return `<tr class="sr"><td colspan="${colSpan}">${h(r.section)}</td></tr>`;
         lines++; if (typeof r.qty==='number') qty+=r.qty;
         const bm={req:'<span class="br br-r">Required</span>',mand:'<span class="br br-m">Mandatory</span>',opt:'<span class="br br-o">Optional</span>',inc:'<span class="br br-o">Included</span>',note:''};
-        return `<tr><td><span class="sk">${h(r.sku||'')}</span></td><td class="nc">${h(r.desc||'')}</td><td class="qc">${r.qty??''}</td><td>${bm[r.kind]||''}</td><td class="nc">${h(r.note||'')}</td></tr>`;
+        let priceCells = '';
+        if (hasPricing) {
+          const listPrice = priceMap.get(r.sku || '');
+          const listPriceNum = listPrice ? parseFloat(String(listPrice).replace(/[^0-9.]/g, '')) : NaN;
+          const totalNum = (!isNaN(listPriceNum) && typeof r.qty === 'number') ? listPriceNum * r.qty : NaN;
+          priceCells = `<td style="text-align:right;white-space:nowrap;">${listPrice ? h(listPrice) : ''}</td><td style="text-align:right;white-space:nowrap;">${!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : ''}</td>`;
+        }
+        return `<tr><td><span class="sk">${h(r.sku||'')}</span></td><td class="nc">${h(r.desc||'')}</td><td class="qc">${r.qty??''}</td><td>${bm[r.kind]||''}</td><td class="nc">${h(r.note||'')}</td>${priceCells}</tr>`;
       }).join('');
       totL+=lines; totQ+=qty;
       const el = document.createElement('div');
@@ -730,7 +746,7 @@ function renderGroups() {
         </div>
         <div class="bt-wrap"><table class="bt"><thead><tr>
           <th style="width:200px;">Part Number</th><th>Description</th>
-          <th style="width:50px;text-align:center;">Qty</th><th style="width:100px;">Type</th><th>Notes</th>
+          <th style="width:50px;text-align:center;">Qty</th><th style="width:100px;">Type</th><th>Notes</th>${hasPricing ? '<th style="width:110px;text-align:right;">List Price</th><th style="width:120px;text-align:right;">Total Price</th>' : ''}
         </tr></thead><tbody>${rows}</tbody></table></div>`;
       addDragListeners(el);
       c.appendChild(el);
