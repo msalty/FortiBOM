@@ -138,7 +138,7 @@
   table.bt{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;min-width:580px;}
   table.bt thead th{background:var(--c-th);border:1px solid var(--c-border);padding:6px 10px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#4A5268;white-space:nowrap;}
   table.bt tbody td{border:1px solid var(--c-border);padding:6px 10px;vertical-align:top;font-size:12px;}
-  table.bt tbody tr:nth-child(even) td{background:var(--c-sh);}
+  table.bt tbody tr.bt-even td{background:var(--c-sh);}
   table.bt tbody tr:hover td{background:#EEF1F6;}
   .sr td{background:#EAECF3!important;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--c-text2);padding:4px 10px;border-top:2px solid #C5CAD9;}
   .sk{font-family:'Courier New',monospace;font-size:11px;color:#1A4E82;font-weight:700;white-space:nowrap;}
@@ -150,7 +150,7 @@
   .br-m{background:#FFF8EE;color:#8A5800;border:1px solid #F5D9A0;}
 
   /* Responsive column hiding for BOM table */
-  .col-exp{display:none;width:28px;padding:2px 4px!important;text-align:center;}
+  .col-exp{display:none;padding:0!important;text-align:center;}
   .exp-btn{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);font-size:13px;font-weight:700;width:20px;height:20px;line-height:1;cursor:pointer;padding:0;font-family:inherit;transition:background .12s,color .12s;}
   .exp-btn:hover,.exp-btn.open{background:var(--forti-red);color:#fff;border-color:var(--forti-red);}
   .bom-detail{display:none;}
@@ -161,7 +161,7 @@
   .det-v{color:var(--c-text);vertical-align:top;padding:3px 0;}
   @media (max-width:640px) {
     .col-notes{display:none;}
-    .col-exp{display:table-cell;}
+    .col-exp{display:table-cell;width:28px;padding:2px 4px!important;}
     table.bt{min-width:0;table-layout:auto;}
   }
   @media (max-width:480px) {
@@ -807,7 +807,8 @@ async function renderGroups() {
         if (r.note) detailRows.push(`<tr><td class="det-k">Notes</td><td class="det-v nc">${h(r.note)}</td></tr>`);
         const expCell = detailRows.length ? `<td class="col-exp"><button class="exp-btn" onclick="toggleDetail(this)" title="Show details">+</button></td>` : `<td class="col-exp"></td>`;
         const detailTr = detailRows.length ? `<tr class="bom-detail"><td colspan="100"><table class="det-tbl"><tbody>${detailRows.join('')}</tbody></table></td></tr>` : '';
-        return `<tr><td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc">${h(r.desc||'')}</td><td class="qc">${r.qty??''}</td><td class="col-type">${bm[r.kind]||''}</td><td class="nc col-notes">${h(r.note||'')}</td>${priceCells}${expCell}</tr>${detailTr}`;
+        const evenCls = lines%2===0 ? ' class="bt-even"' : '';
+        return `<tr${evenCls}><td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc">${h(r.desc||'')}</td><td class="qc">${r.qty??''}</td><td class="col-type">${bm[r.kind]||''}</td><td class="nc col-notes">${h(r.note||'')}</td>${priceCells}${expCell}</tr>${detailTr}`;
       }).join('');
       totL+=lines; totQ+=qty;
       const el = document.createElement('div');
