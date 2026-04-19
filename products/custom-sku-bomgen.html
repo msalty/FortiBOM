@@ -1147,10 +1147,13 @@ async function searchBySku(query) {
 async function searchByDesc(query) {
   const data = await getPricingData();
   if (!data || !data.rows) return [];
-  const q = query.trim().toLowerCase();
-  if (q.length < 3) return [];
+  const terms = query.trim().toLowerCase().split(/\s+/).filter(t => t.length > 0);
+  if (!terms.length || terms[0].length < 3) return [];
   return data.rows
-    .filter(row => (row['Description #1'] || '').toLowerCase().includes(q))
+    .filter(row => {
+      const d = (row['Description #1'] || '').toLowerCase();
+      return terms.every(t => d.includes(t));
+    })
     .slice(0, 15)
     .map(rowToAcItem);
 }
@@ -1183,14 +1186,6 @@ function fillRowFromPricing(id, item) {
 
   const notesEl = document.getElementById(`notes-${id}`);
   if (notesEl) notesEl.value = item.desc2;
-
-  const groupEl = document.getElementById('f-group-name');
-  if (groupEl && !groupEl.value.trim() && item.product)
-    groupEl.value = item.product;
-
-  const sectionEl = document.getElementById('f-section-label');
-  if (sectionEl && !sectionEl.value.trim() && item.item)
-    sectionEl.value = item.item;
 
   clearRowErr(id);
 }
