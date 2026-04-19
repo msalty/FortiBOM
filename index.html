@@ -260,6 +260,7 @@
     .lc,.bg{break-inside:avoid;}
   }
 </style>
+<script>var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$",e={};function t(r,o){if(!e[r]){e[r]={};for(var n=0;n<r.length;n++)e[r][r.charAt(n)]=n}return e[r][o]}var i={compressToBase64:function(r){if(null==r)return"";var n=i._compress(r,6,function(r){return o.charAt(r)});switch(n.length%4){default:case 0:return n;case 1:return n+"===";case 2:return n+"==";case 3:return n+"="}},decompressFromBase64:function(r){return null==r?"":""==r?null:i._decompress(r.length,32,function(n){return t(o,r.charAt(n))})},compressToUTF16:function(o){return null==o?"":i._compress(o,15,function(o){return r(o+32)})+" "},decompressFromUTF16:function(r){return null==r?"":""==r?null:i._decompress(r.length,16384,function(o){return r.charCodeAt(o)-32})},compressToUint8Array:function(r){for(var o=i.compress(r),n=new Uint8Array(2*o.length),e=0,t=o.length;e<t;e++){var s=o.charCodeAt(e);n[2*e]=s>>>8,n[2*e+1]=s%256}return n},decompressFromUint8Array:function(o){if(null==o)return i.decompress(o);for(var n=new Array(o.length/2),e=0,t=n.length;e<t;e++)n[e]=256*o[2*e]+o[2*e+1];var s=[];return n.forEach(function(o){s.push(r(o))}),i.decompress(s.join(""))},compressToEncodedURIComponent:function(r){return null==r?"":i._compress(r,6,function(r){return n.charAt(r)})},decompressFromEncodedURIComponent:function(r){return null==r?"":""==r?null:(r=r.replace(/ /g,"+"),i._decompress(r.length,32,function(o){return t(n,r.charAt(o))}))},compress:function(o){return i._compress(o,16,function(o){return r(o)})},_compress:function(r,o,n){if(null==r)return"";var e,t,i,s={},u={},a="",p="",c="",l=2,f=3,h=2,d=[],m=0,v=0;for(i=0;i<r.length;i+=1)if(a=r.charAt(i),Object.prototype.hasOwnProperty.call(s,a)||(s[a]=f++,u[a]=!0),p=c+a,Object.prototype.hasOwnProperty.call(s,p))c=p;else{if(Object.prototype.hasOwnProperty.call(u,c)){if(c.charCodeAt(0)<256){for(e=0;e<h;e++)m<<=1,v==o-1?(v=0,d.push(n(m)),m=0):v++;for(t=c.charCodeAt(0),e=0;e<8;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;e<h;e++)m=m<<1|t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=c.charCodeAt(0),e=0;e<16;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}0==--l&&(l=Math.pow(2,h),h++),delete u[c]}else for(t=s[c],e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;0==--l&&(l=Math.pow(2,h),h++),s[p]=f++,c=String(a)}if(""!==c){if(Object.prototype.hasOwnProperty.call(u,c)){if(c.charCodeAt(0)<256){for(e=0;e<h;e++)m<<=1,v==o-1?(v=0,d.push(n(m)),m=0):v++;for(t=c.charCodeAt(0),e=0;e<8;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;e<h;e++)m=m<<1|t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=c.charCodeAt(0),e=0;e<16;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}0==--l&&(l=Math.pow(2,h),h++),delete u[c]}else for(t=s[c],e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;0==--l&&(l=Math.pow(2,h),h++)}for(t=2,e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;for(;;){if(m<<=1,v==o-1){d.push(n(m));break}v++}return d.join("")},decompress:function(r){return null==r?"":""==r?null:i._decompress(r.length,32768,function(o){return r.charCodeAt(o)})},_decompress:function(o,n,e){var t,i,s,u,a,p,c,l=[],f=4,h=4,d=3,m="",v=[],g={val:e(0),position:n,index:1};for(t=0;t<3;t+=1)l[t]=t;for(s=0,a=Math.pow(2,2),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;switch(s){case 0:for(s=0,a=Math.pow(2,8),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;c=r(s);break;case 1:for(s=0,a=Math.pow(2,16),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;c=r(s);break;case 2:return""}for(l[3]=c,i=c,v.push(c);;){if(g.index>o)return"";for(s=0,a=Math.pow(2,d),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;switch(c=s){case 0:for(s=0,a=Math.pow(2,8),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;l[h++]=r(s),c=h-1,f--;break;case 1:for(s=0,a=Math.pow(2,16),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;l[h++]=r(s),c=h-1,f--;break;case 2:return v.join("")}if(0==f&&(f=Math.pow(2,d),d++),l[c])m=l[c];else{if(c!==h)return null;m=i+i.charAt(0)}v.push(m),l[h++]=i+m.charAt(0),i=m,0==--f&&(f=Math.pow(2,d),d++)}}};return i}();"function"==typeof define&&define.amd?define(function(){return LZString}):"undefined"!=typeof module&&null!=module?module.exports=LZString:"undefined"!=typeof angular&&null!=angular&&angular.module("LZString",[]).factory("LZString",function(){return LZString});</script>
 </head>
 <body>
 
@@ -412,6 +413,9 @@
 
 <!-- Copy/Export dropdown menu (position:fixed so it escapes overflow-y:auto parents) -->
 <div id="copy-menu">
+  <div class="dm-section">Share</div>
+  <button class="dm-item" onclick="shareBOM()"><svg viewBox="0 0 13 13" fill="none"><circle cx="10" cy="2.5" r="1.5" stroke="currentColor" stroke-width="1.1"/><circle cx="10" cy="10.5" r="1.5" stroke="currentColor" stroke-width="1.1"/><circle cx="3" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M8.5 3.5L4.5 5.5M4.5 7.5L8.5 9.5" stroke="currentColor" stroke-width="1.1"/></svg>Share BOM URL</button>
+  <div class="dm-sep"></div>
   <div class="dm-section">Copy to Clipboard</div>
   <button class="dm-item" onclick="copyTSV()"><svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="currentColor" stroke-width="1.1"/></svg>Copy TSV</button>
   <button class="dm-item" onclick="copyBOMCSV()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M1 4.5h11M4.5 4.5v7" stroke="currentColor" stroke-width="1.1"/></svg>Copy CSV</button>
@@ -467,7 +471,25 @@
   </div>
 </div>
 
-
+<!-- BOM Share Import confirmation modal -->
+<div id="bom-share-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.55);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:5px;width:440px;max-width:95vw;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3);">
+    <h3 style="font-size:14px;font-weight:700;color:var(--c-text);padding:16px 18px;border-bottom:1px solid var(--c-border);background:var(--c-sh);display:flex;align-items:center;gap:8px;">
+      <svg width="14" height="14" viewBox="0 0 13 13" fill="none"><circle cx="10" cy="2.5" r="1.5" stroke="#2A2F3A" stroke-width="1.1"/><circle cx="10" cy="10.5" r="1.5" stroke="#2A2F3A" stroke-width="1.1"/><circle cx="3" cy="6.5" r="1.5" stroke="#2A2F3A" stroke-width="1.1"/><path d="M8.5 3.5L4.5 5.5M4.5 7.5L8.5 9.5" stroke="#2A2F3A" stroke-width="1.1"/></svg>
+      Load Shared BOM?
+    </h3>
+    <div style="padding:18px;font-size:13px;color:var(--c-text);line-height:1.6;">
+      <p id="bom-share-msg"></p>
+      <p style="margin-top:10px;font-size:12px;color:#C0392B;background:#FEF0EE;border:1px solid #F5C6C2;border-radius:3px;padding:8px 12px;">
+        Your current Project BOM will be replaced. Consider saving it first.
+      </p>
+    </div>
+    <div style="padding:12px 18px;border-top:1px solid var(--c-border);display:flex;justify-content:flex-end;gap:8px;background:var(--c-sh);">
+      <button class="btn bs" onclick="closeBOMShareModal()">Keep My BOM</button>
+      <button class="btn bp" onclick="confirmBOMShare()">Load Shared BOM</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const CATALOG = [
@@ -676,7 +698,7 @@ function updateBadges() {
 }
 
 function removeFromCart(id) { cart = cart.filter(c=>c.id!==id); updateBadges(); renderGroups(); saveCart(); }
-function clearCart() { if (!confirm('Clear all items from the Project BOM?')) return; cart=[]; seq=0; updateBadges(); renderGroups(); saveCart(); }
+function clearCart() { if (!confirm('Clear all items from the Project BOM?')) return; cart=[]; seq=0; if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname); updateBadges(); renderGroups(); saveCart(); }
 
 // ── RENDER ───────────────────────────────────────────────────────────────────
 async function renderGroups() {
@@ -857,7 +879,7 @@ function saveGroupRow() {
 
 // Allow Enter key in group modal inputs
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeGroupModal(); closeImport(); }
+  if (e.key === 'Escape') { closeGroupModal(); closeImport(); closeBOMShareModal(); }
   if (e.key === 'Enter' && document.getElementById('grp-modal').classList.contains('on')) saveGroupRow();
 });
 
@@ -989,6 +1011,66 @@ function getMeta() {
     term:  document.getElementById('pi-term').value,
   };
 }
+// ── URL SHARING ───────────────────────────────────────────────────────────────
+function serializeBOM() {
+  const m = getMeta();
+  const items = cart.map(entry => {
+    if (entry._type === 'group') {
+      return { g: 1, l: entry.label, n: entry.note || '' };
+    }
+    const rows = entry.rows.map(r =>
+      r.section !== undefined
+        ? { s: r.section }
+        : [r.sku || '', r.desc || '', r.qty ?? null, r.kind || '', r.note || '']
+    );
+    return { p: entry.product, l: entry.label, r: rows };
+  });
+  return JSON.stringify({
+    v: 1,
+    m: { c: m.cust, o: m.opp, e: m.eng, d: m.date, n: m.notes, t: m.term },
+    i: items
+  });
+}
+
+function deserializeBOM(json) {
+  const obj = JSON.parse(json);
+  if (!obj || obj.v !== 1) throw new Error('Unknown BOM version');
+  const m = obj.m || {};
+  const meta = { cust: m.c||'', opp: m.o||'', eng: m.e||'', date: m.d||'', notes: m.n||'', term: m.t||'DD' };
+  const items = (obj.i || []).map(item => {
+    if (item.g) {
+      return { _type: 'group', label: item.l || '', note: item.n || '' };
+    }
+    const rows = (item.r || []).map(r =>
+      Array.isArray(r)
+        ? { sku: r[0]||'', desc: r[1]||'', qty: r[2] ?? undefined, kind: r[3]||'', note: r[4]||'' }
+        : { section: r.s }
+    );
+    return { product: item.p || item.l || '', label: item.l || '', rows };
+  });
+  const prodCount = items.filter(i => !i._type).length;
+  const grpCount  = items.filter(i => i._type === 'group').length;
+  return { ok: true, meta, items, prodCount, grpCount };
+}
+
+function shareBOM() {
+  closeCopyMenu();
+  if (!cart.length) { toast('Nothing to share — add items first'); return; }
+  let compressed;
+  try {
+    compressed = LZString.compressToEncodedURIComponent(serializeBOM());
+  } catch(e) {
+    toast('Could not generate share URL: ' + e.message);
+    return;
+  }
+  if (compressed.length > 100000) {
+    toast('Warning: BOM is very large — URL may not work in all browsers.');
+  }
+  const url = location.origin + location.pathname + '#bom=' + compressed;
+  clipboardWrite(url, '✓ Share URL copied to clipboard');
+  history.replaceState(null, '', '#bom=' + compressed);
+}
+
 function exportCSV() {
   const p = getMeta();
   const termLabel = {DD:'Co-term (-DD)',12:'1 Year (-12)',36:'3 Years (-36)',60:'5 Years (-60)'}[p.term];
@@ -1231,6 +1313,84 @@ function doImport() {
   showPBV();
 }
 
+// ── BOM URL SHARE LOAD ────────────────────────────────────────────────────────
+let _pendingSharedBOM = null;
+
+function applySharedBOM(parsed) {
+  const { meta, items } = parsed;
+  if (meta.cust)  document.getElementById('pi-cust').value  = meta.cust;
+  if (meta.opp)   document.getElementById('pi-opp').value   = meta.opp;
+  if (meta.eng)   document.getElementById('pi-eng').value   = meta.eng;
+  if (meta.date)  document.getElementById('pi-date').value  = meta.date;
+  if (meta.notes) document.getElementById('pi-notes').value = meta.notes;
+  if (meta.term)  document.getElementById('pi-term').value  = meta.term;
+  cart = []; seq = 0;
+  for (const item of items) {
+    if (item._type === 'group') {
+      cart.push({ id: ++seq, _type: 'group', label: item.label, note: item.note || '' });
+    } else {
+      cart.push({ id: ++seq, product: item.product, label: item.label, rows: item.rows, meta: {} });
+    }
+  }
+  updateBadges();
+  renderGroups();
+  saveCart();
+}
+
+function showBOMFragmentConfirm(parsed, name, summary) {
+  _pendingSharedBOM = parsed;
+  document.getElementById('bom-share-msg').textContent =
+    `A shared BOM was found in the URL: "${name}" — ${summary}.`;
+  const modal = document.getElementById('bom-share-modal');
+  modal.style.display = 'flex';
+}
+
+function closeBOMShareModal() {
+  document.getElementById('bom-share-modal').style.display = 'none';
+  _pendingSharedBOM = null;
+}
+
+function confirmBOMShare() {
+  if (!_pendingSharedBOM) return;
+  const parsed = _pendingSharedBOM;
+  closeBOMShareModal();
+  applySharedBOM(parsed);
+  toast(`✓ Loaded shared BOM: "${parsed.meta.cust || 'Unnamed'}"`);
+  showPBV();
+}
+
+function checkBOMFragment() {
+  const hash = location.hash;
+  if (!hash.startsWith('#bom=')) return;
+  const encoded = hash.slice(5);
+  if (!encoded) return;
+  history.replaceState(null, '', location.pathname);
+  let parsed;
+  try {
+    const json = LZString.decompressFromEncodedURIComponent(encoded);
+    if (!json) throw new Error('Decompression returned empty — URL may be truncated or corrupt.');
+    parsed = deserializeBOM(json);
+  } catch(e) {
+    console.error('BOM share URL error:', e.message);
+    toast('Could not load shared BOM — URL may be corrupt or truncated.');
+    return;
+  }
+  const name = parsed.meta.cust || 'Unnamed Project';
+  const prodCount = parsed.prodCount;
+  const grpCount  = parsed.grpCount;
+  const summary = [
+    prodCount ? `${prodCount} product group${prodCount !== 1 ? 's' : ''}` : '',
+    grpCount  ? `${grpCount} group header${grpCount !== 1 ? 's' : ''}` : ''
+  ].filter(Boolean).join(' + ') || 'no items';
+  if (cart.length) {
+    showBOMFragmentConfirm(parsed, name, summary);
+  } else {
+    applySharedBOM(parsed);
+    toast(`✓ Loaded shared BOM: "${name}" (${summary})`);
+    showPBV();
+  }
+}
+
 // ── PRICING (IndexedDB) ────────────────────────────────────────────────────────
 let _pricingDb = null;
 
@@ -1431,6 +1591,7 @@ updateSavedBadge();
 renderGroups();
 if (cart.length) showPBV();
 buildNav();
+checkBOMFragment();
 
 // ── SERVICE WORKER REGISTRATION ───────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
