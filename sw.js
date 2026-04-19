@@ -1,4 +1,4 @@
-const CACHE = 'fabricbom-v1';
+const CACHE = 'fabricbom-v2';
 
 const SHELL = [
   './',
@@ -28,6 +28,14 @@ const SHELL = [
   './products/fortisiem-bomgen.html',
   './products/fortiflex-bomgen.html',
   './products/fortiedr-bomgen.html',
+  './products/fortiappsec-bomgen.html',
+  './products/forticnapp-bomgen.html',
+  './products/fortidlp-bomgen.html',
+  './products/fortiextender-bomgen.html',
+  './products/fortimail-bomgen.html',
+  './products/fortimail-workspace-bomgen.html',
+  './products/fortipresence-bomgen.html',
+  './products/fortirecon-bomgen.html',
   './products/custom-sku-bomgen.html',
 ];
 
