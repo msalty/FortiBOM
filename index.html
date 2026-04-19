@@ -145,9 +145,31 @@
   .qc{text-align:center;font-weight:700;color:var(--c-textm);}
   .nc{color:var(--c-textm);font-size:11px;}
   .br{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:2px;padding:1px 4px;}
-  .br-r{background:#FEF0EE;color:#C0392B;border:1px solid #F5C6C2;}
+  .br-r{background:#FEE0DE;color:#C0392B;border:1px solid #F5C6C2;}
   .br-o{background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;}
   .br-m{background:#FFF8EE;color:#8A5800;border:1px solid #F5D9A0;}
+
+  /* Responsive column hiding for BOM table */
+  .col-exp{display:none;width:28px;padding:2px 4px!important;text-align:center;}
+  .exp-btn{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);font-size:13px;font-weight:700;width:20px;height:20px;line-height:1;cursor:pointer;padding:0;font-family:inherit;transition:background .12s,color .12s;}
+  .exp-btn:hover,.exp-btn.open{background:var(--forti-red);color:#fff;border-color:var(--forti-red);}
+  .bom-detail{display:none;}
+  table.bt tbody .bom-detail td{padding:8px 12px!important;background:#F0F2F7!important;border-top:none!important;}
+  .det-tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .det-tbl tr+tr td{border-top:1px solid var(--c-border);}
+  .det-k{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--c-text2);padding:3px 10px 3px 0;width:90px;white-space:nowrap;vertical-align:top;}
+  .det-v{color:var(--c-text);vertical-align:top;padding:3px 0;}
+  @media (max-width:640px) {
+    .col-notes{display:none;}
+    .col-exp{display:table-cell;}
+    table.bt{min-width:0;table-layout:auto;}
+  }
+  @media (max-width:480px) {
+    .col-type{display:none;}
+  }
+  @media (max-width:360px) {
+    .col-desc{display:none;}
+  }
 
   /* Empty state */
   .ec{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:60px 20px;text-align:center;color:var(--c-textm);}
@@ -708,6 +730,16 @@ function updateBadges() {
 }
 
 function removeFromCart(id) { cart = cart.filter(c=>c.id!==id); updateBadges(); renderGroups(); saveCart(); }
+
+function toggleDetail(btn) {
+  const row = btn.closest('tr');
+  const detail = row.nextElementSibling;
+  if (!detail || !detail.classList.contains('bom-detail')) return;
+  const open = detail.style.display === 'table-row';
+  detail.style.display = open ? '' : 'table-row';
+  btn.classList.toggle('open', !open);
+  btn.textContent = open ? '+' : '−';
+}
 function clearCart() { if (!confirm('Clear all items from the Project BOM?')) return; cart=[]; seq=0; if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname); updateBadges(); renderGroups(); saveCart(); }
 
 // ── RENDER ───────────────────────────────────────────────────────────────────
@@ -720,7 +752,7 @@ async function renderGroups() {
     }
   } catch(e) { /* pricing unavailable */ }
   const hasPricing = priceMap !== null;
-  const colSpan = hasPricing ? 7 : 5;
+  const colSpan = hasPricing ? 8 : 6;
   const c = document.getElementById('bgc');
   const ec = document.getElementById('ec');
   const sbar = document.getElementById('sbar');
@@ -769,7 +801,13 @@ async function renderGroups() {
           const totalNum = (!isNaN(listPriceNum) && typeof r.qty === 'number') ? listPriceNum * r.qty : NaN;
           priceCells = `<td class="nc" style="text-align:right;white-space:nowrap;">${listPrice ? h(listPrice) : ''}</td><td class="nc" style="text-align:right;white-space:nowrap;">${!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : ''}</td>`;
         }
-        return `<tr><td><span class="sk">${h(r.sku||'')}</span></td><td class="nc">${h(r.desc||'')}</td><td class="qc">${r.qty??''}</td><td>${bm[r.kind]||''}</td><td class="nc">${h(r.note||'')}</td>${priceCells}</tr>`;
+        const detailRows = [];
+        if (r.desc) detailRows.push(`<tr><td class="det-k">Description</td><td class="det-v nc">${h(r.desc)}</td></tr>`);
+        if (r.kind && bm[r.kind]) detailRows.push(`<tr><td class="det-k">Type</td><td class="det-v">${bm[r.kind]}</td></tr>`);
+        if (r.note) detailRows.push(`<tr><td class="det-k">Notes</td><td class="det-v nc">${h(r.note)}</td></tr>`);
+        const expCell = detailRows.length ? `<td class="col-exp"><button class="exp-btn" onclick="toggleDetail(this)" title="Show details">+</button></td>` : `<td class="col-exp"></td>`;
+        const detailTr = detailRows.length ? `<tr class="bom-detail"><td colspan="100"><table class="det-tbl"><tbody>${detailRows.join('')}</tbody></table></td></tr>` : '';
+        return `<tr><td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc">${h(r.desc||'')}</td><td class="qc">${r.qty??''}</td><td class="col-type">${bm[r.kind]||''}</td><td class="nc col-notes">${h(r.note||'')}</td>${priceCells}${expCell}</tr>${detailTr}`;
       }).join('');
       totL+=lines; totQ+=qty;
       const el = document.createElement('div');
@@ -785,8 +823,9 @@ async function renderGroups() {
           <button class="bg-del" onclick="removeFromCart(${entry.id})">✕ Remove</button>
         </div>
         <div class="bt-wrap"><table class="bt"><thead><tr>
-          <th style="width:200px;">Part Number</th><th>Description</th>
-          <th style="width:50px;text-align:center;">Qty</th><th style="width:100px;">Type</th><th>Notes</th>${hasPricing ? '<th style="width:110px;text-align:right;">List Price</th><th style="width:120px;text-align:right;">Total Price</th>' : ''}
+          <th style="width:200px;">Part Number</th><th class="col-desc">Description</th>
+          <th style="width:50px;text-align:center;">Qty</th><th class="col-type" style="width:100px;">Type</th><th class="col-notes">Notes</th>${hasPricing ? '<th style="width:110px;text-align:right;">List Price</th><th style="width:120px;text-align:right;">Total Price</th>' : ''}
+          <th class="col-exp"></th>
         </tr></thead><tbody>${rows}</tbody></table></div>`;
       addDragListeners(el);
       c.appendChild(el);
