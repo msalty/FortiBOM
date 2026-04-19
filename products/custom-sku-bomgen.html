@@ -454,6 +454,43 @@ tbody tr:nth-child(even) td { background: var(--forti-table-stripe); }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* ── Normalize / As-Is toggle ── */
+.norm-toggle {
+  display: none;
+  align-items: center;
+  gap: 3px;
+  margin-top: 5px;
+  flex-wrap: nowrap;
+}
+.norm-toggle-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--forti-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  margin-right: 1px;
+}
+.norm-toggle-btn {
+  padding: 2px 7px;
+  border-radius: 2px;
+  border: 1px solid var(--forti-border);
+  background: white;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--forti-text-muted);
+  letter-spacing: .04em;
+  white-space: nowrap;
+  transition: all .1s;
+}
+.norm-toggle-btn:hover { border-color: #aaa; }
+.norm-toggle-btn.nt-active {
+  background: var(--forti-info-bg);
+  color: var(--forti-info-text);
+  border-color: var(--forti-info-border);
+}
 </style>
 </head>
 <body>
@@ -628,6 +665,13 @@ function addSkuRow(data) {
       <input type="text" class="sku-input" id="sku-${id}" placeholder="FG-91G-BDL-809-DD"
              value="${escHtml(data.sku||'')}"
              oninput="this.value=this.value.toUpperCase();clearRowErr(${id})">
+      <div class="norm-toggle" id="norm-toggle-${id}">
+        <span class="norm-toggle-label">Term:</span>
+        <button type="button" class="norm-toggle-btn nt-active" id="norm-btn-dd-${id}"
+                onclick="setRowNormalized(${id}, true)">-DD</button>
+        <button type="button" class="norm-toggle-btn" id="norm-btn-asis-${id}"
+                onclick="setRowNormalized(${id}, false)">As-Is</button>
+      </div>
       <div class="field-err" id="err-sku-${id}">Part number required</div>
     </td>
     <td>
@@ -709,7 +753,9 @@ function addSectionRow(data) {
 }
 
 function removeRow(btn) {
-  btn.closest('tr').remove();
+  const tr = btn.closest('tr');
+  _rowPricingItems.delete(parseInt(tr.dataset.rowId, 10));
+  tr.remove();
   updateRowNumbers();
   updateRowCountBadge();
 }
@@ -1178,31 +1224,60 @@ async function findExactDesc(desc) {
 //  Normalization helpers
 // ─────────────────────────────────────────────
 function normalizeSkuTerm(sku) {
-  // Replace Fortinet contract-term suffixes with -DD so the Project BOM
-  // term selector can substitute the correct value at export time.
   return sku.replace(/-(?:12|24|36|48|60)$/i, '-DD');
 }
 
 function normalizeDesc(desc) {
-  // Strip leading year strings (e.g. "3 Year ", "1 Year ") so the
-  // description stays accurate when the term is changed in the Project BOM.
   return desc.replace(/\b\d+\s+[Yy]ears?\s+/g, '');
 }
 
 // ─────────────────────────────────────────────
-//  Fill row fields from a pricing match
+//  Per-row pricing state  { item, normalized }
 // ─────────────────────────────────────────────
+const _rowPricingItems = new Map();
+
 function fillRowFromPricing(id, item) {
+  _rowPricingItems.set(id, { item, normalized: true });
+  applyPricingToRow(id);
+  _showNormToggle(id);
+  clearRowErr(id);
+}
+
+function applyPricingToRow(id) {
+  const state = _rowPricingItems.get(id);
+  if (!state) return;
+  const { item, normalized } = state;
+
   const skuEl = document.getElementById(`sku-${id}`);
-  if (skuEl) skuEl.value = normalizeSkuTerm(item.sku).toUpperCase();
+  if (skuEl) skuEl.value = normalized
+    ? normalizeSkuTerm(item.sku).toUpperCase()
+    : item.sku.toUpperCase();
 
   const descEl = document.getElementById(`desc-${id}`);
-  if (descEl) descEl.value = normalizeDesc(item.desc1);
+  if (descEl) descEl.value = normalized ? normalizeDesc(item.desc1) : item.desc1;
 
   const notesEl = document.getElementById(`notes-${id}`);
-  if (notesEl) notesEl.value = normalizeDesc(item.desc2);
+  if (notesEl) notesEl.value = normalized ? normalizeDesc(item.desc2) : item.desc2;
+}
 
+function setRowNormalized(id, normalized) {
+  const state = _rowPricingItems.get(id);
+  if (!state) return;
+  state.normalized = normalized;
+  applyPricingToRow(id);
+  _updateNormToggle(id, normalized);
   clearRowErr(id);
+}
+
+function _showNormToggle(id) {
+  const el = document.getElementById(`norm-toggle-${id}`);
+  if (el) el.style.display = 'flex';
+  _updateNormToggle(id, true);
+}
+
+function _updateNormToggle(id, normalized) {
+  document.getElementById(`norm-btn-dd-${id}`)?.classList.toggle('nt-active', normalized);
+  document.getElementById(`norm-btn-asis-${id}`)?.classList.toggle('nt-active', !normalized);
 }
 
 // ─────────────────────────────────────────────
