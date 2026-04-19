@@ -135,7 +135,7 @@
 
   /* BOM table */
   .bt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  table.bt{width:100%;border-collapse:collapse;font-size:12px;min-width:580px;}
+  table.bt{width:100%;border-collapse:collapse;font-size:12px;min-width:580px;table-layout:fixed;}
   table.bt thead th{background:var(--c-th);border:1px solid var(--c-border);padding:6px 10px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#4A5268;white-space:nowrap;}
   table.bt tbody td{border:1px solid var(--c-border);padding:6px 10px;vertical-align:top;font-size:12px;}
   table.bt tbody tr.bt-even td{background:var(--c-sh);}
@@ -150,7 +150,7 @@
   .br-m{background:#FFF8EE;color:#8A5800;border:1px solid #F5D9A0;}
 
   /* Responsive column hiding for BOM table */
-  .col-exp{display:none;padding:0!important;text-align:center;}
+  .col-exp{display:none;width:0!important;max-width:0!important;overflow:hidden;padding:0!important;border:none!important;}
   .exp-btn{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);font-size:13px;font-weight:700;width:20px;height:20px;line-height:1;cursor:pointer;padding:0;font-family:inherit;transition:background .12s,color .12s;}
   .exp-btn:hover,.exp-btn.open{background:var(--forti-red);color:#fff;border-color:var(--forti-red);}
   .bom-detail{display:none;}
@@ -161,7 +161,7 @@
   .det-v{color:var(--c-text);vertical-align:top;padding:3px 0;}
   @media (max-width:999px) {
     .col-notes{display:none;}
-    .col-exp{display:table-cell;width:28px;padding:2px 4px!important;}
+    .col-exp{display:table-cell;width:28px!important;max-width:28px!important;padding:2px 4px!important;border:1px solid var(--c-border)!important;overflow:visible;}
     table.bt{min-width:0;}
   }
   @media (max-width:849px) {
@@ -825,8 +825,8 @@ async function renderGroups() {
         </div>
         <div class="bt-wrap"><table class="bt"><thead><tr>
           <th style="width:200px;">Part Number</th><th class="col-desc">Description</th>
-          <th style="width:50px;text-align:center;">Qty</th><th class="col-type" style="width:100px;">Type</th><th class="col-notes">Notes</th>${hasPricing ? '<th style="width:110px;text-align:right;">List Price</th><th style="width:120px;text-align:right;">Total Price</th>' : ''}
-          <th class="col-exp"></th>
+          <th style="width:50px;text-align:center;">Qty</th><th class="col-type" style="width:100px;">Type</th><th class="col-notes" style="width:130px;">Notes</th>${hasPricing ? '<th style="width:110px;text-align:right;">List Price</th><th style="width:120px;text-align:right;">Total Price</th>' : ''}
+          <th class="col-exp" style="width:0;padding:0;border:none;"></th>
         </tr></thead><tbody>${rows}</tbody></table></div>`;
       addDragListeners(el);
       c.appendChild(el);
