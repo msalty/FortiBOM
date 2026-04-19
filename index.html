@@ -49,7 +49,7 @@
   #main{display:flex;flex:1;overflow:hidden;}
 
   /* SIDEBAR */
-  #sidebar{width:240px;background:var(--forti-sidebar);border-right:1px solid var(--forti-border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden;}
+  #sidebar{width:240px;background:var(--forti-sidebar);border-right:1px solid var(--forti-border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden;transition:width .25s ease,border .25s ease;}
   #sidebar::-webkit-scrollbar{width:4px;}
   #sidebar::-webkit-scrollbar-thumb{background:var(--forti-border);border-radius:2px;}
   .nsl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--forti-text-muted);padding:20px 16px 8px;}
@@ -201,10 +201,13 @@
   #toast{position:fixed;bottom:24px;right:24px;z-index:999;background:#2A2F3A;color:#E8EAF0;font-size:12px;padding:10px 16px;border-radius:4px;border-left:3px solid var(--forti-red);opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;max-width:340px;}
   #toast.on{opacity:1;transform:translateY(0);}
 
-  /* Hamburger menu button (mobile only) */
-  #menu-btn{display:none;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:4px 6px;color:var(--forti-text-secondary);flex-shrink:0;border-radius:3px;}
+  /* Hamburger menu button (always visible) */
+  #menu-btn{display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:4px 6px;color:var(--forti-text-secondary);flex-shrink:0;border-radius:3px;}
   #menu-btn:hover{color:var(--forti-text-primary);background:rgba(255,255,255,.06);}
   #menu-btn svg{display:block;}
+
+  /* Desktop sidebar collapse */
+  #sidebar.collapsed{width:0;overflow:hidden;border-right:none;}
 
   /* Sidebar backdrop overlay (mobile) */
   #sidebar-overlay{display:none;position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.45);}
@@ -212,8 +215,7 @@
 
   /* Mobile responsive sidebar */
   @media (max-width:768px) {
-    #menu-btn{display:flex;}
-    #sidebar{position:fixed;top:var(--hh);left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform .25s ease;}
+    #sidebar{position:fixed;top:var(--hh);left:0;bottom:0;z-index:100;width:240px!important;transform:translateX(-100%);transition:transform .25s ease;}
     #sidebar.open{transform:translateX(0);box-shadow:4px 0 24px rgba(0,0,0,.45);}
   }
 
@@ -588,16 +590,22 @@ function filterNav(q) {
 }
 function clearNavSearch() { const i=document.getElementById('nav-search-input'); i.value=''; filterNav(''); i.focus(); }
 
-// ── MOBILE SIDEBAR TOGGLE ─────────────────────────────────────────────────────
+// ── SIDEBAR TOGGLE ────────────────────────────────────────────────────────────
 function toggleSidebar() {
   const s = document.getElementById('sidebar');
   const o = document.getElementById('sidebar-overlay');
-  const open = s.classList.toggle('open');
-  open ? o.classList.add('on') : o.classList.remove('on');
+  if (window.innerWidth <= 768) {
+    const open = s.classList.toggle('open');
+    open ? o.classList.add('on') : o.classList.remove('on');
+  } else {
+    s.classList.toggle('collapsed');
+  }
 }
 function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebar-overlay').classList.remove('on');
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('on');
+  }
 }
 
 // ── NAVIGATION ───────────────────────────────────────────────────────────────
