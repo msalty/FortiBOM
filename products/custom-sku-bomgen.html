@@ -1200,7 +1200,7 @@ function fillRowFromPricing(id, item) {
   if (descEl) descEl.value = normalizeDesc(item.desc1);
 
   const notesEl = document.getElementById(`notes-${id}`);
-  if (notesEl) notesEl.value = item.desc2;
+  if (notesEl) notesEl.value = normalizeDesc(item.desc2);
 
   clearRowErr(id);
 }
