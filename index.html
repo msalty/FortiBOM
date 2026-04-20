@@ -1520,7 +1520,22 @@ function parsePricingLine(line) {
 }
 
 function parsePricingCSV(text) {
-  const rawLines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  // Split into logical CSV lines respecting quoted fields that may contain newlines
+  const rawLines = [];
+  const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  let lineBuf = '', inQ = false;
+  for (let i = 0; i < normalized.length; i++) {
+    const c = normalized[i];
+    if (c === '"') {
+      if (inQ && normalized[i + 1] === '"') { lineBuf += '""'; i++; }
+      else { inQ = !inQ; lineBuf += c; }
+    } else if (c === '\n' && !inQ) {
+      rawLines.push(lineBuf); lineBuf = '';
+    } else {
+      lineBuf += c;
+    }
+  }
+  rawLines.push(lineBuf);
   let name = '', effectiveDate = '', headerRowIdx = -1, foundDate = false;
 
   for (let i = 0; i < Math.min(rawLines.length, 30); i++) {
