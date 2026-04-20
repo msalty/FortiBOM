@@ -160,6 +160,7 @@
   .det-tbl tr+tr td{border-top:1px solid var(--c-border);}
   .det-k{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--c-text2);padding:3px 10px 3px 0;width:90px;white-space:nowrap;vertical-align:top;}
   .det-v{color:var(--c-text);vertical-align:top;padding:3px 0;}
+  .note-clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;cursor:default;}
   @media (max-width:649px) {
     .col-notes{display:none;}
     .col-exp{visibility:visible;width:28px;max-width:28px;overflow:visible;padding:2px 4px!important;border-width:1px!important;}
@@ -809,7 +810,7 @@ async function renderGroups() {
         const expCell = detailRows.length ? `<td class="col-exp"><button class="exp-btn" onclick="toggleDetail(this)" title="Show details">+</button></td>` : `<td class="col-exp"></td>`;
         const detailTr = detailRows.length ? `<tr class="bom-detail"><td colspan="100"><table class="det-tbl"><tbody>${detailRows.join('')}</tbody></table></td></tr>` : '';
         const evenCls = lines%2===0 ? ' class="bt-even"' : '';
-        return `<tr${evenCls}><td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc">${h(r.desc||'')}</td><td class="qc">${r.qty??''}</td><td class="col-type">${bm[r.kind]||''}</td><td class="nc col-notes">${h(r.note||'')}</td>${priceCells}${expCell}</tr>${detailTr}`;
+        return `<tr${evenCls}><td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc">${h(r.desc||'')}</td><td class="qc">${r.qty??''}</td><td class="col-type">${bm[r.kind]||''}</td><td class="nc col-notes"><span class="note-clamp" title="${h(r.note||'')}">${h(r.note||'')}</span></td>${priceCells}${expCell}</tr>${detailTr}`;
       }).join('');
       totL+=lines; totQ+=qty;
       const el = document.createElement('div');
