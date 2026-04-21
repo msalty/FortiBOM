@@ -284,6 +284,19 @@
   #pricing-drop:hover,#pricing-drop.over{border-color:var(--forti-red);background:#FFF5F4;}
   #pricing-drop p{margin-top:6px;font-size:11px;color:var(--c-textm);}
 
+  /* Kind (type) override popover */
+  .type-btn{display:inline-flex;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:2px 4px;border-radius:2px;font-family:inherit;line-height:1;}
+  .type-btn:hover{background:rgba(0,0,0,.07);}
+  .type-hint{font-size:9px;color:var(--c-textm);opacity:0;transition:opacity .1s;}
+  .type-btn:hover .type-hint{opacity:1;}
+  .type-empty{font-size:11px;color:var(--c-textm);}
+  #kind-popover{display:none;position:fixed;background:#fff;border:1px solid var(--c-border);border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:700;min-width:140px;padding:4px 0;}
+  #kind-popover.on{display:block;}
+  .kp-item{display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;font-size:12px;color:var(--c-text);white-space:nowrap;background:none;border:none;width:100%;text-align:left;font-family:inherit;}
+  .kp-item:hover{background:var(--c-sh);}
+  .kp-item.kp-active{background:#EEF3FF;}
+  .kp-sep{height:1px;background:var(--c-border);margin:3px 0;}
+
   /* Print */
   @media print {
     body{background:#fff;overflow:auto;height:auto;}
@@ -519,6 +532,16 @@
       <button class="btn bp" id="grp-ok" onclick="saveGroupRow()">Add Group</button>
     </div>
   </div>
+</div>
+
+<!-- Kind override popover -->
+<div id="kind-popover">
+  <button class="kp-item" data-kind="req" onclick="setKind('req')"><span class="br br-r">Required</span></button>
+  <button class="kp-item" data-kind="mand" onclick="setKind('mand')"><span class="br br-m">Mandatory</span></button>
+  <button class="kp-item" data-kind="opt" onclick="setKind('opt')"><span class="br br-o">Optional</span></button>
+  <button class="kp-item" data-kind="inc" onclick="setKind('inc')"><span class="br br-o">Included</span></button>
+  <div class="kp-sep"></div>
+  <button class="kp-item" data-kind="" onclick="setKind('')" style="color:var(--c-text2)">Clear override</button>
 </div>
 
 <!-- BOM Share Import confirmation modal -->
@@ -768,6 +791,51 @@ function updateQty(entryId, rowIdx, rawVal) {
 }
 function clearCart() { if (!confirm('Clear all items from the Project BOM?')) return; cart=[]; seq=0; if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname); updateBadges(); renderGroups(); saveCart(); }
 
+// ── KIND (TYPE) OVERRIDE ─────────────────────────────────────────────────────
+let kindPopoverTarget = null;
+
+function openKindPopover(e, entryId, rowIdx) {
+  e.stopPropagation();
+  kindPopoverTarget = {entryId, rowIdx};
+  const entry = cart.find(c => c.id === entryId);
+  const row = entry && entry.rows[rowIdx];
+  const effectiveKind = row ? (row._kindOverride !== undefined ? row._kindOverride : (row.kind || '')) : '';
+  const pop = document.getElementById('kind-popover');
+  pop.querySelectorAll('.kp-item').forEach(el => el.classList.toggle('kp-active', el.dataset.kind === effectiveKind));
+  const rect = e.currentTarget.getBoundingClientRect();
+  pop.style.top = (rect.bottom + 4) + 'px';
+  pop.style.left = rect.left + 'px';
+  pop.classList.add('on');
+  requestAnimationFrame(() => {
+    const pr = pop.getBoundingClientRect();
+    if (pr.right > window.innerWidth - 8) pop.style.left = (window.innerWidth - pr.width - 8) + 'px';
+  });
+}
+
+function setKind(newKind) {
+  if (!kindPopoverTarget) return;
+  const {entryId, rowIdx} = kindPopoverTarget;
+  const entry = cart.find(c => c.id === entryId);
+  if (!entry) return;
+  if (newKind === '') {
+    delete entry.rows[rowIdx]._kindOverride;
+  } else {
+    entry.rows[rowIdx]._kindOverride = newKind;
+  }
+  closeKindPopover();
+  saveCart();
+  renderGroups();
+}
+
+function closeKindPopover() {
+  document.getElementById('kind-popover').classList.remove('on');
+  kindPopoverTarget = null;
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#kind-popover') && !e.target.closest('.type-btn')) closeKindPopover();
+});
+
 // ── RENDER ───────────────────────────────────────────────────────────────────
 async function renderGroups() {
   let priceMap = null;
@@ -821,6 +889,7 @@ async function renderGroups() {
         if (r.section!==undefined) return `<tr class="sr"><td colspan="${colSpan}">${h(r.section)}</td></tr>`;
         lines++; if (typeof r.qty==='number') qty+=r.qty;
         const bm={req:'<span class="br br-r">Required</span>',mand:'<span class="br br-m">Mandatory</span>',opt:'<span class="br br-o">Optional</span>',inc:'<span class="br br-o">Included</span>',note:''};
+        const effectiveKind = r._kindOverride !== undefined ? r._kindOverride : r.kind;
         let priceCells = '';
         if (hasPricing) {
           const listPrice = priceMap.get(r.sku || '');
@@ -831,12 +900,13 @@ async function renderGroups() {
         }
         const detailRows = [];
         if (r.desc) detailRows.push(`<tr><td class="det-k">Description</td><td class="det-v nc">${h(r.desc)}</td></tr>`);
-        if (r.kind && bm[r.kind]) detailRows.push(`<tr><td class="det-k">Type</td><td class="det-v">${bm[r.kind]}</td></tr>`);
+        if (effectiveKind && bm[effectiveKind]) detailRows.push(`<tr><td class="det-k">Type</td><td class="det-v">${bm[effectiveKind]}</td></tr>`);
         if (r.note) detailRows.push(`<tr><td class="det-k">Notes</td><td class="det-v nc">${h(r.note)}</td></tr>`);
         const expCell = detailRows.length ? `<td class="col-exp"><button class="exp-btn" onclick="toggleDetail(this)" title="Show details">+</button></td>` : `<td class="col-exp"></td>`;
         const detailTr = detailRows.length ? `<tr class="bom-detail"><td colspan="100"><table class="det-tbl"><tbody>${detailRows.join('')}</tbody></table></td></tr>` : '';
         const evenCls = lines%2===0 ? ' class="bt-even"' : '';
-        return `<tr${evenCls}><td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc"><span class="note-clamp" title="${h(r.desc||'')}">${h(r.desc||'')}</span></td><td class="qc"><input type="number" class="qty-input" value="${r.qty??''}" min="0" onchange="updateQty(${entry.id},${i},this.value)"></td><td class="col-type">${bm[r.kind]||''}</td><td class="nc col-notes"><span class="note-clamp" title="${h(r.note||'')}">${h(r.note||'')}</span></td>${priceCells}${expCell}</tr>${detailTr}`;
+        const typeCell = `<button class="type-btn" onclick="openKindPopover(event,${entry.id},${i})" title="Click to change type">${bm[effectiveKind]||'<span class=\\"type-empty\\">—</span>'}<span class="type-hint">▾</span></button>`;
+        return `<tr${evenCls}><td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc"><span class="note-clamp" title="${h(r.desc||'')}">${h(r.desc||'')}</span></td><td class="qc"><input type="number" class="qty-input" value="${r.qty??''}" min="0" onchange="updateQty(${entry.id},${i},this.value)"></td><td class="col-type">${typeCell}</td><td class="nc col-notes"><span class="note-clamp" title="${h(r.note||'')}">${h(r.note||'')}</span></td>${priceCells}${expCell}</tr>${detailTr}`;
       }).join('');
       totL+=lines; totQ+=qty;
       const el = document.createElement('div');
@@ -964,7 +1034,7 @@ function saveGroupRow() {
 
 // Allow Enter key in group modal inputs
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeGroupModal(); closeImport(); closeBOMShareModal(); }
+  if (e.key === 'Escape') { closeGroupModal(); closeImport(); closeBOMShareModal(); closeKindPopover(); }
   if (e.key === 'Enter' && document.getElementById('grp-modal').classList.contains('on')) saveGroupRow();
 });
 
@@ -1106,7 +1176,7 @@ function serializeBOM() {
     const rows = entry.rows.map(r =>
       r.section !== undefined
         ? { s: r.section }
-        : [r.sku || '', r.desc || '', r.qty ?? null, r.kind || '', r.note || '']
+        : [r.sku || '', r.desc || '', r.qty ?? null, r.kind || '', r.note || '', r._kindOverride || '']
     );
     return { p: entry.product, l: entry.label, r: rows };
   });
@@ -1128,7 +1198,7 @@ function deserializeBOM(json) {
     }
     const rows = (item.r || []).map(r =>
       Array.isArray(r)
-        ? { sku: r[0]||'', desc: r[1]||'', qty: r[2] ?? undefined, kind: r[3]||'', note: r[4]||'' }
+        ? { sku: r[0]||'', desc: r[1]||'', qty: r[2] ?? undefined, kind: r[3]||'', note: r[4]||'', ...(r[5] ? {_kindOverride: r[5]} : {}) }
         : { section: r.s }
     );
     return { product: item.p || item.l || '', label: item.l || '', rows };
@@ -1173,7 +1243,7 @@ function exportCSV() {
     rows.push([entry.label,'','','','','']);
     for (const r of rowsWithTerm(entry.rows)) {
       if (r.section!==undefined) rows.push(['',`--- ${r.section} ---`,'','','','']);
-      else rows.push(['',r.sku||'',r.desc||'',r.qty??'',r.kind||'',r.note||'']);
+      else rows.push(['',r.sku||'',r.desc||'',r.qty??'',(r._kindOverride !== undefined ? r._kindOverride : r.kind)||'',r.note||'']);
     }
     rows.push([]);
   }
