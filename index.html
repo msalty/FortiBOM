@@ -153,6 +153,7 @@
   .br-r{background:#FEE0DE;color:#C0392B;border:1px solid #F5C6C2;}
   .br-o{background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;}
   .br-m{background:#FFF8EE;color:#8A5800;border:1px solid #F5D9A0;}
+  .br-ex{background:#F0F0F2;color:#6B7280;border:1px solid #D1D5DB;}
 
   /* Responsive column hiding for BOM table */
   .col-exp{visibility:hidden;width:0;max-width:0;overflow:hidden;padding:0!important;border-width:0!important;}
@@ -540,6 +541,7 @@
   <button class="kp-item" data-kind="mand" onclick="setKind('mand')"><span class="br br-m">Mandatory</span></button>
   <button class="kp-item" data-kind="opt" onclick="setKind('opt')"><span class="br br-o">Optional</span></button>
   <button class="kp-item" data-kind="inc" onclick="setKind('inc')"><span class="br br-o">Included</span></button>
+  <button class="kp-item" data-kind="excl" onclick="setKind('excl')"><span class="br br-ex">Excluded</span></button>
   <div class="kp-sep"></div>
   <button class="kp-item" data-kind="" onclick="setKind('')" style="color:var(--c-text2)">Clear override</button>
 </div>
@@ -888,15 +890,17 @@ async function renderGroups() {
       const rows = displayRows.map((r, i) => {
         if (r.section!==undefined) return `<tr class="sr"><td colspan="${colSpan}">${h(r.section)}</td></tr>`;
         lines++; if (typeof r.qty==='number') qty+=r.qty;
-        const bm={req:'<span class="br br-r">Required</span>',mand:'<span class="br br-m">Mandatory</span>',opt:'<span class="br br-o">Optional</span>',inc:'<span class="br br-o">Included</span>',note:''};
+        const bm={req:'<span class="br br-r">Required</span>',mand:'<span class="br br-m">Mandatory</span>',opt:'<span class="br br-o">Optional</span>',inc:'<span class="br br-o">Included</span>',excl:'<span class="br br-ex">Excluded</span>',note:''};
         const effectiveKind = r._kindOverride !== undefined ? r._kindOverride : r.kind;
+        const isExcluded = effectiveKind === 'excl';
         let priceCells = '';
         if (hasPricing) {
           const listPrice = priceMap.get(r.sku || '');
           const listPriceNum = listPrice ? parseFloat(String(listPrice).replace(/[^0-9.]/g, '')) : NaN;
           const totalNum = (!isNaN(listPriceNum) && typeof r.qty === 'number') ? listPriceNum * r.qty : NaN;
-          if (!isNaN(totalNum)) { grandTotal += totalNum; grandTotalValid = true; }
-          priceCells = `<td class="nc" style="text-align:right;white-space:nowrap;">${listPrice ? h(listPrice) : ''}</td><td class="nc" style="text-align:right;white-space:nowrap;">${!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : ''}</td>`;
+          if (!isExcluded && !isNaN(totalNum)) { grandTotal += totalNum; grandTotalValid = true; }
+          const totalDisplay = isExcluded ? '$0.00' : (!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '');
+          priceCells = `<td class="nc" style="text-align:right;white-space:nowrap;">${listPrice ? h(listPrice) : ''}</td><td class="nc" style="text-align:right;white-space:nowrap;">${totalDisplay}</td>`;
         }
         const detailRows = [];
         if (r.desc) detailRows.push(`<tr><td class="det-k">Description</td><td class="det-v nc">${h(r.desc)}</td></tr>`);
