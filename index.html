@@ -306,6 +306,25 @@
   .kp-sep{height:1px;background:var(--c-border);margin:3px 0;}
 
   /* Print */
+  /* Project Info view/edit toggle */
+  .pi-edit-btn{margin-left:auto;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
+  .pi-edit-btn:hover{background:var(--c-sh);border-color:var(--c-text2);}
+  .pi-edit-btn.active{background:#EEF3FF;border-color:#B8CBF5;color:#3557A5;}
+  .pi-edit-btn svg{width:11px;height:11px;flex-shrink:0;}
+  #pi-view{display:none;padding:0;}
+  #proj-info-card.view-mode .pfg{display:none;}
+  #proj-info-card.view-mode #pi-view{display:block;}
+  .pi-vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:8px 24px;}
+  .pi-vf{display:flex;flex-direction:column;gap:2px;}
+  .pi-vf.full{grid-column:1/-1;}
+  .pi-vl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--c-textm);}
+  .pi-vv{font-size:13px;color:var(--c-text);line-height:1.5;word-break:break-word;}
+  .pi-vv a{color:#1A4E82;text-decoration:none;border-bottom:1px solid #B8CBF5;}
+  .pi-vv a:hover{color:#3557A5;border-bottom-color:#3557A5;}
+  .pi-vv.empty{color:var(--c-textm);font-style:italic;}
+  .pi-vv.pi-cust-val{font-size:17px;font-weight:600;color:var(--c-text);}
+  .pi-vg .pi-vf.cust-row{grid-column:1/-1;margin-bottom:4px;padding-bottom:10px;border-bottom:1px solid var(--c-border);}
+
   @media print {
     body{background:#fff;overflow:auto;height:auto;}
     #top-bar,#sidebar,#ch,.act-row,#toast,#pfw{display:none!important;}
@@ -313,6 +332,10 @@
     #pbv{display:flex!important;overflow:visible;padding:20px;}
     .bg-del{display:none!important;}
     .lc,.bg{break-inside:avoid;}
+    .pi-edit-btn{display:none!important;}
+    #proj-info-card .pfg{display:none!important;}
+    #proj-info-card #pi-view{display:block!important;}
+    .pi-vv a{color:#1A4E82;text-decoration:none;border-bottom:1px solid #B8CBF5;}
   }
 </style>
 <script>var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$",e={};function t(r,o){if(!e[r]){e[r]={};for(var n=0;n<r.length;n++)e[r][r.charAt(n)]=n}return e[r][o]}var i={compressToBase64:function(r){if(null==r)return"";var n=i._compress(r,6,function(r){return o.charAt(r)});switch(n.length%4){default:case 0:return n;case 1:return n+"===";case 2:return n+"==";case 3:return n+"="}},decompressFromBase64:function(r){return null==r?"":""==r?null:i._decompress(r.length,32,function(n){return t(o,r.charAt(n))})},compressToUTF16:function(o){return null==o?"":i._compress(o,15,function(o){return r(o+32)})+" "},decompressFromUTF16:function(r){return null==r?"":""==r?null:i._decompress(r.length,16384,function(o){return r.charCodeAt(o)-32})},compressToUint8Array:function(r){for(var o=i.compress(r),n=new Uint8Array(2*o.length),e=0,t=o.length;e<t;e++){var s=o.charCodeAt(e);n[2*e]=s>>>8,n[2*e+1]=s%256}return n},decompressFromUint8Array:function(o){if(null==o)return i.decompress(o);for(var n=new Array(o.length/2),e=0,t=n.length;e<t;e++)n[e]=256*o[2*e]+o[2*e+1];var s=[];return n.forEach(function(o){s.push(r(o))}),i.decompress(s.join(""))},compressToEncodedURIComponent:function(r){return null==r?"":i._compress(r,6,function(r){return n.charAt(r)})},decompressFromEncodedURIComponent:function(r){return null==r?"":""==r?null:(r=r.replace(/ /g,"+"),i._decompress(r.length,32,function(o){return t(n,r.charAt(o))}))},compress:function(o){return i._compress(o,16,function(o){return r(o)})},_compress:function(r,o,n){if(null==r)return"";var e,t,i,s={},u={},a="",p="",c="",l=2,f=3,h=2,d=[],m=0,v=0;for(i=0;i<r.length;i+=1)if(a=r.charAt(i),Object.prototype.hasOwnProperty.call(s,a)||(s[a]=f++,u[a]=!0),p=c+a,Object.prototype.hasOwnProperty.call(s,p))c=p;else{if(Object.prototype.hasOwnProperty.call(u,c)){if(c.charCodeAt(0)<256){for(e=0;e<h;e++)m<<=1,v==o-1?(v=0,d.push(n(m)),m=0):v++;for(t=c.charCodeAt(0),e=0;e<8;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;e<h;e++)m=m<<1|t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=c.charCodeAt(0),e=0;e<16;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}0==--l&&(l=Math.pow(2,h),h++),delete u[c]}else for(t=s[c],e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;0==--l&&(l=Math.pow(2,h),h++),s[p]=f++,c=String(a)}if(""!==c){if(Object.prototype.hasOwnProperty.call(u,c)){if(c.charCodeAt(0)<256){for(e=0;e<h;e++)m<<=1,v==o-1?(v=0,d.push(n(m)),m=0):v++;for(t=c.charCodeAt(0),e=0;e<8;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;e<h;e++)m=m<<1|t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=c.charCodeAt(0),e=0;e<16;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}0==--l&&(l=Math.pow(2,h),h++),delete u[c]}else for(t=s[c],e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;0==--l&&(l=Math.pow(2,h),h++)}for(t=2,e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;for(;;){if(m<<=1,v==o-1){d.push(n(m));break}v++}return d.join("")},decompress:function(r){return null==r?"":""==r?null:i._decompress(r.length,32768,function(o){return r.charCodeAt(o)})},_decompress:function(o,n,e){var t,i,s,u,a,p,c,l=[],f=4,h=4,d=3,m="",v=[],g={val:e(0),position:n,index:1};for(t=0;t<3;t+=1)l[t]=t;for(s=0,a=Math.pow(2,2),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;switch(s){case 0:for(s=0,a=Math.pow(2,8),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;c=r(s);break;case 1:for(s=0,a=Math.pow(2,16),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;c=r(s);break;case 2:return""}for(l[3]=c,i=c,v.push(c);;){if(g.index>o)return"";for(s=0,a=Math.pow(2,d),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;switch(c=s){case 0:for(s=0,a=Math.pow(2,8),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;l[h++]=r(s),c=h-1,f--;break;case 1:for(s=0,a=Math.pow(2,16),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;l[h++]=r(s),c=h-1,f--;break;case 2:return v.join("")}if(0==f&&(f=Math.pow(2,d),d++),l[c])m=l[c];else{if(c!==h)return null;m=i+i.charAt(0)}v.push(m),l[h++]=i+m.charAt(0),i=m,0==--f&&(f=Math.pow(2,d),d++)}}};return i}();"function"==typeof define&&define.amd?define(function(){return LZString}):"undefined"!=typeof module&&null!=module?module.exports=LZString:"undefined"!=typeof angular&&null!=angular&&angular.module("LZString",[]).factory("LZString",function(){return LZString});</script>
@@ -392,10 +415,14 @@
     <!-- Project BOM view -->
     <div id="pbv">
       <!-- Project Info -->
-      <div class="lc">
+      <div class="lc" id="proj-info-card">
         <div class="lch">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1.5" stroke="#6B7589" stroke-width="1.2"/><path d="M3.5 4.5h6M3.5 6.5h4" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round"/></svg>
           <h2>Project Information</h2>
+          <button class="pi-edit-btn" id="pi-edit-btn" onclick="togglePiEdit()" title="Toggle edit mode">
+            <svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
+            <span id="pi-edit-label">View</span>
+          </button>
         </div>
         <div class="lcb">
           <div class="pfg">
@@ -415,6 +442,7 @@
             </div>
             <div class="pg full"><label class="pl">Project Scope / Notes</label><textarea class="pi" id="pi-notes" placeholder="Optional: overall project scope, deployment context, or assumptions…"></textarea></div>
           </div>
+          <div id="pi-view"></div>
         </div>
       </div>
 
@@ -1825,6 +1853,68 @@ async function deletePricing() {
   }
 }
 
+// ── PROJECT INFO EDIT TOGGLE ─────────────────────────────────────────────────
+const PI_TERM_LABELS = {DD:'Co-term / Date-driven',12:'1 Year',36:'3 Years',60:'5 Years'};
+
+function piAutoLink(text) {
+  if (!text) return '';
+  const esc = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return esc
+    .replace(/\n/g,'<br>')
+    .replace(/(https?:\/\/[^\s<>"&][^\s<>"]*)/g, url => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
+}
+
+function updatePiView() {
+  const cust  = document.getElementById('pi-cust').value.trim();
+  const opp   = document.getElementById('pi-opp').value.trim();
+  const eng   = document.getElementById('pi-eng').value.trim();
+  const date  = document.getElementById('pi-date').value.trim();
+  const term  = document.getElementById('pi-term').value;
+  const notes = document.getElementById('pi-notes').value.trim();
+  const termLabel = PI_TERM_LABELS[term] || term;
+
+  const field = (label, value, cls='', fullRow=false) => {
+    const isEmpty = !value;
+    const displayVal = isEmpty ? '—' : piAutoLink(value);
+    return `<div class="pi-vf${fullRow?' full':''}${cls?' '+cls:''}">
+      <span class="pi-vl">${label}</span>
+      <span class="pi-vv${isEmpty?' empty':''}">${displayVal}</span>
+    </div>`;
+  };
+
+  const custField = `<div class="pi-vf full cust-row">
+    <span class="pi-vl">Customer / Opportunity</span>
+    <span class="pi-vv pi-cust-val${!cust?' empty':''}">${cust ? piAutoLink(cust) : 'Unnamed Project'}</span>
+  </div>`;
+
+  let html = `<div class="pi-vg">${custField}`;
+  if (opp)   html += field('Opportunity ID', opp);
+  if (eng)   html += field('SE / Engineer', eng);
+  if (date)  html += field('Date', date);
+  html += field('Support / License Term', termLabel);
+  if (notes) html += field('Project Scope / Notes', notes, '', true);
+  html += '</div>';
+
+  document.getElementById('pi-view').innerHTML = html;
+}
+
+function togglePiEdit() {
+  const card  = document.getElementById('proj-info-card');
+  const btn   = document.getElementById('pi-edit-btn');
+  const label = document.getElementById('pi-edit-label');
+  const isView = card.classList.contains('view-mode');
+  if (isView) {
+    card.classList.remove('view-mode');
+    btn.classList.remove('active');
+    label.textContent = 'View';
+  } else {
+    updatePiView();
+    card.classList.add('view-mode');
+    btn.classList.add('active');
+    label.textContent = 'Edit';
+  }
+}
+
 // ── TOAST ────────────────────────────────────────────────────────────────────
 let tt=null;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3000);}
@@ -1839,6 +1929,9 @@ renderGroups();
 if (cart.length) showPBV();
 buildNav();
 checkBOMFragment();
+
+// Ensure view mode content is populated before printing regardless of current state
+window.addEventListener('beforeprint', updatePiView);
 
 // ── SERVICE WORKER REGISTRATION ───────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
