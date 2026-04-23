@@ -286,6 +286,12 @@
   .sp-empty svg{opacity:.2;}
   .sp-empty h3{font-size:16px;font-weight:500;color:var(--c-text2);}
   .sp-empty p{font-size:13px;max-width:320px;line-height:1.6;}
+  #spv-filter-wrap{padding:10px 18px;border-bottom:1px solid var(--c-border);position:relative;}
+  #spv-filter{width:100%;box-sizing:border-box;background:var(--c-white);border:1px solid var(--c-border);border-radius:3px;color:var(--c-text);font-size:12px;padding:6px 28px 6px 10px;outline:none;font-family:inherit;}
+  #spv-filter::placeholder{color:var(--c-textm);}
+  #spv-filter:focus{border-color:rgba(238,49,36,.5);}
+  #spv-filter-clear{position:absolute;right:24px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--c-textm);font-size:16px;padding:0;line-height:1;display:none;}
+  #spv-filter-clear:hover{color:var(--c-text2);}
 
   /* Saved Pricing upload drop zone */
   #pricing-drop{border:2px dashed var(--c-ib);border-radius:4px;padding:32px 20px;text-align:center;color:var(--c-text2);font-size:13px;cursor:pointer;transition:border-color .15s,background .15s;}
@@ -458,6 +464,10 @@
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="#6B7589" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="#6B7589" stroke-width="1.1"/></svg>
           <h2>Saved Projects</h2>
         </div>
+        <div id="spv-filter-wrap">
+          <input id="spv-filter" type="text" placeholder="Filter by project name, opportunity ID, or SE…" oninput="filterSavedProjects(this.value)" autocomplete="off" spellcheck="false">
+          <button id="spv-filter-clear" onclick="clearSpvFilter()" title="Clear">&times;</button>
+        </div>
         <div id="spv-content" class="lcb"></div>
       </div>
       <div class="lc">
@@ -627,6 +637,7 @@ const CATALOG = [
 
 let cart = [], seq = 0, activeNav = null;
 let savedProjects = [];
+let spvFilter = '';
 // cart entries are either product-entries {id, product, label, rows, meta}
 // or group-header entries {id, _type:'group', label, note}
 
@@ -1122,21 +1133,45 @@ function showSavedProjects() {
   document.getElementById('pfw').style.display = 'none';
   document.getElementById('pbv').style.display = 'none';
   document.getElementById('spv').style.display = 'flex';
+  spvFilter = '';
+  document.getElementById('spv-filter').value = '';
+  document.getElementById('spv-filter-clear').style.display = 'none';
   renderSavedProjects();
   renderPricingSection();
 }
 
+function filterSavedProjects(q) {
+  spvFilter = q.toLowerCase();
+  document.getElementById('spv-filter-clear').style.display = q ? 'block' : 'none';
+  renderSavedProjects();
+}
+function clearSpvFilter() {
+  const i = document.getElementById('spv-filter');
+  i.value = '';
+  filterSavedProjects('');
+  i.focus();
+}
+
 function renderSavedProjects() {
   const content = document.getElementById('spv-content');
-  if (!savedProjects.length) {
-    content.innerHTML = `<div class="sp-empty">
+  const projects = spvFilter
+    ? savedProjects.filter(p =>
+        (p.meta.cust || '').toLowerCase().includes(spvFilter) ||
+        (p.meta.opp  || '').toLowerCase().includes(spvFilter) ||
+        (p.meta.eng  || '').toLowerCase().includes(spvFilter)
+      )
+    : savedProjects;
+  if (!projects.length) {
+    content.innerHTML = spvFilter
+      ? `<div class="sp-empty"><h3>No matching projects</h3><p>No saved projects match your filter.</p></div>`
+      : `<div class="sp-empty">
       <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="6" width="36" height="36" rx="5" stroke="#9BA5BA" stroke-width="2"/><rect x="16" y="6" width="16" height="14" rx="2" stroke="#9BA5BA" stroke-width="2"/><rect x="12" y="26" width="24" height="12" rx="2" stroke="#9BA5BA" stroke-width="2"/></svg>
       <h3>No saved projects yet</h3>
       <p>Use the <strong>Save Project</strong> button in your Project BOM to save a snapshot you can resume later.</p>
     </div>`;
     return;
   }
-  const cards = savedProjects.map(p => {
+  const cards = projects.map(p => {
     const prodCount = p.cart.filter(c => !c._type).length;
     const lineCount = p.cart.filter(c => !c._type).reduce((s, c) => s + (c.rows ? c.rows.filter(r => r.section === undefined).length : 0), 0);
     const when = new Date(p.savedAt).toLocaleString('en-US', {month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
