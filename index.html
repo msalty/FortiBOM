@@ -255,8 +255,15 @@
   }
 
   /* Copy/Export dropdown menu */
-  #copy-menu,#project-menu{display:none;position:fixed;background:#fff;border:1px solid var(--c-border);border-radius:4px;box-shadow:0 6px 20px rgba(0,0,0,.15);min-width:196px;z-index:600;overflow:hidden;padding:4px 0;}
-  #copy-menu.on,#project-menu.on{display:block;}
+  #copy-menu,#project-menu,#add-menu{display:none;position:fixed;background:#fff;border:1px solid var(--c-border);border-radius:4px;box-shadow:0 6px 20px rgba(0,0,0,.15);min-width:196px;z-index:600;overflow:hidden;padding:4px 0;}
+  #copy-menu.on,#project-menu.on,#add-menu.on{display:block;}
+
+  /* Add SKU modal */
+  #sku-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.55);align-items:center;justify-content:center;}
+  #sku-modal.on{display:flex;}
+  #sku-box{background:#fff;border-radius:5px;width:540px;max-width:95vw;height:82vh;max-height:780px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3);display:flex;flex-direction:column;}
+  #sku-box iframe{flex:1;border:none;width:100%;display:block;}
+  @media(max-width:600px){#sku-box{width:100%;max-width:100%;height:90vh;border-radius:5px 5px 0 0;}#sku-modal.on{align-items:flex-end;}}
   .dm-section{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--c-textm);padding:6px 12px 2px;}
   .dm-item{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:12px;color:var(--c-text);cursor:pointer;white-space:nowrap;font-family:inherit;background:none;border:none;width:100%;text-align:left;}
   .dm-item:hover{background:var(--c-sh);}
@@ -415,7 +422,7 @@
         <div class="si"><div class="sl">Term Applied</div><div class="sv" id="sum-term" style="font-size:14px;">-DD</div></div>
         <div class="act-row">
           <button class="btn bp" id="project-btn" onclick="toggleProjectMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>Save / Export<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <button class="btn bs" onclick="openAddGroup()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="4" width="11" height="5" rx="1" stroke="#6B7589" stroke-width="1.1"/><path d="M4 6.5h5M6.5 5.5v2" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>Add Group</button>
+          <button class="btn bs" id="add-btn" onclick="toggleAddMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="4" width="11" height="5" rx="1" stroke="#6B7589" stroke-width="1.1"/><path d="M4 6.5h5M6.5 5.5v2" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>Add<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 <button class="btn bs" id="copy-export-btn" onclick="toggleCopyMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/></svg>Copy / Share<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           <button class="btn bd" onclick="clearCart()"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Clear All</button>
         </div>
@@ -471,6 +478,20 @@
   <button class="dm-item" onclick="copyTSV()"><svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="currentColor" stroke-width="1.1"/></svg>Copy TSV</button>
   <button class="dm-item" onclick="copyBOMCSV()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M1 4.5h11M4.5 4.5v7" stroke="currentColor" stroke-width="1.1"/></svg>Copy CSV</button>
   <button class="dm-item" onclick="copyMD()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="2.5" width="11" height="8" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 8.5V4.5l2 2.5 2-2.5v4M9.5 8.5V4.5l-1.5 2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>Copy Markdown</button>
+</div>
+
+<!-- Add Item dropdown menu -->
+<div id="add-menu">
+  <div class="dm-section">Add to BOM</div>
+  <button class="dm-item" onclick="openSkuModal();closeAddMenu()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="3" width="11" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 6.5h6M6.5 5v3" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Add SKU</button>
+  <button class="dm-item" onclick="openAddGroup();closeAddMenu()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="4" width="11" height="5" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M4 6.5h5M6.5 5.5v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Add Group</button>
+</div>
+
+<!-- Add SKU modal (iframe popover) -->
+<div id="sku-modal">
+  <div id="sku-box">
+    <iframe id="sku-frame" src="" title="Add Custom SKU"></iframe>
+  </div>
 </div>
 
 <!-- Save/Export/Import dropdown menu -->
@@ -748,7 +769,9 @@ function showAbout() {
 
 // ── postMessage RECEIVER ─────────────────────────────────────────────────────
 window.addEventListener('message', e => {
-  if (!e.data || e.data.type !== 'FORTIBOM_ADD') return;
+  if (!e.data) return;
+  if (e.data.type === 'FORTIBOM_CLOSE') { closeSkuModal(); return; }
+  if (e.data.type !== 'FORTIBOM_ADD') return;
   const { product, label, rows, meta } = e.data;
   cart.push({ id:++seq, product, label, rows, meta });
   updateBadges();
@@ -1267,6 +1290,31 @@ function toggleCopyMenu(e) {
   menu.classList.add('on');
 }
 function closeCopyMenu() { document.getElementById('copy-menu').classList.remove('on'); }
+function toggleAddMenu(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('add-menu');
+  if (menu.classList.contains('on')) { menu.classList.remove('on'); return; }
+  const rect = e.currentTarget.getBoundingClientRect();
+  menu.style.top  = (rect.bottom + 4) + 'px';
+  menu.style.left = rect.left + 'px';
+  menu.classList.add('on');
+}
+function closeAddMenu() { document.getElementById('add-menu').classList.remove('on'); }
+function openSkuModal() {
+  const frame = document.getElementById('sku-frame');
+  if (!frame.src.includes('custom-sku-bomgen-mobile.html')) {
+    frame.src = 'products/custom-sku-bomgen-mobile.html';
+  } else {
+    try { frame.contentWindow.resetForm(); } catch(_) {}
+  }
+  document.getElementById('sku-modal').classList.add('on');
+}
+function closeSkuModal() {
+  document.getElementById('sku-modal').classList.remove('on');
+}
+document.getElementById('sku-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeSkuModal();
+});
 async function toggleProjectMenu(e) {
   e.stopPropagation();
   const menu = document.getElementById('project-menu');
@@ -1288,6 +1336,8 @@ document.addEventListener('click', function(e) {
   if (m && !m.contains(e.target) && e.target.id !== 'copy-export-btn') m.classList.remove('on');
   const p = document.getElementById('project-menu');
   if (p && !p.contains(e.target) && e.target.id !== 'project-btn') p.classList.remove('on');
+  const a = document.getElementById('add-menu');
+  if (a && !a.contains(e.target) && e.target.id !== 'add-btn') a.classList.remove('on');
 });
 
 function clipboardWrite(text, msg) {
