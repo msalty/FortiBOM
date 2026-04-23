@@ -1309,6 +1309,7 @@ function loadSavedProject(id) {
   renderGroups();
   saveCart();
   toast(`✓ Loaded: "${snap.meta.cust || 'Unnamed'}"`);
+  initPiMode();
   showPBV();
 }
 
@@ -1677,6 +1678,7 @@ function doImport() {
   if (prodCount) parts.push(`${prodCount} product group${prodCount!==1?'s':''}`);
   if (grpCount)  parts.push(`${grpCount} group header${grpCount!==1?'s':''}`);
   toast('✓ Imported ' + (parts.join(' + ') || 'project'));
+  initPiMode();
   showPBV();
 }
 
@@ -1702,6 +1704,7 @@ function applySharedBOM(parsed) {
   updateBadges();
   renderGroups();
   saveCart();
+  initPiMode();
 }
 
 function showBOMFragmentConfirm(parsed, name, summary) {
@@ -2022,6 +2025,28 @@ function togglePiEdit() {
   }
 }
 
+function hasPiData() {
+  return ['pi-cust','pi-opp','pi-eng','pi-notes'].some(
+    id => document.getElementById(id).value.trim()
+  );
+}
+
+function initPiMode() {
+  const card  = document.getElementById('proj-info-card');
+  const btn   = document.getElementById('pi-edit-btn');
+  const label = document.getElementById('pi-edit-label');
+  if (hasPiData()) {
+    updatePiView();
+    card.classList.add('view-mode');
+    btn.classList.add('active');
+    label.textContent = 'Edit';
+  } else {
+    card.classList.remove('view-mode');
+    btn.classList.remove('active');
+    label.textContent = 'View';
+  }
+}
+
 // ── TOAST ────────────────────────────────────────────────────────────────────
 let tt=null;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3000);}
@@ -2036,6 +2061,7 @@ renderGroups();
 if (cart.length) showPBV();
 buildNav();
 checkBOMFragment();
+initPiMode();
 
 // Ensure view mode content is populated before printing regardless of current state
 window.addEventListener('beforeprint', updatePiView);
