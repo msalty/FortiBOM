@@ -1013,7 +1013,7 @@ async function renderGroups() {
             <svg width="12" height="18" viewBox="0 0 12 18" fill="none"><circle cx="4" cy="4" r="1.3" fill="currentColor"/><circle cx="8" cy="4" r="1.3" fill="currentColor"/><circle cx="4" cy="9" r="1.3" fill="currentColor"/><circle cx="8" cy="9" r="1.3" fill="currentColor"/><circle cx="4" cy="14" r="1.3" fill="currentColor"/><circle cx="8" cy="14" r="1.3" fill="currentColor"/></svg>
           </div>
           <div><input type="text" class="label-input bgp" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)"><div class="bgm">${lines} line item${lines!==1?'s':''} · ${qty.toLocaleString()} units/licenses</div></div>
-          <span class="bg-tag">${h(entry.product)}</span>
+          ${entry.product !== 'Custom SKU' ? `<span class="bg-tag">${h(entry.product)}</span>` : ''}
           <button class="bg-del" onclick="removeFromCart(${entry.id})">✕</button>
         </div>
         <div class="bt-wrap"><table class="bt"><thead><tr>
