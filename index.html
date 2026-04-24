@@ -326,6 +326,10 @@
   .pi-edit-btn:hover{background:var(--c-sh);border-color:var(--c-text2);}
   .pi-edit-btn.active{background:#EEF3FF;border-color:#B8CBF5;color:#3557A5;}
   .pi-edit-btn svg{width:11px;height:11px;flex-shrink:0;}
+  .pi-clear-btn{background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
+  .pi-clear-btn:hover{background:#FEF2F2;border-color:#FCA5A5;color:#B91C1C;}
+  .pi-clear-btn svg{width:11px;height:11px;flex-shrink:0;}
+  #proj-info-card.view-mode #pi-clear-btn{display:none!important;}
   #pi-view{display:none;padding:0;}
   #proj-info-card.view-mode .pfg{display:none;}
   #proj-info-card.view-mode #pi-view{display:block;}
@@ -347,7 +351,7 @@
     #pbv{display:flex!important;overflow:visible;padding:20px;}
     .bg-del,.bgr-actions{display:none!important;}
     .lc,.bg{break-inside:avoid;}
-    .pi-edit-btn{display:none!important;}
+    .pi-edit-btn,.pi-clear-btn{display:none!important;}
     #proj-info-card .pfg{display:none!important;}
     #proj-info-card #pi-view{display:block!important;}
     .pi-vv a{color:#1A4E82;text-decoration:none;border-bottom:1px solid #B8CBF5;}
@@ -437,6 +441,10 @@
           <button class="pi-edit-btn" id="pi-edit-btn" onclick="togglePiEdit()" title="Toggle edit mode">
             <svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
             <span id="pi-edit-label">View</span>
+          </button>
+          <button class="pi-clear-btn" id="pi-clear-btn" onclick="clearPiFields()" title="Clear all project information fields">
+            <svg viewBox="0 0 11 11" fill="none"><path d="M2 2l7 7M9 2l-7 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Clear
           </button>
         </div>
         <div class="lcb">
@@ -679,6 +687,31 @@ let spvFilter = '';
 // or group-header entries {id, _type:'group', label, note}
 
 // ── PERSISTENCE ───────────────────────────────────────────────────────────────
+function savePiData() {
+  try {
+    localStorage.setItem('fortibom_pi', JSON.stringify({
+      cust:  document.getElementById('pi-cust').value,
+      opp:   document.getElementById('pi-opp').value,
+      eng:   document.getElementById('pi-eng').value,
+      date:  document.getElementById('pi-date').value,
+      term:  document.getElementById('pi-term').value,
+      notes: document.getElementById('pi-notes').value
+    }));
+  } catch(e) {}
+}
+function loadPiData() {
+  try {
+    const raw = localStorage.getItem('fortibom_pi');
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.cust  !== undefined) document.getElementById('pi-cust').value  = d.cust;
+    if (d.opp   !== undefined) document.getElementById('pi-opp').value   = d.opp;
+    if (d.eng   !== undefined) document.getElementById('pi-eng').value   = d.eng;
+    if (d.date  !== undefined) document.getElementById('pi-date').value  = d.date;
+    if (d.term  !== undefined) document.getElementById('pi-term').value  = d.term;
+    if (d.notes !== undefined) document.getElementById('pi-notes').value = d.notes;
+  } catch(e) {}
+}
 function saveCart() {
   try {
     localStorage.setItem('fortibom_cart', JSON.stringify({ cart, seq }));
@@ -1308,6 +1341,7 @@ function loadSavedProject(id) {
   updateBadges();
   renderGroups();
   saveCart();
+  savePiData();
   toast(`✓ Loaded: "${snap.meta.cust || 'Unnamed'}"`);
   initPiMode();
   showPBV();
@@ -1673,6 +1707,7 @@ function doImport() {
   updateBadges();
   renderGroups();
   saveCart();
+  savePiData();
   closeImport();
   const parts = [];
   if (prodCount) parts.push(`${prodCount} product group${prodCount!==1?'s':''}`);
@@ -1704,6 +1739,7 @@ function applySharedBOM(parsed) {
   updateBadges();
   renderGroups();
   saveCart();
+  savePiData();
   initPiMode();
 }
 
@@ -2025,6 +2061,23 @@ function togglePiEdit() {
   }
 }
 
+function clearPiFields() {
+  if (!confirm('Clear all Project Information fields?')) return;
+  document.getElementById('pi-cust').value  = '';
+  document.getElementById('pi-opp').value   = '';
+  document.getElementById('pi-eng').value   = '';
+  document.getElementById('pi-date').value  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('pi-term').value  = 'DD';
+  document.getElementById('pi-notes').value = '';
+  savePiData();
+  const card  = document.getElementById('proj-info-card');
+  const btn   = document.getElementById('pi-edit-btn');
+  const label = document.getElementById('pi-edit-label');
+  card.classList.remove('view-mode');
+  btn.classList.remove('active');
+  label.textContent = 'View';
+}
+
 function hasPiData() {
   return ['pi-cust','pi-opp','pi-eng','pi-notes'].some(
     id => document.getElementById(id).value.trim()
@@ -2052,7 +2105,10 @@ let tt=null;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3000);}
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
-document.getElementById('pi-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+loadPiData();
+if (!document.getElementById('pi-date').value) {
+  document.getElementById('pi-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+}
 loadCart();
 loadSaved();
 updateBadges();
@@ -2062,6 +2118,10 @@ if (cart.length) showPBV();
 buildNav();
 checkBOMFragment();
 initPiMode();
+['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
+  document.getElementById(id).addEventListener('input', savePiData);
+});
+document.getElementById('pi-term').addEventListener('change', savePiData);
 
 // Ensure view mode content is populated before printing regardless of current state
 window.addEventListener('beforeprint', updatePiView);
