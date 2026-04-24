@@ -344,6 +344,14 @@
   .pi-vv.pi-cust-val{font-size:17px;font-weight:600;color:var(--c-text);}
   .pi-vg .pi-vf.cust-row{grid-column:1/-1;margin-bottom:4px;padding-bottom:10px;border-bottom:1px solid var(--c-border);}
 
+  /* Term applied warning (still at default -DD) */
+  #sum-term.term-warn{color:#8A5800;}
+
+  /* Welcome screen step list */
+  .ws-steps{list-style:none;text-align:left;display:inline-flex;flex-direction:column;gap:8px;margin:0;}
+  .ws-steps li{display:flex;align-items:baseline;gap:10px;font-size:13px;color:#4A5168;line-height:1.5;}
+  .ws-steps li .sn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--forti-red);color:#fff;font-size:10px;font-weight:700;flex-shrink:0;}
+
   @media print {
     body{background:#fff;overflow:auto;height:auto;}
     #top-bar,#sidebar,#ch,.act-row,#toast,#pfw,#copy-menu,#project-menu,#add-menu{display:none!important;}
@@ -372,7 +380,7 @@
   <div class="tb-div"></div>
   <span class="tb-sub"><!-- Project BOM Generator--></span>
   <div class="spacer"></div>
-  <button id="cart-btn" onclick="showPBV()">
+  <button id="cart-btn" onclick="showPBV()" title="View Project BOM">
     <svg viewBox="0 0 15 15" fill="none"><path d="M1 1h2l2 7h7l1-5H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="13" r="1" fill="currentColor"/><circle cx="12" cy="13" r="1" fill="currentColor"/></svg>
     Project BOM
     <span id="cbadge">0</span>
@@ -421,8 +429,13 @@
       <div id="ws">
         <svg class="wl" viewBox="0 0 56 56" fill="none"><rect width="56" height="56" rx="8" fill="#EE3124"/><path d="M12 16h32v6H12zM12 25h20v6H12zM12 34h32v6H12z" fill="white"/></svg>
         <h2>Select a product to begin</h2>
-        <p>Choose a Fortinet product from the left sidebar. Configure the BOM, then click <strong>"Add to Project BOM"</strong> to build a cross-product project quote. You can add the same product multiple times.</p>
-        <div class="hint">Products load from <code>products/</code> · Multiple runs per product supported</div>
+        <ol class="ws-steps">
+          <li><span class="sn">1</span>Pick a product from the left sidebar</li>
+          <li><span class="sn">2</span>Configure options in the product page</li>
+          <li><span class="sn">3</span>Click <strong>"Add to Project BOM"</strong> at the bottom of that page</li>
+          <li><span class="sn">4</span>Repeat for each product, then open <strong>Project BOM</strong></li>
+        </ol>
+        <div class="hint">Multiple runs of the same product are supported</div>
         <div style="display:flex;gap:8px;margin-top:4px;">
           <button class="btn bs" onclick="openImport()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>Import from CSV</button>
           <button class="btn bs" onclick="openSkuModal()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="3" width="11" height="7" rx="1" stroke="#6B7589" stroke-width="1.1"/><path d="M3.5 6.5h6M6.5 5v3" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>Add SKU</button>
@@ -470,7 +483,7 @@
       </div>
 
       <!-- Summary + Actions -->
-      <div class="sbar" id="sbar" style="display:none;">
+      <div class="sbar" id="sbar">
         <div class="si"><div class="sl">Product Groups</div><div class="sv" id="sum-g">0</div></div>
         <div class="si hi"><div class="sl">Total Line Items</div><div class="sv" id="sum-l">0</div></div>
         <div class="si"><div class="sl">Total Units / Licenses</div><div class="sv" id="sum-q">0</div></div>
@@ -557,6 +570,7 @@
 <!-- Save/Export/Import dropdown menu -->
 <div id="project-menu">
   <div class="dm-section">Project</div>
+  <button class="dm-item" onclick="newProject();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M7 1H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V5L7 1z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><path d="M7 1v4h4" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><path d="M6.5 6v4M4.5 8h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>New Project</button>
   <button class="dm-item" onclick="saveProject();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>Save Project</button>
   <div class="dm-sep"></div>
   <div class="dm-section">File</div>
@@ -915,6 +929,24 @@ function updateSectionLabel(entryId, rowIdx, value) {
   renderGroups();
 }
 function clearCart() { if (!confirm('Clear all items from the Project BOM?')) return; cart=[]; seq=0; if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname); updateBadges(); renderGroups(); saveCart(); }
+function newProject() {
+  if (cart.length && !confirm('Start a new project? The current BOM and project info will be cleared.')) return;
+  cart=[]; seq=0;
+  if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname);
+  document.getElementById('pi-cust').value  = '';
+  document.getElementById('pi-opp').value   = '';
+  document.getElementById('pi-eng').value   = '';
+  document.getElementById('pi-date').value  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('pi-term').value  = 'DD';
+  document.getElementById('pi-notes').value = '';
+  savePiData();
+  const card = document.getElementById('proj-info-card');
+  card.classList.remove('view-mode');
+  document.getElementById('pi-edit-btn').classList.remove('active');
+  document.getElementById('pi-edit-label').textContent = 'View';
+  updateBadges(); renderGroups(); saveCart();
+  showPBV();
+}
 
 // ── KIND (TYPE) OVERRIDE ─────────────────────────────────────────────────────
 let kindPopoverTarget = null;
@@ -974,16 +1006,13 @@ async function renderGroups() {
   const colSpan = hasPricing ? 8 : 6;
   const c = document.getElementById('bgc');
   const ec = document.getElementById('ec');
-  const sbar = document.getElementById('sbar');
   if (!cart.length) {
     c.innerHTML = '';
     ec.style.display = 'flex';
-    sbar.style.display = 'none';
     document.getElementById('project-total').style.display = 'none';
     return;
   }
   ec.style.display = 'none';
-  sbar.style.display = 'flex';
   let totL=0, totQ=0;
   let grandTotal=0, grandTotalValid=false;
   c.innerHTML = '';
@@ -1063,7 +1092,9 @@ async function renderGroups() {
   document.getElementById('sum-q').textContent = totQ.toLocaleString();
   const term = getCurrentTerm();
   const termLabel = {DD:'-DD (co-term)',12:'-12 (1 yr)',36:'-36 (3 yr)',60:'-60 (5 yr)'}[term];
-  document.getElementById('sum-term').textContent = termLabel;
+  const sumTermEl = document.getElementById('sum-term');
+  sumTermEl.textContent = termLabel;
+  sumTermEl.classList.toggle('term-warn', term === 'DD');
   const ptEl = document.getElementById('project-total');
   if (hasPricing && grandTotalValid) {
     document.getElementById('pt-value').textContent = '$' + grandTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
