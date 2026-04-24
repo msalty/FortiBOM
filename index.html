@@ -1605,7 +1605,7 @@ function exportSFDC(region) {
   const rows = [['UID','Quantity','Disti Discount','Quote Line Item Notes']];
   for (const r of bomDataRows()) {
     if (!r.sku) continue;
-    rows.push([`${r.sku}-${region}`, r.qty??'', 28, r.note||'']);
+    rows.push([`${r.sku}${region}`, r.qty??'', 28, r.note||'']);
   }
   const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
   const a = document.createElement('a');
