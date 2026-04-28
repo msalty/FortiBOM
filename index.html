@@ -890,10 +890,15 @@ function showAbout() {
   document.getElementById('pf').style.display = 'none';
   const ws = document.getElementById('ws');
   ws.style.display = 'flex';
-  ws.querySelector('h2').textContent = 'FabricBOM v1.0.1b';
-  ws.querySelector('p').textContent = 'Cross-product Bill of Materials generator for Fortinet deployments. Build BOMs per product, then combine them into a Project BOM.';
-  ws.querySelector('p').innerHTML += '<br><br>Disclaimer: FabricBOM is not an officially sanctioned Fortinet product. Always validate output against the official Fortinet product ordering guides.';
-  ws.querySelector('p').innerHTML += '<br><br><a href="https://github.com/msalty/FortiBOM/issues" target="_blank" rel="noopener noreferrer">Report an issue on GitHub</a>';
+  ws.innerHTML = `
+    <svg class="wl" viewBox="0 0 56 56" fill="none"><rect width="56" height="56" rx="8" fill="#EE3124"/><path d="M12 16h32v6H12zM12 25h20v6H12zM12 34h32v6H12z" fill="white"/></svg>
+    <h2>FabricBOM v1.0.1b</h2>
+    <p>Cross-product Bill of Materials generator for Fortinet deployments. Build BOMs per product, then combine them into a Project BOM.</p>
+    <div class="hint" style="max-width:380px;text-align:left;">
+      <strong style="color:#4A5168;display:block;margin-bottom:4px;">Disclaimer</strong>
+      FabricBOM is not an officially sanctioned Fortinet product. Always validate output against the official Fortinet product ordering guides.
+    </div>
+    <a href="https://github.com/msalty/FabricBOM/issues" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:var(--forti-red);text-decoration:none;">Report an issue on GitHub →</a>`;
 }
 
 // ── postMessage RECEIVER ─────────────────────────────────────────────────────
