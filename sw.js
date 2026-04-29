@@ -6,6 +6,7 @@ const SHELL = [
   './manifest.json',
   './js/toolbox-shared.js',
   './js/pricing-normalize.js',
+  './js/xlsx.mini.min.js',
   './favicon.ico',
   './icons/pwa-192x192.png',
   './icons/pwa-512x512.png',
