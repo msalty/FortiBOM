@@ -1,9 +1,11 @@
-const CACHE = 'fabricbom-v3.0.0.3';
+const CACHE = 'fabricbom-v3.1.0.0';
 
 const SHELL = [
   './',
   './index.html',
   './manifest.json',
+  './js/toolbox-shared.js',
+  './js/pricing-normalize.js',
   './favicon.ico',
   './icons/pwa-192x192.png',
   './icons/pwa-512x512.png',
@@ -37,6 +39,7 @@ const SHELL = [
   './products/fortipresence-bomgen.html',
   './products/fortirecon-bomgen.html',
   './products/custom-sku-bomgen.html',
+  './products/custom-sku-bomgen-mobile.html',
 ];
 
 self.addEventListener('install', event => {
