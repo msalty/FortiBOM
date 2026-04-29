@@ -216,6 +216,7 @@
   .bgr-btn:hover{background:var(--c-sh);color:var(--c-text);}
   .bgr-btn.del{border-color:#F5C6C2;color:#C0392B;background:#FEF0EE;}
   .bgr-btn.del:hover{background:#F5C6C2;}
+  .bgr-price{font-size:12px;font-weight:700;color:var(--forti-red);background:#fff;border:1px solid var(--c-border);border-radius:3px;padding:2px 8px;white-space:nowrap;margin-left:4px;}
 
   /* Project Total */
   #project-total{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;padding:14px 20px;display:flex;justify-content:flex-end;align-items:center;gap:20px;}
@@ -628,6 +629,10 @@
       <div class="pg">
         <label class="pl">Note (optional)</label>
         <input type="text" class="pi" id="grp-note" placeholder="e.g. Requires FortiCare Essential">
+      </div>
+      <div class="pg" style="flex-direction:row;align-items:center;gap:8px;margin-top:2px;">
+        <input type="checkbox" id="grp-show-pricing" style="width:auto;cursor:pointer;accent-color:var(--forti-red);">
+        <label class="pl" for="grp-show-pricing" style="text-transform:none;font-size:12px;font-weight:500;cursor:pointer;letter-spacing:0;">Show group pricing total on header</label>
       </div>
     </div>
     <div id="grp-foot">
@@ -1049,9 +1054,37 @@ async function renderGroups() {
   ec.style.display = 'none';
   let totL=0, totQ=0;
   let grandTotal=0, grandTotalValid=false;
+
+  // Pre-compute per-group pricing totals (items between each group header and the next)
+  const groupTotals = {};
+  if (hasPricing) {
+    let curGrpId = null, curTotal = 0, curValid = false;
+    for (const entry of cart) {
+      if (entry._type === 'group') {
+        if (curGrpId !== null) groupTotals[curGrpId] = { total: curTotal, valid: curValid };
+        curGrpId = entry.id; curTotal = 0; curValid = false;
+      } else {
+        for (const r of rowsWithTerm(entry.rows)) {
+          if (r.section !== undefined) continue;
+          const ek = r._kindOverride !== undefined ? r._kindOverride : r.kind;
+          if (ek === 'excl') continue;
+          const lp = priceMap.get(r.sku || '');
+          const lpn = lp ? parseFloat(String(lp).replace(/[^0-9.]/g, '')) : NaN;
+          const tot = (!isNaN(lpn) && typeof r.qty === 'number') ? lpn * r.qty : NaN;
+          if (!isNaN(tot)) { curTotal += tot; curValid = true; }
+        }
+      }
+    }
+    if (curGrpId !== null) groupTotals[curGrpId] = { total: curTotal, valid: curValid };
+  }
+
   c.innerHTML = '';
   for (const entry of cart) {
     if (entry._type === 'group') {
+      const gt = hasPricing && entry.showPricing ? groupTotals[entry.id] : null;
+      const groupPriceHtml = (gt && gt.valid)
+        ? `<span class="bgr-price">$${gt.total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>`
+        : '';
       const el = document.createElement('div');
       el.className = 'bom-group-row';
       el.dataset.id = entry.id;
@@ -1064,6 +1097,7 @@ async function renderGroups() {
           <svg class="bgr-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="4" width="12" height="6" rx="1" stroke="#EE3124" stroke-width="1.3"/><path d="M4 7h6" stroke="#EE3124" stroke-width="1.3" stroke-linecap="round"/></svg>
           <input type="text" class="label-input bgr-label" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)">
           ${entry.note ? `<span class="bgr-note">${h(entry.note)}</span>` : ''}
+          ${groupPriceHtml}
         </div>
         <div class="bgr-actions">
           <button class="bgr-btn" onclick="openEditGroup(${entry.id})">Edit</button>
@@ -1235,6 +1269,7 @@ function openAddGroup() {
   document.getElementById('grp-ok').textContent = 'Add Group';
   document.getElementById('grp-label').value = '';
   document.getElementById('grp-note').value = '';
+  document.getElementById('grp-show-pricing').checked = false;
   document.getElementById('grp-modal').classList.add('on');
   setTimeout(() => document.getElementById('grp-label').focus(), 60);
 }
@@ -1247,6 +1282,7 @@ function openEditGroup(id) {
   document.getElementById('grp-ok').textContent = 'Save';
   document.getElementById('grp-label').value = entry.label;
   document.getElementById('grp-note').value = entry.note || '';
+  document.getElementById('grp-show-pricing').checked = !!entry.showPricing;
   document.getElementById('grp-modal').classList.add('on');
   setTimeout(() => document.getElementById('grp-label').focus(), 60);
 }
@@ -1260,11 +1296,12 @@ function saveGroupRow() {
   const label = document.getElementById('grp-label').value.trim();
   if (!label) { document.getElementById('grp-label').focus(); return; }
   const note = document.getElementById('grp-note').value.trim();
+  const showPricing = document.getElementById('grp-show-pricing').checked;
   if (editingGroupId !== null) {
     const entry = cart.find(c => c.id === editingGroupId);
-    if (entry) { entry.label = label; entry.note = note; }
+    if (entry) { entry.label = label; entry.note = note; entry.showPricing = showPricing; }
   } else {
-    cart.push({ id: ++seq, _type: 'group', label, note });
+    cart.push({ id: ++seq, _type: 'group', label, note, showPricing });
     updateBadges();
   }
   closeGroupModal();
@@ -1511,7 +1548,7 @@ function serializeBOM() {
   const m = getMeta();
   const items = cart.map(entry => {
     if (entry._type === 'group') {
-      return { g: 1, l: entry.label, n: entry.note || '' };
+      return { g: 1, l: entry.label, n: entry.note || '', sp: entry.showPricing ? 1 : 0 };
     }
     const rows = entry.rows.map(r =>
       r.section !== undefined
@@ -1534,7 +1571,7 @@ function deserializeBOM(json) {
   const meta = { cust: m.c||'', opp: m.o||'', eng: m.e||'', date: m.d||'', notes: m.n||'', term: m.t||'DD' };
   const items = (obj.i || []).map(item => {
     if (item.g) {
-      return { _type: 'group', label: item.l || '', note: item.n || '' };
+      return { _type: 'group', label: item.l || '', note: item.n || '', showPricing: !!item.sp };
     }
     const rows = (item.r || []).map(r =>
       Array.isArray(r)
@@ -1869,7 +1906,7 @@ function applySharedBOM(parsed) {
   cart = []; seq = 0;
   for (const item of items) {
     if (item._type === 'group') {
-      cart.push({ id: ++seq, _type: 'group', label: item.label, note: item.note || '' });
+      cart.push({ id: ++seq, _type: 'group', label: item.label, note: item.note || '', showPricing: !!item.showPricing });
     } else {
       cart.push({ id: ++seq, product: item.product, label: item.label, rows: item.rows, meta: {} });
     }
