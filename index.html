@@ -1072,8 +1072,8 @@ async function renderGroups() {
           if (r.section !== undefined) continue;
           const ek = r._kindOverride !== undefined ? r._kindOverride : r.kind;
           if (ek === 'excl') continue;
-          const lp = priceMap.get(r.sku || '');
-          const lpn = lp ? parseFloat(String(lp).replace(/[^0-9.]/g, '')) : NaN;
+          const pricingRow = priceMap.get(r.sku || '');
+          const lpn = (pricingRow && typeof pricingRow.price === 'number') ? pricingRow.price : NaN;
           const tot = (!isNaN(lpn) && typeof r.qty === 'number') ? lpn * r.qty : NaN;
           if (!isNaN(tot)) { curTotal += tot; curValid = true; }
         }
