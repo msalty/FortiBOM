@@ -2129,31 +2129,42 @@ function parsePricingXLSX(arrayBuffer, filename) {
       return { ok: false, error: 'Could not find the "DataSet" tab in the Excel file.' };
     }
 
-    // Try to extract name and effectiveDate from other sheets
-    let name = '', effectiveDate = '';
-    for (const sn of wb.SheetNames) {
-      if (sn === sheetName) continue;
-      const rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, defval: '' });
-      for (const row of rows.slice(0, 20)) {
-        const first = String(row[0] || '').trim();
-        if (first.startsWith('Effective Date:')) {
-          effectiveDate = first.replace('Effective Date:', '').trim();
-        } else if (!name && first && row.slice(1).every(c => !String(c).trim())) {
-          name = first;
-        }
-      }
-      if (name && effectiveDate) break;
-    }
-
     const allRows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: '' });
     if (!allRows.length) return { ok: false, error: 'The DataSet tab is empty.' };
 
-    const headers = allRows[0].map(h => String(h).trim());
+    // Scan preamble rows for metadata and header row (name/date may be in any column)
+    let name = '', effectiveDate = '', headerRowIdx = -1;
+    for (let i = 0; i < Math.min(allRows.length, 40); i++) {
+      const cells = allRows[i].map(c => String(c || '').trim());
+      // Check every cell for metadata
+      for (const cell of cells) {
+        if (cell.startsWith('Effective Date:')) {
+          effectiveDate = effectiveDate || cell.replace('Effective Date:', '').trim();
+        } else if (!name && /price\s*list/i.test(cell)) {
+          name = cell;
+        }
+      }
+      // Header row: first non-empty cell is "Comments" and row contains "SKU"
+      const firstNonEmpty = cells.find(c => c);
+      if (firstNonEmpty === 'Comments' && cells.includes('SKU')) {
+        headerRowIdx = i;
+        break;
+      }
+    }
+
+    if (headerRowIdx === -1) {
+      return { ok: false, error: 'Could not find the pricing header row in the DataSet tab. Expected a row starting with "Comments" and containing "SKU".' };
+    }
+
+    // Strip trailing empty columns before validating
+    const headers = allRows[headerRowIdx].map(h => String(h || '').trim());
+    while (headers.length && !headers[headers.length - 1]) headers.pop();
+
     const headerErr = validatePricingHeaders(headers);
     if (headerErr) return { ok: false, error: 'Header validation failed: ' + headerErr };
 
     const rows = [];
-    for (let i = 1; i < allRows.length; i++) {
+    for (let i = headerRowIdx + 1; i < allRows.length; i++) {
       const rowArr = allRows[i];
       if (rowArr.every(c => !String(c).trim())) continue;
       const row = {};
