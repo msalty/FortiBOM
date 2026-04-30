@@ -546,7 +546,7 @@
   </div>
 </div>
 
-<input type="file" id="pricing-file" accept=".csv" style="display:none" onchange="pricingFileChosen(this)">
+<input type="file" id="pricing-file" accept=".csv,.xlsx" style="display:none" onchange="pricingFileChosen(this)">
 <div id="toast"></div>
 
 <!-- Copy/Export dropdown menu (position:fixed so it escapes overflow-y:auto parents) -->
@@ -673,6 +673,7 @@
   </div>
 </div>
 
+<script src="js/xlsx.mini.min.js"></script>
 <script>
 const CATALOG = [
   { file:'fortigate-bomgen.html',    label:'FortiGate (FGT)',      cat:'Network Security' },
@@ -1037,8 +1038,8 @@ async function renderGroups() {
   let priceMap = null;
   try {
     const pricingRaw = await getPricingIDB();
-    if (pricingRaw && pricingRaw.rows && pricingRaw.rows.length) {
-      priceMap = new Map(pricingRaw.rows.map(r => [r['SKU'], r['Price']]));
+    if (pricingRaw && pricingRaw.data && pricingRaw.data.rows && pricingRaw.data.rows.length) {
+      priceMap = new Map(pricingRaw.data.rows.map(r => [r['SKU'], r['Price']]));
     }
   } catch(e) { /* pricing unavailable */ }
   const hasPricing = priceMap !== null;
@@ -1972,41 +1973,53 @@ function checkBOMFragment() {
   }
 }
 
-// ── PRICING (IndexedDB) ────────────────────────────────────────────────────────
-let _pricingDb = null;
+// ── PRICING (IndexedDB — toolbox_shared) ─────────────────────────────────────
+let _sharedDb = null;
 
-function openPricingDB() {
-  if (_pricingDb) return Promise.resolve(_pricingDb);
+const PRICING_REQUIRED_HEADERS = [
+  'Comments','Identifier','Product Family Group','Product','Product Type','Item','SKU',
+  'Description #1','Description #2','Price','Category','FX Translated Price','UPC Code',
+  'FED','GSA','COO','Single Pack Weight (lbs.)','Single Pack Length (in.)',
+  'Single Pack Width (in.)','Single Pack Height (in.)','Case Pack Quantity',
+  'Case Pack Weight (lbs.)','Case Pack Length (in.)','Case Pack Width (in.)',
+  'Case Pack Height (in.)','Ground Pallet Quantity','Ground Pallet Weight (lbs.)',
+  'Ground Pallet Length (in.)','Ground Pallet Width (in.)','Ground Pallet Height (in.)',
+  'Air Pallet Quantity','Air Pallet Weight (lbs.)','Air Pallet Length (in.)',
+  'Air Pallet Width (in.)','Air Pallet Height (in.)','AutoStart','E-Rate','Pillar','Term (Month)'
+];
+
+function openSharedDB() {
+  if (_sharedDb) return Promise.resolve(_sharedDb);
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open('fabricbom_pricing', 1);
-    req.onupgradeneeded = e => e.target.result.createObjectStore('pricing');
-    req.onsuccess = e => { _pricingDb = e.target.result; resolve(_pricingDb); };
+    const req = indexedDB.open('toolbox_shared', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('datasets', { keyPath: 'key' });
+    req.onsuccess = e => { _sharedDb = e.target.result; resolve(_sharedDb); };
     req.onerror = e => reject(e.target.error);
   });
 }
-async function savePricingIDB(data) {
-  const db = await openPricingDB();
+async function savePricingIDB(record) {
+  const db = await openSharedDB();
   return new Promise((resolve, reject) => {
-    const tx = db.transaction('pricing', 'readwrite');
-    tx.objectStore('pricing').put(data, 'current');
+    const tx = db.transaction('datasets', 'readwrite');
+    tx.objectStore('datasets').put(record);
     tx.oncomplete = resolve;
     tx.onerror = e => reject(e.target.error);
   });
 }
 async function getPricingIDB() {
-  const db = await openPricingDB();
+  const db = await openSharedDB();
   return new Promise((resolve, reject) => {
-    const tx = db.transaction('pricing', 'readonly');
-    const req = tx.objectStore('pricing').get('current');
+    const tx = db.transaction('datasets', 'readonly');
+    const req = tx.objectStore('datasets').get('pricing');
     req.onsuccess = e => resolve(e.target.result || null);
     req.onerror = e => reject(e.target.error);
   });
 }
 async function deletePricingIDB() {
-  const db = await openPricingDB();
+  const db = await openSharedDB();
   return new Promise((resolve, reject) => {
-    const tx = db.transaction('pricing', 'readwrite');
-    tx.objectStore('pricing').delete('current');
+    const tx = db.transaction('datasets', 'readwrite');
+    tx.objectStore('datasets').delete('pricing');
     tx.oncomplete = resolve;
     tx.onerror = e => reject(e.target.error);
   });
@@ -2028,6 +2041,18 @@ function parsePricingLine(line) {
   }
   cells.push(cur);
   return cells;
+}
+
+function validatePricingHeaders(headers) {
+  if (headers.length !== PRICING_REQUIRED_HEADERS.length) {
+    return `Expected ${PRICING_REQUIRED_HEADERS.length} columns, found ${headers.length}.`;
+  }
+  for (let i = 0; i < PRICING_REQUIRED_HEADERS.length; i++) {
+    if (headers[i] !== PRICING_REQUIRED_HEADERS[i]) {
+      return `Column ${i + 1} mismatch: expected "${PRICING_REQUIRED_HEADERS[i]}", found "${headers[i]}".`;
+    }
+  }
+  return null;
 }
 
 function parsePricingCSV(text) {
@@ -2052,7 +2077,6 @@ function parsePricingCSV(text) {
   for (let i = 0; i < Math.min(rawLines.length, 30); i++) {
     const cells = parsePricingLine(rawLines[i]);
     const first = cells[0].trim();
-
     if (first.startsWith('Effective Date:')) {
       effectiveDate = first.replace('Effective Date:', '').trim();
       foundDate = true;
@@ -2076,13 +2100,16 @@ function parsePricingCSV(text) {
   }
 
   const headers = parsePricingLine(rawLines[headerRowIdx]).map(h => h.trim());
+  const headerErr = validatePricingHeaders(headers);
+  if (headerErr) return { ok: false, error: 'Header validation failed: ' + headerErr };
+
   const rows = [];
   for (let i = headerRowIdx + 1; i < rawLines.length; i++) {
     if (!rawLines[i].trim()) continue;
     const cells = parsePricingLine(rawLines[i]);
     if (cells.every(c => !c.trim())) continue;
     const row = {};
-    headers.forEach((hdr, idx) => { if (hdr) row[hdr] = (cells[idx] || '').trim(); });
+    headers.forEach((hdr, idx) => { row[hdr] = (cells[idx] || '').trim(); });
     rows.push(row);
   }
 
@@ -2090,39 +2117,83 @@ function parsePricingCSV(text) {
     return { ok: false, error: 'No pricing data rows found after the header row.' };
   }
 
-  return {
-    ok: true,
-    name: name || 'Fortinet Price List',
-    effectiveDate: effectiveDate || '',
-    headers,
-    rows,
-    uploadedAt: new Date().toISOString()
-  };
+  return { ok: true, name: name || 'Fortinet Price List', effectiveDate: effectiveDate || '', headers, rows };
+}
+
+function parsePricingXLSX(arrayBuffer, filename) {
+  try {
+    const wb = XLSX.read(arrayBuffer, { type: 'array' });
+    const sheetName = wb.SheetNames.find(n => n === 'DataSet') ||
+                      wb.SheetNames.find(n => /^dataset$/i.test(n));
+    if (!sheetName) {
+      return { ok: false, error: 'Could not find the "DataSet" tab in the Excel file.' };
+    }
+
+    // Try to extract name and effectiveDate from other sheets
+    let name = '', effectiveDate = '';
+    for (const sn of wb.SheetNames) {
+      if (sn === sheetName) continue;
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, defval: '' });
+      for (const row of rows.slice(0, 20)) {
+        const first = String(row[0] || '').trim();
+        if (first.startsWith('Effective Date:')) {
+          effectiveDate = first.replace('Effective Date:', '').trim();
+        } else if (!name && first && row.slice(1).every(c => !String(c).trim())) {
+          name = first;
+        }
+      }
+      if (name && effectiveDate) break;
+    }
+
+    const allRows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: '' });
+    if (!allRows.length) return { ok: false, error: 'The DataSet tab is empty.' };
+
+    const headers = allRows[0].map(h => String(h).trim());
+    const headerErr = validatePricingHeaders(headers);
+    if (headerErr) return { ok: false, error: 'Header validation failed: ' + headerErr };
+
+    const rows = [];
+    for (let i = 1; i < allRows.length; i++) {
+      const rowArr = allRows[i];
+      if (rowArr.every(c => !String(c).trim())) continue;
+      const row = {};
+      headers.forEach((hdr, idx) => { row[hdr] = String(rowArr[idx] ?? ''); });
+      rows.push(row);
+    }
+
+    if (!rows.length) return { ok: false, error: 'No data rows found in the DataSet tab.' };
+
+    return { ok: true, name: name || 'Fortinet Price List', effectiveDate: effectiveDate || '', headers, rows };
+  } catch(e) {
+    return { ok: false, error: 'Could not parse Excel file: ' + e.message };
+  }
 }
 
 async function renderPricingSection() {
   const el = document.getElementById('pricing-content');
   if (!el) return;
   try {
-    const data = await getPricingIDB();
-    if (!data) {
+    const record = await getPricingIDB();
+    if (!record) {
       el.innerHTML = `
         <div id="pricing-drop" onclick="document.getElementById('pricing-file').click()"
              ondragover="pricingDragOver(event)" ondragleave="pricingDragLeave(event)" ondrop="pricingDrop(event)">
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="opacity:.35"><rect x="4" y="4" width="24" height="24" rx="3" stroke="#6B7589" stroke-width="1.5"/><path d="M10 16h12M16 10v12" stroke="#6B7589" stroke-width="1.5" stroke-linecap="round"/></svg>
-          <div style="font-weight:600;color:var(--c-text);margin-top:8px;">Drop a Fortinet Pricing CSV here or click to browse</div>
-          <p>The price list name and effective date will be read automatically from the file header.</p>
+          <div style="font-weight:600;color:var(--c-text);margin-top:8px;">Drop a Fortinet Pricing CSV or XLSX here or click to browse</div>
+          <p>Drop the exported CSV or the actual Fortinet price list XLSX. The name and effective date are read automatically.</p>
         </div>`;
     } else {
-      const when = new Date(data.uploadedAt).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
-      const rowCount = data.rows.length.toLocaleString();
+      const d = record.data;
+      const when = new Date(d.uploadedAt).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+      const rowCount = record.meta.rowCount.toLocaleString();
+      const srcLabel = record.source && record.source.type === 'xlsx' ? 'XLSX' : 'CSV';
       el.innerHTML = `
         <div class="sp-list">
           <div class="sp-card">
             <div class="sp-accent"></div>
             <div class="sp-body">
-              <div class="sp-name">${h(data.name)}</div>
-              <div class="sp-meta">Effective: ${h(data.effectiveDate || '—')} &middot; ${rowCount} items &middot; Uploaded ${when}</div>
+              <div class="sp-name">${h(d.name)}</div>
+              <div class="sp-meta">Effective: ${h(d.effectiveDate || '—')} &middot; ${rowCount} items &middot; ${srcLabel} uploaded ${when}</div>
             </div>
             <div class="sp-actions">
               <button class="btn bd" onclick="deletePricing()">
@@ -2146,13 +2217,23 @@ function pricingFileChosen(inp) { if(inp.files[0]) handlePricingFile(inp.files[0
 function handlePricingFile(file) {
   const el = document.getElementById('pricing-content');
   if (el) el.innerHTML = `<div style="padding:20px;text-align:center;font-size:13px;color:var(--c-text2);">Processing pricing data…</div>`;
+  const isXlsx = /\.xlsx$/i.test(file.name);
   const reader = new FileReader();
   reader.onload = async ev => {
-    const result = parsePricingCSV(ev.target.result);
-    if (!result.ok) { toast('⚠ ' + result.error); renderPricingSection(); return; }
+    const parsed = isXlsx
+      ? parsePricingXLSX(ev.target.result, file.name)
+      : parsePricingCSV(ev.target.result);
+    if (!parsed.ok) { toast('⚠ ' + parsed.error); renderPricingSection(); return; }
+    const record = {
+      key: 'pricing',
+      version: 1,
+      source: { type: isXlsx ? 'xlsx' : 'csv', filename: file.name, importedAt: new Date().toISOString() },
+      data: { ok: true, name: parsed.name, effectiveDate: parsed.effectiveDate, headers: parsed.headers, rows: parsed.rows, uploadedAt: new Date().toISOString() },
+      meta: { rowCount: parsed.rows.length, headerCount: parsed.headers.length, effectiveDate: parsed.effectiveDate, datasetName: parsed.name }
+    };
     try {
-      await savePricingIDB(result);
-      toast(`✓ Pricing saved: "${result.name}"`);
+      await savePricingIDB(record);
+      toast(`✓ Pricing saved: "${parsed.name}"`);
       renderPricingSection();
     } catch(e) {
       toast('⚠ Could not save pricing data: ' + e.message);
@@ -2160,7 +2241,11 @@ function handlePricingFile(file) {
     }
   };
   reader.onerror = () => { toast('⚠ Could not read file.'); renderPricingSection(); };
-  reader.readAsText(file);
+  if (isXlsx) {
+    reader.readAsArrayBuffer(file);
+  } else {
+    reader.readAsText(file);
+  }
 }
 
 async function deletePricing() {
