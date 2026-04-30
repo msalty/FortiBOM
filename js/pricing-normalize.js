@@ -5,7 +5,7 @@
 
 const PRICING_HEADER_MAP = {
   sku:          ['sku', 'product_sku', 'part', 'partnumber'],
-  description1: ['description', 'description#1', 'description1', 'desc', 'itemdescription', 'productdescription'],
+  description1: ['description#1', 'description1', 'description', 'desc', 'itemdescription', 'productdescription'],
   description2: ['description#2', 'description2', 'desc2', 'itemdescription2', 'productdescription2', 'secondarydescription'],
   price:        ['price', 'listprice', 'unitprice', 'msrp', 'usdprice'],
   category:     ['category', 'productcategory', 'family', 'productfamily', 'familyname', 'productline', 'bundle', 'solution', 'segment', 'portfolio'],
@@ -18,16 +18,17 @@ function _pnNormalKey(s) {
 
 function _pnResolveColumnMap(sampleKeys) {
   const result = {};
-  sampleKeys.forEach(key => {
-    const norm = _pnNormalKey(key);
-    for (const [field, synonyms] of Object.entries(PRICING_HEADER_MAP)) {
-      if (result[field]) continue;
-      if (synonyms.some(s => _pnNormalKey(s) === norm)) {
-        result[field] = key;
-        break;
-      }
+  // Build a lookup from normalized column name → original column name
+  const normToKey = {};
+  sampleKeys.forEach(key => { normToKey[_pnNormalKey(key)] = key; });
+  // Iterate synonyms in declared order so more-specific names (e.g. "description#1")
+  // take priority over generic ones (e.g. "description") regardless of column order in the sheet
+  for (const [field, synonyms] of Object.entries(PRICING_HEADER_MAP)) {
+    for (const syn of synonyms) {
+      const col = normToKey[_pnNormalKey(syn)];
+      if (col !== undefined) { result[field] = col; break; }
     }
-  });
+  }
   return result;
 }
 
