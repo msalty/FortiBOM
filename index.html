@@ -1122,7 +1122,8 @@ async function renderGroups() {
           const totalNum = (!isNaN(listPriceNum) && typeof r.qty === 'number') ? listPriceNum * r.qty : NaN;
           if (!isExcluded && !isNaN(totalNum)) { grandTotal += totalNum; grandTotalValid = true; }
           const totalDisplay = isExcluded ? '$0.00' : (!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '');
-          priceCells = `<td class="nc" style="text-align:right;white-space:nowrap;">${listPrice ? h(listPrice) : ''}</td><td class="nc" style="text-align:right;white-space:nowrap;">${totalDisplay}</td>`;
+          const listPriceDisplay = !isNaN(listPriceNum) ? '$'+listPriceNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '';
+          priceCells = `<td class="nc" style="text-align:right;white-space:nowrap;">${listPriceDisplay}</td><td class="nc" style="text-align:right;white-space:nowrap;">${totalDisplay}</td>`;
         }
         const detailRows = [];
         if (r.desc) detailRows.push(`<tr><td class="det-k">Description</td><td class="det-v nc">${h(r.desc)}</td></tr>`);
@@ -2084,7 +2085,12 @@ function parsePricingCSV(text) {
     const cells = parsePricingLine(rawLines[i]);
     if (cells.every(c => !c.trim())) continue;
     const row = {};
-    headers.forEach((hdr, idx) => { if (hdr) row[hdr] = (cells[idx] || '').trim(); });
+    headers.forEach((hdr, idx) => {
+      if (!hdr) return;
+      let val = (cells[idx] || '').trim();
+      if (hdr === 'Price') val = val.replace(/[^0-9.]/g, '');
+      row[hdr] = val;
+    });
     rows.push(row);
   }
 
