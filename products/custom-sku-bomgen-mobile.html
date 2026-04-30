@@ -1330,11 +1330,15 @@ async function searchBySku(query) {
 async function searchByDesc(query) {
   const data = await getPricingData();
   if (!data || !data.rows) return [];
-  const terms = query.trim().toLowerCase().split(/\s+/).filter(t => t.length > 0);
-  if (!terms.length || terms[0].length < 3) return [];
+  const q     = query.trim();
+  const terms = q.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+  if (!terms.length || q.length < 2) return [];
+  const skuQ = q.toUpperCase();
   return data.rows.filter(row => {
     const d = (row.description1||'').toLowerCase();
-    return terms.every(t => d.includes(t));
+    const descMatch = terms[0].length >= 3 && terms.every(t => d.includes(t));
+    const skuMatch  = (row.sku||'').toUpperCase().includes(skuQ);
+    return descMatch || skuMatch;
   }).slice(0,15).map(rowToAcItem);
 }
 
