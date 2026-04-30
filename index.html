@@ -2114,6 +2114,10 @@ function parsePricingCSV(text) {
     if (cells.every(c => !c.trim())) continue;
     const row = {};
     headers.forEach((hdr, idx) => { row[hdr] = (cells[idx] || '').trim(); });
+    if (row['Price']) {
+      const stripped = row['Price'].replace(/[^0-9.]/g, '');
+      if (stripped !== '') row['Price'] = stripped;
+    }
     rows.push(row);
   }
 
