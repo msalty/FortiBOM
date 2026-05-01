@@ -360,6 +360,11 @@
   .ws-steps li{display:flex;align-items:baseline;gap:10px;font-size:13px;color:#4A5168;line-height:1.5;}
   .ws-steps li .sn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--forti-red);color:#fff;font-size:10px;font-weight:700;flex-shrink:0;}
 
+  /* Save status dot */
+  .save-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:none;transition:background .3s;}
+  .save-dot.saved{display:inline-block;background:rgba(74,196,100,0.6);}
+  .save-dot.dirty{display:inline-block;background:rgba(247,148,29,0.85);}
+
   @media print {
     body{background:#fff;overflow:auto;height:auto;}
     #top-bar,#sidebar,#ch,.act-row,#toast,#pfw,#copy-menu,#project-menu,#add-menu{display:none!important;}
@@ -391,6 +396,7 @@
   <button id="cart-btn" onclick="showPBV()" title="View Project BOM">
     <svg viewBox="0 0 15 15" fill="none"><path d="M1 1h2l2 7h7l1-5H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="13" r="1" fill="currentColor"/><circle cx="12" cy="13" r="1" fill="currentColor"/></svg>
     Project BOM
+    <span id="bom-save-dot" class="save-dot"></span>
     <span id="cbadge">0</span>
   </button>
 </div>
@@ -402,6 +408,7 @@
     <div class="ni proj" id="nav-proj" onclick="showPBV()">
       <svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2" stroke="#E8EAF0" stroke-width="1.2"/><path d="M5 6h8M5 9h8M5 12h5" stroke="#E8EAF0" stroke-width="1.2" stroke-linecap="round"/></svg>
       <span class="ni-label">Project BOM</span>
+      <span id="nav-bom-save-dot" class="save-dot" style="margin-left:2px;"></span>
       <span class="ni-badge" id="sb-badge">0</span>
     </div>
     <div class="ni" id="nav-saved" onclick="showSavedProjects()">
@@ -714,6 +721,7 @@ const CATALOG = [
 
 let cart = [], seq = 0, activeNav = null;
 let savedProjects = [];
+let bomDirty = false;
 let spvFilter = '';
 let spRevExpanded = {}; // projectKey -> boolean, tracks which revision lists are expanded
 // cart entries are either product-entries {id, product, label, rows, meta}
@@ -919,6 +927,7 @@ window.addEventListener('message', e => {
   updateBadges();
   renderGroups();
   saveCart();
+  markDirty();
   toast(`✓ Added to Project BOM: ${label}`);
   if (cart.length === 1) showPBV();
 });
@@ -936,7 +945,20 @@ function updateBadges() {
   n > 0 ? navProj.classList.add('live') : navProj.classList.remove('live');
 }
 
-function removeFromCart(id) { cart = cart.filter(c=>c.id!==id); updateBadges(); renderGroups(); saveCart(); }
+function updateSaveIndicator() {
+  const cls = cart.length === 0 ? '' : (bomDirty ? 'save-dot dirty' : 'save-dot saved');
+  const title = cart.length === 0 ? '' : (bomDirty ? 'Unsaved changes' : 'Saved');
+  ['bom-save-dot','nav-bom-save-dot'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = cls || 'save-dot';
+    el.title = title;
+  });
+}
+function markDirty() { bomDirty = true; updateSaveIndicator(); }
+function markSaved() { bomDirty = false; updateSaveIndicator(); }
+
+function removeFromCart(id) { cart = cart.filter(c=>c.id!==id); updateBadges(); renderGroups(); saveCart(); markDirty(); }
 
 function toggleDetail(btn) {
   const row = btn.closest('tr');
@@ -953,6 +975,7 @@ function updateQty(entryId, rowIdx, rawVal) {
   const num = parseInt(rawVal, 10);
   entry.rows[rowIdx].qty = (rawVal === '' || rawVal === null) ? undefined : (!isNaN(num) && num >= 0 ? num : entry.rows[rowIdx].qty);
   saveCart();
+  markDirty();
   renderGroups();
 }
 function updateEntryLabel(id, value) {
@@ -961,6 +984,7 @@ function updateEntryLabel(id, value) {
   const v = value.trim();
   if (v) entry.label = v;
   saveCart();
+  markDirty();
   renderGroups();
 }
 function updateSectionLabel(entryId, rowIdx, value) {
@@ -968,9 +992,10 @@ function updateSectionLabel(entryId, rowIdx, value) {
   if (!entry || !entry.rows || entry.rows[rowIdx] === undefined) return;
   entry.rows[rowIdx].section = value.trim();
   saveCart();
+  markDirty();
   renderGroups();
 }
-function clearCart() { if (!confirm('Clear all items from the Project BOM?')) return; cart=[]; seq=0; if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname); updateBadges(); renderGroups(); saveCart(); }
+function clearCart() { if (!confirm('Clear all items from the Project BOM?')) return; cart=[]; seq=0; if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname); updateBadges(); renderGroups(); saveCart(); markSaved(); }
 function newProject() {
   if (cart.length && !confirm('Start a new project? The current BOM and project info will be cleared.')) return;
   cart=[]; seq=0;
@@ -986,7 +1011,7 @@ function newProject() {
   card.classList.remove('view-mode');
   document.getElementById('pi-edit-btn').classList.remove('active');
   document.getElementById('pi-edit-label').textContent = 'View';
-  updateBadges(); renderGroups(); saveCart();
+  updateBadges(); renderGroups(); saveCart(); markSaved();
   showPBV();
 }
 
@@ -1023,6 +1048,7 @@ function setKind(newKind) {
   }
   closeKindPopover();
   saveCart();
+  markDirty();
   renderGroups();
 }
 
@@ -1189,6 +1215,7 @@ function _doDrop(targetId) {
   dragSrcId = null;
   renderGroups();
   saveCart();
+  markDirty();
 }
 
 function _topItem(node) {
@@ -1311,6 +1338,7 @@ function saveGroupRow() {
   closeGroupModal();
   renderGroups();
   saveCart();
+  markDirty();
   toast(editingGroupId !== null ? '✓ Group updated' : '✓ Group header added');
 }
 
@@ -1369,6 +1397,7 @@ function saveProject() {
   savedProjects.unshift(snapshot);
   saveSaved();
   updateSavedBadge();
+  markSaved();
   toast(`✓ Project saved: "${meta.cust || 'Unnamed'}"`);
 }
 
@@ -1504,6 +1533,7 @@ function loadSavedProject(id) {
   renderGroups();
   saveCart();
   savePiData();
+  markSaved();
   toast(`✓ Loaded: "${snap.meta.cust || 'Unnamed'}"`);
   initPiMode();
   showPBV();
@@ -1970,6 +2000,7 @@ function doImport() {
   renderGroups();
   saveCart();
   savePiData();
+  markDirty();
   closeImport();
   const parts = [];
   if (prodCount) parts.push(`${prodCount} product group${prodCount!==1?'s':''}`);
@@ -2002,6 +2033,7 @@ function applySharedBOM(parsed) {
   renderGroups();
   saveCart();
   savePiData();
+  markDirty();
   initPiMode();
 }
 
@@ -2479,14 +2511,15 @@ loadSaved();
 updateBadges();
 updateSavedBadge();
 renderGroups();
+updateSaveIndicator();
 if (cart.length) showPBV();
 buildNav();
 checkBOMFragment();
 initPiMode();
 ['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
-  document.getElementById(id).addEventListener('input', savePiData);
+  document.getElementById(id).addEventListener('input', () => { savePiData(); if (cart.length) markDirty(); });
 });
-document.getElementById('pi-term').addEventListener('change', savePiData);
+document.getElementById('pi-term').addEventListener('change', () => { savePiData(); if (cart.length) markDirty(); });
 
 // Ensure view mode content is populated before printing regardless of current state
 window.addEventListener('beforeprint', updatePiView);
