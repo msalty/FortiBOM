@@ -1705,7 +1705,7 @@ async function toggleProjectMenu(e) {
   try {
     const pricing = await getPricingIDB();
     const sfdc = document.getElementById('project-sfdc-section');
-    if (sfdc) sfdc.style.display = (pricing && pricing.rows && pricing.rows.length) ? '' : 'none';
+    if (sfdc) sfdc.style.display = (pricing && pricing.data && pricing.data.rows && pricing.data.rows.length) ? '' : 'none';
   } catch(_) {}
   const rect = btn.getBoundingClientRect();
   menu.style.top  = (rect.bottom + 4) + 'px';
