@@ -552,6 +552,7 @@
 <!-- Copy/Export dropdown menu (position:fixed so it escapes overflow-y:auto parents) -->
 <div id="copy-menu">
   <div class="dm-section">Share</div>
+  <button class="dm-item" onclick="shareHyperlink()"><svg viewBox="0 0 13 13" fill="none"><path d="M5.5 7.5a3 3 0 0 0 4.243 0l1.5-1.5a3 3 0 0 0-4.243-4.243L6.25 2.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><path d="M7.5 5.5a3 3 0 0 0-4.243 0L1.757 7a3 3 0 0 0 4.243 4.243L6.75 10.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Share Hyperlink</button>
   <button class="dm-item" onclick="shareBOM()"><svg viewBox="0 0 13 13" fill="none"><circle cx="10" cy="2.5" r="1.5" stroke="currentColor" stroke-width="1.1"/><circle cx="10" cy="10.5" r="1.5" stroke="currentColor" stroke-width="1.1"/><circle cx="3" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M8.5 3.5L4.5 5.5M4.5 7.5L8.5 9.5" stroke="currentColor" stroke-width="1.1"/></svg>Share BOM URL</button>
   <div class="dm-sep"></div>
   <div class="dm-section">Copy to Clipboard</div>
@@ -1603,6 +1604,34 @@ function shareBOM() {
   const url = location.origin + location.pathname + '#bom=' + compressed;
   clipboardWrite(url, '✓ Share URL copied to clipboard');
   history.replaceState(null, '', '#bom=' + compressed);
+}
+
+function shareHyperlink() {
+  closeCopyMenu();
+  if (!cart.length) { toast('Nothing to share — add items first'); return; }
+  let compressed;
+  try {
+    compressed = LZString.compressToEncodedURIComponent(serializeBOM());
+  } catch(e) {
+    toast('Could not generate share URL: ' + e.message);
+    return;
+  }
+  const url = location.origin + location.pathname + '#bom=' + compressed;
+  const displayName = getMeta().cust;
+  const html = `<a href="${url}">${displayName.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}</a>`;
+  history.replaceState(null, '', '#bom=' + compressed);
+  if (navigator.clipboard && navigator.clipboard.write) {
+    const item = new ClipboardItem({
+      'text/html': new Blob([html], { type: 'text/html' }),
+      'text/plain': new Blob([url], { type: 'text/plain' })
+    });
+    navigator.clipboard.write([item]).then(
+      () => toast('✓ Hyperlink copied to clipboard'),
+      () => clipboardWrite(url, '✓ Share URL copied (hyperlink unavailable)')
+    );
+  } else {
+    clipboardWrite(url, '✓ Share URL copied (hyperlink unavailable)');
+  }
 }
 
 function exportCSV() {
