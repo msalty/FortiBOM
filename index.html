@@ -155,6 +155,7 @@
   .br-o{background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;}
   .br-m{background:#FFF8EE;color:#8A5800;border:1px solid #F5D9A0;}
   .br-ex{background:#F0F0F2;color:#6B7280;border:1px solid #D1D5DB;}
+  .br-attn{background:#FFF3CD;color:#7A4F00;border:1px solid #FECB2E;}
 
   /* Responsive column hiding for BOM table */
   .col-exp{visibility:hidden;width:0;max-width:0;overflow:hidden;padding:0!important;border-width:0!important;}
@@ -658,6 +659,7 @@
   <button class="kp-item" data-kind="opt" onclick="setKind('opt')"><span class="br br-o">Optional</span></button>
   <button class="kp-item" data-kind="inc" onclick="setKind('inc')"><span class="br br-o">Included</span></button>
   <button class="kp-item" data-kind="excl" onclick="setKind('excl')"><span class="br br-ex">Excluded</span></button>
+  <button class="kp-item" data-kind="attn" onclick="setKind('attn')"><span class="br br-attn">Attention</span></button>
   <div class="kp-sep"></div>
   <button class="kp-item" data-kind="" onclick="setKind('')" style="color:var(--c-text2)">Clear override</button>
 </div>
@@ -1140,13 +1142,19 @@ async function renderGroups() {
       const rows = displayRows.map((r, i) => {
         if (r.section!==undefined) return `<tr class="sr"><td colspan="${colSpan}"><input type="text" class="label-input" value="${h(r.section)}" onchange="updateSectionLabel(${entry.id},${i},this.value)"></td></tr>`;
         lines++; if (typeof r.qty==='number') qty+=r.qty;
-        const bm={req:'<span class="br br-r">Required</span>',mand:'<span class="br br-m">Mandatory</span>',opt:'<span class="br br-o">Optional</span>',inc:'<span class="br br-o">Included</span>',excl:'<span class="br br-ex">Excluded</span>',note:''};
-        const effectiveKind = r._kindOverride !== undefined ? r._kindOverride : r.kind;
+        const bm={req:'<span class="br br-r">Required</span>',mand:'<span class="br br-m">Mandatory</span>',opt:'<span class="br br-o">Optional</span>',inc:'<span class="br br-o">Included</span>',excl:'<span class="br br-ex">Excluded</span>',attn:'<span class="br br-attn">Attention</span>',note:''};
+        // Compute pricing first so auto-ATTENTION can use it
+        let listPrice, listPriceNum = NaN;
+        if (hasPricing) {
+          listPrice = priceMap.get(r.sku || '');
+          listPriceNum = listPrice ? parseFloat(String(listPrice).replace(/[^0-9.]/g, '')) : NaN;
+        }
+        // Auto-select ATTENTION when pricing is loaded and the SKU has no valid price (unless user set an override)
+        const baseKind = r._kindOverride !== undefined ? r._kindOverride : r.kind;
+        const effectiveKind = (r._kindOverride === undefined && hasPricing && r.sku && isNaN(listPriceNum)) ? 'attn' : baseKind;
         const isExcluded = effectiveKind === 'excl';
         let priceCells = '';
         if (hasPricing) {
-          const listPrice = priceMap.get(r.sku || '');
-          const listPriceNum = listPrice ? parseFloat(String(listPrice).replace(/[^0-9.]/g, '')) : NaN;
           const totalNum = (!isNaN(listPriceNum) && typeof r.qty === 'number') ? listPriceNum * r.qty : NaN;
           if (!isExcluded && !isNaN(totalNum)) { grandTotal += totalNum; grandTotalValid = true; }
           const totalDisplay = isExcluded ? '$0.00' : (!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '');
