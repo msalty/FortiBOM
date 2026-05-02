@@ -351,7 +351,6 @@
   .pi-clear-btn:hover{background:#FEF2F2;border-color:#FCA5A5;color:#B91C1C;}
   .pi-clear-btn svg{width:11px;height:11px;flex-shrink:0;}
   #proj-info-card.view-mode #pi-clear-btn{display:none!important;}
-  #proj-info-card:not(.view-mode) .pi-clear-btn{margin-left:auto;}
   #pi-view{display:none;padding:0;}
   #proj-info-card.view-mode .pfg{display:none;}
   #proj-info-card.view-mode.pi-expanded #pi-view{display:block;}
@@ -377,7 +376,7 @@
   .pi-sum-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-textm);}
   .pi-sum-val{font-size:12px;color:var(--c-text2);white-space:nowrap;}
   /* Expand/collapse chevron button */
-  .pi-expand-btn{margin-left:auto;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 8px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:none;align-items:center;gap:4px;transition:background .12s,border-color .12s;flex-shrink:0;}
+  .pi-expand-btn{background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 8px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:none;align-items:center;gap:4px;transition:background .12s,border-color .12s;flex-shrink:0;}
   .pi-expand-btn:hover{background:var(--c-sh);border-color:var(--c-text2);}
   .pi-expand-btn svg{width:9px;height:9px;flex-shrink:0;transition:transform .2s;}
   #proj-info-card.view-mode .pi-expand-btn{display:inline-flex;}
@@ -385,6 +384,31 @@
 
   /* Term applied warning (still at default -DD) */
   #sum-term.term-warn{color:#8A5800;}
+
+  /* Read Only checkbox (visible only in edit mode) */
+  #pi-readonly-wrap{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border:1px solid var(--c-ib);border-radius:3px;cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s;}
+  #pi-readonly-wrap:hover{background:var(--c-sh);border-color:var(--c-text2);}
+  #pi-readonly-wrap input{cursor:pointer;accent-color:var(--forti-red);margin:0;}
+  #pi-readonly-wrap span{font-size:11px;font-weight:500;color:var(--c-text2);font-family:inherit;}
+  #proj-info-card.view-mode #pi-readonly-wrap{display:none!important;}
+
+  /* BOM Read Only state */
+  #pbv.bom-readonly .bg-edit,
+  #pbv.bom-readonly .bg-del,
+  #pbv.bom-readonly .bgr-actions,
+  #pbv.bom-readonly #add-btn,
+  #pbv.bom-readonly #clear-btn{display:none!important;}
+  #pbv.bom-readonly .qty-input,
+  #pbv.bom-readonly .note-input,
+  #pbv.bom-readonly .label-input{pointer-events:none;background:transparent!important;}
+  #pbv.bom-readonly .type-btn{pointer-events:none;cursor:default;}
+  #pbv.bom-readonly .drag-handle{pointer-events:none;cursor:default;opacity:.25;}
+
+  /* Project Info Read Only state — lock fields but keep checkbox interactive */
+  #proj-info-card.pi-readonly .pfg input,
+  #proj-info-card.pi-readonly .pfg select,
+  #proj-info-card.pi-readonly .pfg textarea{background:var(--c-sh)!important;color:var(--c-text2)!important;cursor:not-allowed;}
+  #proj-info-card.pi-readonly .pi-clear-btn{display:none!important;}
 
   /* Welcome screen step list */
   .ws-steps{list-style:none;text-align:left;display:inline-flex;flex-direction:column;gap:8px;margin:0;}
@@ -509,6 +533,7 @@
         <div class="lch">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1.5" stroke="#6B7589" stroke-width="1.2"/><path d="M3.5 4.5h6M3.5 6.5h4" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round"/></svg>
           <h2>Project Information</h2>
+          <div style="flex:1;min-width:0;"></div>
           <button class="pi-expand-btn" id="pi-expand-btn" onclick="togglePiExpand()" title="Show / hide full project details">
             <svg viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Details
@@ -517,6 +542,10 @@
             <svg viewBox="0 0 11 11" fill="none"><path d="M2 2l7 7M9 2l-7 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
             Clear
           </button>
+          <label id="pi-readonly-wrap" title="Lock the BOM and project info against edits">
+            <input type="checkbox" id="pi-readonly" onchange="toggleReadOnly(this.checked)">
+            <span>Read Only</span>
+          </label>
           <button class="pi-edit-btn" id="pi-edit-btn" onclick="togglePiEdit()" title="Toggle edit mode">
             <svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
             <span id="pi-edit-label">Save</span>
@@ -552,7 +581,7 @@
           <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
             <button class="btn bs" id="project-btn" onclick="toggleProjectMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>File<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <button class="btn bs" id="copy-export-btn" onclick="toggleCopyMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/></svg>Share<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <button class="btn bd" onclick="clearCart()" title="Clear All"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button id="clear-btn" class="btn bd" onclick="clearCart()" title="Clear All"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
           </div>
         </div>
       </div>
@@ -796,12 +825,13 @@ let spRevExpanded = {}; // projectKey -> boolean, tracks which revision lists ar
 function savePiData() {
   try {
     localStorage.setItem('fortibom_pi', JSON.stringify({
-      cust:  document.getElementById('pi-cust').value,
-      opp:   document.getElementById('pi-opp').value,
-      eng:   document.getElementById('pi-eng').value,
-      date:  document.getElementById('pi-date').value,
-      term:  document.getElementById('pi-term').value,
-      notes: document.getElementById('pi-notes').value
+      cust:     document.getElementById('pi-cust').value,
+      opp:      document.getElementById('pi-opp').value,
+      eng:      document.getElementById('pi-eng').value,
+      date:     document.getElementById('pi-date').value,
+      term:     document.getElementById('pi-term').value,
+      notes:    document.getElementById('pi-notes').value,
+      readOnly: isReadOnly(),
     }));
   } catch(e) {}
 }
@@ -816,6 +846,10 @@ function loadPiData() {
     if (d.date  !== undefined) document.getElementById('pi-date').value  = d.date;
     if (d.term  !== undefined) document.getElementById('pi-term').value  = d.term;
     if (d.notes !== undefined) document.getElementById('pi-notes').value = d.notes;
+    if (d.readOnly) {
+      document.getElementById('pi-readonly').checked = true;
+      toggleReadOnly(true);
+    }
   } catch(e) {}
 }
 function saveCart() {
@@ -1091,6 +1125,8 @@ function newProject() {
   document.getElementById('pi-date').value  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   document.getElementById('pi-term').value  = 'DD';
   document.getElementById('pi-notes').value = '';
+  document.getElementById('pi-readonly').checked = false;
+  toggleReadOnly(false);
   savePiData();
   const card = document.getElementById('proj-info-card');
   card.classList.remove('view-mode');
@@ -1294,6 +1330,7 @@ async function renderGroups() {
   } else {
     ptEl.style.display = 'none';
   }
+  if (isReadOnly()) applyReadOnlyToDOM();
 }
 
 // ── DRAG-TO-REORDER ──────────────────────────────────────────────────────────
@@ -1321,10 +1358,11 @@ function _topItem(node) {
 function addDragListeners(el) {
   // ── Mouse / HTML5 drag ──
   el.addEventListener('mousedown', e => {
+    if (isReadOnly()) { el.draggable = false; return; }
     el.draggable = !!e.target.closest('.drag-handle');
   });
   el.addEventListener('dragstart', e => {
-    if (!el.draggable) { e.preventDefault(); return; }
+    if (!el.draggable || isReadOnly()) { e.preventDefault(); return; }
     dragSrcId = Number(el.dataset.id);
     el.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
@@ -1346,7 +1384,7 @@ function addDragListeners(el) {
 
   // ── Touch drag (mobile) ──
   el.addEventListener('touchstart', e => {
-    if (!e.target.closest('.drag-handle')) return;
+    if (isReadOnly() || !e.target.closest('.drag-handle')) return;
     e.preventDefault();
     dragSrcId = Number(el.dataset.id);
     el.classList.add('dragging');
@@ -1623,6 +1661,7 @@ function loadSavedProject(id) {
   document.getElementById('pi-date').value  = snap.meta.date  || '';
   document.getElementById('pi-notes').value = snap.meta.notes || '';
   document.getElementById('pi-term').value  = snap.meta.term  || 'DD';
+  _restoreReadOnly(snap.meta);
   updateBadges();
   renderGroups();
   saveCart();
@@ -1663,12 +1702,13 @@ function deleteProjectGroup(projectKey) {
 // ── EXPORT ───────────────────────────────────────────────────────────────────
 function getMeta() {
   return {
-    cust:  document.getElementById('pi-cust').value.trim()||'Unnamed Project',
-    opp:   document.getElementById('pi-opp').value.trim(),
-    eng:   document.getElementById('pi-eng').value.trim(),
-    date:  document.getElementById('pi-date').value.trim(),
-    notes: document.getElementById('pi-notes').value.trim(),
-    term:  document.getElementById('pi-term').value,
+    cust:     document.getElementById('pi-cust').value.trim()||'Unnamed Project',
+    opp:      document.getElementById('pi-opp').value.trim(),
+    eng:      document.getElementById('pi-eng').value.trim(),
+    date:     document.getElementById('pi-date').value.trim(),
+    notes:    document.getElementById('pi-notes').value.trim(),
+    term:     document.getElementById('pi-term').value,
+    readOnly: isReadOnly(),
   };
 }
 // ── URL SHARING ───────────────────────────────────────────────────────────────
@@ -1687,7 +1727,7 @@ function serializeBOM() {
   });
   return JSON.stringify({
     v: 1,
-    m: { c: m.cust, o: m.opp, e: m.eng, d: m.date, n: m.notes, t: m.term },
+    m: { c: m.cust, o: m.opp, e: m.eng, d: m.date, n: m.notes, t: m.term, ro: m.readOnly ? 1 : 0 },
     i: items
   });
 }
@@ -1696,7 +1736,7 @@ function deserializeBOM(json) {
   const obj = JSON.parse(json);
   if (!obj || obj.v !== 1) throw new Error('Unknown BOM version');
   const m = obj.m || {};
-  const meta = { cust: m.c||'', opp: m.o||'', eng: m.e||'', date: m.d||'', notes: m.n||'', term: m.t||'DD' };
+  const meta = { cust: m.c||'', opp: m.o||'', eng: m.e||'', date: m.d||'', notes: m.n||'', term: m.t||'DD', readOnly: !!m.ro };
   const items = (obj.i || []).map(item => {
     if (item.g) {
       return { _type: 'group', label: item.l || '', note: item.n || '', showPricing: !!item.sp };
@@ -1819,7 +1859,7 @@ function exportCSV() {
   const termLabel = {DD:'Co-term (-DD)',12:'1 Year (-12)',36:'3 Years (-36)',60:'5 Years (-60)'}[p.term];
   const rows = [
     ['FabricBOM Project Export'],
-    [`Customer:${p.cust}`,`Opportunity:${p.opp}`,`Engineer:${p.eng}`,`Date:${p.date}`,`Term:${termLabel}`],
+    [`Customer:${p.cust}`,`Opportunity:${p.opp}`,`Engineer:${p.eng}`,`Date:${p.date}`,`Term:${termLabel}`,`ReadOnly:${p.readOnly?'true':''}`],
     [],
     ['Product Group','Part Number','Description','Qty','Type','Notes'],
   ];
@@ -2048,11 +2088,12 @@ function parseCSV(text) {
   // Row 1: meta
   const metaRow = lines[1] || [];
   function mval(cell) { return cell ? cell.replace(/^[^:]+:/,'').trim() : ''; }
-  const meta = { cust:mval(metaRow[0]), opp:mval(metaRow[1]), eng:mval(metaRow[2]), date:mval(metaRow[3]), term:'DD' };
+  const meta = { cust:mval(metaRow[0]), opp:mval(metaRow[1]), eng:mval(metaRow[2]), date:mval(metaRow[3]), term:'DD', readOnly:false };
   const termLine = mval(metaRow[4]);
   if (termLine.includes('1 Year')) meta.term='12';
   else if (termLine.includes('3 Year')) meta.term='36';
   else if (termLine.includes('5 Year')) meta.term='60';
+  if (mval(metaRow[5]).toLowerCase() === 'true') meta.readOnly = true;
   // Data rows start at index 4 (after header row at index 3)
   // Parse all items in order (product groups and group headers interleaved)
   const items = [];
@@ -2089,6 +2130,12 @@ function parseCSV(text) {
   return { ok:true, meta, items, prodCount, grpCount };
 }
 
+function _restoreReadOnly(meta) {
+  const ro = !!meta.readOnly;
+  document.getElementById('pi-readonly').checked = ro;
+  toggleReadOnly(ro);
+}
+
 function doImport() {
   if (!pendingImport) return;
   const { meta, items, prodCount, grpCount } = pendingImport;
@@ -2098,6 +2145,7 @@ function doImport() {
   if (meta.eng)  document.getElementById('pi-eng').value  = meta.eng;
   if (meta.date) document.getElementById('pi-date').value = meta.date;
   if (meta.term) document.getElementById('pi-term').value = meta.term;
+  _restoreReadOnly(meta);
   // Rebuild cart preserving order
   cart = [];
   seq = 0;
@@ -2133,6 +2181,7 @@ function applySharedBOM(parsed) {
   if (meta.date)  document.getElementById('pi-date').value  = meta.date;
   if (meta.notes) document.getElementById('pi-notes').value = meta.notes;
   if (meta.term)  document.getElementById('pi-term').value  = meta.term;
+  _restoreReadOnly(meta);
   cart = []; seq = 0;
   for (const item of items) {
     if (item._type === 'group') {
@@ -2605,6 +2654,8 @@ function clearPiFields() {
   document.getElementById('pi-date').value  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   document.getElementById('pi-term').value  = 'DD';
   document.getElementById('pi-notes').value = '';
+  document.getElementById('pi-readonly').checked = false;
+  toggleReadOnly(false);
   savePiData();
   const card  = document.getElementById('proj-info-card');
   const btn   = document.getElementById('pi-edit-btn');
@@ -2637,6 +2688,53 @@ function initPiMode() {
     btn.classList.remove('active');
     label.textContent = 'Save';
   }
+}
+
+// ── READ ONLY MODE ────────────────────────────────────────────────────────────
+function isReadOnly() {
+  const cb = document.getElementById('pi-readonly');
+  return cb ? cb.checked : false;
+}
+
+function applyReadOnlyToDOM() {
+  const bgc = document.getElementById('bgc');
+  if (!bgc) return;
+  bgc.querySelectorAll('.qty-input, .note-input, .label-input').forEach(el => {
+    el.readOnly = true;
+    el.tabIndex = -1;
+  });
+  bgc.querySelectorAll('.type-btn').forEach(el => { el.disabled = true; });
+}
+
+function removeReadOnlyFromDOM() {
+  const bgc = document.getElementById('bgc');
+  if (!bgc) return;
+  bgc.querySelectorAll('.qty-input, .note-input, .label-input').forEach(el => {
+    el.readOnly = false;
+    el.removeAttribute('tabindex');
+  });
+  bgc.querySelectorAll('.type-btn').forEach(el => { el.disabled = false; });
+}
+
+function toggleReadOnly(checked) {
+  const pbv  = document.getElementById('pbv');
+  const card = document.getElementById('proj-info-card');
+  const piInputIds = ['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'];
+
+  if (checked) {
+    pbv.classList.add('bom-readonly');
+    card.classList.add('pi-readonly');
+    piInputIds.forEach(id => { document.getElementById(id).disabled = true; });
+    document.getElementById('pi-term').disabled = true;
+    applyReadOnlyToDOM();
+  } else {
+    pbv.classList.remove('bom-readonly');
+    card.classList.remove('pi-readonly');
+    piInputIds.forEach(id => { document.getElementById(id).disabled = false; });
+    document.getElementById('pi-term').disabled = false;
+    removeReadOnlyFromDOM();
+  }
+  savePiData();
 }
 
 // ── TOAST ────────────────────────────────────────────────────────────────────
