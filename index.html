@@ -927,34 +927,62 @@ let spRevExpanded = {}; // projectKey -> boolean, tracks which revision lists ar
 // or group-header entries {id, _type:'group', label, note}
 
 // ── PERSISTENCE ───────────────────────────────────────────────────────────────
-function savePiData() {
+async function savePiData() {
   try {
-    localStorage.setItem('fortibom_pi', JSON.stringify({
-      cust:         document.getElementById('pi-cust').value,
-      opp:          document.getElementById('pi-opp').value,
+    const data = {
       eng:          document.getElementById('pi-eng').value,
       date:         document.getElementById('pi-date').value,
       term:         document.getElementById('pi-term').value,
-      notes:        document.getElementById('pi-notes').value,
       readOnly:     isReadOnly(),
       passwordHash: bomPasswordHash,
-    }));
+      passwordSalt: _pwSalt,
+    };
+    if (_activeKey) {
+      await _encryptCurrentFields();
+      Object.assign(data, _encBlobsCache);
+    } else if (bomPasswordHash && _encBlobsCache) {
+      Object.assign(data, _encBlobsCache);
+    } else {
+      data.cust  = document.getElementById('pi-cust').value;
+      data.opp   = document.getElementById('pi-opp').value;
+      data.notes = document.getElementById('pi-notes').value;
+    }
+    localStorage.setItem('fortibom_pi', JSON.stringify(data));
   } catch(e) {}
 }
-function loadPiData() {
+async function loadPiData() {
   try {
     const raw = localStorage.getItem('fortibom_pi');
     if (!raw) return;
     const d = JSON.parse(raw);
-    if (d.cust  !== undefined) document.getElementById('pi-cust').value  = d.cust;
-    if (d.opp   !== undefined) document.getElementById('pi-opp').value   = d.opp;
     if (d.eng   !== undefined) document.getElementById('pi-eng').value   = d.eng;
     if (d.date  !== undefined) document.getElementById('pi-date').value  = d.date;
     if (d.term  !== undefined) document.getElementById('pi-term').value  = d.term;
-    if (d.notes !== undefined) document.getElementById('pi-notes').value = d.notes;
     if (d.passwordHash) {
       bomPasswordHash = d.passwordHash;
-      bomUnlocked = isCreator(bomPasswordHash);
+      _pwSalt = d.passwordSalt || '';
+      if (d.cust_enc) {
+        _encBlobsCache = { cust_enc: d.cust_enc, opp_enc: d.opp_enc||'', notes_enc: d.notes_enc||'' };
+        const stored = JSON.parse(localStorage.getItem('fortibom_pw_plain') || 'null');
+        if (stored && stored.hash === bomPasswordHash && _pwSalt) {
+          try {
+            _activeKey = await deriveKey(stored.plain, _pwSalt);
+            await _decryptIntoFields(_activeKey, _encBlobsCache);
+            bomUnlocked = true;
+          } catch { _activeKey = null; bomUnlocked = false; }
+        } else {
+          bomUnlocked = false;
+        }
+      } else {
+        if (d.cust  !== undefined) document.getElementById('pi-cust').value  = d.cust;
+        if (d.opp   !== undefined) document.getElementById('pi-opp').value   = d.opp;
+        if (d.notes !== undefined) document.getElementById('pi-notes').value = d.notes;
+        bomUnlocked = isCreator(bomPasswordHash);
+      }
+    } else {
+      if (d.cust  !== undefined) document.getElementById('pi-cust').value  = d.cust;
+      if (d.opp   !== undefined) document.getElementById('pi-opp').value   = d.opp;
+      if (d.notes !== undefined) document.getElementById('pi-notes').value = d.notes;
     }
     if (d.readOnly) {
       document.getElementById('pi-readonly').checked = true;
@@ -1239,6 +1267,7 @@ function newProject() {
   document.getElementById('pi-readonly').checked = false;
   toggleReadOnly(false);
   bomPasswordHash = ''; bomUnlocked = false; _sessionUnlockPlain = '';
+  _activeKey = null; _pwSalt = ''; _encBlobsCache = null;
   localStorage.removeItem('fortibom_pw_plain');
   setLockedState(false);
   savePiData();
@@ -1769,11 +1798,13 @@ function loadSavedProject(id) {
   if (cart.length && !confirm(`Load "${snap.meta.cust || 'this project'}"? Your current Project BOM will be replaced.`)) return;
   cart = JSON.parse(JSON.stringify(snap.cart));
   seq  = snap.seq;
-  document.getElementById('pi-cust').value  = snap.meta.cust  || '';
-  document.getElementById('pi-opp').value   = snap.meta.opp   || '';
+  // skip cust/opp/notes when encrypted — applyPasswordHashFromMeta handles decryption
+  if (!snap.meta.cust_enc) document.getElementById('pi-cust').value  = snap.meta.cust  || '';
+  if (!snap.meta.cust_enc) document.getElementById('pi-opp').value   = snap.meta.opp   || '';
+  if (!snap.meta.cust_enc) document.getElementById('pi-notes').value = snap.meta.notes || '';
+  if (snap.meta.cust_enc)  { document.getElementById('pi-cust').value = ''; document.getElementById('pi-opp').value = ''; document.getElementById('pi-notes').value = ''; }
   document.getElementById('pi-eng').value   = snap.meta.eng   || '';
   document.getElementById('pi-date').value  = snap.meta.date  || '';
-  document.getElementById('pi-notes').value = snap.meta.notes || '';
   document.getElementById('pi-term').value  = snap.meta.term  || 'DD';
   _sessionUnlockPlain = '';
   _restoreReadOnly(snap.meta);
@@ -1817,7 +1848,7 @@ function deleteProjectGroup(projectKey) {
 
 // ── EXPORT ───────────────────────────────────────────────────────────────────
 function getMeta() {
-  return {
+  const m = {
     cust:         document.getElementById('pi-cust').value.trim()||'Unnamed Project',
     opp:          document.getElementById('pi-opp').value.trim(),
     eng:          document.getElementById('pi-eng').value.trim(),
@@ -1826,7 +1857,14 @@ function getMeta() {
     term:         document.getElementById('pi-term').value,
     readOnly:     isReadOnly(),
     passwordHash: bomPasswordHash,
+    passwordSalt: _pwSalt,
   };
+  if (_encBlobsCache) {
+    m.cust_enc  = _encBlobsCache.cust_enc;
+    m.opp_enc   = _encBlobsCache.opp_enc;
+    m.notes_enc = _encBlobsCache.notes_enc;
+  }
+  return m;
 }
 // ── URL SHARING ───────────────────────────────────────────────────────────────
 function serializeBOM() {
@@ -1842,18 +1880,22 @@ function serializeBOM() {
     );
     return { p: entry.product, l: entry.label, r: rows };
   });
-  return JSON.stringify({
-    v: 1,
-    m: { c: m.cust, o: m.opp, e: m.eng, d: m.date, n: m.notes, t: m.term, ro: m.readOnly ? 1 : 0, ph: m.passwordHash || '' },
-    i: items
-  });
+  const mj = m.cust_enc
+    ? { c_e: m.cust_enc, o_e: m.opp_enc||'', n_e: m.notes_enc||'', e: m.eng, d: m.date, t: m.term, ro: m.readOnly ? 1 : 0, ph: m.passwordHash||'', ps: m.passwordSalt||'' }
+    : { c: m.cust, o: m.opp, e: m.eng, d: m.date, n: m.notes, t: m.term, ro: m.readOnly ? 1 : 0, ph: m.passwordHash||'' };
+  return JSON.stringify({ v: 1, m: mj, i: items });
 }
 
 function deserializeBOM(json) {
   const obj = JSON.parse(json);
   if (!obj || obj.v !== 1) throw new Error('Unknown BOM version');
   const m = obj.m || {};
-  const meta = { cust: m.c||'', opp: m.o||'', eng: m.e||'', date: m.d||'', notes: m.n||'', term: m.t||'DD', readOnly: !!m.ro, passwordHash: m.ph||'' };
+  const meta = {
+    cust: m.c_e ? '' : (m.c||''), opp: m.o_e ? '' : (m.o||''),
+    eng: m.e||'', date: m.d||'', notes: m.n_e ? '' : (m.n||''),
+    term: m.t||'DD', readOnly: !!m.ro, passwordHash: m.ph||'', passwordSalt: m.ps||'',
+    ...(m.c_e ? { cust_enc: m.c_e, opp_enc: m.o_e||'', notes_enc: m.n_e||'' } : {}),
+  };
   const items = (obj.i || []).map(item => {
     if (item.g) {
       return { _type: 'group', label: item.l || '', note: item.n || '', showPricing: !!item.sp };
@@ -1974,9 +2016,12 @@ function backupProjects() {
 function exportCSV() {
   const p = getMeta();
   const termLabel = {DD:'Co-term (-DD)',12:'1 Year (-12)',36:'3 Years (-36)',60:'5 Years (-60)'}[p.term];
+  const metaFields = p.cust_enc
+    ? [`Customer_enc:${p.cust_enc}`,`Opportunity_enc:${p.opp_enc||''}`,`Notes_enc:${p.notes_enc||''}`,`Engineer:${p.eng}`,`Date:${p.date}`,`Term:${termLabel}`,`ReadOnly:${p.readOnly?'true':''}`,`PasswordHash:${p.passwordHash||''}`,`PasswordSalt:${p.passwordSalt||''}`]
+    : [`Customer:${p.cust}`,`Opportunity:${p.opp}`,`Engineer:${p.eng}`,`Date:${p.date}`,`Term:${termLabel}`,`ReadOnly:${p.readOnly?'true':''}`,`PasswordHash:${p.passwordHash||''}`];
   const rows = [
     ['FabricBOM Project Export'],
-    [`Customer:${p.cust}`,`Opportunity:${p.opp}`,`Engineer:${p.eng}`,`Date:${p.date}`,`Term:${termLabel}`,`ReadOnly:${p.readOnly?'true':''}`,`PasswordHash:${p.passwordHash||''}`],
+    metaFields,
     [],
     ['Product Group','Part Number','Description','Qty','Type','Notes'],
   ];
@@ -2205,13 +2250,34 @@ function parseCSV(text) {
   // Row 1: meta
   const metaRow = lines[1] || [];
   function mval(cell) { return cell ? cell.replace(/^[^:]+:/,'').trim() : ''; }
-  const meta = { cust:mval(metaRow[0]), opp:mval(metaRow[1]), eng:mval(metaRow[2]), date:mval(metaRow[3]), term:'DD', readOnly:false, passwordHash:'' };
-  const termLine = mval(metaRow[4]);
-  if (termLine.includes('1 Year')) meta.term='12';
-  else if (termLine.includes('3 Year')) meta.term='36';
-  else if (termLine.includes('5 Year')) meta.term='60';
-  if (mval(metaRow[5]).toLowerCase() === 'true') meta.readOnly = true;
-  if (metaRow[6]) meta.passwordHash = mval(metaRow[6]);
+  const meta = { cust:'', opp:'', eng:'', date:'', term:'DD', readOnly:false, passwordHash:'', passwordSalt:'' };
+  const encrypted = metaRow[0] && metaRow[0].startsWith('Customer_enc:');
+  if (encrypted) {
+    // fields: Customer_enc, Opportunity_enc, Notes_enc, Engineer, Date, Term, ReadOnly, PasswordHash, PasswordSalt
+    meta.cust_enc  = mval(metaRow[0]);
+    meta.opp_enc   = mval(metaRow[1]);
+    meta.notes_enc = mval(metaRow[2]);
+    meta.eng       = mval(metaRow[3]);
+    meta.date      = mval(metaRow[4]);
+    const termLine = mval(metaRow[5]);
+    if (termLine.includes('1 Year')) meta.term='12';
+    else if (termLine.includes('3 Year')) meta.term='36';
+    else if (termLine.includes('5 Year')) meta.term='60';
+    if (mval(metaRow[6]).toLowerCase() === 'true') meta.readOnly = true;
+    meta.passwordHash = mval(metaRow[7]);
+    meta.passwordSalt = mval(metaRow[8]);
+  } else {
+    meta.cust = mval(metaRow[0]);
+    meta.opp  = mval(metaRow[1]);
+    meta.eng  = mval(metaRow[2]);
+    meta.date = mval(metaRow[3]);
+    const termLine = mval(metaRow[4]);
+    if (termLine.includes('1 Year')) meta.term='12';
+    else if (termLine.includes('3 Year')) meta.term='36';
+    else if (termLine.includes('5 Year')) meta.term='60';
+    if (mval(metaRow[5]).toLowerCase() === 'true') meta.readOnly = true;
+    if (metaRow[6]) meta.passwordHash = mval(metaRow[6]);
+  }
   // Data rows start at index 4 (after header row at index 3)
   // Parse all items in order (product groups and group headers interleaved)
   const items = [];
@@ -2257,12 +2323,13 @@ function _restoreReadOnly(meta) {
 function doImport() {
   if (!pendingImport) return;
   const { meta, items, prodCount, grpCount } = pendingImport;
-  // Restore project info fields
-  if (meta.cust) document.getElementById('pi-cust').value = meta.cust;
-  if (meta.opp)  document.getElementById('pi-opp').value  = meta.opp;
+  // Restore project info fields (skip cust/opp/notes when encrypted — applyPasswordHashFromMeta handles decryption)
+  if (!meta.cust_enc && meta.cust) document.getElementById('pi-cust').value = meta.cust;
+  if (!meta.cust_enc && meta.opp)  document.getElementById('pi-opp').value  = meta.opp;
   if (meta.eng)  document.getElementById('pi-eng').value  = meta.eng;
   if (meta.date) document.getElementById('pi-date').value = meta.date;
   if (meta.term) document.getElementById('pi-term').value = meta.term;
+  if (meta.cust_enc) { document.getElementById('pi-cust').value = ''; document.getElementById('pi-opp').value = ''; document.getElementById('pi-notes').value = ''; }
   _sessionUnlockPlain = '';
   _restoreReadOnly(meta);
   applyPasswordHashFromMeta(meta);
@@ -2295,11 +2362,13 @@ let _pendingSharedBOM = null;
 
 function applySharedBOM(parsed) {
   const { meta, items } = parsed;
-  if (meta.cust)  document.getElementById('pi-cust').value  = meta.cust;
-  if (meta.opp)   document.getElementById('pi-opp').value   = meta.opp;
+  // skip cust/opp/notes when encrypted — applyPasswordHashFromMeta handles decryption
+  if (!meta.cust_enc && meta.cust)  document.getElementById('pi-cust').value  = meta.cust;
+  if (!meta.cust_enc && meta.opp)   document.getElementById('pi-opp').value   = meta.opp;
+  if (!meta.cust_enc && meta.notes) document.getElementById('pi-notes').value = meta.notes;
+  if (meta.cust_enc) { document.getElementById('pi-cust').value = ''; document.getElementById('pi-opp').value = ''; document.getElementById('pi-notes').value = ''; }
   if (meta.eng)   document.getElementById('pi-eng').value   = meta.eng;
   if (meta.date)  document.getElementById('pi-date').value  = meta.date;
-  if (meta.notes) document.getElementById('pi-notes').value = meta.notes;
   if (meta.term)  document.getElementById('pi-term').value  = meta.term;
   _sessionUnlockPlain = '';
   _restoreReadOnly(meta);
@@ -2806,6 +2875,7 @@ function clearPiFields() {
   document.getElementById('pi-readonly').checked = false;
   toggleReadOnly(false);
   bomPasswordHash = ''; bomUnlocked = false; _sessionUnlockPlain = '';
+  _activeKey = null; _pwSalt = ''; _encBlobsCache = null;
   localStorage.removeItem('fortibom_pw_plain');
   setLockedState(false);
   savePiData();
@@ -2840,6 +2910,7 @@ function initPiMode() {
     btn.classList.remove('active');
     label.textContent = 'Save';
   }
+  if (bomPasswordHash) setLockedState(!bomUnlocked);
   updateLockUI();
 }
 
@@ -2850,20 +2921,65 @@ let _setupPasswordPlain = '';
 let _unlockModalMode = '';
 let _sessionUnlockPlain = '';
 let _pwViewVisible = false;
+let _activeKey = null;       // AES-GCM CryptoKey — in memory only, never persisted
+let _pwSalt = '';            // PBKDF2 salt hex — public, stored alongside hash
+let _encBlobsCache = null;   // { cust_enc, opp_enc, notes_enc }
 
-function generatePassword() {
-  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-  const arr = new Uint8Array(14);
-  crypto.getRandomValues(arr);
-  return Array.from(arr, b => chars[b % chars.length]).join('');
-}
+// ── Crypto helpers ────────────────────────────────────────────────────────────
+function _b2h(buf) { return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
+function _h2b(hex) { const a=new Uint8Array(hex.length/2); for(let i=0;i<a.length;i++) a[i]=parseInt(hex.slice(i*2,i*2+2),16); return a; }
+
+function genSalt() { return _b2h(crypto.getRandomValues(new Uint8Array(16))); }
 
 async function hashPassword(pw) {
-  const enc = new TextEncoder();
-  const buf = await crypto.subtle.digest('SHA-256', enc.encode(pw));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return _b2h(buf);
 }
 
+async function deriveKey(pw, saltHex) {
+  const keyMat = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt:_h2b(saltHex), iterations:100000, hash:'SHA-256' },
+    keyMat, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']
+  );
+}
+
+async function encryptField(key, plaintext) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, key, new TextEncoder().encode(plaintext));
+  return _b2h(iv) + ':' + _b2h(new Uint8Array(ct));
+}
+
+async function decryptField(key, encHex) {
+  if (!encHex || !encHex.includes(':')) return '';
+  try {
+    const [ivHex, ctHex] = encHex.split(':');
+    const pt = await crypto.subtle.decrypt({ name:'AES-GCM', iv:_h2b(ivHex) }, key, _h2b(ctHex));
+    return new TextDecoder().decode(pt);
+  } catch { return ''; }
+}
+
+async function _encryptCurrentFields() {
+  if (!_activeKey) return;
+  _encBlobsCache = {
+    cust_enc:  await encryptField(_activeKey, document.getElementById('pi-cust').value),
+    opp_enc:   await encryptField(_activeKey, document.getElementById('pi-opp').value),
+    notes_enc: await encryptField(_activeKey, document.getElementById('pi-notes').value),
+  };
+}
+
+async function _decryptIntoFields(key, blobs) {
+  const [cust, opp, notes] = await Promise.all([
+    decryptField(key, blobs.cust_enc  || ''),
+    decryptField(key, blobs.opp_enc   || ''),
+    decryptField(key, blobs.notes_enc || ''),
+  ]);
+  document.getElementById('pi-cust').value  = cust;
+  document.getElementById('pi-opp').value   = opp;
+  document.getElementById('pi-notes').value = notes;
+}
+
+// ── Creator check / visible password ─────────────────────────────────────────
 function isCreator(hash) {
   try {
     const stored = JSON.parse(localStorage.getItem('fortibom_pw_plain') || 'null');
@@ -2879,6 +2995,7 @@ function getVisiblePassword() {
   return _sessionUnlockPlain || '';
 }
 
+// ── Lock UI and state ─────────────────────────────────────────────────────────
 function updateLockUI() {
   const card = document.getElementById('proj-info-card');
   const isLocked = card.classList.contains('bom-locked');
@@ -2904,14 +3021,30 @@ function setLockedState(locked) {
   updateLockUI();
 }
 
-function applyPasswordHashFromMeta(meta) {
+async function applyPasswordHashFromMeta(meta) {
   bomPasswordHash = meta.passwordHash || '';
+  _pwSalt = meta.passwordSalt || '';
+
+  if (meta.cust_enc || meta.opp_enc || meta.notes_enc) {
+    _encBlobsCache = { cust_enc: meta.cust_enc||'', opp_enc: meta.opp_enc||'', notes_enc: meta.notes_enc||'' };
+  }
+
   if (bomPasswordHash) {
-    if (isCreator(bomPasswordHash)) {
-      bomUnlocked = true;
-      setLockedState(false);
+    const stored = JSON.parse(localStorage.getItem('fortibom_pw_plain') || 'null');
+    if (stored && stored.hash === bomPasswordHash && _pwSalt) {
+      try {
+        _activeKey = await deriveKey(stored.plain, _pwSalt);
+        if (_encBlobsCache) await _decryptIntoFields(_activeKey, _encBlobsCache);
+        bomUnlocked = true;
+        setLockedState(false);
+      } catch {
+        bomUnlocked = false;
+        _activeKey = null;
+        setLockedState(true);
+      }
     } else {
       bomUnlocked = false;
+      _activeKey = null;
       _sessionUnlockPlain = '';
       setLockedState(true);
     }
@@ -2943,17 +3076,26 @@ function generateAndShowSetupPassword() {
   document.getElementById('pw-setup-confirm-btn').style.display = 'inline-flex';
 }
 
+function generatePassword() {
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  const arr = new Uint8Array(14);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, b => chars[b % chars.length]).join('');
+}
+
 function copySetupPassword() {
   if (_setupPasswordPlain) clipboardWrite(_setupPasswordPlain, '✓ Password copied');
 }
 
 async function confirmPasswordSetup() {
   if (!_setupPasswordPlain) return;
-  const hash = await hashPassword(_setupPasswordPlain);
-  bomPasswordHash = hash;
+  _pwSalt = genSalt();
+  _activeKey = await deriveKey(_setupPasswordPlain, _pwSalt);
+  bomPasswordHash = await hashPassword(_setupPasswordPlain);
   bomUnlocked = true;
-  localStorage.setItem('fortibom_pw_plain', JSON.stringify({ plain: _setupPasswordPlain, hash }));
-  savePiData();
+  localStorage.setItem('fortibom_pw_plain', JSON.stringify({ plain: _setupPasswordPlain, hash: bomPasswordHash, salt: _pwSalt }));
+  await _encryptCurrentFields();
+  await savePiData();
   updateLockUI();
   closePasswordSetupModal();
   toast('✓ Password protection enabled');
@@ -2985,19 +3127,27 @@ async function attemptUnlock() {
   if (!val) { inp.classList.add('error'); return; }
   const hash = await hashPassword(val);
   if (hash === bomPasswordHash) {
-    bomUnlocked = true;
-    _sessionUnlockPlain = val;
-    setLockedState(false);
-    closePwUnlockModal();
-    if (_unlockModalMode === 'disable-ro') {
-      document.getElementById('pi-readonly').checked = false;
-      toggleReadOnly(false);
-      removePasswordProtection();
-      toast('✓ BOM unlocked — read-only removed');
-    } else {
-      toast('✓ BOM unlocked');
+    try {
+      _activeKey = await deriveKey(val, _pwSalt);
+      if (_encBlobsCache) await _decryptIntoFields(_activeKey, _encBlobsCache);
+      bomUnlocked = true;
+      _sessionUnlockPlain = val;
+      setLockedState(false);
+      closePwUnlockModal();
+      if (_unlockModalMode === 'disable-ro') {
+        document.getElementById('pi-readonly').checked = false;
+        toggleReadOnly(false);
+        removePasswordProtection();
+        toast('✓ BOM unlocked — read-only removed');
+      } else {
+        toast('✓ BOM unlocked');
+      }
+      updateLockUI();
+    } catch {
+      inp.classList.add('error');
+      document.getElementById('pw-unlock-err').textContent = 'Decryption failed — try again.';
+      document.getElementById('pw-unlock-err').classList.add('on');
     }
-    updateLockUI();
   } else {
     inp.classList.add('error');
     document.getElementById('pw-unlock-err').classList.add('on');
@@ -3009,6 +3159,9 @@ function removePasswordProtection() {
   bomPasswordHash = '';
   bomUnlocked = false;
   _sessionUnlockPlain = '';
+  _activeKey = null;
+  _pwSalt = '';
+  _encBlobsCache = null;
   localStorage.removeItem('fortibom_pw_plain');
   savePiData();
   setLockedState(false);
@@ -3071,6 +3224,7 @@ function handleReadOnlyChange(cb) {
   }
 }
 
+
 // ── READ ONLY MODE ────────────────────────────────────────────────────────────
 function isReadOnly() {
   const cb = document.getElementById('pi-readonly');
@@ -3123,24 +3277,26 @@ let tt=null;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3000);}
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
-loadPiData();
-if (!document.getElementById('pi-date').value) {
-  document.getElementById('pi-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-}
-loadCart();
-loadSaved();
-updateBadges();
-updateSavedBadge();
-renderGroups();
-updateSaveIndicator();
-if (cart.length) showPBV();
-buildNav();
-checkBOMFragment();
-initPiMode();
-['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
-  document.getElementById(id).addEventListener('input', () => { savePiData(); if (cart.length) markDirty(); });
-});
-document.getElementById('pi-term').addEventListener('change', () => { savePiData(); if (cart.length) markDirty(); });
+(async () => {
+  await loadPiData();
+  if (!document.getElementById('pi-date').value) {
+    document.getElementById('pi-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  }
+  loadCart();
+  loadSaved();
+  updateBadges();
+  updateSavedBadge();
+  renderGroups();
+  updateSaveIndicator();
+  if (cart.length) showPBV();
+  buildNav();
+  checkBOMFragment();
+  initPiMode();
+  ['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => { savePiData(); if (cart.length) markDirty(); });
+  });
+  document.getElementById('pi-term').addEventListener('change', () => { savePiData(); if (cart.length) markDirty(); });
+})();
 
 // ── PROJECT BREADCRUMB (shows customer when Project Information scrolls behind #ch) ──
 function updateProjBreadcrumb() {
