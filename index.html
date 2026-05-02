@@ -347,9 +347,9 @@
   .pi-edit-btn:hover{background:var(--c-sh);border-color:var(--c-text2);}
   .pi-edit-btn.active{background:#EEF3FF;border-color:#B8CBF5;color:#3557A5;}
   .pi-edit-btn svg{width:11px;height:11px;flex-shrink:0;}
-  .pi-clear-btn{margin-left:0;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
-  .pi-clear-btn:hover{background:#FEF2F2;border-color:#FCA5A5;color:#B91C1C;}
-  .pi-clear-btn svg{width:11px;height:11px;flex-shrink:0;}
+  .pi-clear-btn{margin-left:0;background:#FEF0EE;color:#C0392B;border:1px solid #F5C6C2;border-radius:3px;padding:3px 5px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .12s,border-color .12s;}
+  .pi-clear-btn:hover{background:#F5C6C2;}
+  .pi-clear-btn svg{width:13px;height:13px;flex-shrink:0;}
   #proj-info-card.view-mode #pi-clear-btn{display:none!important;}
   #pi-view{display:none;padding:0;}
   #proj-info-card.view-mode .pfg{display:none;}
@@ -539,12 +539,11 @@
             Details
           </button>
           <button class="pi-clear-btn" id="pi-clear-btn" onclick="clearPiFields()" title="Clear all project information fields">
-            <svg viewBox="0 0 11 11" fill="none"><path d="M2 2l7 7M9 2l-7 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-            Clear
+            <svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
           </button>
           <label id="pi-readonly-wrap" title="Lock the BOM and project info against edits">
             <input type="checkbox" id="pi-readonly" onchange="toggleReadOnly(this.checked)">
-            <span>Read Only</span>
+            <span>RO</span>
           </label>
           <button class="pi-edit-btn" id="pi-edit-btn" onclick="togglePiEdit()" title="Toggle edit mode">
             <svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
