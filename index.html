@@ -123,7 +123,7 @@
   .bs:hover{background:var(--c-sh);}
   .bd{background:#FEF0EE;color:#C0392B;border-color:#F5C6C2;}
   .bd:hover{background:#F5C6C2;}
-  .act-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-left:auto;}
+  .act-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%;}
 
   /* BOM groups */
   .bg{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;overflow:hidden;}
@@ -133,6 +133,9 @@
   .bg-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;border-radius:2px;padding:1px 6px;}
   .bg-del{background:#FEF0EE;border:1px solid #F5C6C2;color:#C0392B;font-size:11px;font-weight:600;padding:3px 8px;border-radius:2px;cursor:pointer;font-family:inherit;margin-left:auto;}
   .bg-del:hover{background:#F5C6C2;}
+  .bg-edit{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);padding:4px 6px;cursor:pointer;display:inline-flex;align-items:center;transition:background .12s;}
+  .bg-edit:hover{background:var(--c-sh);color:var(--c-text);}
+  .bg-edit svg{width:11px;height:11px;}
 
   /* BOM table */
   .bt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -149,12 +152,16 @@
   .qty-input:focus{border-color:#4A90D9;outline:none;background:#fff;}
   .qty-input::-webkit-inner-spin-button,.qty-input::-webkit-outer-spin-button{opacity:0;}
   .qty-input:hover::-webkit-inner-spin-button,.qty-input:focus::-webkit-inner-spin-button{opacity:1;}
+  .note-input{width:100%;box-sizing:border-box;border:1px solid transparent;border-radius:3px;background:transparent;font-size:11px;color:var(--c-textm);font-family:inherit;padding:1px 3px;resize:none;overflow-y:auto;vertical-align:top;line-height:1.4;}
+  .note-input:hover{border-color:var(--c-border);}
+  .note-input:focus{border-color:#4A90D9;outline:none;background:#fff;}
   .nc{color:var(--c-textm);font-size:11px;}
   .br{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:2px;padding:1px 4px;}
   .br-r{background:#FEE0DE;color:#C0392B;border:1px solid #F5C6C2;}
   .br-o{background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;}
   .br-m{background:#FFF8EE;color:#8A5800;border:1px solid #F5D9A0;}
   .br-ex{background:#F0F0F2;color:#6B7280;border:1px solid #D1D5DB;}
+  .br-attn{background:#FFF3CD;color:#7A4F00;border:1px solid #FECB2E;}
 
   /* Responsive column hiding for BOM table */
   .col-exp{visibility:hidden;width:0;max-width:0;overflow:hidden;padding:0!important;border-width:0!important;}
@@ -212,7 +219,8 @@
   .bgr-label{font-size:13px;font-weight:700;color:var(--c-text);flex:1;}
   .bgr-note{font-size:11px;color:var(--c-text2);font-style:italic;}
   .bgr-actions{display:flex;gap:5px;align-items:center;padding:0 10px;}
-  .bgr-btn{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);font-size:11px;font-weight:600;padding:3px 8px;cursor:pointer;font-family:inherit;transition:background .12s;}
+  .bgr-btn{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);font-size:11px;font-weight:600;padding:3px 8px;cursor:pointer;font-family:inherit;transition:background .12s;display:inline-flex;align-items:center;}
+  .bgr-btn svg{width:11px;height:11px;}
   .bgr-btn:hover{background:var(--c-sh);color:var(--c-text);}
   .bgr-btn.del{border-color:#F5C6C2;color:#C0392B;background:#FEF0EE;}
   .bgr-btn.del:hover{background:#F5C6C2;}
@@ -330,17 +338,19 @@
 
   /* Print */
   /* Project Info view/edit toggle */
-  .pi-edit-btn{margin-left:auto;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
+  .pi-edit-btn{margin-left:0;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
   .pi-edit-btn:hover{background:var(--c-sh);border-color:var(--c-text2);}
   .pi-edit-btn.active{background:#EEF3FF;border-color:#B8CBF5;color:#3557A5;}
   .pi-edit-btn svg{width:11px;height:11px;flex-shrink:0;}
-  .pi-clear-btn{background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
+  .pi-clear-btn{margin-left:0;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
   .pi-clear-btn:hover{background:#FEF2F2;border-color:#FCA5A5;color:#B91C1C;}
   .pi-clear-btn svg{width:11px;height:11px;flex-shrink:0;}
   #proj-info-card.view-mode #pi-clear-btn{display:none!important;}
+  #proj-info-card:not(.view-mode) .pi-clear-btn{margin-left:auto;}
   #pi-view{display:none;padding:0;}
   #proj-info-card.view-mode .pfg{display:none;}
-  #proj-info-card.view-mode #pi-view{display:block;}
+  #proj-info-card.view-mode.pi-expanded #pi-view{display:block;}
+  #proj-info-card.view-mode:not(.pi-expanded) .lcb{padding:8px 18px;}
   .pi-vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:8px 24px;}
   .pi-vf{display:flex;flex-direction:column;gap:2px;}
   .pi-vf.full{grid-column:1/-1;}
@@ -351,6 +361,22 @@
   .pi-vv.empty{color:var(--c-textm);font-style:italic;}
   .pi-vv.pi-cust-val{font-size:17px;font-weight:600;color:var(--c-text);}
   .pi-vg .pi-vf.cust-row{grid-column:1/-1;margin-bottom:4px;padding-bottom:10px;border-bottom:1px solid var(--c-border);}
+  /* Collapsed summary bar */
+  #pi-summary{display:none;align-items:center;gap:0;overflow:hidden;flex-wrap:wrap;row-gap:6px;}
+  #proj-info-card.view-mode #pi-summary{display:flex;}
+  #proj-info-card.view-mode.pi-expanded #pi-summary{display:none;}
+  .pi-sum-cust{font-size:14px;font-weight:600;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px;}
+  .pi-sum-cust.empty{color:var(--c-textm);font-style:italic;}
+  .pi-sum-divider{width:1px;height:18px;background:var(--c-border);flex-shrink:0;margin:0 12px;}
+  .pi-sum-chip{display:flex;flex-direction:column;gap:1px;flex-shrink:0;}
+  .pi-sum-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-textm);}
+  .pi-sum-val{font-size:12px;color:var(--c-text2);white-space:nowrap;}
+  /* Expand/collapse chevron button */
+  .pi-expand-btn{margin-left:auto;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 8px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:none;align-items:center;gap:4px;transition:background .12s,border-color .12s;flex-shrink:0;}
+  .pi-expand-btn:hover{background:var(--c-sh);border-color:var(--c-text2);}
+  .pi-expand-btn svg{width:9px;height:9px;flex-shrink:0;transition:transform .2s;}
+  #proj-info-card.view-mode .pi-expand-btn{display:inline-flex;}
+  #proj-info-card.view-mode.pi-expanded .pi-expand-btn svg{transform:rotate(180deg);}
 
   /* Term applied warning (still at default -DD) */
   #sum-term.term-warn{color:#8A5800;}
@@ -360,16 +386,33 @@
   .ws-steps li{display:flex;align-items:baseline;gap:10px;font-size:13px;color:#4A5168;line-height:1.5;}
   .ws-steps li .sn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--forti-red);color:#fff;font-size:10px;font-weight:700;flex-shrink:0;}
 
+  /* Save status dot */
+  .save-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:none;transition:background .3s;}
+  .save-dot.saved{display:inline-block;background:rgba(74,196,100,0.6);}
+  .save-dot.dirty{display:inline-block;background:rgba(247,148,29,0.85);}
+
+  #pbv-watermark{margin-top:auto;padding:14px 4px 4px;text-align:center;font-size:11px;color:var(--c-textm);display:flex;align-items:center;justify-content:center;gap:6px;opacity:.75;}
+  #pbv-watermark a{display:inline-flex;align-items:center;gap:5px;color:inherit;text-decoration:none;font-weight:600;}
+  #pbv-watermark a:hover{color:var(--forti-red);}
+  #pbv-watermark .pbv-wm-logo{width:14px;height:14px;flex-shrink:0;}
+
+  @media print {
+    #pbv-watermark{margin-top:24px;opacity:1;color:#555;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    #pbv-watermark a{color:#555;}
+  }
+
   @media print {
     body{background:#fff;overflow:auto;height:auto;}
     #top-bar,#sidebar,#ch,.act-row,#toast,#pfw,#copy-menu,#project-menu,#add-menu{display:none!important;}
     #main{display:block;}
     #pbv{display:flex!important;overflow:visible;padding:20px;}
-    .bg-del,.bgr-actions{display:none!important;}
+    .bg-del,.bg-edit,.bgr-actions{display:none!important;}
     .lc,.bg{break-inside:avoid;}
-    .pi-edit-btn,.pi-clear-btn{display:none!important;}
+    .pi-edit-btn,.pi-clear-btn,.pi-expand-btn{display:none!important;}
     #proj-info-card .pfg{display:none!important;}
     #proj-info-card #pi-view{display:block!important;}
+    #proj-info-card #pi-summary{display:none!important;}
+    #proj-info-card.view-mode:not(.pi-expanded) .lcb{padding:18px!important;}
     .pi-vv a{color:#1A4E82;text-decoration:none;border-bottom:1px solid #B8CBF5;}
   }
 </style>
@@ -388,9 +431,9 @@
   <div class="tb-div"></div>
   <span class="tb-sub"><!-- Project BOM Generator--></span>
   <div class="spacer"></div>
-  <button id="cart-btn" onclick="showPBV()" title="View Project BOM">
+  <button id="cart-btn" onclick="showPBV()" title="Project BOM">
     <svg viewBox="0 0 15 15" fill="none"><path d="M1 1h2l2 7h7l1-5H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="13" r="1" fill="currentColor"/><circle cx="12" cy="13" r="1" fill="currentColor"/></svg>
-    Project BOM
+    <span id="bom-save-dot" class="save-dot"></span>
     <span id="cbadge">0</span>
   </button>
 </div>
@@ -402,6 +445,7 @@
     <div class="ni proj" id="nav-proj" onclick="showPBV()">
       <svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2" stroke="#E8EAF0" stroke-width="1.2"/><path d="M5 6h8M5 9h8M5 12h5" stroke="#E8EAF0" stroke-width="1.2" stroke-linecap="round"/></svg>
       <span class="ni-label">Project BOM</span>
+      <span id="nav-bom-save-dot" class="save-dot" style="margin-left:2px;"></span>
       <span class="ni-badge" id="sb-badge">0</span>
     </div>
     <div class="ni" id="nav-saved" onclick="showSavedProjects()">
@@ -458,13 +502,17 @@
         <div class="lch">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1.5" stroke="#6B7589" stroke-width="1.2"/><path d="M3.5 4.5h6M3.5 6.5h4" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round"/></svg>
           <h2>Project Information</h2>
-          <button class="pi-edit-btn" id="pi-edit-btn" onclick="togglePiEdit()" title="Toggle edit mode">
-            <svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
-            <span id="pi-edit-label">View</span>
+          <button class="pi-expand-btn" id="pi-expand-btn" onclick="togglePiExpand()" title="Show / hide full project details">
+            <svg viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Details
           </button>
           <button class="pi-clear-btn" id="pi-clear-btn" onclick="clearPiFields()" title="Clear all project information fields">
             <svg viewBox="0 0 11 11" fill="none"><path d="M2 2l7 7M9 2l-7 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
             Clear
+          </button>
+          <button class="pi-edit-btn" id="pi-edit-btn" onclick="togglePiEdit()" title="Toggle edit mode">
+            <svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
+            <span id="pi-edit-label">Save</span>
           </button>
         </div>
         <div class="lcb">
@@ -485,21 +533,20 @@
             </div>
             <div class="pg full"><label class="pl">Project Scope / Notes</label><textarea class="pi" id="pi-notes" placeholder="Optional: overall project scope, deployment context, or assumptions…"></textarea></div>
           </div>
+          <div id="pi-summary"></div>
           <div id="pi-view"></div>
         </div>
       </div>
 
-      <!-- Summary + Actions -->
+      <!-- Actions -->
       <div class="sbar" id="sbar">
-        <div class="si"><div class="sl">Product Groups</div><div class="sv" id="sum-g">0</div></div>
-        <div class="si hi"><div class="sl">Total Line Items</div><div class="sv" id="sum-l">0</div></div>
-        <div class="si"><div class="sl">Total Units / Licenses</div><div class="sv" id="sum-q">0</div></div>
-        <div class="si"><div class="sl">Term Applied</div><div class="sv" id="sum-term" style="font-size:14px;">-DD</div></div>
         <div class="act-row">
-          <button class="btn bp" id="project-btn" onclick="toggleProjectMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>Save / Export<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <button class="btn bs" id="add-btn" onclick="toggleAddMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="4" width="11" height="5" rx="1" stroke="#6B7589" stroke-width="1.1"/><path d="M4 6.5h5M6.5 5.5v2" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>Add<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-<button class="btn bs" id="copy-export-btn" onclick="toggleCopyMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/></svg>Copy / Share<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <button class="btn bd" onclick="clearCart()"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Clear All</button>
+          <button class="btn bp" id="add-btn" onclick="toggleAddMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="4" width="11" height="5" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M4 6.5h5M6.5 5.5v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Add Item<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+            <button class="btn bs" id="project-btn" onclick="toggleProjectMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>File<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="btn bs" id="copy-export-btn" onclick="toggleCopyMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/></svg>Share<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="btn bd" onclick="clearCart()" title="Clear All"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+          </div>
         </div>
       </div>
 
@@ -515,10 +562,27 @@
       <!-- BOM groups container -->
       <div id="bgc"></div>
 
+      <!-- BOM Summary Stats -->
+      <div class="sbar" id="bom-stats">
+        <div class="si"><div class="sl">Product Groups</div><div class="sv" id="sum-g">0</div></div>
+        <div class="si hi"><div class="sl">Total Line Items</div><div class="sv" id="sum-l">0</div></div>
+        <div class="si"><div class="sl">Total Units / Licenses</div><div class="sv" id="sum-q">0</div></div>
+        <div class="si"><div class="sl">Term Applied</div><div class="sv" id="sum-term" style="font-size:14px;">-DD</div></div>
+      </div>
+
       <!-- Project Total (only shown when pricing data is loaded) -->
       <div id="project-total" style="display:none;">
         <span class="pt-label">Project Total</span>
         <span class="pt-value" id="pt-value"></span>
+      </div>
+
+      <!-- Watermark -->
+      <div id="pbv-watermark">
+        Powered by
+        <a href="https://msalty.github.io/FabricBOM/" target="_blank" rel="noopener noreferrer">
+          <svg class="pbv-wm-logo" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect width="28" height="28" rx="4" fill="#EE3124"/><path d="M6 8h16v3H6zM6 12.5h10v3H6zM6 17h16v3H6z" fill="white"/></svg>
+          <span>FabricBOM</span>
+        </a>
       </div>
     </div>
 
@@ -528,6 +592,7 @@
         <div class="lch">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="#6B7589" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="#6B7589" stroke-width="1.1"/></svg>
           <h2>Saved Projects</h2>
+          <button class="btn bs" style="margin-left:auto;font-size:11px;padding:4px 10px;" onclick="backupProjects()" title="Download a Markdown backup of all saved projects"><svg viewBox="0 0 13 13" fill="none" style="width:12px;height:12px;"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Backup All</button>
         </div>
         <div id="spv-filter-wrap">
           <input id="spv-filter" type="text" placeholder="Filter by project name, opportunity ID, or SE…" oninput="filterSavedProjects(this.value)" autocomplete="off" spellcheck="false">
@@ -546,12 +611,13 @@
   </div>
 </div>
 
-<input type="file" id="pricing-file" accept=".csv" style="display:none" onchange="pricingFileChosen(this)">
+<input type="file" id="pricing-file" accept=".csv,.xlsx" style="display:none" onchange="pricingFileChosen(this)">
 <div id="toast"></div>
 
 <!-- Copy/Export dropdown menu (position:fixed so it escapes overflow-y:auto parents) -->
 <div id="copy-menu">
   <div class="dm-section">Share</div>
+  <button class="dm-item" onclick="shareHyperlink()"><svg viewBox="0 0 13 13" fill="none"><path d="M5.5 7.5a3 3 0 0 0 4.243 0l1.5-1.5a3 3 0 0 0-4.243-4.243L6.25 2.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><path d="M7.5 5.5a3 3 0 0 0-4.243 0L1.757 7a3 3 0 0 0 4.243 4.243L6.75 10.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Share Hyperlink</button>
   <button class="dm-item" onclick="shareBOM()"><svg viewBox="0 0 13 13" fill="none"><circle cx="10" cy="2.5" r="1.5" stroke="currentColor" stroke-width="1.1"/><circle cx="10" cy="10.5" r="1.5" stroke="currentColor" stroke-width="1.1"/><circle cx="3" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M8.5 3.5L4.5 5.5M4.5 7.5L8.5 9.5" stroke="currentColor" stroke-width="1.1"/></svg>Share BOM URL</button>
   <div class="dm-sep"></div>
   <div class="dm-section">Copy to Clipboard</div>
@@ -581,8 +647,8 @@
   <button class="dm-item" onclick="saveProject();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>Save Project</button>
   <div class="dm-sep"></div>
   <div class="dm-section">File</div>
-  <button class="dm-item" onclick="exportCSV();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Export CSV</button>
-  <button class="dm-item" onclick="openImport();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Import CSV</button>
+  <button class="dm-item" onclick="exportCSV();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Export FabricBOM</button>
+  <button class="dm-item" onclick="openImport();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Import FabricBOM</button>
   <div id="project-sfdc-section" style="display:none">
     <div class="dm-sep"></div>
     <div class="dm-section">SFDC Export (Download CSV)</div>
@@ -599,14 +665,14 @@
   <div id="imp-box">
     <h3>
       <svg width="14" height="14" viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="#2A2F3A" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="#2A2F3A" stroke-width="1.3" stroke-linecap="round"/></svg>
-      Import Project from CSV
+      Import Project from FabricBOM
     </h3>
     <div id="imp-body">
       <div id="imp-drop" onclick="document.getElementById('imp-file').click()" ondragover="impDragOver(event)" ondragleave="impDragLeave(event)" ondrop="impDrop(event)">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="opacity:.35"><rect x="4" y="4" width="24" height="24" rx="3" stroke="#6B7589" stroke-width="1.5"/><path d="M10 16h12M16 10v12" stroke="#6B7589" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <div style="font-weight:600;color:var(--c-text);margin-top:8px;">Drop a CSV file here or click to browse</div>
-        <p>Must be a FortiBOM-exported CSV. Project info and all product groups will be restored.</p>
-        <input type="file" id="imp-file" accept=".csv" style="display:none" onchange="impFileChosen(this)">
+        <div style="font-weight:600;color:var(--c-text);margin-top:8px;">Drop an .fbom <span title="go ahead, drop it" aria-hidden="true">😉</span> … or click to browse.</div>
+        <p>Must be a FabricBOM-exported .fbom file. Project info and all product groups will be restored.</p>
+        <input type="file" id="imp-file" accept=".fbom" style="display:none" onchange="impFileChosen(this)">
       </div>
       <div id="imp-warn" style="display:none;font-size:12px;color:#8A5800;background:#FFF8EE;border:1px solid #F5D9A0;border-radius:3px;padding:8px 12px;"></div>
     </div>
@@ -649,6 +715,7 @@
   <button class="kp-item" data-kind="opt" onclick="setKind('opt')"><span class="br br-o">Optional</span></button>
   <button class="kp-item" data-kind="inc" onclick="setKind('inc')"><span class="br br-o">Included</span></button>
   <button class="kp-item" data-kind="excl" onclick="setKind('excl')"><span class="br br-ex">Excluded</span></button>
+  <button class="kp-item" data-kind="attn" onclick="setKind('attn')"><span class="br br-attn">Attention</span></button>
   <div class="kp-sep"></div>
   <button class="kp-item" data-kind="" onclick="setKind('')" style="color:var(--c-text2)">Clear override</button>
 </div>
@@ -673,6 +740,7 @@
   </div>
 </div>
 
+<script src="js/xlsx.mini.min.js"></script>
 <script>
 const CATALOG = [
   { file:'fortigate-bomgen.html',    label:'FortiGate (FGT)',      cat:'Network Security' },
@@ -711,6 +779,7 @@ const CATALOG = [
 
 let cart = [], seq = 0, activeNav = null;
 let savedProjects = [];
+let bomDirty = false;
 let spvFilter = '';
 let spRevExpanded = {}; // projectKey -> boolean, tracks which revision lists are expanded
 // cart entries are either product-entries {id, product, label, rows, meta}
@@ -907,17 +976,31 @@ function showAbout() {
 }
 
 // ── postMessage RECEIVER ─────────────────────────────────────────────────────
+let _skuEditId = null;
+
 window.addEventListener('message', e => {
   if (!e.data) return;
   if (e.data.type === 'FORTIBOM_CLOSE') { closeSkuModal(); return; }
   if (e.data.type !== 'FORTIBOM_ADD') return;
   const { product, label, rows, meta } = e.data;
-  cart.push({ id:++seq, product, label, rows, meta });
-  updateBadges();
-  renderGroups();
-  saveCart();
-  toast(`✓ Added to Project BOM: ${label}`);
-  if (cart.length === 1) showPBV();
+  if (_skuEditId !== null) {
+    const idx = cart.findIndex(c => c.id === _skuEditId);
+    if (idx !== -1) cart[idx] = { ...cart[idx], product, label, rows, meta };
+    _skuEditId = null;
+    closeSkuModal();
+    renderGroups();
+    saveCart();
+    markDirty();
+    toast(`✓ Updated: ${label || 'Custom SKU group'}`);
+  } else {
+    cart.push({ id:++seq, product, label, rows, meta });
+    updateBadges();
+    renderGroups();
+    saveCart();
+    markDirty();
+    toast(`✓ Added to Project BOM: ${label || 'Custom SKU group'}`);
+    if (cart.length === 1) showPBV();
+  }
 });
 
 // ── CART UI ──────────────────────────────────────────────────────────────────
@@ -933,7 +1016,20 @@ function updateBadges() {
   n > 0 ? navProj.classList.add('live') : navProj.classList.remove('live');
 }
 
-function removeFromCart(id) { cart = cart.filter(c=>c.id!==id); updateBadges(); renderGroups(); saveCart(); }
+function updateSaveIndicator() {
+  const cls = cart.length === 0 ? '' : (bomDirty ? 'save-dot dirty' : 'save-dot saved');
+  const title = cart.length === 0 ? '' : (bomDirty ? 'Unsaved changes' : 'Saved');
+  ['bom-save-dot','nav-bom-save-dot'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = cls || 'save-dot';
+    el.title = title;
+  });
+}
+function markDirty() { bomDirty = true; updateSaveIndicator(); }
+function markSaved() { bomDirty = false; updateSaveIndicator(); }
+
+function removeFromCart(id) { cart = cart.filter(c=>c.id!==id); updateBadges(); renderGroups(); saveCart(); markDirty(); }
 
 function toggleDetail(btn) {
   const row = btn.closest('tr');
@@ -950,14 +1046,23 @@ function updateQty(entryId, rowIdx, rawVal) {
   const num = parseInt(rawVal, 10);
   entry.rows[rowIdx].qty = (rawVal === '' || rawVal === null) ? undefined : (!isNaN(num) && num >= 0 ? num : entry.rows[rowIdx].qty);
   saveCart();
+  markDirty();
   renderGroups();
+}
+function updateNote(entryId, rowIdx, value) {
+  const entry = cart.find(e => e.id === entryId);
+  if (!entry) return;
+  entry.rows[rowIdx].note = value.trim();
+  saveCart();
+  markDirty();
 }
 function updateEntryLabel(id, value) {
   const entry = cart.find(c => c.id === id);
   if (!entry) return;
   const v = value.trim();
-  if (v) entry.label = v;
+  entry.label = v;
   saveCart();
+  markDirty();
   renderGroups();
 }
 function updateSectionLabel(entryId, rowIdx, value) {
@@ -965,9 +1070,10 @@ function updateSectionLabel(entryId, rowIdx, value) {
   if (!entry || !entry.rows || entry.rows[rowIdx] === undefined) return;
   entry.rows[rowIdx].section = value.trim();
   saveCart();
+  markDirty();
   renderGroups();
 }
-function clearCart() { if (!confirm('Clear all items from the Project BOM?')) return; cart=[]; seq=0; if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname); updateBadges(); renderGroups(); saveCart(); }
+function clearCart() { if (!confirm('Clear all items from the Project BOM?')) return; cart=[]; seq=0; if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname); updateBadges(); renderGroups(); saveCart(); markSaved(); }
 function newProject() {
   if (cart.length && !confirm('Start a new project? The current BOM and project info will be cleared.')) return;
   cart=[]; seq=0;
@@ -982,8 +1088,8 @@ function newProject() {
   const card = document.getElementById('proj-info-card');
   card.classList.remove('view-mode');
   document.getElementById('pi-edit-btn').classList.remove('active');
-  document.getElementById('pi-edit-label').textContent = 'View';
-  updateBadges(); renderGroups(); saveCart();
+  document.getElementById('pi-edit-label').textContent = 'Save';
+  updateBadges(); renderGroups(); saveCart(); markSaved();
   showPBV();
 }
 
@@ -1020,6 +1126,7 @@ function setKind(newKind) {
   }
   closeKindPopover();
   saveCart();
+  markDirty();
   renderGroups();
 }
 
@@ -1037,8 +1144,8 @@ async function renderGroups() {
   let priceMap = null;
   try {
     const pricingRaw = await getPricingIDB();
-    if (pricingRaw && pricingRaw.rows && pricingRaw.rows.length) {
-      priceMap = new Map(pricingRaw.rows.map(r => [r['SKU'], r['Price']]));
+    if (pricingRaw && pricingRaw.data && pricingRaw.data.rows && pricingRaw.data.rows.length) {
+      priceMap = new Map(pricingRaw.data.rows.map(r => [r['SKU'], r['Price']]));
     }
   } catch(e) { /* pricing unavailable */ }
   const hasPricing = priceMap !== null;
@@ -1100,7 +1207,7 @@ async function renderGroups() {
           ${groupPriceHtml}
         </div>
         <div class="bgr-actions">
-          <button class="bgr-btn" onclick="openEditGroup(${entry.id})">Edit</button>
+          <button class="bgr-btn" onclick="openEditGroup(${entry.id})" title="Edit group header"><svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg></button>
           <button class="bgr-btn del" onclick="removeFromCart(${entry.id})">✕</button>
         </div>`;
       addDragListeners(el);
@@ -1111,17 +1218,24 @@ async function renderGroups() {
       const rows = displayRows.map((r, i) => {
         if (r.section!==undefined) return `<tr class="sr"><td colspan="${colSpan}"><input type="text" class="label-input" value="${h(r.section)}" onchange="updateSectionLabel(${entry.id},${i},this.value)"></td></tr>`;
         lines++; if (typeof r.qty==='number') qty+=r.qty;
-        const bm={req:'<span class="br br-r">Required</span>',mand:'<span class="br br-m">Mandatory</span>',opt:'<span class="br br-o">Optional</span>',inc:'<span class="br br-o">Included</span>',excl:'<span class="br br-ex">Excluded</span>',note:''};
-        const effectiveKind = r._kindOverride !== undefined ? r._kindOverride : r.kind;
+        const bm={req:'<span class="br br-r">Required</span>',mand:'<span class="br br-m">Mandatory</span>',opt:'<span class="br br-o">Optional</span>',inc:'<span class="br br-o">Included</span>',excl:'<span class="br br-ex">Excluded</span>',attn:'<span class="br br-attn">Attention</span>',note:''};
+        // Compute pricing first so auto-ATTENTION can use it
+        let listPrice, listPriceNum = NaN;
+        if (hasPricing) {
+          listPrice = priceMap.get(r.sku || '');
+          listPriceNum = listPrice ? parseFloat(String(listPrice).replace(/[^0-9.]/g, '')) : NaN;
+        }
+        // Auto-select ATTENTION when pricing is loaded and the SKU has no valid price (unless user set an override)
+        const baseKind = r._kindOverride !== undefined ? r._kindOverride : r.kind;
+        const effectiveKind = (r._kindOverride === undefined && hasPricing && r.sku && isNaN(listPriceNum)) ? 'attn' : baseKind;
         const isExcluded = effectiveKind === 'excl';
         let priceCells = '';
         if (hasPricing) {
-          const listPrice = priceMap.get(r.sku || '');
-          const listPriceNum = listPrice ? parseFloat(String(listPrice).replace(/[^0-9.]/g, '')) : NaN;
           const totalNum = (!isNaN(listPriceNum) && typeof r.qty === 'number') ? listPriceNum * r.qty : NaN;
           if (!isExcluded && !isNaN(totalNum)) { grandTotal += totalNum; grandTotalValid = true; }
           const totalDisplay = isExcluded ? '$0.00' : (!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '');
-          priceCells = `<td class="nc" style="text-align:right;white-space:nowrap;">${listPrice ? h(listPrice) : ''}</td><td class="nc" style="text-align:right;white-space:nowrap;">${totalDisplay}</td>`;
+          const listPriceDisplay = !isNaN(listPriceNum) ? '$'+listPriceNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : (listPrice ? h(listPrice) : '');
+          priceCells = `<td class="nc" style="text-align:right;white-space:nowrap;">${listPriceDisplay}</td><td class="nc" style="text-align:right;white-space:nowrap;">${totalDisplay}</td>`;
         }
         const detailRows = [];
         if (r.desc) detailRows.push(`<tr><td class="det-k">Description</td><td class="det-v nc">${h(r.desc)}</td></tr>`);
@@ -1131,7 +1245,7 @@ async function renderGroups() {
         const detailTr = detailRows.length ? `<tr class="bom-detail"><td colspan="100"><table class="det-tbl"><tbody>${detailRows.join('')}</tbody></table></td></tr>` : '';
         const evenCls = lines%2===0 ? ' class="bt-even"' : '';
         const typeCell = `<button class="type-btn" onclick="openKindPopover(event,${entry.id},${i})" title="Click to change type">${bm[effectiveKind]||'<span class=\\"type-empty\\">—</span>'}<span class="type-hint">▾</span></button>`;
-        return `<tr${evenCls}>${expCell}<td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc"><span class="note-clamp" title="${h(r.desc||'')}">${h(r.desc||'')}</span></td><td class="qc"><input type="number" class="qty-input" value="${r.qty??''}" min="0" onchange="updateQty(${entry.id},${i},this.value)"></td><td class="col-type">${typeCell}</td><td class="nc col-notes"><span class="note-clamp" title="${h(r.note||'')}">${h(r.note||'')}</span></td>${priceCells}</tr>${detailTr}`;
+        return `<tr${evenCls}>${expCell}<td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc"><span class="note-clamp" title="${h(r.desc||'')}">${h(r.desc||'')}</span></td><td class="qc"><input type="number" class="qty-input" value="${r.qty??''}" min="0" onchange="updateQty(${entry.id},${i},this.value)"></td><td class="col-type">${typeCell}</td><td class="nc col-notes"><textarea class="note-input" rows="3" placeholder="Add note…" onchange="updateNote(${entry.id},${i},this.value)" title="${h(r.note||'')}">${h(r.note||'')}</textarea></td>${priceCells}</tr>${detailTr}`;
       }).join('');
       totL+=lines; totQ+=qty;
       const el = document.createElement('div');
@@ -1144,6 +1258,7 @@ async function renderGroups() {
           </div>
           <div style="flex:1;min-width:0;"><input type="text" class="label-input bgp" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)"><div class="bgm">${lines} line item${lines!==1?'s':''} · ${qty.toLocaleString()} units/licenses</div></div>
           ${entry.product !== 'Custom SKU' ? `<span class="bg-tag">${h(entry.product)}</span>` : ''}
+          <button class="bg-edit" onclick="openSkuModalForEdit(${entry.id})" title="Edit rows"><svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg></button>
           <button class="bg-del" onclick="removeFromCart(${entry.id})">✕</button>
         </div>
         <div class="bt-wrap"><table class="bt"><thead><tr>
@@ -1185,6 +1300,7 @@ function _doDrop(targetId) {
   dragSrcId = null;
   renderGroups();
   saveCart();
+  markDirty();
 }
 
 function _topItem(node) {
@@ -1307,6 +1423,7 @@ function saveGroupRow() {
   closeGroupModal();
   renderGroups();
   saveCart();
+  markDirty();
   toast(editingGroupId !== null ? '✓ Group updated' : '✓ Group header added');
 }
 
@@ -1365,6 +1482,7 @@ function saveProject() {
   savedProjects.unshift(snapshot);
   saveSaved();
   updateSavedBadge();
+  markSaved();
   toast(`✓ Project saved: "${meta.cust || 'Unnamed'}"`);
 }
 
@@ -1500,6 +1618,7 @@ function loadSavedProject(id) {
   renderGroups();
   saveCart();
   savePiData();
+  markSaved();
   toast(`✓ Loaded: "${snap.meta.cust || 'Unnamed'}"`);
   initPiMode();
   showPBV();
@@ -1603,6 +1722,89 @@ function shareBOM() {
   history.replaceState(null, '', '#bom=' + compressed);
 }
 
+function shareHyperlink() {
+  closeCopyMenu();
+  if (!cart.length) { toast('Nothing to share — add items first'); return; }
+  let compressed;
+  try {
+    compressed = LZString.compressToEncodedURIComponent(serializeBOM());
+  } catch(e) {
+    toast('Could not generate share URL: ' + e.message);
+    return;
+  }
+  const url = location.origin + location.pathname + '#bom=' + compressed;
+  const displayName = getMeta().cust;
+  const html = `<a href="${url}">${displayName.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}</a>`;
+  history.replaceState(null, '', '#bom=' + compressed);
+  if (navigator.clipboard && navigator.clipboard.write) {
+    const item = new ClipboardItem({
+      'text/html': new Blob([html], { type: 'text/html' }),
+      'text/plain': new Blob([url], { type: 'text/plain' })
+    });
+    navigator.clipboard.write([item]).then(
+      () => toast('✓ Hyperlink copied to clipboard'),
+      () => clipboardWrite(url, '✓ Share URL copied (hyperlink unavailable)')
+    );
+  } else {
+    clipboardWrite(url, '✓ Share URL copied (hyperlink unavailable)');
+  }
+}
+
+function backupProjects() {
+  if (!savedProjects.length) { toast('No saved projects to back up'); return; }
+
+  // Collect the most recent revision of each project (savedProjects is newest-first)
+  const seen = new Set();
+  const primaries = [];
+  savedProjects.forEach(p => {
+    const key = p.projectKey || p.id;
+    if (!seen.has(key)) { seen.add(key); primaries.push(p); }
+  });
+
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}-${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`;
+
+  const base = location.origin + location.pathname;
+
+  const lines = [`# FabricBOM backup ${ts}`, ''];
+  primaries.forEach(p => {
+    const m = p.meta || {};
+    const label = [m.cust, m.opp].filter(Boolean).join(' / ') || 'Untitled';
+    const saveDate = new Date(p.savedAt).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+    const displayName = `${label} - ${saveDate}`;
+    try {
+      const items = (p.cart || []).map(entry => {
+        if (entry._type === 'group') {
+          return { g: 1, l: entry.label, n: entry.note || '', sp: entry.showPricing ? 1 : 0 };
+        }
+        const rows = (entry.rows || []).map(r =>
+          r.section !== undefined
+            ? { s: r.section }
+            : [r.sku || '', r.desc || '', r.qty ?? null, r.kind || '', r.note || '', r._kindOverride || '']
+        );
+        return { p: entry.product, l: entry.label, r: rows };
+      });
+      const json = JSON.stringify({ v: 1, m: { c: m.cust||'', o: m.opp||'', e: m.eng||'', d: m.date||'', n: m.notes||'', t: m.term||'DD' }, i: items });
+      const compressed = LZString.compressToEncodedURIComponent(json);
+      const url = base + '#bom=' + compressed;
+      lines.push(`* [${displayName}](${url})`);
+    } catch(e) {
+      lines.push(`* ${displayName} *(URL generation failed)*`);
+    }
+  });
+  lines.push('');
+
+  const md = lines.join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([md], { type: 'text/markdown;charset=utf-8;' }));
+  a.download = `FabricBOM-Backup-${ts}.md`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 1000);
+  toast(`✓ Backup downloaded (${primaries.length} project${primaries.length !== 1 ? 's' : ''})`);
+}
+
 function exportCSV() {
   const p = getMeta();
   const termLabel = {DD:'Co-term (-DD)',12:'1 Year (-12)',36:'3 Years (-36)',60:'5 Years (-60)'}[p.term];
@@ -1627,8 +1829,8 @@ function exportCSV() {
   const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
-  a.download=`FabricBOM_${p.cust.replace(/[^a-zA-Z0-9]/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click(); toast('✓ CSV exported');
+  a.download=`FabricBOM_${p.cust.replace(/[^a-zA-Z0-9]/g,'_')}_${new Date().toISOString().slice(0,10)}.fbom`;
+  a.click(); toast('✓ FabricBOM exported');
 }
 // ── COPY / EXPORT DROPDOWN ───────────────────────────────────────────────────
 function toggleCopyMenu(e) {
@@ -1652,6 +1854,7 @@ function toggleAddMenu(e) {
 }
 function closeAddMenu() { document.getElementById('add-menu').classList.remove('on'); }
 function openSkuModal() {
+  _skuEditId = null;
   const frame = document.getElementById('sku-frame');
   if (!frame.src.includes('custom-sku-bomgen-mobile.html')) {
     frame.src = 'products/custom-sku-bomgen-mobile.html';
@@ -1660,7 +1863,24 @@ function openSkuModal() {
   }
   document.getElementById('sku-modal').classList.add('on');
 }
+function openSkuModalForEdit(entryId) {
+  const entry = cart.find(c => c.id === entryId);
+  if (!entry) return;
+  _skuEditId = entryId;
+  const frame = document.getElementById('sku-frame');
+  const doLoad = () => {
+    try { frame.contentWindow.loadForEdit({ label: entry.label, rows: entry.rows }); } catch(_) {}
+  };
+  if (!frame.src.includes('custom-sku-bomgen-mobile.html')) {
+    frame.src = 'products/custom-sku-bomgen-mobile.html';
+    frame.addEventListener('load', function onLoad() { frame.removeEventListener('load', onLoad); doLoad(); });
+  } else {
+    doLoad();
+  }
+  document.getElementById('sku-modal').classList.add('on');
+}
 function closeSkuModal() {
+  _skuEditId = null;
   document.getElementById('sku-modal').classList.remove('on');
 }
 document.getElementById('sku-modal').addEventListener('click', function(e) {
@@ -1674,7 +1894,7 @@ async function toggleProjectMenu(e) {
   try {
     const pricing = await getPricingIDB();
     const sfdc = document.getElementById('project-sfdc-section');
-    if (sfdc) sfdc.style.display = (pricing && pricing.rows && pricing.rows.length) ? '' : 'none';
+    if (sfdc) sfdc.style.display = (pricing && pricing.data && pricing.data.rows && pricing.data.rows.length) ? '' : 'none';
   } catch(_) {}
   const rect = btn.getBoundingClientRect();
   menu.style.top  = (rect.bottom + 4) + 'px';
@@ -1883,6 +2103,7 @@ function doImport() {
   renderGroups();
   saveCart();
   savePiData();
+  markDirty();
   closeImport();
   const parts = [];
   if (prodCount) parts.push(`${prodCount} product group${prodCount!==1?'s':''}`);
@@ -1915,6 +2136,7 @@ function applySharedBOM(parsed) {
   renderGroups();
   saveCart();
   savePiData();
+  markDirty();
   initPiMode();
 }
 
@@ -1972,41 +2194,57 @@ function checkBOMFragment() {
   }
 }
 
-// ── PRICING (IndexedDB) ────────────────────────────────────────────────────────
-let _pricingDb = null;
+// ── PRICING (IndexedDB — toolbox_shared) ─────────────────────────────────────
+let _sharedDb = null;
 
-function openPricingDB() {
-  if (_pricingDb) return Promise.resolve(_pricingDb);
+const PRICING_REQUIRED_HEADERS = [
+  'Comments','Identifier','Product Family Group','Product','Product Type','Item','SKU',
+  'Description #1','Description #2','Price','Category','Fx Translated Price','UPC Code',
+  'FED','GSA','COO','Single Pack Weight (lbs.)','Single Pack Length (in.)',
+  'Single Pack Width (in.)','Single Pack Height (in.)','Case Pack Quantity',
+  'Case Pack Weight (lbs.)','Case Pack Length (in.)','Case Pack Width (in.)',
+  'Case Pack Height (in.)','Ground Pallet Quantity','Ground Pallet Weight (lbs.)',
+  'Ground Pallet Length (in.)','Ground Pallet Width (in.)','Ground Pallet Height (in.)',
+  'Air Pallet Quantity','Air Pallet Weight (lbs.)','Air Pallet Length (in.)',
+  'Air Pallet Width (in.)','Air Pallet Height (in.)','AutoStart','E-Rate','Pillar','Term (Month)'
+];
+
+function openSharedDB() {
+  if (_sharedDb) return Promise.resolve(_sharedDb);
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open('fabricbom_pricing', 1);
-    req.onupgradeneeded = e => e.target.result.createObjectStore('pricing');
-    req.onsuccess = e => { _pricingDb = e.target.result; resolve(_pricingDb); };
+    const req = indexedDB.open('toolbox_shared', 2);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (db.objectStoreNames.contains('datasets')) db.deleteObjectStore('datasets');
+      db.createObjectStore('datasets', { keyPath: 'key' });
+    };
+    req.onsuccess = e => { _sharedDb = e.target.result; resolve(_sharedDb); };
     req.onerror = e => reject(e.target.error);
   });
 }
-async function savePricingIDB(data) {
-  const db = await openPricingDB();
+async function savePricingIDB(record) {
+  const db = await openSharedDB();
   return new Promise((resolve, reject) => {
-    const tx = db.transaction('pricing', 'readwrite');
-    tx.objectStore('pricing').put(data, 'current');
+    const tx = db.transaction('datasets', 'readwrite');
+    tx.objectStore('datasets').put(record);
     tx.oncomplete = resolve;
     tx.onerror = e => reject(e.target.error);
   });
 }
 async function getPricingIDB() {
-  const db = await openPricingDB();
+  const db = await openSharedDB();
   return new Promise((resolve, reject) => {
-    const tx = db.transaction('pricing', 'readonly');
-    const req = tx.objectStore('pricing').get('current');
+    const tx = db.transaction('datasets', 'readonly');
+    const req = tx.objectStore('datasets').get('pricing');
     req.onsuccess = e => resolve(e.target.result || null);
     req.onerror = e => reject(e.target.error);
   });
 }
 async function deletePricingIDB() {
-  const db = await openPricingDB();
+  const db = await openSharedDB();
   return new Promise((resolve, reject) => {
-    const tx = db.transaction('pricing', 'readwrite');
-    tx.objectStore('pricing').delete('current');
+    const tx = db.transaction('datasets', 'readwrite');
+    tx.objectStore('datasets').delete('pricing');
     tx.oncomplete = resolve;
     tx.onerror = e => reject(e.target.error);
   });
@@ -2028,6 +2266,18 @@ function parsePricingLine(line) {
   }
   cells.push(cur);
   return cells;
+}
+
+function validatePricingHeaders(headers) {
+  if (headers.length !== PRICING_REQUIRED_HEADERS.length) {
+    return `Expected ${PRICING_REQUIRED_HEADERS.length} columns, found ${headers.length}.`;
+  }
+  for (let i = 0; i < PRICING_REQUIRED_HEADERS.length; i++) {
+    if (headers[i] !== PRICING_REQUIRED_HEADERS[i]) {
+      return `Column ${i + 1} mismatch: expected "${PRICING_REQUIRED_HEADERS[i]}", found "${headers[i]}".`;
+    }
+  }
+  return null;
 }
 
 function parsePricingCSV(text) {
@@ -2052,7 +2302,6 @@ function parsePricingCSV(text) {
   for (let i = 0; i < Math.min(rawLines.length, 30); i++) {
     const cells = parsePricingLine(rawLines[i]);
     const first = cells[0].trim();
-
     if (first.startsWith('Effective Date:')) {
       effectiveDate = first.replace('Effective Date:', '').trim();
       foundDate = true;
@@ -2076,13 +2325,20 @@ function parsePricingCSV(text) {
   }
 
   const headers = parsePricingLine(rawLines[headerRowIdx]).map(h => h.trim());
+  const headerErr = validatePricingHeaders(headers);
+  if (headerErr) return { ok: false, error: 'Header validation failed: ' + headerErr };
+
   const rows = [];
   for (let i = headerRowIdx + 1; i < rawLines.length; i++) {
     if (!rawLines[i].trim()) continue;
     const cells = parsePricingLine(rawLines[i]);
     if (cells.every(c => !c.trim())) continue;
     const row = {};
-    headers.forEach((hdr, idx) => { if (hdr) row[hdr] = (cells[idx] || '').trim(); });
+    headers.forEach((hdr, idx) => { row[hdr] = (cells[idx] || '').trim(); });
+    if (row['Price']) {
+      const stripped = row['Price'].replace(/[^0-9.]/g, '');
+      if (stripped !== '') row['Price'] = stripped;
+    }
     rows.push(row);
   }
 
@@ -2090,39 +2346,94 @@ function parsePricingCSV(text) {
     return { ok: false, error: 'No pricing data rows found after the header row.' };
   }
 
-  return {
-    ok: true,
-    name: name || 'Fortinet Price List',
-    effectiveDate: effectiveDate || '',
-    headers,
-    rows,
-    uploadedAt: new Date().toISOString()
-  };
+  return { ok: true, name: name || 'Fortinet Price List', effectiveDate: effectiveDate || '', headers, rows };
+}
+
+function parsePricingXLSX(arrayBuffer, filename) {
+  try {
+    const wb = XLSX.read(arrayBuffer, { type: 'array' });
+    const sheetName = wb.SheetNames.find(n => n === 'DataSet') ||
+                      wb.SheetNames.find(n => /^dataset$/i.test(n));
+    if (!sheetName) {
+      return { ok: false, error: 'Could not find the "DataSet" tab in the Excel file.' };
+    }
+
+    const allRows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: '' });
+    if (!allRows.length) return { ok: false, error: 'The DataSet tab is empty.' };
+
+    // Scan preamble rows for metadata and header row (name/date may be in any column)
+    let name = '', effectiveDate = '', headerRowIdx = -1;
+    for (let i = 0; i < Math.min(allRows.length, 40); i++) {
+      const cells = allRows[i].map(c => String(c || '').trim());
+      // Check every cell for metadata
+      for (const cell of cells) {
+        if (cell.startsWith('Effective Date:')) {
+          effectiveDate = effectiveDate || cell.replace('Effective Date:', '').trim();
+        } else if (!name && /price\s*list/i.test(cell)) {
+          name = cell;
+        }
+      }
+      // Header row: first non-empty cell is "Comments" and row contains "SKU"
+      const firstNonEmpty = cells.find(c => c);
+      if (firstNonEmpty === 'Comments' && cells.includes('SKU')) {
+        headerRowIdx = i;
+        break;
+      }
+    }
+
+    if (headerRowIdx === -1) {
+      return { ok: false, error: 'Could not find the pricing header row in the DataSet tab. Expected a row starting with "Comments" and containing "SKU".' };
+    }
+
+    // Strip trailing empty columns before validating
+    const headers = allRows[headerRowIdx].map(h => String(h || '').trim());
+    while (headers.length && !headers[headers.length - 1]) headers.pop();
+
+    const headerErr = validatePricingHeaders(headers);
+    if (headerErr) return { ok: false, error: 'Header validation failed: ' + headerErr };
+
+    const rows = [];
+    for (let i = headerRowIdx + 1; i < allRows.length; i++) {
+      const rowArr = allRows[i];
+      if (rowArr.every(c => !String(c).trim())) continue;
+      const row = {};
+      headers.forEach((hdr, idx) => { row[hdr] = String(rowArr[idx] ?? ''); });
+      rows.push(row);
+    }
+
+    if (!rows.length) return { ok: false, error: 'No data rows found in the DataSet tab.' };
+
+    return { ok: true, name: name || 'Fortinet Price List', effectiveDate: effectiveDate || '', headers, rows };
+  } catch(e) {
+    return { ok: false, error: 'Could not parse Excel file: ' + e.message };
+  }
 }
 
 async function renderPricingSection() {
   const el = document.getElementById('pricing-content');
   if (!el) return;
   try {
-    const data = await getPricingIDB();
-    if (!data) {
+    const record = await getPricingIDB();
+    if (!record) {
       el.innerHTML = `
         <div id="pricing-drop" onclick="document.getElementById('pricing-file').click()"
              ondragover="pricingDragOver(event)" ondragleave="pricingDragLeave(event)" ondrop="pricingDrop(event)">
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="opacity:.35"><rect x="4" y="4" width="24" height="24" rx="3" stroke="#6B7589" stroke-width="1.5"/><path d="M10 16h12M16 10v12" stroke="#6B7589" stroke-width="1.5" stroke-linecap="round"/></svg>
-          <div style="font-weight:600;color:var(--c-text);margin-top:8px;">Drop a Fortinet Pricing CSV here or click to browse</div>
-          <p>The price list name and effective date will be read automatically from the file header.</p>
+          <div style="font-weight:600;color:var(--c-text);margin-top:8px;">Drop a Fortinet Pricing CSV or XLSX here or click to browse</div>
+          <p>Drop the exported CSV or the actual Fortinet price list XLSX. The name and effective date are read automatically.</p>
         </div>`;
     } else {
-      const when = new Date(data.uploadedAt).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
-      const rowCount = data.rows.length.toLocaleString();
+      const d = record.data;
+      const when = new Date(d.uploadedAt).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+      const rowCount = record.meta.rowCount.toLocaleString();
+      const srcLabel = record.source && record.source.type === 'xlsx' ? 'XLSX' : 'CSV';
       el.innerHTML = `
         <div class="sp-list">
           <div class="sp-card">
             <div class="sp-accent"></div>
             <div class="sp-body">
-              <div class="sp-name">${h(data.name)}</div>
-              <div class="sp-meta">Effective: ${h(data.effectiveDate || '—')} &middot; ${rowCount} items &middot; Uploaded ${when}</div>
+              <div class="sp-name">${h(d.name)}</div>
+              <div class="sp-meta">Effective: ${h(d.effectiveDate || '—')} &middot; ${rowCount} items &middot; ${srcLabel} uploaded ${when}</div>
             </div>
             <div class="sp-actions">
               <button class="btn bd" onclick="deletePricing()">
@@ -2146,13 +2457,23 @@ function pricingFileChosen(inp) { if(inp.files[0]) handlePricingFile(inp.files[0
 function handlePricingFile(file) {
   const el = document.getElementById('pricing-content');
   if (el) el.innerHTML = `<div style="padding:20px;text-align:center;font-size:13px;color:var(--c-text2);">Processing pricing data…</div>`;
+  const isXlsx = /\.xlsx$/i.test(file.name);
   const reader = new FileReader();
   reader.onload = async ev => {
-    const result = parsePricingCSV(ev.target.result);
-    if (!result.ok) { toast('⚠ ' + result.error); renderPricingSection(); return; }
+    const parsed = isXlsx
+      ? parsePricingXLSX(ev.target.result, file.name)
+      : parsePricingCSV(ev.target.result);
+    if (!parsed.ok) { toast('⚠ ' + parsed.error); renderPricingSection(); return; }
+    const record = {
+      key: 'pricing',
+      version: 1,
+      source: { type: isXlsx ? 'xlsx' : 'csv', filename: file.name, importedAt: new Date().toISOString() },
+      data: { ok: true, name: parsed.name, effectiveDate: parsed.effectiveDate, headers: parsed.headers, rows: parsed.rows, uploadedAt: new Date().toISOString() },
+      meta: { rowCount: parsed.rows.length, headerCount: parsed.headers.length, effectiveDate: parsed.effectiveDate, datasetName: parsed.name }
+    };
     try {
-      await savePricingIDB(result);
-      toast(`✓ Pricing saved: "${result.name}"`);
+      await savePricingIDB(record);
+      toast(`✓ Pricing saved: "${parsed.name}"`);
       renderPricingSection();
     } catch(e) {
       toast('⚠ Could not save pricing data: ' + e.message);
@@ -2160,7 +2481,11 @@ function handlePricingFile(file) {
     }
   };
   reader.onerror = () => { toast('⚠ Could not read file.'); renderPricingSection(); };
-  reader.readAsText(file);
+  if (isXlsx) {
+    reader.readAsArrayBuffer(file);
+  } else {
+    reader.readAsText(file);
+  }
 }
 
 async function deletePricing() {
@@ -2217,6 +2542,31 @@ function updatePiView() {
   html += '</div>';
 
   document.getElementById('pi-view').innerHTML = html;
+  updatePiSummary();
+}
+
+function updatePiSummary() {
+  const cust  = document.getElementById('pi-cust').value.trim();
+  const opp   = document.getElementById('pi-opp').value.trim();
+  const eng   = document.getElementById('pi-eng').value.trim();
+  const date  = document.getElementById('pi-date').value.trim();
+  const term  = document.getElementById('pi-term').value;
+  const termLabel = PI_TERM_LABELS[term] || term;
+
+  const chip = (lbl, val) => val ? `<div class="pi-sum-divider"></div><div class="pi-sum-chip"><span class="pi-sum-lbl">${lbl}</span><span class="pi-sum-val">${h(val)}</span></div>` : '';
+
+  const custDisplay = cust || 'Unnamed Project';
+  let html = `<span class="pi-sum-cust${!cust?' empty':''}" title="${h(custDisplay)}">${h(custDisplay)}</span>`;
+  html += chip('Opportunity', opp);
+  html += chip('Engineer', eng);
+  html += chip('Date', date);
+  if (term !== 'DD') html += chip('Term', termLabel);
+
+  document.getElementById('pi-summary').innerHTML = html;
+}
+
+function togglePiExpand() {
+  document.getElementById('proj-info-card').classList.toggle('pi-expanded');
 }
 
 function togglePiEdit() {
@@ -2226,11 +2576,13 @@ function togglePiEdit() {
   const isView = card.classList.contains('view-mode');
   if (isView) {
     card.classList.remove('view-mode');
+    card.classList.remove('pi-expanded');
     btn.classList.remove('active');
-    label.textContent = 'View';
+    label.textContent = 'Save';
   } else {
     updatePiView();
     card.classList.add('view-mode');
+    card.classList.remove('pi-expanded');
     btn.classList.add('active');
     label.textContent = 'Edit';
   }
@@ -2249,8 +2601,9 @@ function clearPiFields() {
   const btn   = document.getElementById('pi-edit-btn');
   const label = document.getElementById('pi-edit-label');
   card.classList.remove('view-mode');
+  card.classList.remove('pi-expanded');
   btn.classList.remove('active');
-  label.textContent = 'View';
+  label.textContent = 'Save';
 }
 
 function hasPiData() {
@@ -2266,12 +2619,14 @@ function initPiMode() {
   if (hasPiData()) {
     updatePiView();
     card.classList.add('view-mode');
+    card.classList.remove('pi-expanded');
     btn.classList.add('active');
     label.textContent = 'Edit';
   } else {
     card.classList.remove('view-mode');
+    card.classList.remove('pi-expanded');
     btn.classList.remove('active');
-    label.textContent = 'View';
+    label.textContent = 'Save';
   }
 }
 
@@ -2289,14 +2644,15 @@ loadSaved();
 updateBadges();
 updateSavedBadge();
 renderGroups();
+updateSaveIndicator();
 if (cart.length) showPBV();
 buildNav();
 checkBOMFragment();
 initPiMode();
 ['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
-  document.getElementById(id).addEventListener('input', savePiData);
+  document.getElementById(id).addEventListener('input', () => { savePiData(); if (cart.length) markDirty(); });
 });
-document.getElementById('pi-term').addEventListener('change', savePiData);
+document.getElementById('pi-term').addEventListener('change', () => { savePiData(); if (cart.length) markDirty(); });
 
 // Ensure view mode content is populated before printing regardless of current state
 window.addEventListener('beforeprint', updatePiView);

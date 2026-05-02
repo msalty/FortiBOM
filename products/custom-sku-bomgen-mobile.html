@@ -202,6 +202,10 @@ input.invalid, select.invalid, textarea.invalid {
   font-weight: 600;
 }
 textarea { resize: vertical; min-height: 68px; }
+#f-group-name::placeholder {
+  color: var(--forti-text-muted);
+  opacity: 0.55;
+}
 .hint-text {
   font-size: 11px;
   color: var(--forti-text-muted);
@@ -211,7 +215,7 @@ textarea { resize: vertical; min-height: 68px; }
 input.sku-input {
   font-family: 'Courier New', monospace;
   font-size: 13px;
-  color: #1A4E82;
+  color: var(--forti-text);
   text-transform: uppercase;
   letter-spacing: .04em;
 }
@@ -350,7 +354,6 @@ input.sku-input {
   font-family: inherit;
   font-size: 12px;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: .06em;
   color: var(--forti-text-secondary);
   flex: 1;
@@ -624,16 +627,9 @@ input.sku-input {
     </div>
     <div class="card-body">
       <div class="field">
-        <label>Group Name <span class="req">*</span></label>
+        <label>Group Name <span class="hint">(optional)</span></label>
         <input type="text" id="f-group-name" placeholder="e.g. FortiGate 91G — ENT Bundle"
                oninput="clearErr('f-group-name','err-group-name')">
-        <span class="field-err" id="err-group-name">Group name is required</span>
-      </div>
-      <div class="field">
-        <label>Section Header Label <span class="hint">(dark divider row in BOM)</span></label>
-        <input type="text" id="f-section-label"
-               placeholder="e.g. Hardware + Enterprise Bundle — FortiGate 91G">
-        <span class="hint-text">Leave blank to omit the section header row.</span>
       </div>
     </div>
   </div>
@@ -696,8 +692,8 @@ input.sku-input {
   <button class="btn btn-primary" onclick="generateBOM()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px;margin-top:-1px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><span class="btn-preview-label">Preview</span>
   </button>
-  <button class="btn btn-success" onclick="addToProjectBOM()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px;margin-top:-1px;"><path d="M12 3v13M5 13l7 7 7-7"/><line x1="5" y1="21" x2="19" y2="21"/></svg>Add to BOM
+  <button id="add-to-bom-btn" class="btn btn-success" onclick="addToProjectBOM()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px;margin-top:-1px;"><path d="M12 3v13M5 13l7 7 7-7"/><line x1="5" y1="21" x2="19" y2="21"/></svg><span id="add-to-bom-label">Add to BOM</span>
   </button>
   <span id="smsg"></span>
   <div class="action-spacer"></div>
@@ -730,6 +726,7 @@ let _rowIdCounter = 0;
 let _lastRows  = [];
 let _lastLabel = '';
 let _lastMeta  = {};
+let _isEditing = false;
 
 const KIND_OPTIONS = [
   { value: 'req',  label: 'REQ',  cls: 'selected-req'  },
@@ -1042,13 +1039,6 @@ function generateBOM() {
   const rows = [];
 
   const groupName = document.getElementById('f-group-name').value.trim();
-  if (!groupName) {
-    showErr('f-group-name','err-group-name');
-    document.getElementById('f-group-name').scrollIntoView({ behavior:'smooth', block:'center' });
-    valid = false;
-  } else {
-    clearErr('f-group-name','err-group-name');
-  }
 
   const skuRowEls = document.querySelectorAll('#sku-rows [data-row-type="sku"]');
   if (skuRowEls.length === 0) {
@@ -1059,9 +1049,6 @@ function generateBOM() {
   }
 
   if (!valid) return false;
-
-  const sectionLabel = document.getElementById('f-section-label').value.trim();
-  if (sectionLabel) rows.push({ section: sectionLabel });
 
   document.querySelectorAll('#sku-rows [data-row-id]').forEach(card => {
     const id   = card.dataset.rowId;
@@ -1157,7 +1144,7 @@ function addToProjectBOM() {
   }, '*');
 
   const msg = document.getElementById('smsg');
-  msg.textContent = `✓ "${_lastLabel}" added`;
+  msg.textContent = _isEditing ? `✓ "${_lastLabel || 'group'}" updated` : `✓ "${_lastLabel || 'group'}" added`;
   msg.className = '';
   msg.style.display = 'inline';
   setTimeout(() => { msg.style.display = 'none'; }, 4000);
@@ -1168,15 +1155,38 @@ function addToProjectBOM() {
 // ─────────────────────────────────────────────
 function resetForm() {
   document.getElementById('f-group-name').value = '';
-  document.getElementById('f-section-label').value = '';
   document.getElementById('sku-rows').innerHTML = '';
   document.getElementById('bom-section').style.display = 'none';
   document.getElementById('smsg').style.display = 'none';
   document.getElementById('err-no-rows').style.display = 'none';
-  clearErr('f-group-name','err-group-name');
   _rowIdCounter = 0;
   _lastRows = [];
+  _isEditing = false;
+  const lbl = document.getElementById('add-to-bom-label');
+  if (lbl) lbl.textContent = 'Add to BOM';
   updateRowCountBadge();
+}
+
+// ─────────────────────────────────────────────
+//  loadForEdit — called by parent window to pre-populate for editing
+// ─────────────────────────────────────────────
+function loadForEdit(data) {
+  resetForm();
+  const { label, rows } = data;
+  document.getElementById('f-group-name').value = label || '';
+
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    if (r.section !== undefined) {
+      addSectionRow({ label: r.section });
+    } else {
+      addSkuRow({ sku: r.sku, desc: r.desc, qty: r.qty, kind: r._kindOverride !== undefined ? r._kindOverride : (r.kind || 'req'), note: r.note || '' });
+    }
+  }
+
+  _isEditing = true;
+  const lbl = document.getElementById('add-to-bom-label');
+  if (lbl) lbl.textContent = 'Update in BOM';
 }
 
 // ─────────────────────────────────────────────
@@ -1219,8 +1229,12 @@ let _pricingLoaded = false;
 function openPricingDB() {
   if (_pricingDb) return Promise.resolve(_pricingDb);
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open('fabricbom_pricing', 1);
-    req.onupgradeneeded = e => e.target.result.createObjectStore('pricing');
+    const req = indexedDB.open('toolbox_shared', 2);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (db.objectStoreNames.contains('datasets')) db.deleteObjectStore('datasets');
+      db.createObjectStore('datasets', { keyPath: 'key' });
+    };
     req.onsuccess = e => { _pricingDb = e.target.result; resolve(_pricingDb); };
     req.onerror   = e => reject(e.target.error);
   });
@@ -1230,15 +1244,15 @@ async function getPricingData() {
   if (_pricingLoaded) return _pricingCache;
   try {
     const db = await openPricingDB();
-    const data = await new Promise((resolve, reject) => {
-      const tx = db.transaction('pricing', 'readonly');
-      const req = tx.objectStore('pricing').get('current');
+    const record = await new Promise((resolve, reject) => {
+      const tx = db.transaction('datasets', 'readonly');
+      const req = tx.objectStore('datasets').get('pricing');
       req.onsuccess = e => resolve(e.target.result || null);
       req.onerror   = e => reject(e.target.error);
     });
-    _pricingCache  = data;
+    _pricingCache  = record ? record.data : null;
     _pricingLoaded = true;
-    return data;
+    return _pricingCache;
   } catch(e) {
     _pricingLoaded = true;
     _pricingCache  = null;
