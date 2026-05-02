@@ -133,8 +133,9 @@
   .bg-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;border-radius:2px;padding:1px 6px;}
   .bg-del{background:#FEF0EE;border:1px solid #F5C6C2;color:#C0392B;font-size:11px;font-weight:600;padding:3px 8px;border-radius:2px;cursor:pointer;font-family:inherit;margin-left:auto;}
   .bg-del:hover{background:#F5C6C2;}
-  .bg-edit{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);font-size:11px;font-weight:600;padding:3px 8px;cursor:pointer;font-family:inherit;transition:background .12s;}
+  .bg-edit{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);padding:4px 6px;cursor:pointer;display:inline-flex;align-items:center;transition:background .12s;}
   .bg-edit:hover{background:var(--c-sh);color:var(--c-text);}
+  .bg-edit svg{width:11px;height:11px;}
 
   /* BOM table */
   .bt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -1197,7 +1198,7 @@ async function renderGroups() {
           </div>
           <div style="flex:1;min-width:0;"><input type="text" class="label-input bgp" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)"><div class="bgm">${lines} line item${lines!==1?'s':''} · ${qty.toLocaleString()} units/licenses</div></div>
           ${entry.product !== 'Custom SKU' ? `<span class="bg-tag">${h(entry.product)}</span>` : ''}
-          <button class="bg-edit" onclick="openSkuModalForEdit(${entry.id})">Edit</button>
+          <button class="bg-edit" onclick="openSkuModalForEdit(${entry.id})" title="Edit rows"><svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg></button>
           <button class="bg-del" onclick="removeFromCart(${entry.id})">✕</button>
         </div>
         <div class="bt-wrap"><table class="bt"><thead><tr>
