@@ -152,6 +152,9 @@
   .qty-input:focus{border-color:#4A90D9;outline:none;background:#fff;}
   .qty-input::-webkit-inner-spin-button,.qty-input::-webkit-outer-spin-button{opacity:0;}
   .qty-input:hover::-webkit-inner-spin-button,.qty-input:focus::-webkit-inner-spin-button{opacity:1;}
+  .note-input{width:100%;box-sizing:border-box;border:1px solid transparent;border-radius:3px;background:transparent;font-size:11px;color:var(--c-textm);font-family:inherit;padding:1px 3px;}
+  .note-input:hover{border-color:var(--c-border);}
+  .note-input:focus{border-color:#4A90D9;outline:none;background:#fff;}
   .nc{color:var(--c-textm);font-size:11px;}
   .br{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:2px;padding:1px 4px;}
   .br-r{background:#FEE0DE;color:#C0392B;border:1px solid #F5C6C2;}
@@ -1003,6 +1006,13 @@ function updateQty(entryId, rowIdx, rawVal) {
   markDirty();
   renderGroups();
 }
+function updateNote(entryId, rowIdx, value) {
+  const entry = cart.find(e => e.id === entryId);
+  if (!entry) return;
+  entry.rows[rowIdx].note = value.trim();
+  saveCart();
+  markDirty();
+}
 function updateEntryLabel(id, value) {
   const entry = cart.find(c => c.id === id);
   if (!entry) return;
@@ -1192,7 +1202,7 @@ async function renderGroups() {
         const detailTr = detailRows.length ? `<tr class="bom-detail"><td colspan="100"><table class="det-tbl"><tbody>${detailRows.join('')}</tbody></table></td></tr>` : '';
         const evenCls = lines%2===0 ? ' class="bt-even"' : '';
         const typeCell = `<button class="type-btn" onclick="openKindPopover(event,${entry.id},${i})" title="Click to change type">${bm[effectiveKind]||'<span class=\\"type-empty\\">—</span>'}<span class="type-hint">▾</span></button>`;
-        return `<tr${evenCls}>${expCell}<td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc"><span class="note-clamp" title="${h(r.desc||'')}">${h(r.desc||'')}</span></td><td class="qc"><input type="number" class="qty-input" value="${r.qty??''}" min="0" onchange="updateQty(${entry.id},${i},this.value)"></td><td class="col-type">${typeCell}</td><td class="nc col-notes"><span class="note-clamp" title="${h(r.note||'')}">${h(r.note||'')}</span></td>${priceCells}</tr>${detailTr}`;
+        return `<tr${evenCls}>${expCell}<td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc"><span class="note-clamp" title="${h(r.desc||'')}">${h(r.desc||'')}</span></td><td class="qc"><input type="number" class="qty-input" value="${r.qty??''}" min="0" onchange="updateQty(${entry.id},${i},this.value)"></td><td class="col-type">${typeCell}</td><td class="nc col-notes"><input type="text" class="note-input" value="${h(r.note||'')}" placeholder="Add note…" onchange="updateNote(${entry.id},${i},this.value)" title="${h(r.note||'')}"></td>${priceCells}</tr>${detailTr}`;
       }).join('');
       totL+=lines; totQ+=qty;
       const el = document.createElement('div');
