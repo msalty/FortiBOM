@@ -671,7 +671,7 @@
     <div id="imp-body">
       <div id="imp-drop" onclick="document.getElementById('imp-file').click()" ondragover="impDragOver(event)" ondragleave="impDragLeave(event)" ondrop="impDrop(event)">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="opacity:.35"><rect x="4" y="4" width="24" height="24" rx="3" stroke="#6B7589" stroke-width="1.5"/><path d="M10 16h12M16 10v12" stroke="#6B7589" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <div style="font-weight:600;color:var(--c-text);margin-top:8px;">Drop a .fbom file here or click to browse</div>
+        <div style="font-weight:600;color:var(--c-text);margin-top:8px;">Drop an .fbom <span title="go ahead, drop it" aria-hidden="true">😉</span> … or click to browse.</div>
         <p>Must be a FabricBOM-exported .fbom file. Project info and all product groups will be restored.</p>
         <input type="file" id="imp-file" accept=".fbom" style="display:none" onchange="impFileChosen(this)">
       </div>
