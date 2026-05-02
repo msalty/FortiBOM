@@ -503,7 +503,7 @@
           </button>
           <button class="pi-edit-btn" id="pi-edit-btn" onclick="togglePiEdit()" title="Toggle edit mode">
             <svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
-            <span id="pi-edit-label">View</span>
+            <span id="pi-edit-label">Save</span>
           </button>
         </div>
         <div class="lcb">
@@ -1068,7 +1068,7 @@ function newProject() {
   const card = document.getElementById('proj-info-card');
   card.classList.remove('view-mode');
   document.getElementById('pi-edit-btn').classList.remove('active');
-  document.getElementById('pi-edit-label').textContent = 'View';
+  document.getElementById('pi-edit-label').textContent = 'Save';
   updateBadges(); renderGroups(); saveCart(); markSaved();
   showPBV();
 }
@@ -2558,7 +2558,7 @@ function togglePiEdit() {
     card.classList.remove('view-mode');
     card.classList.remove('pi-expanded');
     btn.classList.remove('active');
-    label.textContent = 'View';
+    label.textContent = 'Save';
   } else {
     updatePiView();
     card.classList.add('view-mode');
@@ -2583,7 +2583,7 @@ function clearPiFields() {
   card.classList.remove('view-mode');
   card.classList.remove('pi-expanded');
   btn.classList.remove('active');
-  label.textContent = 'View';
+  label.textContent = 'Save';
 }
 
 function hasPiData() {
@@ -2606,7 +2606,7 @@ function initPiMode() {
     card.classList.remove('view-mode');
     card.classList.remove('pi-expanded');
     btn.classList.remove('active');
-    label.textContent = 'View';
+    label.textContent = 'Save';
   }
 }
 
