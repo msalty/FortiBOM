@@ -571,10 +571,10 @@
 
       <!-- BOM Summary Stats -->
       <div class="sbar" id="bom-stats">
-        <div class="si"><div class="sl">Product Groups</div><div class="sv" id="sum-g">0</div></div>
-        <div class="si hi"><div class="sl">Total Line Items</div><div class="sv" id="sum-l">0</div></div>
-        <div class="si"><div class="sl">Total Units / Licenses</div><div class="sv" id="sum-q">0</div></div>
-        <div class="si"><div class="sl">Term Applied</div><div class="sv" id="sum-term">-DD</div></div>
+        <div class="si"><div class="sl">Groups</div><div class="sv" id="sum-g">0</div></div>
+        <div class="si hi"><div class="sl">Line Items</div><div class="sv" id="sum-l">0</div></div>
+        <div class="si"><div class="sl">Units / Lic.</div><div class="sv" id="sum-q">0</div></div>
+        <div class="si"><div class="sl">Term</div><div class="sv" id="sum-term">-DD</div></div>
       </div>
 
       <!-- Project Total (only shown when pricing data is loaded) -->
@@ -1162,10 +1162,12 @@ async function renderGroups() {
   if (!cart.length) {
     c.innerHTML = '';
     ec.style.display = 'flex';
+    document.getElementById('bom-stats').style.display = 'none';
     document.getElementById('project-total').style.display = 'none';
     return;
   }
   ec.style.display = 'none';
+  document.getElementById('bom-stats').style.display = '';
   let totL=0, totQ=0;
   let grandTotal=0, grandTotalValid=false;
 
