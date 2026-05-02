@@ -392,6 +392,7 @@
   #pw-unlock-btn{background:#FFF8EE;color:#8A5800;border:1px solid #F5D9A0;border-radius:3px;padding:3px 10px;cursor:pointer;display:none;align-items:center;gap:5px;font-size:11px;font-weight:500;font-family:inherit;transition:background .12s;}
   #pw-unlock-btn:hover{background:#F5D9A0;}
   #pw-unlock-btn svg{width:11px;height:11px;flex-shrink:0;}
+  #proj-info-card.bom-locked .pi-cust-wrap,
   #proj-info-card.bom-locked .pi-opp-wrap,
   #proj-info-card.bom-locked .pi-notes-wrap{display:none;}
   /* Password modals */
@@ -588,7 +589,7 @@
         </div>
         <div class="lcb">
           <div class="pfg">
-            <div class="pg"><label class="pl">Customer / Opportunity <span class="r">*</span></label><input type="text" class="pi" id="pi-cust" placeholder="e.g. Acme Corp – Network Refresh 2025"></div>
+            <div class="pg full pi-cust-wrap"><label class="pl">Customer / Opportunity <span class="r">*</span></label><input type="text" class="pi" id="pi-cust" placeholder="e.g. Acme Corp – Network Refresh 2025"></div>
             <div class="pg pi-opp-wrap"><label class="pl">Opportunity ID</label><input type="text" class="pi" id="pi-opp" placeholder="e.g. OPP-2025-01234"></div>
             <div class="pg"><label class="pl">SE / Engineer</label><input type="text" class="pi" id="pi-eng" placeholder="Your name"></div>
             <div class="pg"><label class="pl">Date</label><input type="text" class="pi" id="pi-date"></div>
@@ -2715,13 +2716,19 @@ function updatePiView() {
     </div>`;
   };
 
-  const custField = `<div class="pi-vf full cust-row">
-    <span class="pi-vl">Customer / Opportunity</span>
-    <span class="pi-vv pi-cust-val${!cust?' empty':''}">${cust ? piAutoLink(cust) : 'Unnamed Project'}</span>
-  </div>`;
-
+  const hasCust  = document.getElementById('pi-cust').value.trim();
   const hasOpp   = document.getElementById('pi-opp').value.trim();
   const hasNotes = document.getElementById('pi-notes').value.trim();
+
+  const custField = locked && hasCust
+    ? `<div class="pi-vf full cust-row">
+        <span class="pi-vl">Customer / Opportunity</span>
+        <span class="pi-vv empty" style="display:inline-flex;align-items:center;gap:4px;">${lockSvg} Password required</span>
+      </div>`
+    : `<div class="pi-vf full cust-row">
+        <span class="pi-vl">Customer / Opportunity</span>
+        <span class="pi-vv pi-cust-val${!cust?' empty':''}">${cust ? piAutoLink(cust) : 'Unnamed Project'}</span>
+      </div>`;
 
   let html = `<div class="pi-vg">${custField}`;
   if (locked && hasOpp)    html += lockedField('Opportunity ID');
@@ -2748,8 +2755,14 @@ function updatePiSummary() {
 
   const chip = (lbl, val) => val ? `<div class="pi-sum-divider"></div><div class="pi-sum-chip"><span class="pi-sum-lbl">${lbl}</span><span class="pi-sum-val">${h(val)}</span></div>` : '';
 
-  const custDisplay = cust || 'Unnamed Project';
-  let html = `<span class="pi-sum-cust${!cust?' empty':''}" title="${h(custDisplay)}">${h(custDisplay)}</span>`;
+  const lockSvg = `<svg width="10" height="12" viewBox="0 0 11 13" fill="none" style="flex-shrink:0;opacity:.55"><rect x="1.5" y="5.5" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 5.5V3.5a2 2 0 0 1 4 0v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><circle cx="5.5" cy="9" r="1" fill="currentColor"/></svg>`;
+  let html;
+  if (locked && cust) {
+    html = `<span class="pi-sum-cust empty" style="display:inline-flex;align-items:center;gap:4px;" title="Password required">${lockSvg} Password required</span>`;
+  } else {
+    const custDisplay = cust || 'Unnamed Project';
+    html = `<span class="pi-sum-cust${!cust?' empty':''}" title="${h(custDisplay)}">${h(custDisplay)}</span>`;
+  }
   html += chip('Opportunity', opp);
   html += chip('Engineer', eng);
   html += chip('Date', date);
@@ -3134,7 +3147,8 @@ function updateProjBreadcrumb() {
   const ch   = document.getElementById('ch');
   const pbv  = document.getElementById('pbv');
   const card = document.getElementById('proj-info-card');
-  const cust = document.getElementById('pi-cust').value.trim();
+  const locked = !!(bomPasswordHash && !bomUnlocked);
+  const cust = locked ? '' : document.getElementById('pi-cust').value.trim();
   const onPBV = pbv && pbv.style.display !== 'none';
   let show = false;
   if (onPBV && cust && card) {
