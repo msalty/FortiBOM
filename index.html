@@ -386,6 +386,31 @@
   /* Term applied warning (still at default -DD) */
   #sum-term.term-warn{color:#8A5800;}
 
+  /* Read Only checkbox (visible only in edit mode) */
+  #pi-readonly-wrap{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border:1px solid var(--c-ib);border-radius:3px;cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s;}
+  #pi-readonly-wrap:hover{background:var(--c-sh);border-color:var(--c-text2);}
+  #pi-readonly-wrap input{cursor:pointer;accent-color:var(--forti-red);margin:0;}
+  #pi-readonly-wrap span{font-size:11px;font-weight:500;color:var(--c-text2);font-family:inherit;}
+  #proj-info-card.view-mode #pi-readonly-wrap{display:none!important;}
+
+  /* BOM Read Only state */
+  #pbv.bom-readonly .bg-edit,
+  #pbv.bom-readonly .bg-del,
+  #pbv.bom-readonly .bgr-actions,
+  #pbv.bom-readonly #add-btn,
+  #pbv.bom-readonly #clear-btn{display:none!important;}
+  #pbv.bom-readonly .qty-input,
+  #pbv.bom-readonly .note-input,
+  #pbv.bom-readonly .label-input{pointer-events:none;background:transparent!important;}
+  #pbv.bom-readonly .type-btn{pointer-events:none;cursor:default;}
+  #pbv.bom-readonly .drag-handle{pointer-events:none;cursor:default;opacity:.25;}
+
+  /* Project Info Read Only state — lock fields but keep checkbox interactive */
+  #proj-info-card.pi-readonly .pfg input,
+  #proj-info-card.pi-readonly .pfg select,
+  #proj-info-card.pi-readonly .pfg textarea{background:var(--c-sh)!important;color:var(--c-text2)!important;cursor:not-allowed;}
+  #proj-info-card.pi-readonly .pi-clear-btn{display:none!important;}
+
   /* Welcome screen step list */
   .ws-steps{list-style:none;text-align:left;display:inline-flex;flex-direction:column;gap:8px;margin:0;}
   .ws-steps li{display:flex;align-items:baseline;gap:10px;font-size:13px;color:#4A5168;line-height:1.5;}
@@ -517,6 +542,10 @@
             <svg viewBox="0 0 11 11" fill="none"><path d="M2 2l7 7M9 2l-7 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
             Clear
           </button>
+          <label id="pi-readonly-wrap" title="Lock the BOM and project info against edits">
+            <input type="checkbox" id="pi-readonly" onchange="toggleReadOnly(this.checked)">
+            <span>Read Only</span>
+          </label>
           <button class="pi-edit-btn" id="pi-edit-btn" onclick="togglePiEdit()" title="Toggle edit mode">
             <svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
             <span id="pi-edit-label">Save</span>
@@ -552,7 +581,7 @@
           <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
             <button class="btn bs" id="project-btn" onclick="toggleProjectMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>File<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <button class="btn bs" id="copy-export-btn" onclick="toggleCopyMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/></svg>Share<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <button class="btn bd" onclick="clearCart()" title="Clear All"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button id="clear-btn" class="btn bd" onclick="clearCart()" title="Clear All"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
           </div>
         </div>
       </div>
@@ -1294,6 +1323,7 @@ async function renderGroups() {
   } else {
     ptEl.style.display = 'none';
   }
+  if (isReadOnly()) applyReadOnlyToDOM();
 }
 
 // ── DRAG-TO-REORDER ──────────────────────────────────────────────────────────
@@ -1321,10 +1351,11 @@ function _topItem(node) {
 function addDragListeners(el) {
   // ── Mouse / HTML5 drag ──
   el.addEventListener('mousedown', e => {
+    if (isReadOnly()) { el.draggable = false; return; }
     el.draggable = !!e.target.closest('.drag-handle');
   });
   el.addEventListener('dragstart', e => {
-    if (!el.draggable) { e.preventDefault(); return; }
+    if (!el.draggable || isReadOnly()) { e.preventDefault(); return; }
     dragSrcId = Number(el.dataset.id);
     el.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
@@ -1346,7 +1377,7 @@ function addDragListeners(el) {
 
   // ── Touch drag (mobile) ──
   el.addEventListener('touchstart', e => {
-    if (!e.target.closest('.drag-handle')) return;
+    if (isReadOnly() || !e.target.closest('.drag-handle')) return;
     e.preventDefault();
     dragSrcId = Number(el.dataset.id);
     el.classList.add('dragging');
@@ -2636,6 +2667,52 @@ function initPiMode() {
     card.classList.remove('pi-expanded');
     btn.classList.remove('active');
     label.textContent = 'Save';
+  }
+}
+
+// ── READ ONLY MODE ────────────────────────────────────────────────────────────
+function isReadOnly() {
+  const cb = document.getElementById('pi-readonly');
+  return cb ? cb.checked : false;
+}
+
+function applyReadOnlyToDOM() {
+  const bgc = document.getElementById('bgc');
+  if (!bgc) return;
+  bgc.querySelectorAll('.qty-input, .note-input, .label-input').forEach(el => {
+    el.readOnly = true;
+    el.tabIndex = -1;
+  });
+  bgc.querySelectorAll('.type-btn').forEach(el => { el.disabled = true; });
+}
+
+function removeReadOnlyFromDOM() {
+  const bgc = document.getElementById('bgc');
+  if (!bgc) return;
+  bgc.querySelectorAll('.qty-input, .note-input, .label-input').forEach(el => {
+    el.readOnly = false;
+    el.removeAttribute('tabindex');
+  });
+  bgc.querySelectorAll('.type-btn').forEach(el => { el.disabled = false; });
+}
+
+function toggleReadOnly(checked) {
+  const pbv  = document.getElementById('pbv');
+  const card = document.getElementById('proj-info-card');
+  const piInputIds = ['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'];
+
+  if (checked) {
+    pbv.classList.add('bom-readonly');
+    card.classList.add('pi-readonly');
+    piInputIds.forEach(id => { document.getElementById(id).disabled = true; });
+    document.getElementById('pi-term').disabled = true;
+    applyReadOnlyToDOM();
+  } else {
+    pbv.classList.remove('bom-readonly');
+    card.classList.remove('pi-readonly');
+    piInputIds.forEach(id => { document.getElementById(id).disabled = false; });
+    document.getElementById('pi-term').disabled = false;
+    removeReadOnlyFromDOM();
   }
 }
 
