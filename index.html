@@ -335,14 +335,16 @@
 
   /* Print */
   /* Project Info view/edit toggle */
-  .pi-edit-btn{margin-left:auto;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
+  .pi-edit-btn{margin-left:auto;order:1;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
   .pi-edit-btn:hover{background:var(--c-sh);border-color:var(--c-text2);}
   .pi-edit-btn.active{background:#EEF3FF;border-color:#B8CBF5;color:#3557A5;}
   .pi-edit-btn svg{width:11px;height:11px;flex-shrink:0;}
-  .pi-clear-btn{background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
+  .pi-clear-btn{order:2;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
   .pi-clear-btn:hover{background:#FEF2F2;border-color:#FCA5A5;color:#B91C1C;}
   .pi-clear-btn svg{width:11px;height:11px;flex-shrink:0;}
   #proj-info-card.view-mode #pi-clear-btn{display:none!important;}
+  #proj-info-card:not(.view-mode) .pi-edit-btn{margin-left:0;order:2;}
+  #proj-info-card:not(.view-mode) .pi-clear-btn{margin-left:auto;order:1;}
   #pi-view{display:none;padding:0;}
   #proj-info-card.view-mode .pfg{display:none;}
   #proj-info-card.view-mode #pi-view{display:block;}
