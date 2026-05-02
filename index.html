@@ -825,12 +825,13 @@ let spRevExpanded = {}; // projectKey -> boolean, tracks which revision lists ar
 function savePiData() {
   try {
     localStorage.setItem('fortibom_pi', JSON.stringify({
-      cust:  document.getElementById('pi-cust').value,
-      opp:   document.getElementById('pi-opp').value,
-      eng:   document.getElementById('pi-eng').value,
-      date:  document.getElementById('pi-date').value,
-      term:  document.getElementById('pi-term').value,
-      notes: document.getElementById('pi-notes').value
+      cust:     document.getElementById('pi-cust').value,
+      opp:      document.getElementById('pi-opp').value,
+      eng:      document.getElementById('pi-eng').value,
+      date:     document.getElementById('pi-date').value,
+      term:     document.getElementById('pi-term').value,
+      notes:    document.getElementById('pi-notes').value,
+      readOnly: isReadOnly(),
     }));
   } catch(e) {}
 }
@@ -845,6 +846,10 @@ function loadPiData() {
     if (d.date  !== undefined) document.getElementById('pi-date').value  = d.date;
     if (d.term  !== undefined) document.getElementById('pi-term').value  = d.term;
     if (d.notes !== undefined) document.getElementById('pi-notes').value = d.notes;
+    if (d.readOnly) {
+      document.getElementById('pi-readonly').checked = true;
+      toggleReadOnly(true);
+    }
   } catch(e) {}
 }
 function saveCart() {
@@ -1120,6 +1125,8 @@ function newProject() {
   document.getElementById('pi-date').value  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   document.getElementById('pi-term').value  = 'DD';
   document.getElementById('pi-notes').value = '';
+  document.getElementById('pi-readonly').checked = false;
+  toggleReadOnly(false);
   savePiData();
   const card = document.getElementById('proj-info-card');
   card.classList.remove('view-mode');
@@ -1654,6 +1661,7 @@ function loadSavedProject(id) {
   document.getElementById('pi-date').value  = snap.meta.date  || '';
   document.getElementById('pi-notes').value = snap.meta.notes || '';
   document.getElementById('pi-term').value  = snap.meta.term  || 'DD';
+  _restoreReadOnly(snap.meta);
   updateBadges();
   renderGroups();
   saveCart();
@@ -1694,12 +1702,13 @@ function deleteProjectGroup(projectKey) {
 // ── EXPORT ───────────────────────────────────────────────────────────────────
 function getMeta() {
   return {
-    cust:  document.getElementById('pi-cust').value.trim()||'Unnamed Project',
-    opp:   document.getElementById('pi-opp').value.trim(),
-    eng:   document.getElementById('pi-eng').value.trim(),
-    date:  document.getElementById('pi-date').value.trim(),
-    notes: document.getElementById('pi-notes').value.trim(),
-    term:  document.getElementById('pi-term').value,
+    cust:     document.getElementById('pi-cust').value.trim()||'Unnamed Project',
+    opp:      document.getElementById('pi-opp').value.trim(),
+    eng:      document.getElementById('pi-eng').value.trim(),
+    date:     document.getElementById('pi-date').value.trim(),
+    notes:    document.getElementById('pi-notes').value.trim(),
+    term:     document.getElementById('pi-term').value,
+    readOnly: isReadOnly(),
   };
 }
 // ── URL SHARING ───────────────────────────────────────────────────────────────
@@ -1718,7 +1727,7 @@ function serializeBOM() {
   });
   return JSON.stringify({
     v: 1,
-    m: { c: m.cust, o: m.opp, e: m.eng, d: m.date, n: m.notes, t: m.term },
+    m: { c: m.cust, o: m.opp, e: m.eng, d: m.date, n: m.notes, t: m.term, ro: m.readOnly ? 1 : 0 },
     i: items
   });
 }
@@ -1727,7 +1736,7 @@ function deserializeBOM(json) {
   const obj = JSON.parse(json);
   if (!obj || obj.v !== 1) throw new Error('Unknown BOM version');
   const m = obj.m || {};
-  const meta = { cust: m.c||'', opp: m.o||'', eng: m.e||'', date: m.d||'', notes: m.n||'', term: m.t||'DD' };
+  const meta = { cust: m.c||'', opp: m.o||'', eng: m.e||'', date: m.d||'', notes: m.n||'', term: m.t||'DD', readOnly: !!m.ro };
   const items = (obj.i || []).map(item => {
     if (item.g) {
       return { _type: 'group', label: item.l || '', note: item.n || '', showPricing: !!item.sp };
@@ -1850,7 +1859,7 @@ function exportCSV() {
   const termLabel = {DD:'Co-term (-DD)',12:'1 Year (-12)',36:'3 Years (-36)',60:'5 Years (-60)'}[p.term];
   const rows = [
     ['FabricBOM Project Export'],
-    [`Customer:${p.cust}`,`Opportunity:${p.opp}`,`Engineer:${p.eng}`,`Date:${p.date}`,`Term:${termLabel}`],
+    [`Customer:${p.cust}`,`Opportunity:${p.opp}`,`Engineer:${p.eng}`,`Date:${p.date}`,`Term:${termLabel}`,`ReadOnly:${p.readOnly?'true':''}`],
     [],
     ['Product Group','Part Number','Description','Qty','Type','Notes'],
   ];
@@ -2079,11 +2088,12 @@ function parseCSV(text) {
   // Row 1: meta
   const metaRow = lines[1] || [];
   function mval(cell) { return cell ? cell.replace(/^[^:]+:/,'').trim() : ''; }
-  const meta = { cust:mval(metaRow[0]), opp:mval(metaRow[1]), eng:mval(metaRow[2]), date:mval(metaRow[3]), term:'DD' };
+  const meta = { cust:mval(metaRow[0]), opp:mval(metaRow[1]), eng:mval(metaRow[2]), date:mval(metaRow[3]), term:'DD', readOnly:false };
   const termLine = mval(metaRow[4]);
   if (termLine.includes('1 Year')) meta.term='12';
   else if (termLine.includes('3 Year')) meta.term='36';
   else if (termLine.includes('5 Year')) meta.term='60';
+  if (mval(metaRow[5]).toLowerCase() === 'true') meta.readOnly = true;
   // Data rows start at index 4 (after header row at index 3)
   // Parse all items in order (product groups and group headers interleaved)
   const items = [];
@@ -2120,6 +2130,12 @@ function parseCSV(text) {
   return { ok:true, meta, items, prodCount, grpCount };
 }
 
+function _restoreReadOnly(meta) {
+  const ro = !!meta.readOnly;
+  document.getElementById('pi-readonly').checked = ro;
+  toggleReadOnly(ro);
+}
+
 function doImport() {
   if (!pendingImport) return;
   const { meta, items, prodCount, grpCount } = pendingImport;
@@ -2129,6 +2145,7 @@ function doImport() {
   if (meta.eng)  document.getElementById('pi-eng').value  = meta.eng;
   if (meta.date) document.getElementById('pi-date').value = meta.date;
   if (meta.term) document.getElementById('pi-term').value = meta.term;
+  _restoreReadOnly(meta);
   // Rebuild cart preserving order
   cart = [];
   seq = 0;
@@ -2164,6 +2181,7 @@ function applySharedBOM(parsed) {
   if (meta.date)  document.getElementById('pi-date').value  = meta.date;
   if (meta.notes) document.getElementById('pi-notes').value = meta.notes;
   if (meta.term)  document.getElementById('pi-term').value  = meta.term;
+  _restoreReadOnly(meta);
   cart = []; seq = 0;
   for (const item of items) {
     if (item._type === 'group') {
@@ -2636,6 +2654,8 @@ function clearPiFields() {
   document.getElementById('pi-date').value  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   document.getElementById('pi-term').value  = 'DD';
   document.getElementById('pi-notes').value = '';
+  document.getElementById('pi-readonly').checked = false;
+  toggleReadOnly(false);
   savePiData();
   const card  = document.getElementById('proj-info-card');
   const btn   = document.getElementById('pi-edit-btn');
@@ -2714,6 +2734,7 @@ function toggleReadOnly(checked) {
     document.getElementById('pi-term').disabled = false;
     removeReadOnlyFromDOM();
   }
+  savePiData();
 }
 
 // ── TOAST ────────────────────────────────────────────────────────────────────
