@@ -216,7 +216,8 @@
   .bgr-label{font-size:13px;font-weight:700;color:var(--c-text);flex:1;}
   .bgr-note{font-size:11px;color:var(--c-text2);font-style:italic;}
   .bgr-actions{display:flex;gap:5px;align-items:center;padding:0 10px;}
-  .bgr-btn{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);font-size:11px;font-weight:600;padding:3px 8px;cursor:pointer;font-family:inherit;transition:background .12s;}
+  .bgr-btn{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);font-size:11px;font-weight:600;padding:3px 8px;cursor:pointer;font-family:inherit;transition:background .12s;display:inline-flex;align-items:center;}
+  .bgr-btn svg{width:11px;height:11px;}
   .bgr-btn:hover{background:var(--c-sh);color:var(--c-text);}
   .bgr-btn.del{border-color:#F5C6C2;color:#C0392B;background:#FEF0EE;}
   .bgr-btn.del:hover{background:#F5C6C2;}
@@ -1147,7 +1148,7 @@ async function renderGroups() {
           ${groupPriceHtml}
         </div>
         <div class="bgr-actions">
-          <button class="bgr-btn" onclick="openEditGroup(${entry.id})">Edit</button>
+          <button class="bgr-btn" onclick="openEditGroup(${entry.id})" title="Edit group header"><svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg></button>
           <button class="bgr-btn del" onclick="removeFromCart(${entry.id})">✕</button>
         </div>`;
       addDragListeners(el);
