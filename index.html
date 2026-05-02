@@ -80,6 +80,11 @@
   .bci{font-size:12px;color:#6B7589;}
   .bcs{font-size:11px;color:#B0B8CC;}
   .bci.cur{color:#2A2F3A;font-weight:500;}
+  #bc-proj-sep,#bc-proj{display:none;}
+  #ch.has-proj #bc{color:#6B7589;font-weight:400;}
+  #ch.has-proj #bc-proj-sep{display:inline;}
+  #ch.has-proj #bc-proj{display:inline-block;max-width:min(50vw,420px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;}
+  @media (max-width:600px){#ch.has-proj #bc-proj{max-width:40vw;}}
   #pfw{flex:1;overflow:hidden;display:flex;flex-direction:column;}
   #pf{border:none;width:100%;flex:1;}
   #ws{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:40px;color:#6B7589;text-align:center;}
@@ -473,6 +478,8 @@
       <span class="bci">FabricBOM</span>
       <span class="bcs">›</span>
       <span class="bci cur" id="bc">Select a product</span>
+      <span class="bcs" id="bc-proj-sep">›</span>
+      <span class="bci cur" id="bc-proj"></span>
     </div>
 
     <!-- Product iframe area -->
@@ -2653,6 +2660,35 @@ initPiMode();
   document.getElementById(id).addEventListener('input', () => { savePiData(); if (cart.length) markDirty(); });
 });
 document.getElementById('pi-term').addEventListener('change', () => { savePiData(); if (cart.length) markDirty(); });
+
+// ── PROJECT BREADCRUMB (shows customer when Project Information scrolls behind #ch) ──
+function updateProjBreadcrumb() {
+  const ch   = document.getElementById('ch');
+  const pbv  = document.getElementById('pbv');
+  const card = document.getElementById('proj-info-card');
+  const cust = document.getElementById('pi-cust').value.trim();
+  const onPBV = pbv && pbv.style.display !== 'none';
+  let show = false;
+  if (onPBV && cust && card) {
+    show = card.getBoundingClientRect().bottom <= ch.getBoundingClientRect().bottom;
+  }
+  if (show) {
+    document.getElementById('bc-proj').textContent = cust;
+    ch.classList.add('has-proj');
+  } else {
+    ch.classList.remove('has-proj');
+  }
+}
+document.getElementById('pbv').addEventListener('scroll', updateProjBreadcrumb, {passive:true});
+document.getElementById('pi-cust').addEventListener('input', updateProjBreadcrumb);
+window.addEventListener('resize', updateProjBreadcrumb);
+updateProjBreadcrumb();
+['showPBV','loadProduct','showAbout'].forEach(fn => {
+  const orig = window[fn];
+  if (typeof orig === 'function') {
+    window[fn] = function(){ const r = orig.apply(this, arguments); updateProjBreadcrumb(); return r; };
+  }
+});
 
 // Ensure view mode content is populated before printing regardless of current state
 window.addEventListener('beforeprint', updatePiView);
