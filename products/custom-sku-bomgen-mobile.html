@@ -1197,7 +1197,7 @@ function loadForEdit(data) {
     if (r.section !== undefined) {
       addSectionRow({ label: r.section });
     } else {
-      addSkuRow({ sku: r.sku, desc: r.desc, qty: r.qty, kind: r.kind || 'req', note: r.note || '' });
+      addSkuRow({ sku: r.sku, desc: r.desc, qty: r.qty, kind: r._kindOverride !== undefined ? r._kindOverride : (r.kind || 'req'), note: r.note || '' });
     }
   }
 
