@@ -202,7 +202,7 @@ input.invalid, select.invalid, textarea.invalid {
   font-weight: 600;
 }
 textarea { resize: vertical; min-height: 68px; }
-#f-group-name::placeholder, #f-section-label::placeholder {
+#f-group-name::placeholder {
   color: var(--forti-text-muted);
   opacity: 0.55;
 }
@@ -354,7 +354,6 @@ input.sku-input {
   font-family: inherit;
   font-size: 12px;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: .06em;
   color: var(--forti-text-secondary);
   flex: 1;
@@ -631,12 +630,6 @@ input.sku-input {
         <label>Group Name <span class="hint">(optional)</span></label>
         <input type="text" id="f-group-name" placeholder="e.g. FortiGate 91G — ENT Bundle"
                oninput="clearErr('f-group-name','err-group-name')">
-      </div>
-      <div class="field">
-        <label>Section Header Label <span class="hint">(dark divider row in BOM)</span></label>
-        <input type="text" id="f-section-label"
-               placeholder="e.g. Hardware + Enterprise Bundle — FortiGate 91G">
-        <span class="hint-text">Leave blank to omit the section header row.</span>
       </div>
     </div>
   </div>
@@ -1057,9 +1050,6 @@ function generateBOM() {
 
   if (!valid) return false;
 
-  const sectionLabel = document.getElementById('f-section-label').value.trim();
-  if (sectionLabel) rows.push({ section: sectionLabel });
-
   document.querySelectorAll('#sku-rows [data-row-id]').forEach(card => {
     const id   = card.dataset.rowId;
     const type = card.dataset.rowType;
@@ -1165,7 +1155,6 @@ function addToProjectBOM() {
 // ─────────────────────────────────────────────
 function resetForm() {
   document.getElementById('f-group-name').value = '';
-  document.getElementById('f-section-label').value = '';
   document.getElementById('sku-rows').innerHTML = '';
   document.getElementById('bom-section').style.display = 'none';
   document.getElementById('smsg').style.display = 'none';
@@ -1186,13 +1175,7 @@ function loadForEdit(data) {
   const { label, rows } = data;
   document.getElementById('f-group-name').value = label || '';
 
-  let startIdx = 0;
-  if (rows.length > 0 && rows[0].section !== undefined) {
-    document.getElementById('f-section-label').value = rows[0].section;
-    startIdx = 1;
-  }
-
-  for (let i = startIdx; i < rows.length; i++) {
+  for (let i = 0; i < rows.length; i++) {
     const r = rows[i];
     if (r.section !== undefined) {
       addSectionRow({ label: r.section });
