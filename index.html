@@ -999,7 +999,7 @@ function updateEntryLabel(id, value) {
   const entry = cart.find(c => c.id === id);
   if (!entry) return;
   const v = value.trim();
-  if (v) entry.label = v;
+  entry.label = v;
   saveCart();
   markDirty();
   renderGroups();
