@@ -338,19 +338,19 @@
 
   /* Print */
   /* Project Info view/edit toggle */
-  .pi-edit-btn{margin-left:auto;order:1;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
+  .pi-edit-btn{margin-left:0;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
   .pi-edit-btn:hover{background:var(--c-sh);border-color:var(--c-text2);}
   .pi-edit-btn.active{background:#EEF3FF;border-color:#B8CBF5;color:#3557A5;}
   .pi-edit-btn svg{width:11px;height:11px;flex-shrink:0;}
-  .pi-clear-btn{order:2;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
+  .pi-clear-btn{margin-left:0;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 9px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:background .12s,border-color .12s;}
   .pi-clear-btn:hover{background:#FEF2F2;border-color:#FCA5A5;color:#B91C1C;}
   .pi-clear-btn svg{width:11px;height:11px;flex-shrink:0;}
   #proj-info-card.view-mode #pi-clear-btn{display:none!important;}
-  #proj-info-card:not(.view-mode) .pi-edit-btn{margin-left:0;order:2;}
-  #proj-info-card:not(.view-mode) .pi-clear-btn{margin-left:auto;order:1;}
+  #proj-info-card:not(.view-mode) .pi-clear-btn{margin-left:auto;}
   #pi-view{display:none;padding:0;}
   #proj-info-card.view-mode .pfg{display:none;}
-  #proj-info-card.view-mode #pi-view{display:block;}
+  #proj-info-card.view-mode.pi-expanded #pi-view{display:block;}
+  #proj-info-card.view-mode:not(.pi-expanded) .lcb{padding:8px 18px;}
   .pi-vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:8px 24px;}
   .pi-vf{display:flex;flex-direction:column;gap:2px;}
   .pi-vf.full{grid-column:1/-1;}
@@ -361,6 +361,22 @@
   .pi-vv.empty{color:var(--c-textm);font-style:italic;}
   .pi-vv.pi-cust-val{font-size:17px;font-weight:600;color:var(--c-text);}
   .pi-vg .pi-vf.cust-row{grid-column:1/-1;margin-bottom:4px;padding-bottom:10px;border-bottom:1px solid var(--c-border);}
+  /* Collapsed summary bar */
+  #pi-summary{display:none;align-items:center;gap:0;overflow:hidden;flex-wrap:wrap;row-gap:6px;}
+  #proj-info-card.view-mode #pi-summary{display:flex;}
+  #proj-info-card.view-mode.pi-expanded #pi-summary{display:none;}
+  .pi-sum-cust{font-size:14px;font-weight:600;color:var(--c-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px;}
+  .pi-sum-cust.empty{color:var(--c-textm);font-style:italic;}
+  .pi-sum-divider{width:1px;height:18px;background:var(--c-border);flex-shrink:0;margin:0 12px;}
+  .pi-sum-chip{display:flex;flex-direction:column;gap:1px;flex-shrink:0;}
+  .pi-sum-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-textm);}
+  .pi-sum-val{font-size:12px;color:var(--c-text2);white-space:nowrap;}
+  /* Expand/collapse chevron button */
+  .pi-expand-btn{margin-left:auto;background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 8px;cursor:pointer;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;display:none;align-items:center;gap:4px;transition:background .12s,border-color .12s;flex-shrink:0;}
+  .pi-expand-btn:hover{background:var(--c-sh);border-color:var(--c-text2);}
+  .pi-expand-btn svg{width:9px;height:9px;flex-shrink:0;transition:transform .2s;}
+  #proj-info-card.view-mode .pi-expand-btn{display:inline-flex;}
+  #proj-info-card.view-mode.pi-expanded .pi-expand-btn svg{transform:rotate(180deg);}
 
   /* Term applied warning (still at default -DD) */
   #sum-term.term-warn{color:#8A5800;}
@@ -382,9 +398,11 @@
     #pbv{display:flex!important;overflow:visible;padding:20px;}
     .bg-del,.bg-edit,.bgr-actions{display:none!important;}
     .lc,.bg{break-inside:avoid;}
-    .pi-edit-btn,.pi-clear-btn{display:none!important;}
+    .pi-edit-btn,.pi-clear-btn,.pi-expand-btn{display:none!important;}
     #proj-info-card .pfg{display:none!important;}
     #proj-info-card #pi-view{display:block!important;}
+    #proj-info-card #pi-summary{display:none!important;}
+    #proj-info-card.view-mode:not(.pi-expanded) .lcb{padding:18px!important;}
     .pi-vv a{color:#1A4E82;text-decoration:none;border-bottom:1px solid #B8CBF5;}
   }
 </style>
@@ -475,13 +493,17 @@
         <div class="lch">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1.5" stroke="#6B7589" stroke-width="1.2"/><path d="M3.5 4.5h6M3.5 6.5h4" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round"/></svg>
           <h2>Project Information</h2>
-          <button class="pi-edit-btn" id="pi-edit-btn" onclick="togglePiEdit()" title="Toggle edit mode">
-            <svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
-            <span id="pi-edit-label">View</span>
+          <button class="pi-expand-btn" id="pi-expand-btn" onclick="togglePiExpand()" title="Show / hide full project details">
+            <svg viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Details
           </button>
           <button class="pi-clear-btn" id="pi-clear-btn" onclick="clearPiFields()" title="Clear all project information fields">
             <svg viewBox="0 0 11 11" fill="none"><path d="M2 2l7 7M9 2l-7 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
             Clear
+          </button>
+          <button class="pi-edit-btn" id="pi-edit-btn" onclick="togglePiEdit()" title="Toggle edit mode">
+            <svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
+            <span id="pi-edit-label">Save</span>
           </button>
         </div>
         <div class="lcb">
@@ -502,6 +524,7 @@
             </div>
             <div class="pg full"><label class="pl">Project Scope / Notes</label><textarea class="pi" id="pi-notes" placeholder="Optional: overall project scope, deployment context, or assumptions…"></textarea></div>
           </div>
+          <div id="pi-summary"></div>
           <div id="pi-view"></div>
         </div>
       </div>
@@ -1045,7 +1068,7 @@ function newProject() {
   const card = document.getElementById('proj-info-card');
   card.classList.remove('view-mode');
   document.getElementById('pi-edit-btn').classList.remove('active');
-  document.getElementById('pi-edit-label').textContent = 'View';
+  document.getElementById('pi-edit-label').textContent = 'Save';
   updateBadges(); renderGroups(); saveCart(); markSaved();
   showPBV();
 }
@@ -2499,6 +2522,31 @@ function updatePiView() {
   html += '</div>';
 
   document.getElementById('pi-view').innerHTML = html;
+  updatePiSummary();
+}
+
+function updatePiSummary() {
+  const cust  = document.getElementById('pi-cust').value.trim();
+  const opp   = document.getElementById('pi-opp').value.trim();
+  const eng   = document.getElementById('pi-eng').value.trim();
+  const date  = document.getElementById('pi-date').value.trim();
+  const term  = document.getElementById('pi-term').value;
+  const termLabel = PI_TERM_LABELS[term] || term;
+
+  const chip = (lbl, val) => val ? `<div class="pi-sum-divider"></div><div class="pi-sum-chip"><span class="pi-sum-lbl">${lbl}</span><span class="pi-sum-val">${h(val)}</span></div>` : '';
+
+  const custDisplay = cust || 'Unnamed Project';
+  let html = `<span class="pi-sum-cust${!cust?' empty':''}" title="${h(custDisplay)}">${h(custDisplay)}</span>`;
+  html += chip('Opportunity', opp);
+  html += chip('Engineer', eng);
+  html += chip('Date', date);
+  if (term !== 'DD') html += chip('Term', termLabel);
+
+  document.getElementById('pi-summary').innerHTML = html;
+}
+
+function togglePiExpand() {
+  document.getElementById('proj-info-card').classList.toggle('pi-expanded');
 }
 
 function togglePiEdit() {
@@ -2508,11 +2556,13 @@ function togglePiEdit() {
   const isView = card.classList.contains('view-mode');
   if (isView) {
     card.classList.remove('view-mode');
+    card.classList.remove('pi-expanded');
     btn.classList.remove('active');
-    label.textContent = 'View';
+    label.textContent = 'Save';
   } else {
     updatePiView();
     card.classList.add('view-mode');
+    card.classList.remove('pi-expanded');
     btn.classList.add('active');
     label.textContent = 'Edit';
   }
@@ -2531,8 +2581,9 @@ function clearPiFields() {
   const btn   = document.getElementById('pi-edit-btn');
   const label = document.getElementById('pi-edit-label');
   card.classList.remove('view-mode');
+  card.classList.remove('pi-expanded');
   btn.classList.remove('active');
-  label.textContent = 'View';
+  label.textContent = 'Save';
 }
 
 function hasPiData() {
@@ -2548,12 +2599,14 @@ function initPiMode() {
   if (hasPiData()) {
     updatePiView();
     card.classList.add('view-mode');
+    card.classList.remove('pi-expanded');
     btn.classList.add('active');
     label.textContent = 'Edit';
   } else {
     card.classList.remove('view-mode');
+    card.classList.remove('pi-expanded');
     btn.classList.remove('active');
-    label.textContent = 'View';
+    label.textContent = 'Save';
   }
 }
 
