@@ -348,25 +348,8 @@
 
 <div id="main">
   <nav id="sidebar" aria-label="FAQ sections">
-    <div class="nsl">Help Topics</div>
-    <a class="ni active" href="#pricing" onclick="closeSidebar()">
-      <span class="ni-label">Pricing</span>
-    </a>
-    <a class="ni" href="#readonly" onclick="closeSidebar()">
-      <span class="ni-label">Read-Only Mode</span>
-    </a>
-    <a class="ni" href="#export-import" onclick="closeSidebar()">
-      <span class="ni-label">Exporting &amp; Importing</span>
-    </a>
-    <a class="ni" href="#printing" onclick="closeSidebar()">
-      <span class="ni-label">Printing</span>
-    </a>
-    <a class="ni" href="#data-privacy" onclick="closeSidebar()">
-      <span class="ni-label">Data Storage &amp; Privacy</span>
-    </a>
-    <div class="n-sep"></div>
     <div class="nsl">Working with BOMs</div>
-    <a class="ni" href="#adding-products" onclick="closeSidebar()">
+    <a class="ni active" href="#adding-products" onclick="closeSidebar()">
       <span class="ni-label">Adding Products</span>
     </a>
     <a class="ni" href="#editing-items" onclick="closeSidebar()">
@@ -384,6 +367,23 @@
     <a class="ni" href="#restoring" onclick="closeSidebar()">
       <span class="ni-label">Restoring a Version</span>
     </a>
+    <div class="n-sep"></div>
+    <div class="nsl">Help Topics</div>
+    <a class="ni" href="#pricing" onclick="closeSidebar()">
+      <span class="ni-label">Pricing</span>
+    </a>
+    <a class="ni" href="#readonly" onclick="closeSidebar()">
+      <span class="ni-label">Read-Only Mode</span>
+    </a>
+    <a class="ni" href="#export-import" onclick="closeSidebar()">
+      <span class="ni-label">Exporting &amp; Importing</span>
+    </a>
+    <a class="ni" href="#printing" onclick="closeSidebar()">
+      <span class="ni-label">Printing</span>
+    </a>
+    <a class="ni" href="#data-privacy" onclick="closeSidebar()">
+      <span class="ni-label">Data Storage &amp; Privacy</span>
+    </a>
   </nav>
 
   <div id="content">
@@ -392,6 +392,167 @@
       <div>
         <div class="page-title">Help &amp; FAQ</div>
         <div class="page-sub">Common questions and answers about using FabricBOM. Click any question to expand the answer.</div>
+      </div>
+
+      <!-- ADDING PRODUCTS -->
+      <div id="adding-products" class="lc section-anchor">
+        <div class="lch">
+          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
+            <rect x="1" y="4" width="14" height="8" rx="1" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M8 7v2M7 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          <h2>Adding a Product to a Project BOM</h2>
+        </div>
+        <div class="lcb">
+
+          <details class="qa">
+            <summary>How do I add a new SKU or part number to my Project BOM?</summary>
+            <div class="qa-body">
+              <p>There are a few ways to add a new SKU (Stock Keeping Unit) or part number to your Project BOM:</p>
+              <ul>
+                <li><strong>The "Add Item" Button:</strong> Under the <em>Project Information</em> section, there is a red <strong>Add Item</strong> dropdown menu. Clicking this will give you options to append a new product line or group directly to your current build.</li>
+                <li><strong>Product Categories:</strong> In the left-hand sidebar, products are categorized by solution (e.g., <em>Network Security</em>, <em>Cloud Security</em>, <em>Network Access</em>). Clicking on a specific product family like <strong>FortiGate (FGT)</strong> or <strong>FortiSwitch (FSW)</strong> will allow you to browse and select specific SKUs to add to your BOM.</li>
+                <li><strong>Search &amp; Custom Entry:</strong> If you know the exact part number (like <code>FG-401G</code> or <code>FC-10-348GF</code>), you can use the <strong>Filter products…</strong> search bar at the top left, or scroll down to the <strong>CATALOG SEARCH</strong> section and click <strong>Search &amp; Custom Entry</strong> to manually look up and add the SKU.</li>
+              </ul>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <!-- EDITING ITEMS -->
+      <div id="editing-items" class="lc section-anchor">
+        <div class="lch">
+          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
+            <path d="M9.5 2.5l4 4L5 15H1v-4L9.5 2.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M7.5 4.5l4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          <h2>Editing Items on a Project BOM</h2>
+        </div>
+        <div class="lcb">
+
+          <details class="qa">
+            <summary>How do I edit an existing item on a Project BOM?</summary>
+            <div class="qa-body">
+              <p>This is only applicable if the BOM is <strong>not</strong> in Read-Only mode. You can make changes directly within the table for that specific product block:</p>
+              <ul>
+                <li><strong>Change Quantity:</strong> Click directly into the number box in the <strong>QTY</strong> column to adjust the unit count.</li>
+                <li><strong>Change Item Type:</strong> Click the dropdown in the <strong>TYPE</strong> column (showing options like <em>REQUIRED</em>, <em>OPTIONAL</em>, or <em>EXCLUDED</em>) to change how the item is factored into your project.</li>
+                <li><strong>Update Notes:</strong> Click the text field in the <strong>NOTES</strong> column to add, modify, or delete custom details.</li>
+                <li><strong>Edit the Item Header:</strong> To rename the title of a product block, click the small <strong>pencil icon</strong> located at the top-right corner of that block.</li>
+                <li><strong>Remove an Item:</strong> To delete a block entirely, click the <strong>✕</strong> button next to the pencil icon.</li>
+              </ul>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <!-- EDITING PROJECT INFO -->
+      <div id="editing-project-info" class="lc section-anchor">
+        <div class="lch">
+          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
+            <rect x="1" y="2" width="14" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M4 6h8M4 9h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          <h2>Editing Project Information</h2>
+        </div>
+        <div class="lcb">
+
+          <details class="qa">
+            <summary>How do I edit the Project Information on a Project BOM?</summary>
+            <div class="qa-body">
+              <ol>
+                <li><strong>Locate the Project Information Section:</strong> Look at the white box at the top of your main working area, just above the "Add Item" button. This section displays details like your project name, Engineer, Date, and Term.</li>
+                <li><strong>Click the Edit Button:</strong> In the top-right corner of that white box, click the <strong>Edit</strong> button (which features a small pencil icon).</li>
+              </ol>
+              <p>Clicking this will allow you to modify those top-level project details.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <!-- SAVING -->
+      <div id="saving" class="lc section-anchor">
+        <div class="lch">
+          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
+            <path d="M2 2h9l3 3v9a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+            <rect x="4" y="1" width="6" height="5" rx=".5" stroke="currentColor" stroke-width="1.1"/>
+            <rect x="3" y="9" width="10" height="6" rx=".5" stroke="currentColor" stroke-width="1.1"/>
+          </svg>
+          <h2>Saving a Project BOM</h2>
+        </div>
+        <div class="lcb">
+
+          <details class="qa">
+            <summary>How do I save my current Project BOM?</summary>
+            <div class="qa-body">
+              <ol>
+                <li><strong>Locate the File Menu:</strong> On the right side of the screen, just above your first list of items (and right next to the <strong>Share</strong> button), you will see a button labeled <strong>File</strong>.</li>
+                <li><strong>Save the Project:</strong> Click the <strong>File</strong> dropdown menu and select <strong>Save</strong> or <strong>Save As…</strong> to store your current build.</li>
+              </ol>
+              <p>Once your project is saved, you can easily retrieve it later by clicking on <strong>Saved Projects</strong> in the top-left sidebar menu.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <!-- OPENING SAVED PROJECTS -->
+      <div id="opening" class="lc section-anchor">
+        <div class="lch">
+          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
+            <path d="M1 4.5A1.5 1.5 0 0 1 2.5 3h3.086a1 1 0 0 1 .707.293L7.5 4.5H13.5A1.5 1.5 0 0 1 15 6v6a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 12V4.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+          </svg>
+          <h2>Opening Previously Saved Projects</h2>
+        </div>
+        <div class="lcb">
+
+          <details class="qa">
+            <summary>How do I open a previously saved Project BOM?</summary>
+            <div class="qa-body">
+              <ol>
+                <li><strong>Locate the Left Sidebar:</strong> Look at the dark grey menu panel on the far left.</li>
+                <li><strong>Click on "Saved Projects":</strong> Under the top <strong>PROJECT</strong> heading, click on <strong>Saved Projects</strong>.</li>
+              </ol>
+              <p>Clicking this will take you to a screen where you can view, select, and load any of your previously saved builds.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <!-- RESTORING A VERSION -->
+      <div id="restoring" class="lc section-anchor">
+        <div class="lch">
+          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
+            <path d="M1.5 8A6.5 6.5 0 1 0 8 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M1.5 3.5V8h4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 5v3.5l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          <h2>Restoring a Previous Version</h2>
+        </div>
+        <div class="lcb">
+
+          <details class="qa">
+            <summary>How do I restore a previous version of a Project BOM?</summary>
+            <div class="qa-body">
+              <p>FabricBOM retains a history of your previous saves, allowing you to easily recover an older version if an accidental overwrite occurs.</p>
+              <ol>
+                <li>Navigate to the <strong>Saved Projects</strong> menu in the left-hand sidebar.</li>
+                <li>Locate the project you need to restore in the main viewing area.</li>
+                <li>Beneath the project details, click the toggle labeled <strong>▼ [X] prior save(s)</strong> to expand the version history for that specific build.</li>
+                <li>Locate the desired previous save by reviewing the date and time stamps.</li>
+                <li>Click the <strong>Load</strong> button to the right of the target timestamp.</li>
+              </ol>
+              <div class="note">
+                <strong>Note:</strong> Clicking <strong>Load</strong> on a previous save will revert your active workspace to that exact historical state. Be sure to save your current work as a new file first if you do not wish to lose it.
+              </div>
+            </div>
+          </details>
+
+        </div>
       </div>
 
       <!-- PRICING -->
@@ -405,7 +566,7 @@
         </div>
         <div class="lcb">
 
-          <details class="qa" open>
+          <details class="qa">
             <summary>Can I view and upload pricing information in FabricBOM?</summary>
             <div class="qa-body">
               <p>Yes. FabricBOM allows you to seamlessly upload and view your pricing data so it can be applied to your project builds.</p>
@@ -580,167 +741,6 @@
         </div>
       </div>
 
-      <!-- ADDING PRODUCTS -->
-      <div id="adding-products" class="lc section-anchor">
-        <div class="lch">
-          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
-            <rect x="1" y="4" width="14" height="8" rx="1" stroke="currentColor" stroke-width="1.2"/>
-            <path d="M8 7v2M7 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
-          <h2>Adding a Product to a Project BOM</h2>
-        </div>
-        <div class="lcb">
-
-          <details class="qa">
-            <summary>How do I add a new SKU or part number to my Project BOM?</summary>
-            <div class="qa-body">
-              <p>There are a few ways to add a new SKU (Stock Keeping Unit) or part number to your Project BOM:</p>
-              <ul>
-                <li><strong>The "Add Item" Button:</strong> Under the <em>Project Information</em> section, there is a red <strong>Add Item</strong> dropdown menu. Clicking this will give you options to append a new product line or group directly to your current build.</li>
-                <li><strong>Product Categories:</strong> In the left-hand sidebar, products are categorized by solution (e.g., <em>Network Security</em>, <em>Cloud Security</em>, <em>Network Access</em>). Clicking on a specific product family like <strong>FortiGate (FGT)</strong> or <strong>FortiSwitch (FSW)</strong> will allow you to browse and select specific SKUs to add to your BOM.</li>
-                <li><strong>Search &amp; Custom Entry:</strong> If you know the exact part number (like <code>FG-401G</code> or <code>FC-10-348GF</code>), you can use the <strong>Filter products…</strong> search bar at the top left, or scroll down to the <strong>CATALOG SEARCH</strong> section and click <strong>Search &amp; Custom Entry</strong> to manually look up and add the SKU.</li>
-              </ul>
-            </div>
-          </details>
-
-        </div>
-      </div>
-
-      <!-- EDITING ITEMS -->
-      <div id="editing-items" class="lc section-anchor">
-        <div class="lch">
-          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
-            <path d="M9.5 2.5l4 4L5 15H1v-4L9.5 2.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
-            <path d="M7.5 4.5l4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
-          <h2>Editing Items on a Project BOM</h2>
-        </div>
-        <div class="lcb">
-
-          <details class="qa">
-            <summary>How do I edit an existing item on a Project BOM?</summary>
-            <div class="qa-body">
-              <p>This is only applicable if the BOM is <strong>not</strong> in Read-Only mode. You can make changes directly within the table for that specific product block:</p>
-              <ul>
-                <li><strong>Change Quantity:</strong> Click directly into the number box in the <strong>QTY</strong> column to adjust the unit count.</li>
-                <li><strong>Change Item Type:</strong> Click the dropdown in the <strong>TYPE</strong> column (showing options like <em>REQUIRED</em>, <em>OPTIONAL</em>, or <em>EXCLUDED</em>) to change how the item is factored into your project.</li>
-                <li><strong>Update Notes:</strong> Click the text field in the <strong>NOTES</strong> column to add, modify, or delete custom details.</li>
-                <li><strong>Edit the Item Header:</strong> To rename the title of a product block, click the small <strong>pencil icon</strong> located at the top-right corner of that block.</li>
-                <li><strong>Remove an Item:</strong> To delete a block entirely, click the <strong>✕</strong> button next to the pencil icon.</li>
-              </ul>
-            </div>
-          </details>
-
-        </div>
-      </div>
-
-      <!-- EDITING PROJECT INFO -->
-      <div id="editing-project-info" class="lc section-anchor">
-        <div class="lch">
-          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
-            <rect x="1" y="2" width="14" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
-            <path d="M4 6h8M4 9h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
-          <h2>Editing Project Information</h2>
-        </div>
-        <div class="lcb">
-
-          <details class="qa">
-            <summary>How do I edit the Project Information on a Project BOM?</summary>
-            <div class="qa-body">
-              <ol>
-                <li><strong>Locate the Project Information Section:</strong> Look at the white box at the top of your main working area, just above the "Add Item" button. This section displays details like your project name, Engineer, Date, and Term.</li>
-                <li><strong>Click the Edit Button:</strong> In the top-right corner of that white box, click the <strong>Edit</strong> button (which features a small pencil icon).</li>
-              </ol>
-              <p>Clicking this will allow you to modify those top-level project details.</p>
-            </div>
-          </details>
-
-        </div>
-      </div>
-
-      <!-- SAVING -->
-      <div id="saving" class="lc section-anchor">
-        <div class="lch">
-          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
-            <path d="M2 2h9l3 3v9a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
-            <rect x="4" y="1" width="6" height="5" rx=".5" stroke="currentColor" stroke-width="1.1"/>
-            <rect x="3" y="9" width="10" height="6" rx=".5" stroke="currentColor" stroke-width="1.1"/>
-          </svg>
-          <h2>Saving a Project BOM</h2>
-        </div>
-        <div class="lcb">
-
-          <details class="qa">
-            <summary>How do I save my current Project BOM?</summary>
-            <div class="qa-body">
-              <ol>
-                <li><strong>Locate the File Menu:</strong> On the right side of the screen, just above your first list of items (and right next to the <strong>Share</strong> button), you will see a button labeled <strong>File</strong>.</li>
-                <li><strong>Save the Project:</strong> Click the <strong>File</strong> dropdown menu and select <strong>Save</strong> or <strong>Save As…</strong> to store your current build.</li>
-              </ol>
-              <p>Once your project is saved, you can easily retrieve it later by clicking on <strong>Saved Projects</strong> in the top-left sidebar menu.</p>
-            </div>
-          </details>
-
-        </div>
-      </div>
-
-      <!-- OPENING SAVED PROJECTS -->
-      <div id="opening" class="lc section-anchor">
-        <div class="lch">
-          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
-            <path d="M1 4.5A1.5 1.5 0 0 1 2.5 3h3.086a1 1 0 0 1 .707.293L7.5 4.5H13.5A1.5 1.5 0 0 1 15 6v6a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 12V4.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
-          </svg>
-          <h2>Opening Previously Saved Projects</h2>
-        </div>
-        <div class="lcb">
-
-          <details class="qa">
-            <summary>How do I open a previously saved Project BOM?</summary>
-            <div class="qa-body">
-              <ol>
-                <li><strong>Locate the Left Sidebar:</strong> Look at the dark grey menu panel on the far left.</li>
-                <li><strong>Click on "Saved Projects":</strong> Under the top <strong>PROJECT</strong> heading, click on <strong>Saved Projects</strong>.</li>
-              </ol>
-              <p>Clicking this will take you to a screen where you can view, select, and load any of your previously saved builds.</p>
-            </div>
-          </details>
-
-        </div>
-      </div>
-
-      <!-- RESTORING A VERSION -->
-      <div id="restoring" class="lc section-anchor">
-        <div class="lch">
-          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
-            <path d="M1.5 8A6.5 6.5 0 1 0 8 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-            <path d="M1.5 3.5V8h4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M8 5v3.5l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
-          <h2>Restoring a Previous Version</h2>
-        </div>
-        <div class="lcb">
-
-          <details class="qa">
-            <summary>How do I restore a previous version of a Project BOM?</summary>
-            <div class="qa-body">
-              <p>FabricBOM retains a history of your previous saves, allowing you to easily recover an older version if an accidental overwrite occurs.</p>
-              <ol>
-                <li>Navigate to the <strong>Saved Projects</strong> menu in the left-hand sidebar.</li>
-                <li>Locate the project you need to restore in the main viewing area.</li>
-                <li>Beneath the project details, click the toggle labeled <strong>▼ [X] prior save(s)</strong> to expand the version history for that specific build.</li>
-                <li>Locate the desired previous save by reviewing the date and time stamps.</li>
-                <li>Click the <strong>Load</strong> button to the right of the target timestamp.</li>
-              </ol>
-              <div class="note">
-                <strong>Note:</strong> Clicking <strong>Load</strong> on a previous save will revert your active workspace to that exact historical state. Be sure to save your current work as a new file first if you do not wish to lose it.
-              </div>
-            </div>
-          </details>
-
-        </div>
-      </div>
-
     </div>
   </div>
 </div>
@@ -760,15 +760,23 @@
   const navLinks = document.querySelectorAll('#sidebar .ni');
   const content = document.getElementById('content');
 
-  content.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(s => {
-      if (content.scrollTop + 60 >= s.offsetTop) current = s.id;
-    });
+  function updateActive() {
+    const atBottom = content.scrollTop + content.clientHeight >= content.scrollHeight - 4;
+    let current = sections[0].id;
+    if (atBottom) {
+      current = sections[sections.length - 1].id;
+    } else {
+      const contentTop = content.getBoundingClientRect().top;
+      sections.forEach(s => {
+        if (s.getBoundingClientRect().top - contentTop <= 80) current = s.id;
+      });
+    }
     navLinks.forEach(a => {
       a.classList.toggle('active', a.getAttribute('href') === '#' + current);
     });
-  }, { passive: true });
+  }
+
+  content.addEventListener('scroll', updateActive, { passive: true });
 
   // Smooth-scroll anchor clicks
   navLinks.forEach(a => {
