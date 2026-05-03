@@ -529,7 +529,10 @@
 
   <div id="content">
     <div id="ch">
-      <span class="bci">FabricBOM</span>
+      <span class="bci" style="display:flex;align-items:center;gap:6px;">
+        <svg style="width:16px;height:16px;flex-shrink:0;" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="4" fill="#EE3124"/><path d="M6 8h16v3H6zM6 12.5h10v3H6zM6 17h16v3H6z" fill="white"/></svg>
+        <span style="color:var(--forti-red);">Fabric</span><span>BOM</span>
+      </span>
       <span class="bcs">›</span>
       <span class="bci cur" id="bc">Select a product</span>
       <span class="bcs" id="bc-proj-sep">›</span>
@@ -539,7 +542,10 @@
     <!-- Product iframe area -->
     <div id="pfw">
       <div id="ws">
-        <svg class="wl" viewBox="0 0 56 56" fill="none"><rect width="56" height="56" rx="8" fill="#EE3124"/><path d="M12 16h32v6H12zM12 25h20v6H12zM12 34h32v6H12z" fill="white"/></svg>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+          <svg style="width:28px;height:28px;flex-shrink:0;" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="4" fill="#EE3124"/><path d="M6 8h16v3H6zM6 12.5h10v3H6zM6 17h16v3H6z" fill="white"/></svg>
+          <span style="font-size:22px;font-weight:700;letter-spacing:.01em;color:var(--forti-text-primary);"><span style="color:var(--forti-red);">Fabric</span>BOM</span>
+        </div>
         <h2>Select a product to begin</h2>
         <ol class="ws-steps">
           <li><span class="sn">1</span>Pick a product from the left sidebar</li>
@@ -1145,8 +1151,11 @@ function showAbout() {
   const ws = document.getElementById('ws');
   ws.style.display = 'flex';
   ws.innerHTML = `
-    <svg class="wl" viewBox="0 0 56 56" fill="none"><rect width="56" height="56" rx="8" fill="#EE3124"/><path d="M12 16h32v6H12zM12 25h20v6H12zM12 34h32v6H12z" fill="white"/></svg>
-    <h2>FabricBOM v1.0.1d</h2>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+      <svg style="width:28px;height:28px;flex-shrink:0;" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="4" fill="#EE3124"/><path d="M6 8h16v3H6zM6 12.5h10v3H6zM6 17h16v3H6z" fill="white"/></svg>
+      <span style="font-size:22px;font-weight:700;letter-spacing:.01em;color:var(--forti-text-primary);"><span style="color:var(--forti-red);">Fabric</span>BOM</span>
+    </div>
+    <span style="font-size:12px;color:var(--forti-text-muted);margin-bottom:8px;">v1.0.1d</span>
     <p>Cross-product Bill of Materials generator for Fortinet deployments. Build BOMs per product, then combine them into a Project BOM.</p>
     <div class="hint" style="max-width:380px;text-align:left;">
       <strong style="color:#4A5168;display:block;margin-bottom:4px;">Disclaimer</strong>
