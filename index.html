@@ -934,6 +934,7 @@ const CATALOG = [
   { file:'fortisiem-bomgen.html', label:'FortiSIEM', cat:'Management' },
   { file: 'fortisoar-bomgen.html', label: 'FortiSOAR', cat: 'Management' },
   { file:'fortiflex-bomgen.html', label:'FortiFlex', cat:'Licensing' },
+  { file:'asku.html', label:'Pricing Dataset Search', cat:'Pricing', pricingOnly:true },
   { file:'custom-sku-bomgen.html', label:'Search & Custom Entry', cat:'Catalog Search' },
   //{ file:'placeholder-bomgen.html',  label:'Placeholder',    cat:'Demo' },
 ];
@@ -1128,7 +1129,11 @@ async function buildNav() {
   let any = false;
   for (const [cat, prods] of Object.entries(groups)) {
     const items = [];
-    for (const p of prods) { if (await exists(`products/${p.file}`)) { items.push(p); any=true; } }
+    for (const p of prods) {
+      if (!await exists(`products/${p.file}`)) continue;
+      if (p.pricingOnly) { const pd = await getPricingIDB(); if (!pd?.data?.rows?.length) continue; }
+      items.push(p); any=true;
+    }
     if (!items.length) continue;
     const lbl = document.createElement('div'); lbl.className='nsl'; lbl.textContent=cat; lbl.style.paddingTop='14px'; c.appendChild(lbl);
     for (const p of items) {
