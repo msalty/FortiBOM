@@ -1,4 +1,4 @@
-const CACHE = 'fabricbom-v1.0.1d.2';
+const CACHE = 'fabricbom-v1.0.1e.1';
 
 const SHELL = [
   './',
