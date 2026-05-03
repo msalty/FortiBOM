@@ -385,6 +385,36 @@
   /* Term applied warning (still at default -DD) */
   #sum-term.term-warn{color:#8A5800;}
 
+  /* Password protection buttons */
+  #pw-lock-btn{background:none;border:1px solid var(--c-ib);border-radius:3px;padding:3px 6px;cursor:pointer;display:none;align-items:center;gap:4px;color:var(--c-text2);font-size:11px;font-weight:500;font-family:inherit;transition:background .12s;}
+  #pw-lock-btn:hover{background:var(--c-sh);}
+  #pw-lock-btn svg{width:11px;height:11px;flex-shrink:0;}
+  #pw-unlock-btn{background:#FFF8EE;color:#8A5800;border:1px solid #F5D9A0;border-radius:3px;padding:3px 10px;cursor:pointer;display:none;align-items:center;gap:5px;font-size:11px;font-weight:500;font-family:inherit;transition:background .12s;}
+  #pw-unlock-btn:hover{background:#F5D9A0;}
+  #pw-unlock-btn svg{width:11px;height:11px;flex-shrink:0;}
+  #proj-info-card.bom-locked .pi-cust-wrap,
+  #proj-info-card.bom-locked .pi-opp-wrap,
+  #proj-info-card.bom-locked .pi-notes-wrap{display:none;}
+  /* Password modals */
+  .pw-modal{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.55);align-items:center;justify-content:center;}
+  .pw-modal.on{display:flex;}
+  .pw-box{background:#fff;border-radius:5px;width:420px;max-width:95vw;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3);}
+  .pw-box h3{font-size:14px;font-weight:700;color:var(--c-text);padding:16px 18px;border-bottom:1px solid var(--c-border);background:var(--c-sh);display:flex;align-items:center;gap:8px;}
+  .pw-body{padding:18px;display:flex;flex-direction:column;gap:12px;}
+  .pw-foot{padding:12px 18px;border-top:1px solid var(--c-border);display:flex;justify-content:flex-end;gap:8px;background:var(--c-sh);}
+  .pw-display{display:flex;align-items:center;gap:8px;background:#F7F9FC;border:1px solid var(--c-border);border-radius:3px;padding:10px 14px;}
+  .pw-val{font-family:'Courier New',monospace;font-size:15px;font-weight:700;color:#1A4E82;flex:1;letter-spacing:.05em;word-break:break-all;}
+  .pw-copy-btn{background:none;border:1px solid var(--c-ib);border-radius:3px;padding:4px 10px;cursor:pointer;font-size:11px;font-weight:500;color:var(--c-text2);font-family:inherit;white-space:nowrap;transition:background .12s;flex-shrink:0;}
+  .pw-copy-btn:hover{background:var(--c-sh);}
+  .pw-warn{font-size:11px;color:#8A5800;background:#FFF8EE;border:1px solid #F5D9A0;border-radius:3px;padding:8px 12px;}
+  .pw-input{width:100%;box-sizing:border-box;border:1px solid var(--c-ib);border-radius:3px;padding:8px 10px;font-size:15px;font-family:'Courier New',monospace;letter-spacing:.05em;outline:none;transition:border-color .15s;}
+  .pw-input:focus{border-color:var(--forti-red);box-shadow:0 0 0 2px rgba(238,49,36,.1);}
+  .pw-input.error{border-color:#E74C3C;background:#FEF0EE;}
+  .pw-err{font-size:12px;color:#C0392B;display:none;margin-top:-4px;}
+  .pw-err.on{display:block;}
+  .pw-desc{font-size:13px;color:var(--c-text);line-height:1.6;}
+  .pw-note{font-size:11px;color:var(--c-text2);line-height:1.5;}
+
   /* Read Only checkbox (visible only in edit mode) */
   #pi-readonly-wrap{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border:1px solid var(--c-ib);border-radius:3px;cursor:pointer;white-space:nowrap;transition:background .12s,border-color .12s;}
   #pi-readonly-wrap:hover{background:var(--c-sh);border-color:var(--c-text2);}
@@ -542,9 +572,16 @@
             <svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
           </button>
           <label id="pi-readonly-wrap" title="Lock the BOM and project info against edits">
-            <input type="checkbox" id="pi-readonly" onchange="toggleReadOnly(this.checked)">
+            <input type="checkbox" id="pi-readonly" onchange="handleReadOnlyChange(this)">
             <span>RO</span>
           </label>
+          <button id="pw-lock-btn" onclick="openPwViewModal()" title="Password protected — click to manage">
+            <svg viewBox="0 0 11 13" fill="none"><rect x="1.5" y="5.5" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 5.5V3.5a2 2 0 0 1 4 0v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><circle cx="5.5" cy="9" r="1" fill="currentColor"/></svg>
+          </button>
+          <button id="pw-unlock-btn" onclick="openPwUnlockModal()" title="This BOM is password-protected — click to unlock">
+            <svg viewBox="0 0 11 13" fill="none"><rect x="1.5" y="5.5" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 5.5V3.5a2 2 0 0 1 4 0v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><circle cx="5.5" cy="9" r="1" fill="currentColor"/></svg>
+            Unlock
+          </button>
           <button class="pi-edit-btn" id="pi-edit-btn" onclick="togglePiEdit()" title="Toggle edit mode">
             <svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
             <span id="pi-edit-label">Save</span>
@@ -552,8 +589,8 @@
         </div>
         <div class="lcb">
           <div class="pfg">
-            <div class="pg"><label class="pl">Customer / Opportunity <span class="r">*</span></label><input type="text" class="pi" id="pi-cust" placeholder="e.g. Acme Corp – Network Refresh 2025"></div>
-            <div class="pg"><label class="pl">Opportunity ID</label><input type="text" class="pi" id="pi-opp" placeholder="e.g. OPP-2025-01234"></div>
+            <div class="pg full pi-cust-wrap"><label class="pl">Customer / Opportunity <span class="r">*</span></label><input type="text" class="pi" id="pi-cust" placeholder="e.g. Acme Corp – Network Refresh 2025"></div>
+            <div class="pg pi-opp-wrap"><label class="pl">Opportunity ID</label><input type="text" class="pi" id="pi-opp" placeholder="e.g. OPP-2025-01234"></div>
             <div class="pg"><label class="pl">SE / Engineer</label><input type="text" class="pi" id="pi-eng" placeholder="Your name"></div>
             <div class="pg"><label class="pl">Date</label><input type="text" class="pi" id="pi-date"></div>
             <div class="pg">
@@ -566,7 +603,7 @@
               </select>
               <div style="font-size:10px;color:var(--c-textm);margin-top:3px;">Replaces <code>-DD</code> suffix on all SKUs in this project BOM</div>
             </div>
-            <div class="pg full"><label class="pl">Project Scope / Notes</label><textarea class="pi" id="pi-notes" placeholder="Optional: overall project scope, deployment context, or assumptions…"></textarea></div>
+            <div class="pg full pi-notes-wrap"><label class="pl">Project Scope / Notes</label><textarea class="pi" id="pi-notes" placeholder="Optional: overall project scope, deployment context, or assumptions…"></textarea></div>
           </div>
           <div id="pi-summary"></div>
           <div id="pi-view"></div>
@@ -775,6 +812,75 @@
   </div>
 </div>
 
+<!-- Password Setup Modal -->
+<div id="pw-setup-modal" class="pw-modal">
+  <div class="pw-box">
+    <h3>
+      <svg width="14" height="14" viewBox="0 0 11 13" fill="none"><rect x="1.5" y="5.5" width="8" height="7" rx="1" stroke="#2A2F3A" stroke-width="1.1"/><path d="M3.5 5.5V3.5a2 2 0 0 1 4 0v2" stroke="#2A2F3A" stroke-width="1.1" stroke-linecap="round"/><circle cx="5.5" cy="9" r="1" fill="#2A2F3A"/></svg>
+      Require a Password?
+    </h3>
+    <div class="pw-body">
+      <p class="pw-desc">This BOM is now read-only. Would you also like to require a password to unlock it?</p>
+      <p class="pw-note">Without a password, the BOM is read-only but all fields are visible. With a password, <strong>Opportunity ID</strong> and <strong>Project Scope / Notes</strong> are hidden from anyone who doesn't have it.</p>
+      <div id="pw-setup-reveal" style="display:none;flex-direction:column;gap:8px;">
+        <div class="pw-display">
+          <span class="pw-val" id="pw-setup-val"></span>
+          <button class="pw-copy-btn" onclick="copySetupPassword()">Copy</button>
+        </div>
+        <p class="pw-warn">Save this password now — it won't be shown again after you close this dialog. Recipients will need it to unlock the BOM.</p>
+      </div>
+    </div>
+    <div class="pw-foot">
+      <button class="btn bs" onclick="skipPasswordSetup()">No, read-only only</button>
+      <button class="btn bs" id="pw-setup-gen-btn" onclick="generateAndShowSetupPassword()">Generate Password</button>
+      <button class="btn bp" id="pw-setup-confirm-btn" style="display:none" onclick="confirmPasswordSetup()">Done — I've saved it</button>
+    </div>
+  </div>
+</div>
+
+<!-- Password Unlock Modal -->
+<div id="pw-unlock-modal" class="pw-modal">
+  <div class="pw-box">
+    <h3>
+      <svg width="14" height="14" viewBox="0 0 11 13" fill="none"><rect x="1.5" y="5.5" width="8" height="7" rx="1" stroke="#2A2F3A" stroke-width="1.1"/><path d="M3.5 5.5V3.5a2 2 0 0 1 4 0v2" stroke="#2A2F3A" stroke-width="1.1" stroke-linecap="round"/><circle cx="5.5" cy="9" r="1" fill="#2A2F3A"/></svg>
+      Unlock BOM
+    </h3>
+    <div class="pw-body">
+      <p class="pw-desc">This BOM is password-protected. Enter the password to reveal all fields and unlock editing.</p>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <input type="password" class="pw-input" id="pw-unlock-input" placeholder="Enter password…" onkeydown="if(event.key==='Enter')attemptUnlock()">
+        <span class="pw-err" id="pw-unlock-err">Incorrect password — try again.</span>
+      </div>
+    </div>
+    <div class="pw-foot">
+      <button class="btn bs" onclick="closePwUnlockModal()">Cancel</button>
+      <button class="btn bp" onclick="attemptUnlock()">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- Password View / Manage Modal -->
+<div id="pw-view-modal" class="pw-modal">
+  <div class="pw-box">
+    <h3>
+      <svg width="14" height="14" viewBox="0 0 11 13" fill="none"><rect x="1.5" y="5.5" width="8" height="7" rx="1" stroke="#2A2F3A" stroke-width="1.1"/><path d="M3.5 5.5V3.5a2 2 0 0 1 4 0v2" stroke="#2A2F3A" stroke-width="1.1" stroke-linecap="round"/><circle cx="5.5" cy="9" r="1" fill="#2A2F3A"/></svg>
+      Password Protection
+    </h3>
+    <div class="pw-body">
+      <p class="pw-note">This BOM is password-protected. Share this password with recipients who need to unlock it.</p>
+      <div class="pw-display">
+        <span class="pw-val" id="pw-view-val">••••••••••••</span>
+        <button class="pw-copy-btn" id="pw-view-toggle" onclick="togglePwVisibility()">Show</button>
+        <button class="pw-copy-btn" id="pw-view-copy" onclick="copyViewPassword()">Copy</button>
+      </div>
+    </div>
+    <div class="pw-foot">
+      <button class="btn bd" onclick="removePasswordProtectionConfirm()">Remove Password</button>
+      <button class="btn bs" onclick="closePwViewModal()">Close</button>
+    </div>
+  </div>
+</div>
+
 <script src="js/xlsx.mini.min.js"></script>
 <script>
 const CATALOG = [
@@ -821,34 +927,68 @@ let spRevExpanded = {}; // projectKey -> boolean, tracks which revision lists ar
 // or group-header entries {id, _type:'group', label, note}
 
 // ── PERSISTENCE ───────────────────────────────────────────────────────────────
-function savePiData() {
+async function savePiData() {
   try {
-    localStorage.setItem('fortibom_pi', JSON.stringify({
-      cust:     document.getElementById('pi-cust').value,
-      opp:      document.getElementById('pi-opp').value,
-      eng:      document.getElementById('pi-eng').value,
-      date:     document.getElementById('pi-date').value,
-      term:     document.getElementById('pi-term').value,
-      notes:    document.getElementById('pi-notes').value,
-      readOnly: isReadOnly(),
-    }));
+    const data = {
+      eng:          document.getElementById('pi-eng').value,
+      date:         document.getElementById('pi-date').value,
+      term:         document.getElementById('pi-term').value,
+      readOnly:     isReadOnly(),
+      passwordHash: bomPasswordHash,
+      passwordSalt: _pwSalt,
+    };
+    if (_activeKey) {
+      await _encryptCurrentFields();
+      Object.assign(data, _encBlobsCache);
+    } else if (bomPasswordHash && _encBlobsCache) {
+      Object.assign(data, _encBlobsCache);
+    } else {
+      data.cust  = document.getElementById('pi-cust').value;
+      data.opp   = document.getElementById('pi-opp').value;
+      data.notes = document.getElementById('pi-notes').value;
+    }
+    localStorage.setItem('fortibom_pi', JSON.stringify(data));
   } catch(e) {}
 }
-function loadPiData() {
+async function loadPiData() {
   try {
     const raw = localStorage.getItem('fortibom_pi');
     if (!raw) return;
     const d = JSON.parse(raw);
-    if (d.cust  !== undefined) document.getElementById('pi-cust').value  = d.cust;
-    if (d.opp   !== undefined) document.getElementById('pi-opp').value   = d.opp;
     if (d.eng   !== undefined) document.getElementById('pi-eng').value   = d.eng;
     if (d.date  !== undefined) document.getElementById('pi-date').value  = d.date;
     if (d.term  !== undefined) document.getElementById('pi-term').value  = d.term;
-    if (d.notes !== undefined) document.getElementById('pi-notes').value = d.notes;
+    if (d.passwordHash) {
+      bomPasswordHash = d.passwordHash;
+      _pwSalt = d.passwordSalt || '';
+      if (d.cust_enc) {
+        _encBlobsCache = { cust_enc: d.cust_enc, opp_enc: d.opp_enc||'', notes_enc: d.notes_enc||'' };
+        const stored = JSON.parse(localStorage.getItem('fortibom_pw_plain') || 'null');
+        if (stored && stored.hash === bomPasswordHash && _pwSalt) {
+          try {
+            _activeKey = await deriveKey(stored.plain, _pwSalt);
+            await _decryptIntoFields(_activeKey, _encBlobsCache);
+            bomUnlocked = true;
+          } catch { _activeKey = null; bomUnlocked = false; }
+        } else {
+          bomUnlocked = false;
+        }
+      } else {
+        if (d.cust  !== undefined) document.getElementById('pi-cust').value  = d.cust;
+        if (d.opp   !== undefined) document.getElementById('pi-opp').value   = d.opp;
+        if (d.notes !== undefined) document.getElementById('pi-notes').value = d.notes;
+        bomUnlocked = isCreator(bomPasswordHash);
+      }
+    } else {
+      if (d.cust  !== undefined) document.getElementById('pi-cust').value  = d.cust;
+      if (d.opp   !== undefined) document.getElementById('pi-opp').value   = d.opp;
+      if (d.notes !== undefined) document.getElementById('pi-notes').value = d.notes;
+    }
     if (d.readOnly) {
       document.getElementById('pi-readonly').checked = true;
       toggleReadOnly(true);
     }
+    updateLockUI();
   } catch(e) {}
 }
 function saveCart() {
@@ -1126,6 +1266,10 @@ function newProject() {
   document.getElementById('pi-notes').value = '';
   document.getElementById('pi-readonly').checked = false;
   toggleReadOnly(false);
+  bomPasswordHash = ''; bomUnlocked = false; _sessionUnlockPlain = '';
+  _activeKey = null; _pwSalt = ''; _encBlobsCache = null;
+  localStorage.removeItem('fortibom_pw_plain');
+  setLockedState(false);
   savePiData();
   const card = document.getElementById('proj-info-card');
   card.classList.remove('view-mode');
@@ -1654,13 +1798,17 @@ function loadSavedProject(id) {
   if (cart.length && !confirm(`Load "${snap.meta.cust || 'this project'}"? Your current Project BOM will be replaced.`)) return;
   cart = JSON.parse(JSON.stringify(snap.cart));
   seq  = snap.seq;
-  document.getElementById('pi-cust').value  = snap.meta.cust  || '';
-  document.getElementById('pi-opp').value   = snap.meta.opp   || '';
+  // skip cust/opp/notes when encrypted — applyPasswordHashFromMeta handles decryption
+  if (!snap.meta.cust_enc) document.getElementById('pi-cust').value  = snap.meta.cust  || '';
+  if (!snap.meta.cust_enc) document.getElementById('pi-opp').value   = snap.meta.opp   || '';
+  if (!snap.meta.cust_enc) document.getElementById('pi-notes').value = snap.meta.notes || '';
+  if (snap.meta.cust_enc)  { document.getElementById('pi-cust').value = ''; document.getElementById('pi-opp').value = ''; document.getElementById('pi-notes').value = ''; }
   document.getElementById('pi-eng').value   = snap.meta.eng   || '';
   document.getElementById('pi-date').value  = snap.meta.date  || '';
-  document.getElementById('pi-notes').value = snap.meta.notes || '';
   document.getElementById('pi-term').value  = snap.meta.term  || 'DD';
+  _sessionUnlockPlain = '';
   _restoreReadOnly(snap.meta);
+  applyPasswordHashFromMeta(snap.meta);
   updateBadges();
   renderGroups();
   saveCart();
@@ -1700,15 +1848,23 @@ function deleteProjectGroup(projectKey) {
 
 // ── EXPORT ───────────────────────────────────────────────────────────────────
 function getMeta() {
-  return {
-    cust:     document.getElementById('pi-cust').value.trim()||'Unnamed Project',
-    opp:      document.getElementById('pi-opp').value.trim(),
-    eng:      document.getElementById('pi-eng').value.trim(),
-    date:     document.getElementById('pi-date').value.trim(),
-    notes:    document.getElementById('pi-notes').value.trim(),
-    term:     document.getElementById('pi-term').value,
-    readOnly: isReadOnly(),
+  const m = {
+    cust:         document.getElementById('pi-cust').value.trim()||'Unnamed Project',
+    opp:          document.getElementById('pi-opp').value.trim(),
+    eng:          document.getElementById('pi-eng').value.trim(),
+    date:         document.getElementById('pi-date').value.trim(),
+    notes:        document.getElementById('pi-notes').value.trim(),
+    term:         document.getElementById('pi-term').value,
+    readOnly:     isReadOnly(),
+    passwordHash: bomPasswordHash,
+    passwordSalt: _pwSalt,
   };
+  if (_encBlobsCache) {
+    m.cust_enc  = _encBlobsCache.cust_enc;
+    m.opp_enc   = _encBlobsCache.opp_enc;
+    m.notes_enc = _encBlobsCache.notes_enc;
+  }
+  return m;
 }
 // ── URL SHARING ───────────────────────────────────────────────────────────────
 function serializeBOM() {
@@ -1724,18 +1880,22 @@ function serializeBOM() {
     );
     return { p: entry.product, l: entry.label, r: rows };
   });
-  return JSON.stringify({
-    v: 1,
-    m: { c: m.cust, o: m.opp, e: m.eng, d: m.date, n: m.notes, t: m.term, ro: m.readOnly ? 1 : 0 },
-    i: items
-  });
+  const mj = m.cust_enc
+    ? { c_e: m.cust_enc, o_e: m.opp_enc||'', n_e: m.notes_enc||'', e: m.eng, d: m.date, t: m.term, ro: m.readOnly ? 1 : 0, ph: m.passwordHash||'', ps: m.passwordSalt||'' }
+    : { c: m.cust, o: m.opp, e: m.eng, d: m.date, n: m.notes, t: m.term, ro: m.readOnly ? 1 : 0, ph: m.passwordHash||'' };
+  return JSON.stringify({ v: 1, m: mj, i: items });
 }
 
 function deserializeBOM(json) {
   const obj = JSON.parse(json);
   if (!obj || obj.v !== 1) throw new Error('Unknown BOM version');
   const m = obj.m || {};
-  const meta = { cust: m.c||'', opp: m.o||'', eng: m.e||'', date: m.d||'', notes: m.n||'', term: m.t||'DD', readOnly: !!m.ro };
+  const meta = {
+    cust: m.c_e ? '' : (m.c||''), opp: m.o_e ? '' : (m.o||''),
+    eng: m.e||'', date: m.d||'', notes: m.n_e ? '' : (m.n||''),
+    term: m.t||'DD', readOnly: !!m.ro, passwordHash: m.ph||'', passwordSalt: m.ps||'',
+    ...(m.c_e ? { cust_enc: m.c_e, opp_enc: m.o_e||'', notes_enc: m.n_e||'' } : {}),
+  };
   const items = (obj.i || []).map(item => {
     if (item.g) {
       return { _type: 'group', label: item.l || '', note: item.n || '', showPricing: !!item.sp };
@@ -1856,9 +2016,12 @@ function backupProjects() {
 function exportCSV() {
   const p = getMeta();
   const termLabel = {DD:'Co-term (-DD)',12:'1 Year (-12)',36:'3 Years (-36)',60:'5 Years (-60)'}[p.term];
+  const metaFields = p.cust_enc
+    ? [`Customer_enc:${p.cust_enc}`,`Opportunity_enc:${p.opp_enc||''}`,`Notes_enc:${p.notes_enc||''}`,`Engineer:${p.eng}`,`Date:${p.date}`,`Term:${termLabel}`,`ReadOnly:${p.readOnly?'true':''}`,`PasswordHash:${p.passwordHash||''}`,`PasswordSalt:${p.passwordSalt||''}`]
+    : [`Customer:${p.cust}`,`Opportunity:${p.opp}`,`Engineer:${p.eng}`,`Date:${p.date}`,`Term:${termLabel}`,`ReadOnly:${p.readOnly?'true':''}`,`PasswordHash:${p.passwordHash||''}`];
   const rows = [
     ['FabricBOM Project Export'],
-    [`Customer:${p.cust}`,`Opportunity:${p.opp}`,`Engineer:${p.eng}`,`Date:${p.date}`,`Term:${termLabel}`,`ReadOnly:${p.readOnly?'true':''}`],
+    metaFields,
     [],
     ['Product Group','Part Number','Description','Qty','Type','Notes'],
   ];
@@ -2087,12 +2250,34 @@ function parseCSV(text) {
   // Row 1: meta
   const metaRow = lines[1] || [];
   function mval(cell) { return cell ? cell.replace(/^[^:]+:/,'').trim() : ''; }
-  const meta = { cust:mval(metaRow[0]), opp:mval(metaRow[1]), eng:mval(metaRow[2]), date:mval(metaRow[3]), term:'DD', readOnly:false };
-  const termLine = mval(metaRow[4]);
-  if (termLine.includes('1 Year')) meta.term='12';
-  else if (termLine.includes('3 Year')) meta.term='36';
-  else if (termLine.includes('5 Year')) meta.term='60';
-  if (mval(metaRow[5]).toLowerCase() === 'true') meta.readOnly = true;
+  const meta = { cust:'', opp:'', eng:'', date:'', term:'DD', readOnly:false, passwordHash:'', passwordSalt:'' };
+  const encrypted = metaRow[0] && metaRow[0].startsWith('Customer_enc:');
+  if (encrypted) {
+    // fields: Customer_enc, Opportunity_enc, Notes_enc, Engineer, Date, Term, ReadOnly, PasswordHash, PasswordSalt
+    meta.cust_enc  = mval(metaRow[0]);
+    meta.opp_enc   = mval(metaRow[1]);
+    meta.notes_enc = mval(metaRow[2]);
+    meta.eng       = mval(metaRow[3]);
+    meta.date      = mval(metaRow[4]);
+    const termLine = mval(metaRow[5]);
+    if (termLine.includes('1 Year')) meta.term='12';
+    else if (termLine.includes('3 Year')) meta.term='36';
+    else if (termLine.includes('5 Year')) meta.term='60';
+    if (mval(metaRow[6]).toLowerCase() === 'true') meta.readOnly = true;
+    meta.passwordHash = mval(metaRow[7]);
+    meta.passwordSalt = mval(metaRow[8]);
+  } else {
+    meta.cust = mval(metaRow[0]);
+    meta.opp  = mval(metaRow[1]);
+    meta.eng  = mval(metaRow[2]);
+    meta.date = mval(metaRow[3]);
+    const termLine = mval(metaRow[4]);
+    if (termLine.includes('1 Year')) meta.term='12';
+    else if (termLine.includes('3 Year')) meta.term='36';
+    else if (termLine.includes('5 Year')) meta.term='60';
+    if (mval(metaRow[5]).toLowerCase() === 'true') meta.readOnly = true;
+    if (metaRow[6]) meta.passwordHash = mval(metaRow[6]);
+  }
   // Data rows start at index 4 (after header row at index 3)
   // Parse all items in order (product groups and group headers interleaved)
   const items = [];
@@ -2138,13 +2323,16 @@ function _restoreReadOnly(meta) {
 function doImport() {
   if (!pendingImport) return;
   const { meta, items, prodCount, grpCount } = pendingImport;
-  // Restore project info fields
-  if (meta.cust) document.getElementById('pi-cust').value = meta.cust;
-  if (meta.opp)  document.getElementById('pi-opp').value  = meta.opp;
+  // Restore project info fields (skip cust/opp/notes when encrypted — applyPasswordHashFromMeta handles decryption)
+  if (!meta.cust_enc && meta.cust) document.getElementById('pi-cust').value = meta.cust;
+  if (!meta.cust_enc && meta.opp)  document.getElementById('pi-opp').value  = meta.opp;
   if (meta.eng)  document.getElementById('pi-eng').value  = meta.eng;
   if (meta.date) document.getElementById('pi-date').value = meta.date;
   if (meta.term) document.getElementById('pi-term').value = meta.term;
+  if (meta.cust_enc) { document.getElementById('pi-cust').value = ''; document.getElementById('pi-opp').value = ''; document.getElementById('pi-notes').value = ''; }
+  _sessionUnlockPlain = '';
   _restoreReadOnly(meta);
+  applyPasswordHashFromMeta(meta);
   // Rebuild cart preserving order
   cart = [];
   seq = 0;
@@ -2174,13 +2362,17 @@ let _pendingSharedBOM = null;
 
 function applySharedBOM(parsed) {
   const { meta, items } = parsed;
-  if (meta.cust)  document.getElementById('pi-cust').value  = meta.cust;
-  if (meta.opp)   document.getElementById('pi-opp').value   = meta.opp;
+  // skip cust/opp/notes when encrypted — applyPasswordHashFromMeta handles decryption
+  if (!meta.cust_enc && meta.cust)  document.getElementById('pi-cust').value  = meta.cust;
+  if (!meta.cust_enc && meta.opp)   document.getElementById('pi-opp').value   = meta.opp;
+  if (!meta.cust_enc && meta.notes) document.getElementById('pi-notes').value = meta.notes;
+  if (meta.cust_enc) { document.getElementById('pi-cust').value = ''; document.getElementById('pi-opp').value = ''; document.getElementById('pi-notes').value = ''; }
   if (meta.eng)   document.getElementById('pi-eng').value   = meta.eng;
   if (meta.date)  document.getElementById('pi-date').value  = meta.date;
-  if (meta.notes) document.getElementById('pi-notes').value = meta.notes;
   if (meta.term)  document.getElementById('pi-term').value  = meta.term;
+  _sessionUnlockPlain = '';
   _restoreReadOnly(meta);
+  applyPasswordHashFromMeta(meta);
   cart = []; seq = 0;
   for (const item of items) {
     if (item._type === 'group') {
@@ -2568,13 +2760,21 @@ function piAutoLink(text) {
 }
 
 function updatePiView() {
+  const locked = !!(bomPasswordHash && !bomUnlocked);
   const cust  = document.getElementById('pi-cust').value.trim();
-  const opp   = document.getElementById('pi-opp').value.trim();
+  const opp   = locked ? '' : document.getElementById('pi-opp').value.trim();
   const eng   = document.getElementById('pi-eng').value.trim();
   const date  = document.getElementById('pi-date').value.trim();
   const term  = document.getElementById('pi-term').value;
-  const notes = document.getElementById('pi-notes').value.trim();
+  const notes = locked ? '' : document.getElementById('pi-notes').value.trim();
   const termLabel = PI_TERM_LABELS[term] || term;
+
+  const lockSvg = `<svg width="10" height="12" viewBox="0 0 11 13" fill="none" style="flex-shrink:0;opacity:.55"><rect x="1.5" y="5.5" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 5.5V3.5a2 2 0 0 1 4 0v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><circle cx="5.5" cy="9" r="1" fill="currentColor"/></svg>`;
+  const lockedField = (label, fullRow=false) =>
+    `<div class="pi-vf${fullRow?' full':''}">
+      <span class="pi-vl">${label}</span>
+      <span class="pi-vv empty" style="display:inline-flex;align-items:center;gap:4px;">${lockSvg} Password required</span>
+    </div>`;
 
   const field = (label, value, cls='', fullRow=false) => {
     const isEmpty = !value;
@@ -2585,17 +2785,28 @@ function updatePiView() {
     </div>`;
   };
 
-  const custField = `<div class="pi-vf full cust-row">
-    <span class="pi-vl">Customer / Opportunity</span>
-    <span class="pi-vv pi-cust-val${!cust?' empty':''}">${cust ? piAutoLink(cust) : 'Unnamed Project'}</span>
-  </div>`;
+  const hasCust  = document.getElementById('pi-cust').value.trim();
+  const hasOpp   = document.getElementById('pi-opp').value.trim();
+  const hasNotes = document.getElementById('pi-notes').value.trim();
+
+  const custField = locked && hasCust
+    ? `<div class="pi-vf full cust-row">
+        <span class="pi-vl">Customer / Opportunity</span>
+        <span class="pi-vv empty" style="display:inline-flex;align-items:center;gap:4px;">${lockSvg} Password required</span>
+      </div>`
+    : `<div class="pi-vf full cust-row">
+        <span class="pi-vl">Customer / Opportunity</span>
+        <span class="pi-vv pi-cust-val${!cust?' empty':''}">${cust ? piAutoLink(cust) : 'Unnamed Project'}</span>
+      </div>`;
 
   let html = `<div class="pi-vg">${custField}`;
-  if (opp)   html += field('Opportunity ID', opp);
+  if (locked && hasOpp)    html += lockedField('Opportunity ID');
+  else if (opp)            html += field('Opportunity ID', opp);
   if (eng)   html += field('SE / Engineer', eng);
   if (date)  html += field('Date', date);
   html += field('Support / License Term', termLabel);
-  if (notes) html += field('Project Scope / Notes', notes, '', true);
+  if (locked && hasNotes)  html += lockedField('Project Scope / Notes', true);
+  else if (notes)          html += field('Project Scope / Notes', notes, '', true);
   html += '</div>';
 
   document.getElementById('pi-view').innerHTML = html;
@@ -2603,8 +2814,9 @@ function updatePiView() {
 }
 
 function updatePiSummary() {
+  const locked = !!(bomPasswordHash && !bomUnlocked);
   const cust  = document.getElementById('pi-cust').value.trim();
-  const opp   = document.getElementById('pi-opp').value.trim();
+  const opp   = locked ? '' : document.getElementById('pi-opp').value.trim();
   const eng   = document.getElementById('pi-eng').value.trim();
   const date  = document.getElementById('pi-date').value.trim();
   const term  = document.getElementById('pi-term').value;
@@ -2612,8 +2824,14 @@ function updatePiSummary() {
 
   const chip = (lbl, val) => val ? `<div class="pi-sum-divider"></div><div class="pi-sum-chip"><span class="pi-sum-lbl">${lbl}</span><span class="pi-sum-val">${h(val)}</span></div>` : '';
 
-  const custDisplay = cust || 'Unnamed Project';
-  let html = `<span class="pi-sum-cust${!cust?' empty':''}" title="${h(custDisplay)}">${h(custDisplay)}</span>`;
+  const lockSvg = `<svg width="10" height="12" viewBox="0 0 11 13" fill="none" style="flex-shrink:0;opacity:.55"><rect x="1.5" y="5.5" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 5.5V3.5a2 2 0 0 1 4 0v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><circle cx="5.5" cy="9" r="1" fill="currentColor"/></svg>`;
+  let html;
+  if (locked && cust) {
+    html = `<span class="pi-sum-cust empty" style="display:inline-flex;align-items:center;gap:4px;" title="Password required">${lockSvg} Password required</span>`;
+  } else {
+    const custDisplay = cust || 'Unnamed Project';
+    html = `<span class="pi-sum-cust${!cust?' empty':''}" title="${h(custDisplay)}">${h(custDisplay)}</span>`;
+  }
   html += chip('Opportunity', opp);
   html += chip('Engineer', eng);
   html += chip('Date', date);
@@ -2643,6 +2861,7 @@ function togglePiEdit() {
     btn.classList.add('active');
     label.textContent = 'Edit';
   }
+  updateLockUI();
 }
 
 function clearPiFields() {
@@ -2655,6 +2874,10 @@ function clearPiFields() {
   document.getElementById('pi-notes').value = '';
   document.getElementById('pi-readonly').checked = false;
   toggleReadOnly(false);
+  bomPasswordHash = ''; bomUnlocked = false; _sessionUnlockPlain = '';
+  _activeKey = null; _pwSalt = ''; _encBlobsCache = null;
+  localStorage.removeItem('fortibom_pw_plain');
+  setLockedState(false);
   savePiData();
   const card  = document.getElementById('proj-info-card');
   const btn   = document.getElementById('pi-edit-btn');
@@ -2687,7 +2910,320 @@ function initPiMode() {
     btn.classList.remove('active');
     label.textContent = 'Save';
   }
+  if (bomPasswordHash) setLockedState(!bomUnlocked);
+  updateLockUI();
 }
+
+// ── PASSWORD PROTECTION ───────────────────────────────────────────────────────
+let bomPasswordHash = '';
+let bomUnlocked = false;
+let _setupPasswordPlain = '';
+let _unlockModalMode = '';
+let _sessionUnlockPlain = '';
+let _pwViewVisible = false;
+let _activeKey = null;       // AES-GCM CryptoKey — in memory only, never persisted
+let _pwSalt = '';            // PBKDF2 salt hex — public, stored alongside hash
+let _encBlobsCache = null;   // { cust_enc, opp_enc, notes_enc }
+
+// ── Crypto helpers ────────────────────────────────────────────────────────────
+function _b2h(buf) { return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
+function _h2b(hex) { const a=new Uint8Array(hex.length/2); for(let i=0;i<a.length;i++) a[i]=parseInt(hex.slice(i*2,i*2+2),16); return a; }
+
+function genSalt() { return _b2h(crypto.getRandomValues(new Uint8Array(16))); }
+
+async function hashPassword(pw) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return _b2h(buf);
+}
+
+async function deriveKey(pw, saltHex) {
+  const keyMat = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt:_h2b(saltHex), iterations:100000, hash:'SHA-256' },
+    keyMat, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']
+  );
+}
+
+async function encryptField(key, plaintext) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, key, new TextEncoder().encode(plaintext));
+  return _b2h(iv) + ':' + _b2h(new Uint8Array(ct));
+}
+
+async function decryptField(key, encHex) {
+  if (!encHex || !encHex.includes(':')) return '';
+  try {
+    const [ivHex, ctHex] = encHex.split(':');
+    const pt = await crypto.subtle.decrypt({ name:'AES-GCM', iv:_h2b(ivHex) }, key, _h2b(ctHex));
+    return new TextDecoder().decode(pt);
+  } catch { return ''; }
+}
+
+async function _encryptCurrentFields() {
+  if (!_activeKey) return;
+  _encBlobsCache = {
+    cust_enc:  await encryptField(_activeKey, document.getElementById('pi-cust').value),
+    opp_enc:   await encryptField(_activeKey, document.getElementById('pi-opp').value),
+    notes_enc: await encryptField(_activeKey, document.getElementById('pi-notes').value),
+  };
+}
+
+async function _decryptIntoFields(key, blobs) {
+  const [cust, opp, notes] = await Promise.all([
+    decryptField(key, blobs.cust_enc  || ''),
+    decryptField(key, blobs.opp_enc   || ''),
+    decryptField(key, blobs.notes_enc || ''),
+  ]);
+  document.getElementById('pi-cust').value  = cust;
+  document.getElementById('pi-opp').value   = opp;
+  document.getElementById('pi-notes').value = notes;
+}
+
+// ── Creator check / visible password ─────────────────────────────────────────
+function isCreator(hash) {
+  try {
+    const stored = JSON.parse(localStorage.getItem('fortibom_pw_plain') || 'null');
+    return !!(stored && stored.hash === hash);
+  } catch { return false; }
+}
+
+function getVisiblePassword() {
+  try {
+    const stored = JSON.parse(localStorage.getItem('fortibom_pw_plain') || 'null');
+    if (stored && stored.hash === bomPasswordHash) return stored.plain;
+  } catch {}
+  return _sessionUnlockPlain || '';
+}
+
+// ── Lock UI and state ─────────────────────────────────────────────────────────
+function updateLockUI() {
+  const card = document.getElementById('proj-info-card');
+  const isLocked = card.classList.contains('bom-locked');
+  const hasPassword = !!bomPasswordHash;
+  const inEditMode = !card.classList.contains('view-mode');
+
+  const lockBtn = document.getElementById('pw-lock-btn');
+  lockBtn.style.display = (hasPassword && !isLocked && inEditMode) ? 'inline-flex' : 'none';
+
+  const unlockBtn = document.getElementById('pw-unlock-btn');
+  unlockBtn.style.display = isLocked ? 'inline-flex' : 'none';
+}
+
+function setLockedState(locked) {
+  const card = document.getElementById('proj-info-card');
+  if (locked) {
+    card.classList.add('bom-locked');
+  } else {
+    card.classList.remove('bom-locked');
+  }
+  updatePiView();
+  updatePiSummary();
+  updateLockUI();
+}
+
+async function applyPasswordHashFromMeta(meta) {
+  bomPasswordHash = meta.passwordHash || '';
+  _pwSalt = meta.passwordSalt || '';
+
+  if (meta.cust_enc || meta.opp_enc || meta.notes_enc) {
+    _encBlobsCache = { cust_enc: meta.cust_enc||'', opp_enc: meta.opp_enc||'', notes_enc: meta.notes_enc||'' };
+  }
+
+  if (bomPasswordHash) {
+    const stored = JSON.parse(localStorage.getItem('fortibom_pw_plain') || 'null');
+    if (stored && stored.hash === bomPasswordHash && _pwSalt) {
+      try {
+        _activeKey = await deriveKey(stored.plain, _pwSalt);
+        if (_encBlobsCache) await _decryptIntoFields(_activeKey, _encBlobsCache);
+        bomUnlocked = true;
+        setLockedState(false);
+      } catch {
+        bomUnlocked = false;
+        _activeKey = null;
+        setLockedState(true);
+      }
+    } else {
+      bomUnlocked = false;
+      _activeKey = null;
+      _sessionUnlockPlain = '';
+      setLockedState(true);
+    }
+  } else {
+    bomUnlocked = false;
+    setLockedState(false);
+  }
+}
+
+// ── Password Setup Modal ──────────────────────────────────────────────────────
+function openPasswordSetupModal() {
+  _setupPasswordPlain = '';
+  document.getElementById('pw-setup-reveal').style.display = 'none';
+  document.getElementById('pw-setup-gen-btn').style.display = 'inline-flex';
+  document.getElementById('pw-setup-confirm-btn').style.display = 'none';
+  document.getElementById('pw-setup-modal').classList.add('on');
+}
+
+function closePasswordSetupModal() {
+  document.getElementById('pw-setup-modal').classList.remove('on');
+  _setupPasswordPlain = '';
+}
+
+function generateAndShowSetupPassword() {
+  _setupPasswordPlain = generatePassword();
+  document.getElementById('pw-setup-val').textContent = _setupPasswordPlain;
+  document.getElementById('pw-setup-reveal').style.display = 'flex';
+  document.getElementById('pw-setup-gen-btn').style.display = 'none';
+  document.getElementById('pw-setup-confirm-btn').style.display = 'inline-flex';
+}
+
+function generatePassword() {
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  const arr = new Uint8Array(14);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, b => chars[b % chars.length]).join('');
+}
+
+function copySetupPassword() {
+  if (_setupPasswordPlain) clipboardWrite(_setupPasswordPlain, '✓ Password copied');
+}
+
+async function confirmPasswordSetup() {
+  if (!_setupPasswordPlain) return;
+  _pwSalt = genSalt();
+  _activeKey = await deriveKey(_setupPasswordPlain, _pwSalt);
+  bomPasswordHash = await hashPassword(_setupPasswordPlain);
+  bomUnlocked = true;
+  localStorage.setItem('fortibom_pw_plain', JSON.stringify({ plain: _setupPasswordPlain, hash: bomPasswordHash, salt: _pwSalt }));
+  await _encryptCurrentFields();
+  await savePiData();
+  updateLockUI();
+  closePasswordSetupModal();
+  toast('✓ Password protection enabled');
+}
+
+function skipPasswordSetup() {
+  closePasswordSetupModal();
+}
+
+// ── Password Unlock Modal ─────────────────────────────────────────────────────
+function openPwUnlockModal(mode) {
+  _unlockModalMode = mode || 'view';
+  const inp = document.getElementById('pw-unlock-input');
+  inp.value = '';
+  inp.classList.remove('error');
+  document.getElementById('pw-unlock-err').classList.remove('on');
+  document.getElementById('pw-unlock-modal').classList.add('on');
+  setTimeout(() => inp.focus(), 80);
+}
+
+function closePwUnlockModal() {
+  document.getElementById('pw-unlock-modal').classList.remove('on');
+  _unlockModalMode = '';
+}
+
+async function attemptUnlock() {
+  const inp = document.getElementById('pw-unlock-input');
+  const val = inp.value;
+  if (!val) { inp.classList.add('error'); return; }
+  const hash = await hashPassword(val);
+  if (hash === bomPasswordHash) {
+    try {
+      _activeKey = await deriveKey(val, _pwSalt);
+      if (_encBlobsCache) await _decryptIntoFields(_activeKey, _encBlobsCache);
+      bomUnlocked = true;
+      _sessionUnlockPlain = val;
+      setLockedState(false);
+      closePwUnlockModal();
+      if (_unlockModalMode === 'disable-ro') {
+        document.getElementById('pi-readonly').checked = false;
+        toggleReadOnly(false);
+        removePasswordProtection();
+        toast('✓ BOM unlocked — read-only removed');
+      } else {
+        toast('✓ BOM unlocked');
+      }
+      updateLockUI();
+    } catch {
+      inp.classList.add('error');
+      document.getElementById('pw-unlock-err').textContent = 'Decryption failed — try again.';
+      document.getElementById('pw-unlock-err').classList.add('on');
+    }
+  } else {
+    inp.classList.add('error');
+    document.getElementById('pw-unlock-err').classList.add('on');
+    inp.select();
+  }
+}
+
+function removePasswordProtection() {
+  bomPasswordHash = '';
+  bomUnlocked = false;
+  _sessionUnlockPlain = '';
+  _activeKey = null;
+  _pwSalt = '';
+  _encBlobsCache = null;
+  localStorage.removeItem('fortibom_pw_plain');
+  savePiData();
+  setLockedState(false);
+  updateLockUI();
+}
+
+// ── Password View Modal ───────────────────────────────────────────────────────
+function openPwViewModal() {
+  _pwViewVisible = false;
+  const pw = getVisiblePassword();
+  document.getElementById('pw-view-val').textContent = pw ? '••••••••••••••' : '(not available in this session)';
+  const toggleBtn = document.getElementById('pw-view-toggle');
+  const copyBtn   = document.getElementById('pw-view-copy');
+  toggleBtn.style.display = pw ? 'inline-flex' : 'none';
+  copyBtn.style.display   = pw ? 'inline-flex' : 'none';
+  toggleBtn.textContent = 'Show';
+  document.getElementById('pw-view-modal').classList.add('on');
+}
+
+function closePwViewModal() {
+  document.getElementById('pw-view-modal').classList.remove('on');
+  _pwViewVisible = false;
+}
+
+function togglePwVisibility() {
+  const pw = getVisiblePassword();
+  if (!pw) return;
+  _pwViewVisible = !_pwViewVisible;
+  document.getElementById('pw-view-val').textContent = _pwViewVisible ? pw : '••••••••••••••';
+  document.getElementById('pw-view-toggle').textContent = _pwViewVisible ? 'Hide' : 'Show';
+}
+
+function copyViewPassword() {
+  const pw = getVisiblePassword();
+  if (pw) clipboardWrite(pw, '✓ Password copied');
+}
+
+function removePasswordProtectionConfirm() {
+  if (!confirm('Remove password protection?\n\nAnyone who already has the .fbom or share URL can still unlock it using the old password.')) return;
+  removePasswordProtection();
+  closePwViewModal();
+  toast('✓ Password protection removed');
+}
+
+// ── RO change handler (intercepts checkbox) ───────────────────────────────────
+function handleReadOnlyChange(cb) {
+  if (cb.checked) {
+    toggleReadOnly(true);
+    if (!bomPasswordHash) {
+      openPasswordSetupModal();
+    }
+  } else {
+    if (bomPasswordHash && !bomUnlocked) {
+      cb.checked = true;
+      openPwUnlockModal('disable-ro');
+    } else {
+      toggleReadOnly(false);
+      if (bomPasswordHash) removePasswordProtection();
+    }
+  }
+}
+
 
 // ── READ ONLY MODE ────────────────────────────────────────────────────────────
 function isReadOnly() {
@@ -2741,31 +3277,34 @@ let tt=null;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3000);}
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
-loadPiData();
-if (!document.getElementById('pi-date').value) {
-  document.getElementById('pi-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-}
-loadCart();
-loadSaved();
-updateBadges();
-updateSavedBadge();
-renderGroups();
-updateSaveIndicator();
-if (cart.length) showPBV();
-buildNav();
-checkBOMFragment();
-initPiMode();
-['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
-  document.getElementById(id).addEventListener('input', () => { savePiData(); if (cart.length) markDirty(); });
-});
-document.getElementById('pi-term').addEventListener('change', () => { savePiData(); if (cart.length) markDirty(); });
+(async () => {
+  await loadPiData();
+  if (!document.getElementById('pi-date').value) {
+    document.getElementById('pi-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  }
+  loadCart();
+  loadSaved();
+  updateBadges();
+  updateSavedBadge();
+  renderGroups();
+  updateSaveIndicator();
+  if (cart.length) showPBV();
+  buildNav();
+  checkBOMFragment();
+  initPiMode();
+  ['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => { savePiData(); if (cart.length) markDirty(); });
+  });
+  document.getElementById('pi-term').addEventListener('change', () => { savePiData(); if (cart.length) markDirty(); });
+})();
 
 // ── PROJECT BREADCRUMB (shows customer when Project Information scrolls behind #ch) ──
 function updateProjBreadcrumb() {
   const ch   = document.getElementById('ch');
   const pbv  = document.getElementById('pbv');
   const card = document.getElementById('proj-info-card');
-  const cust = document.getElementById('pi-cust').value.trim();
+  const locked = !!(bomPasswordHash && !bomUnlocked);
+  const cust = locked ? '' : document.getElementById('pi-cust').value.trim();
   const onPBV = pbv && pbv.style.display !== 'none';
   let show = false;
   if (onPBV && cust && card) {
