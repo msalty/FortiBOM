@@ -59,7 +59,7 @@
   .ni.active{background:var(--forti-sidebar-active);border-left-color:var(--forti-red);}
   .ni.proj{border-left-color:transparent;}
   .ni.proj.live{border-left-color:#F7941D;}
-  .ni-icon{width:18px;height:18px;flex-shrink:0;opacity:.7;}
+  .ni-icon{width:18px;height:18px;flex-shrink:0;opacity:.7;object-fit:contain;}
   .ni.active .ni-icon,.ni.proj .ni-icon{opacity:1;}
   .ni-label{font-size:13px;color:var(--forti-text-secondary);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .ni.active .ni-label,.ni.proj .ni-label{color:var(--forti-text-primary);font-weight:500;}
@@ -1060,7 +1060,7 @@ function updateSavedBadge() {
 }
 
 // ── ICONS ──────────────────────────────────────────────────────────────────
-function icon(file) {
+function iconSvg(file) {
   if (file.startsWith('fortigate'))   return `<svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 7h8M5 9.5h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`;
   if (file.startsWith('fortiswitch')) return `<svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="6" width="14" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="9" r="1" fill="currentColor"/><circle cx="8" cy="9" r="1" fill="currentColor"/><circle cx="11" cy="9" r="1" fill="currentColor"/></svg>`;
   if (file.startsWith('fortiap'))     return `<svg class="ni-icon" viewBox="0 0 18 18" fill="none"><path d="M9 11a3 3 0 0 1 0-6M9 11a3 3 0 0 0 0-6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M6 13.5A6 6 0 0 1 3 8M12 13.5A6 6 0 0 0 15 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="9" cy="9" r="1" fill="currentColor"/></svg>`;
@@ -1068,6 +1068,49 @@ function icon(file) {
   if (file.startsWith('fortianal') || file.startsWith('fortimanag')) return `<svg class="ni-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`;
   return `<svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M6 9h6M9 6v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`;
 }
+const FORTI_ICON_NAMES = {
+  'fortigate-bomgen.html':           'FortiGate',
+  'fortiadc-bomgen.html':            'FortiADC',
+  'fortiddos-bomgen.html':           'FortiDDoS',
+  'fortideceptor-bomgen.html':       'FortiDeceptor',
+  'fortipam-bomgen.html':            'FortiPAM',
+  'fortiproxy-bomgen.html':          'FortiProxy',
+  'fortisandbox-bomgen.html':        'FortiSandbox',
+  'fortiweb-bomgen.html':            'FortiWeb',
+  'fortiappsec-bomgen.html':         'FortiAppSec',
+  'forticnapp-bomgen.html':          'FortiCNAPP',
+  'fortisase-bomgen.html':           'FortiSASE',
+  'fortimail-bomgen.html':           'FortiMail',
+  'fortimail-workspace-bomgen.html': 'FortiMail',
+  'fortiap-bomgen.html':             'FortiAP',
+  'fortiextender-bomgen.html':       'FortiExtender',
+  'fortipresence-bomgen.html':       'FortiPresence',
+  'fortiswitch-bomgen.html':         'FortiSwitch',
+  'forticlient-bomgen.html':         'FortiClient',
+  'fortidlp-bomgen.html':            'FortiDLP',
+  'fortiedr-bomgen.html':            'FortiEDR',
+  'fortiauthenticator-bomgen.html':  'FortiAuthenticator',
+  'fortinac-bomgen.html':            'FortiNAC',
+  'fortianalyzer-bomgen.html':       'FortiAnalyzer',
+  'fortimanager-bomgen.html':        'FortiManager',
+  'fortiaiops-bomgen.html':          'FortiAIOps',
+  'fortimonitor-bomgen.html':        'FortiMonitor',
+  'fortirecon-bomgen.html':          'FortiRecon',
+  'fortisiem-bomgen.html':           'FortiSIEM',
+  'fortisoar-bomgen.html':           'FortiSOAR',
+  'fortiflex-bomgen.html':           'FortiFlex',
+};
+function icon(file) {
+  const name = FORTI_ICON_NAMES[file];
+  if (!name) return iconSvg(file);
+  return `<img class="ni-icon" src="forti-icons/${name}-white.svg" data-file="${file}">`;
+}
+document.addEventListener('error', e => {
+  const img = e.target;
+  if (img.tagName === 'IMG' && img.dataset.file) {
+    img.outerHTML = iconSvg(img.dataset.file);
+  }
+}, true);
 
 // ── NAV BUILD ────────────────────────────────────────────────────────────────
 async function buildNav() {
