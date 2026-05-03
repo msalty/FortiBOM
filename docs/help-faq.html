@@ -280,6 +280,73 @@
   /* scroll-margin so anchor links clear the fixed top bar */
   .section-anchor { scroll-margin-top: 24px; }
 
+  /* MEDIA THUMBNAIL */
+  .media-thumb {
+    display: inline-block;
+    margin-top: 14px;
+    cursor: pointer;
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 380px;
+    width: 100%;
+    transition: border-color .15s, box-shadow .15s;
+    text-decoration: none;
+  }
+  .media-thumb:hover { border-color: var(--forti-red); box-shadow: 0 2px 14px rgba(0,0,0,.12); }
+  .media-thumb img { display: block; width: 100%; height: auto; }
+  .media-caption {
+    font-size: 11px;
+    color: var(--c-textm);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .media-caption svg { flex-shrink: 0; }
+
+  /* LIGHTBOX */
+  #lb-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.88);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    cursor: zoom-out;
+  }
+  #lb-overlay.open { display: flex; }
+  #lb-img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.6);
+    object-fit: contain;
+    cursor: default;
+  }
+  #lb-close {
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    color: #fff;
+    border-radius: 3px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    font-family: inherit;
+    transition: background .12s;
+  }
+  #lb-close:hover { background: rgba(255,255,255,.2); }
+
   /* MOBILE */
   #ham-btn {
     display: none;
@@ -414,6 +481,13 @@
                 <li><strong>Product Categories:</strong> In the left-hand sidebar, products are categorized by solution (e.g., <em>Network Security</em>, <em>Cloud Security</em>, <em>Network Access</em>). Clicking on a specific product family like <strong>FortiGate (FGT)</strong> or <strong>FortiSwitch (FSW)</strong> will allow you to browse and select specific SKUs to add to your BOM.</li>
                 <li><strong>Search &amp; Custom Entry:</strong> If you know the exact part number (like <code>FG-401G</code> or <code>FC-10-348GF</code>), you can use the <strong>Filter products…</strong> search bar at the top left, or scroll down to the <strong>CATALOG SEARCH</strong> section and click <strong>Search &amp; Custom Entry</strong> to manually look up and add the SKU.</li>
               </ul>
+              <a class="media-thumb" href="javascript:void(0)" onclick="openLightbox('screenshots/fabricbom-docs-adding_sku.gif')" aria-label="View full-size walkthrough">
+                <img src="screenshots/fabricbom-docs-adding_sku.gif" alt="Walkthrough: adding a SKU to a Project BOM" loading="lazy">
+              </a>
+              <div class="media-caption">
+                <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5.5" cy="5.5" r="5" stroke="currentColor" stroke-width="1"/><path d="M5.5 3.5v3M5.5 8v.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+                Click to view full size
+              </div>
             </div>
           </details>
 
@@ -745,7 +819,23 @@
   </div>
 </div>
 
+<div id="lb-overlay" onclick="closeLightbox()">
+  <button id="lb-close" onclick="closeLightbox()" aria-label="Close">&#x2715;</button>
+  <img id="lb-img" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
 <script>
+  function openLightbox(src) {
+    const img = document.getElementById('lb-img');
+    img.src = src;
+    document.getElementById('lb-overlay').classList.add('open');
+  }
+  function closeLightbox() {
+    document.getElementById('lb-overlay').classList.remove('open');
+    document.getElementById('lb-img').src = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('sidebar-overlay').classList.toggle('open');
