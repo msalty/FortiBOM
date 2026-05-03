@@ -552,9 +552,11 @@
           <li><span class="sn">4</span>Repeat for each product, then open Project BOM</li>
         </ol>
         <div class="hint">Multiple runs of the same product are supported</div>
-        <div style="display:flex;gap:8px;margin-top:4px;">
+        <div class="hint">Already know your SKUs? Use <strong>Add SKU</strong> or load a project from <strong>Saved Projects</strong> — the product pages are optional.</div>
+        <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
           <button class="btn bs" onclick="openImport()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>Import FBOM</button>
           <button class="btn bp" onclick="openSkuModal()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="3" width="11" height="7" rx="1" stroke="#fff" stroke-width="1.1"/><path d="M3.5 6.5h6M6.5 5v3" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></svg>Add SKU</button>
+          <a class="demo-bom-link btn bs" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;gap:6px;"><svg viewBox="0 0 13 13" fill="none" style="width:13px;height:13px;"><path d="M7.5 1.5h4v4M11 2L6 7M5.5 2.5H2a1 1 0 0 0-1 1V11a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V7.5" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="demo-bom-label">Try a demo BOM</span></a>
         </div>
       </div>
       <iframe id="pf" style="display:none;" title="Product BOM Generator"></iframe>
@@ -631,9 +633,10 @@
         <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M4 4h8l6 22h20l4-14H14" stroke="#9BA5BA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22" cy="40" r="3" fill="#9BA5BA"/><circle cx="36" cy="40" r="3" fill="#9BA5BA"/></svg>
         <h3>Project BOM is empty</h3>
         <p>Select a product from the left sidebar, configure it, and click <strong>Add to Project BOM</strong>. You can add multiple products and run the same product page multiple times to build a complete project quote.</p>
-        <div style="display:flex;gap:8px;margin-top:4px;">
+        <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
           <button class="btn bs" onclick="openImport()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>Import FBOM</button>
           <button class="btn bp" onclick="openSkuModal()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="3" width="11" height="7" rx="1" stroke="#fff" stroke-width="1.1"/><path d="M3.5 6.5h6M6.5 5v3" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></svg>Add SKU</button>
+          <a class="demo-bom-link btn bs" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;gap:6px;"><svg viewBox="0 0 13 13" fill="none" style="width:13px;height:13px;"><path d="M7.5 1.5h4v4M11 2L6 7M5.5 2.5H2a1 1 0 0 0-1 1V11a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V7.5" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="demo-bom-label">Try a demo BOM</span></a>
         </div>
       </div>
 
@@ -3336,9 +3339,31 @@ function toggleReadOnly(checked) {
 let tt=null;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');if(tt)clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3000);}
 
+// ── DEMO BOM LINK ────────────────────────────────────────────────────────────
+// The demo URL is fetched at runtime from the canonical deployment so it does
+// not live in this repo. The link only renders at the original URL; This is so
+// the demo link can be taken offline anytime immediately with no edits to this page.
+function initDemoLink() {
+  if (location.hostname !== 'msalty.github.io') return;
+  const CONFIG_URL = 'https://gist.githubusercontent.com/msalty/ca8f0f5f11d9c11d3296b90371360de0/raw/43bc90a56e875cf8e8a4a250f3b9356dbd931e7f/demobom.json';
+  fetch(CONFIG_URL, { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : null)
+    .then(cfg => {
+      if (!cfg || !cfg.url) return;
+      document.querySelectorAll('.demo-bom-link').forEach(a => {
+        a.href = cfg.url;
+        const lbl = a.querySelector('.demo-bom-label');
+        if (cfg.label && lbl) lbl.textContent = cfg.label;
+        a.style.display = 'inline-flex';
+      });
+    })
+    .catch(() => {});
+}
+
 // ── INIT ─────────────────────────────────────────────────────────────────────
 (async () => {
   await loadPiData();
+  initDemoLink();
   if (!document.getElementById('pi-date').value) {
     document.getElementById('pi-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   }
