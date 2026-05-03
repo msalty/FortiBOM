@@ -1,4 +1,4 @@
-const CACHE = 'fabricbom-v1.0.1e.2';
+const CACHE = 'fabricbom-v1.0.1e.3';
 
 const SHELL = [
   './',
@@ -75,6 +75,10 @@ const SHELL = [
   './products/fortiswitch-bomgen.html',
   './products/fortiweb-bomgen.html',
   './products/placeholder-bomgen.html',
+  './docs/help-faq.html',
+  './docs/screenshots/fabricbom-screenshot-demobom.jpg',
+  './docs/screenshots/fabricbom-docs-adding_sku.gif',
+  './docs/screenshots/fabricbom-docs-saving_pricing.gif',
 ];
 
 self.addEventListener('install', event => {
