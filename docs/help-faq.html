@@ -133,14 +133,19 @@
   #content {
     flex: 1;
     background: var(--forti-content-bg);
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     min-height: 0;
   }
-  #content::-webkit-scrollbar { width: 6px; }
-  #content::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 3px; }
+  #content-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+  }
+  #content-scroll::-webkit-scrollbar { width: 6px; }
+  #content-scroll::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 3px; }
 
   /* BREADCRUMB BAR */
   #ch { height: 40px; background: #fff; border-bottom: 1px solid #DDE1E9; display: flex; align-items: center; padding: 0 20px; gap: 6px; flex-shrink: 0; flex-wrap: nowrap; overflow: hidden; min-width: 0; }
@@ -410,6 +415,7 @@
     </svg>
     <span class="product-name"><span>Fabric</span>BOM</span>
   </a>
+  <div class="tb-div"></div>
   <div class="spacer"></div>
   <a class="tb-back" href="../index.html">
     <svg viewBox="0 0 13 13" fill="none">
@@ -467,6 +473,7 @@
       <span class="bcs">›</span>
       <span class="bci cur">Help &amp; FAQ</span>
     </div>
+    <div id="content-scroll">
     <div class="content-inner">
 
       <div>
@@ -485,7 +492,7 @@
         </div>
         <div class="lcb">
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>How do I add a new SKU or part number to my Project BOM?</summary>
             <div class="qa-body">
               <p>There are a few ways to add a new SKU (Stock Keeping Unit) or part number to your Project BOM:</p>
@@ -518,7 +525,7 @@
         </div>
         <div class="lcb">
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>How do I edit an existing item on a Project BOM?</summary>
             <div class="qa-body">
               <p>This is only applicable if the BOM is <strong>not</strong> in Read-Only mode. You can make changes directly within the table for that specific product block:</p>
@@ -546,7 +553,7 @@
         </div>
         <div class="lcb">
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>How do I edit the Project Information on a Project BOM?</summary>
             <div class="qa-body">
               <ol>
@@ -572,7 +579,7 @@
         </div>
         <div class="lcb">
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>How do I save my current Project BOM?</summary>
             <div class="qa-body">
               <ol>
@@ -596,7 +603,7 @@
         </div>
         <div class="lcb">
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>How do I open a previously saved Project BOM?</summary>
             <div class="qa-body">
               <ol>
@@ -622,7 +629,7 @@
         </div>
         <div class="lcb">
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>How do I restore a previous version of a Project BOM?</summary>
             <div class="qa-body">
               <p>FabricBOM retains a history of your previous saves, allowing you to easily recover an older version if an accidental overwrite occurs.</p>
@@ -653,35 +660,35 @@
         </div>
         <div class="lcb">
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>Can I view and upload pricing information in FabricBOM?</summary>
             <div class="qa-body">
               <p>Yes. FabricBOM allows you to seamlessly upload and view your pricing data so it can be applied to your project builds.</p>
             </div>
           </details>
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>Where do I go to upload my pricing file?</summary>
             <div class="qa-body">
               <p>Navigate to the <strong>Saved Projects</strong> menu located in the left-hand sidebar. Scroll down just below your list of saved projects, and you will find the <strong>SAVED PRICING</strong> section.</p>
             </div>
           </details>
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>How do I upload the pricing file?</summary>
             <div class="qa-body">
               <p>Inside the <strong>SAVED PRICING</strong> section, there is a designated upload area (a dashed box with a "+" icon). You can either drag and drop your file directly into this box, or click anywhere inside the box to browse your computer and select your file.</p>
             </div>
           </details>
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>What file formats are supported for pricing uploads?</summary>
             <div class="qa-body">
               <p>The tool currently accepts standard Fortinet price lists in either <strong>CSV</strong> or <strong>XLSX</strong> format.</p>
             </div>
           </details>
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>What happens after I upload the file?</summary>
             <div class="qa-body">
               <p>FabricBOM will automatically read the file to determine the name and effective date of the price list. Once successfully uploaded, the system will begin applying those specific prices to the items in your Project BOMs.</p>
@@ -710,28 +717,28 @@
         </div>
         <div class="lcb">
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>How do I mark my Project BOM as Read-Only?</summary>
             <div class="qa-body">
               <p>In the white Project Information box at the top of your workspace, locate the small checkbox labeled <strong>RO</strong> (next to the Save button). Click the checkbox to toggle Read-Only mode on.</p>
             </div>
           </details>
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>What does marking a BOM as Read-Only actually do?</summary>
             <div class="qa-body">
               <p>Activating Read-Only mode locks the current BOM, preventing accidental edits, quantity changes, or overwrites.</p>
             </div>
           </details>
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>Will I be prompted to enter a password when making a BOM Read-Only?</summary>
             <div class="qa-body">
               <p>Yes. When you check the <strong>RO</strong> box, a prompt will appear asking if you would like to require a password to unlock the BOM. You can choose to generate a password or proceed without one by clicking <strong>No, read-only only</strong>.</p>
             </div>
           </details>
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>What is the difference between using a password and not using one?</summary>
             <div class="qa-body">
               <p><strong>Without a password:</strong> The BOM is locked from editing, but all fields and information remain fully visible to anyone viewing it.</p>
@@ -756,14 +763,14 @@
         </div>
         <div class="lcb">
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>How do I export my current Project BOM?</summary>
             <div class="qa-body">
               <p>You can export your current build directly from your workspace. Look at the menu panel on the far right side of your screen. Under the <strong>FILE</strong> heading, click the <strong>Export FabricBOM</strong> button. This will download a copy of your project file to your computer.</p>
             </div>
           </details>
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>How do I import a previously exported Project BOM?</summary>
             <div class="qa-body">
               <p>To load an external BOM file into the tool, navigate to the menu panel on the far right side of your screen. Under the <strong>FILE</strong> heading, click the <strong>Import FabricBOM</strong> button. This will prompt you to browse your computer and select the FabricBOM file you wish to upload and open.</p>
@@ -786,7 +793,7 @@
         </div>
         <div class="lcb">
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>How do I print my Project BOM?</summary>
             <div class="qa-body">
               <p>Because FabricBOM is a web-based tool, you can print your BOM using a couple of straightforward methods:</p>
@@ -811,21 +818,21 @@
         </div>
         <div class="lcb">
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>Where is my project data and pricing information stored? Is it secure?</summary>
             <div class="qa-body">
               <p>Yes, your data is completely secure. FabricBOM is designed with a strict privacy-first approach. All of your information—including your saved Project BOMs, uploaded price lists, and project details—is stored entirely <strong>locally on your own computer</strong>.</p>
             </div>
           </details>
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>Does FabricBOM send my data to a cloud server?</summary>
             <div class="qa-body">
               <p>No. Instead of transmitting your sensitive project details or proprietary pricing to an external database or cloud server, FabricBOM utilizes your web browser's built-in, secure storage system (technically known as <em>IndexedDB</em>).</p>
             </div>
           </details>
 
-          <details class="qa">
+          <details class="qa" open>
             <summary>What does local storage mean for my data privacy?</summary>
             <div class="qa-body">
               <p>Because everything is saved directly to your local browser profile, your data never leaves your machine. This ensures that you maintain complete control over your information, and no third parties—or even the tool's creators—can access or view your builds.</p>
@@ -835,6 +842,7 @@
         </div>
       </div>
 
+    </div>
     </div>
   </div>
 </div>
@@ -876,7 +884,7 @@
   // Highlight active nav item on scroll
   const sections = document.querySelectorAll('.section-anchor');
   const navLinks = document.querySelectorAll('#sidebar .ni');
-  const content = document.getElementById('content');
+  const content = document.getElementById('content-scroll');
 
   function updateActive() {
     const atBottom = content.scrollTop + content.clientHeight >= content.scrollHeight - 4;
