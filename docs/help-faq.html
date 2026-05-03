@@ -92,7 +92,9 @@
     flex-shrink: 0;
     overflow-y: auto;
     overflow-x: hidden;
+    transition: width .25s ease, border .25s ease;
   }
+  #sidebar.collapsed { width: 0; overflow: hidden; border-right: none; }
   #sidebar::-webkit-scrollbar { width: 4px; }
   #sidebar::-webkit-scrollbar-thumb { background: var(--forti-border); border-radius: 2px; }
   .nsl {
@@ -347,40 +349,42 @@
   }
   #lb-close:hover { background: rgba(255,255,255,.2); }
 
-  /* MOBILE */
   #ham-btn {
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: none;
     border: none;
-    color: var(--forti-text-secondary);
     cursor: pointer;
-    padding: 4px;
-    border-radius: 3px;
+    padding: 4px 6px;
+    color: var(--forti-text-secondary);
     flex-shrink: 0;
+    border-radius: 3px;
   }
-  #ham-btn:hover { color: var(--forti-text-primary); }
+  #ham-btn:hover { color: var(--forti-text-primary); background: rgba(255,255,255,.06); }
 
   #sidebar-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.5);
-    z-index: 150;
+    background: rgba(0,0,0,.45);
+    z-index: 90;
   }
+  #sidebar-overlay.on { display: block; }
 
   @media (max-width: 768px) {
-    #ham-btn { display: flex; align-items: center; }
     #sidebar {
       position: fixed;
       top: var(--hh);
       left: 0;
       bottom: 0;
-      z-index: 160;
+      z-index: 100;
+      width: 240px !important;
       transform: translateX(-100%);
-      transition: transform .22s ease;
+      transition: transform .25s ease;
     }
-    #sidebar.open { transform: translateX(0); }
-    #sidebar-overlay.open { display: block; }
+    #sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.45); }
+    #sidebar-overlay.on { display: block; }
     .content-inner { padding: 16px 16px 40px; }
   }
 </style>
@@ -398,7 +402,7 @@
       <rect width="28" height="28" rx="4" fill="#EE3124"/>
       <path d="M6 8h16v3H6zM6 12.5h10v3H6zM6 17h16v3H6z" fill="white"/>
     </svg>
-    <div class="product-name">Fabric<span>BOM</span></div>
+    <span class="product-name"><span>Fabric</span>BOM</span>
   </a>
   <div class="tb-div"></div>
   <div class="tb-sub">Help &amp; FAQ</div>
@@ -411,7 +415,7 @@
   </a>
 </div>
 
-<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
 
 <div id="main">
   <nav id="sidebar" aria-label="FAQ sections">
@@ -844,12 +848,20 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
   function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('sidebar-overlay').classList.toggle('open');
+    const s = document.getElementById('sidebar');
+    const o = document.getElementById('sidebar-overlay');
+    if (window.innerWidth <= 768) {
+      const open = s.classList.toggle('open');
+      open ? o.classList.add('on') : o.classList.remove('on');
+    } else {
+      s.classList.toggle('collapsed');
+    }
   }
   function closeSidebar() {
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('sidebar-overlay').classList.remove('open');
+    if (window.innerWidth <= 768) {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebar-overlay').classList.remove('on');
+    }
   }
 
   // Highlight active nav item on scroll
