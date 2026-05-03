@@ -436,6 +436,9 @@
     <a class="ni" href="#editing-items" onclick="closeSidebar()">
       <span class="ni-label">Editing Items</span>
     </a>
+    <a class="ni" href="#group-headers" onclick="closeSidebar()">
+      <span class="ni-label">Group Headers</span>
+    </a>
     <a class="ni" href="#editing-project-info" onclick="closeSidebar()">
       <span class="ni-label">Project Information</span>
     </a>
@@ -542,6 +545,59 @@
           <a class="media-thumb" href="javascript:void(0)" onclick="openLightbox('screenshots/fabricbom-docs-editing_bom_items.gif')" aria-label="View full-size walkthrough">
             <img src="screenshots/fabricbom-docs-editing_bom_items.gif" alt="Walkthrough: editing items on a Project BOM" loading="lazy">
           </a>
+
+        </div>
+      </div>
+
+      <!-- GROUP HEADERS -->
+      <div id="group-headers" class="lc section-anchor">
+        <div class="lch">
+          <svg class="lch-icon" viewBox="0 0 16 16" fill="none">
+            <path d="M1 4h14M1 8h10M1 12h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          <h2>Adding and Working with Group Headers</h2>
+        </div>
+        <div class="lcb">
+
+          <details class="qa" open>
+            <summary>How do I add a header to my Project BOM?</summary>
+            <div class="qa-body">
+              <p>To add a custom section header, navigate to your active Project BOM. Just below the Project Information section at the top of your workspace, click the red <strong>Add Item</strong> dropdown menu (or <strong>Add SKU</strong>) and select the option to <strong>Add Header</strong>.</p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Why should I use headers in my build?</summary>
+            <div class="qa-body">
+              <p>Headers are an excellent way to keep your Bill of Materials clean and organized, especially for larger or more complex projects. You can use them to logically group products by:</p>
+              <ul>
+                <li><strong>Physical location</strong> — e.g., "HQ Data Center," "Branch Offices"</li>
+                <li><strong>Solution category</strong> — e.g., "Core Networking," "Endpoint Security"</li>
+                <li><strong>Deployment phase</strong> — e.g., "Phase 1," "Phase 2"</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>How do I customize the text of a new header?</summary>
+            <div class="qa-body">
+              <p>Once a header block is added to your project workspace, click directly on the default text or use the <strong>Edit</strong> (pencil) icon on that block to rename it to whatever fits your organizational needs.</p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Can I reorganize my BOM using these headers?</summary>
+            <div class="qa-body">
+              <p>Absolutely. FabricBOM is designed to be flexible. You can drag and drop your configured product blocks to move them beneath your newly created headers, allowing you to structure your final export exactly how you want to present it.</p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>How do I delete a header I no longer need?</summary>
+            <div class="qa-body">
+              <p>Just like any other item on your BOM, look for the <strong>✕</strong> (remove) button located on the right side of the header block. Clicking this will remove the header from your project layout.</p>
+            </div>
+          </details>
 
         </div>
       </div>
