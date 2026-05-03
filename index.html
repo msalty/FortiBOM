@@ -552,9 +552,11 @@
           <li><span class="sn">4</span>Repeat for each product, then open Project BOM</li>
         </ol>
         <div class="hint">Multiple runs of the same product are supported</div>
-        <div style="display:flex;gap:8px;margin-top:4px;">
+        <div class="hint">Already know your SKUs? Use <strong>Add SKU</strong> or load a project from <strong>Saved Projects</strong> — the product pages are optional.</div>
+        <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
           <button class="btn bs" onclick="openImport()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>Import FBOM</button>
           <button class="btn bp" onclick="openSkuModal()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="3" width="11" height="7" rx="1" stroke="#fff" stroke-width="1.1"/><path d="M3.5 6.5h6M6.5 5v3" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></svg>Add SKU</button>
+          <a class="demo-bom-link btn bs" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;gap:6px;"><svg viewBox="0 0 13 13" fill="none" style="width:13px;height:13px;"><path d="M7.5 1.5h4v4M11 2L6 7M5.5 2.5H2a1 1 0 0 0-1 1V11a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V7.5" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="demo-bom-label">Try a demo BOM</span></a>
         </div>
       </div>
       <iframe id="pf" style="display:none;" title="Product BOM Generator"></iframe>
@@ -634,7 +636,7 @@
         <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
           <button class="btn bs" onclick="openImport()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>Import FBOM</button>
           <button class="btn bp" onclick="openSkuModal()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="3" width="11" height="7" rx="1" stroke="#fff" stroke-width="1.1"/><path d="M3.5 6.5h6M6.5 5v3" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></svg>Add SKU</button>
-          <a id="demo-bom-link" class="btn bs" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;gap:6px;"><svg viewBox="0 0 13 13" fill="none" style="width:13px;height:13px;"><path d="M7.5 1.5h4v4M11 2L6 7M5.5 2.5H2a1 1 0 0 0-1 1V11a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V7.5" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="demo-bom-label">Try a demo BOM</span></a>
+          <a class="demo-bom-link btn bs" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;gap:6px;"><svg viewBox="0 0 13 13" fill="none" style="width:13px;height:13px;"><path d="M7.5 1.5h4v4M11 2L6 7M5.5 2.5H2a1 1 0 0 0-1 1V11a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V7.5" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="demo-bom-label">Try a demo BOM</span></a>
         </div>
       </div>
 
@@ -3348,12 +3350,12 @@ function initDemoLink() {
     .then(r => r.ok ? r.json() : null)
     .then(cfg => {
       if (!cfg || !cfg.url) return;
-      const a = document.getElementById('demo-bom-link');
-      const lbl = document.getElementById('demo-bom-label');
-      if (!a) return;
-      a.href = cfg.url;
-      if (cfg.label && lbl) lbl.textContent = cfg.label;
-      a.style.display = 'inline-flex';
+      document.querySelectorAll('.demo-bom-link').forEach(a => {
+        a.href = cfg.url;
+        const lbl = a.querySelector('.demo-bom-label');
+        if (cfg.label && lbl) lbl.textContent = cfg.label;
+        a.style.display = 'inline-flex';
+      });
     })
     .catch(() => {});
 }
