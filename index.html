@@ -1068,9 +1068,42 @@ function iconSvg(file) {
   if (file.startsWith('fortianal') || file.startsWith('fortimanag')) return `<svg class="ni-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`;
   return `<svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M6 9h6M9 6v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`;
 }
+const FORTI_ICON_NAMES = {
+  'fortigate-bomgen.html':           'FortiGate',
+  'fortiadc-bomgen.html':            'FortiADC',
+  'fortiddos-bomgen.html':           'FortiDDoS',
+  'fortideceptor-bomgen.html':       'FortiDeceptor',
+  'fortipam-bomgen.html':            'FortiPAM',
+  'fortiproxy-bomgen.html':          'FortiProxy',
+  'fortisandbox-bomgen.html':        'FortiSandbox',
+  'fortiweb-bomgen.html':            'FortiWeb',
+  'fortiappsec-bomgen.html':         'FortiAppSec',
+  'forticnapp-bomgen.html':          'FortiCNAPP',
+  'fortisase-bomgen.html':           'FortiSASE',
+  'fortimail-bomgen.html':           'FortiMail',
+  'fortimail-workspace-bomgen.html': 'FortiMail',
+  'fortiap-bomgen.html':             'FortiAP',
+  'fortiextender-bomgen.html':       'FortiExtender',
+  'fortipresence-bomgen.html':       'FortiPresence',
+  'fortiswitch-bomgen.html':         'FortiSwitch',
+  'forticlient-bomgen.html':         'FortiClient',
+  'fortidlp-bomgen.html':            'FortiDLP',
+  'fortiedr-bomgen.html':            'FortiEDR',
+  'fortiauthenticator-bomgen.html':  'FortiAuthenticator',
+  'fortinac-bomgen.html':            'FortiNAC',
+  'fortianalyzer-bomgen.html':       'FortiAnalyzer',
+  'fortimanager-bomgen.html':        'FortiManager',
+  'fortiaiops-bomgen.html':          'FortiAIOps',
+  'fortimonitor-bomgen.html':        'FortiMonitor',
+  'fortirecon-bomgen.html':          'FortiRecon',
+  'fortisiem-bomgen.html':           'FortiSIEM',
+  'fortisoar-bomgen.html':           'FortiSOAR',
+  'fortiflex-bomgen.html':           'FortiFlex',
+};
 function icon(file) {
-  const name = file.replace(/-bomgen\.html$/, '');
-  return `<img class="ni-icon" src="forti-icons/${name}.svg" data-file="${file}">`;
+  const name = FORTI_ICON_NAMES[file];
+  if (!name) return iconSvg(file);
+  return `<img class="ni-icon" src="forti-icons/${name}-white.svg" data-file="${file}">`;
 }
 document.addEventListener('error', e => {
   const img = e.target;
