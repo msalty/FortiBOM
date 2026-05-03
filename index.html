@@ -3339,11 +3339,11 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 
 // ── DEMO BOM LINK ────────────────────────────────────────────────────────────
 // The demo URL is fetched at runtime from the canonical deployment so it does
-// not live in this repo. The link only renders on msalty.github.io; forks see
-// no link unless they actively edit this code.
+// not live in this repo. The link only renders at the original URL; This is so
+// the demo link can be taken offline anytime immediately with no edits to this page.
 function initDemoLink() {
   if (location.hostname !== 'msalty.github.io') return;
-  const CONFIG_URL = 'https://msalty.github.io/FabricBOM/demo.json';
+  const CONFIG_URL = 'https://gist.githubusercontent.com/msalty/ca8f0f5f11d9c11d3296b90371360de0/raw/43bc90a56e875cf8e8a4a250f3b9356dbd931e7f/demobom.json';
   fetch(CONFIG_URL, { cache: 'no-store' })
     .then(r => r.ok ? r.json() : null)
     .then(cfg => {
