@@ -450,14 +450,14 @@
   .save-dot.saved{display:inline-block;background:rgba(74,196,100,0.6);}
   .save-dot.dirty{display:inline-block;background:rgba(247,148,29,0.85);}
 
-  #pbv-watermark{margin-top:auto;padding:14px 4px 4px;text-align:center;font-size:11px;color:var(--c-textm);display:flex;align-items:center;justify-content:center;gap:6px;opacity:.75;}
-  #pbv-watermark a{display:inline-flex;align-items:center;gap:5px;color:inherit;text-decoration:none;font-weight:600;}
-  #pbv-watermark a:hover{color:var(--forti-red);}
-  #pbv-watermark .pbv-wm-logo{width:14px;height:14px;flex-shrink:0;}
+  .pbv-watermark{margin-top:auto;padding:14px 4px 4px;text-align:center;font-size:11px;color:var(--c-textm);display:flex;align-items:center;justify-content:center;gap:6px;opacity:.75;}
+  .pbv-watermark a{display:inline-flex;align-items:center;gap:5px;color:inherit;text-decoration:none;font-weight:600;}
+  .pbv-watermark a:hover{color:var(--forti-red);}
+  .pbv-watermark .pbv-wm-logo{width:14px;height:14px;flex-shrink:0;}
 
   @media print {
-    #pbv-watermark{margin-top:24px;opacity:1;color:#555;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    #pbv-watermark a{color:#555;}
+    .pbv-watermark{margin-top:24px;opacity:1;color:#555;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .pbv-watermark a{color:#555;}
   }
 
   @media print {
@@ -654,7 +654,7 @@
       </div>
 
       <!-- Watermark -->
-      <div id="pbv-watermark">
+      <div class="pbv-watermark">
         Powered by
         <a href="https://msalty.github.io/FabricBOM/" target="_blank" rel="noopener noreferrer">
           <svg class="pbv-wm-logo" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect width="28" height="28" rx="4" fill="#EE3124"/><path d="M6 8h16v3H6zM6 12.5h10v3H6zM6 17h16v3H6z" fill="white"/></svg>
@@ -683,6 +683,13 @@
           <h2>Saved Pricing</h2>
         </div>
         <div id="pricing-content" class="lcb"></div>
+      </div>
+      <div class="pbv-watermark">
+        Powered by
+        <a href="https://msalty.github.io/FabricBOM/" target="_blank" rel="noopener noreferrer">
+          <svg class="pbv-wm-logo" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect width="28" height="28" rx="4" fill="#EE3124"/><path d="M6 8h16v3H6zM6 12.5h10v3H6zM6 17h16v3H6z" fill="white"/></svg>
+          <span>FabricBOM</span>
+        </a>
       </div>
     </div>
   </div>
