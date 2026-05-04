@@ -312,12 +312,22 @@ let selectedPartner = '';
 let priceMap        = new Map();
 let catMap          = new Map();
 
-// Returns all matrix column definitions: standard partner types followed by named accounts
+// All columns ever stored — used for export and rate counting
 function allCols() {
   return [
     ...PARTNERS.map(p => ({key: p.key, label: p.label})),
     ...customerNames.map(n => ({key: n, label: n}))
   ];
+}
+
+// Columns currently visible in the matrix table:
+// always the 6 standard partner types, plus the active customer column if one is selected
+function visibleCols() {
+  const cols = PARTNERS.map(p => ({key: p.key, label: p.label}));
+  if (selectedPartner && !PARTNERS.find(p => p.key === selectedPartner) && customerNames.includes(selectedPartner)) {
+    cols.push({key: selectedPartner, label: selectedPartner});
+  }
+  return cols;
 }
 
 // ── BOOT ─────────────────────────────────────────────────────────────────────
@@ -626,14 +636,14 @@ function onExcInput(idx, val) {
 
 function onPartnerChange() {
   selectedPartner = el('partner-sel').value;
+  renderMatrix();   // re-render so customer column appears, swaps, or disappears
   if (quoteRows.length) renderQuoteTable();
-  highlightMatrixCol();
 }
 
 function highlightMatrixCol() {
   document.querySelectorAll('#dmt th, #dmt td').forEach(c => c.classList.remove('ph-col'));
   if (!selectedPartner) return;
-  const cols = allCols();
+  const cols = visibleCols();
   const colIdx = cols.findIndex(c => c.key === selectedPartner);
   if (colIdx < 0) return;
   document.querySelectorAll('#dmt tr').forEach(row => {
@@ -692,7 +702,7 @@ function saveMatrix() {
 }
 
 function renderMatrix() {
-  const cols = allCols();
+  const cols = visibleCols();
   const tbl  = el('dmt');
   let h = '<thead><tr><th class="catcol">Category</th>';
   cols.forEach(col => { h += `<th>${esc(col.label)}</th>`; });
