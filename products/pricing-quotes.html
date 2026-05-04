@@ -574,7 +574,7 @@ function renderQuoteTable() {
       <td class="r">${lp !== null ? fmt(lp) : '<span class="no-p">—</span>'}</td>
       <td class="r">${lineList !== null ? fmt(lineList) : '<span class="no-p">—</span>'}</td>
       <td class="r" style="padding:3px 5px">
-        <input type="number" class="exc-inp${isOverridden ? ' ov' : ''}" min="0" max="100" step="0.1"
+        <input type="text" inputmode="decimal" class="exc-inp${isOverridden ? ' ov' : ''}"
           placeholder="${esc(placeholder)}"
           value="${esc(String(excVal))}"
           title="Type to override discount % for this line"
