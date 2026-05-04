@@ -320,6 +320,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!hasData) openMatrix();
   await loadPricing();
   populateSourceSelect();
+
+  // Delegated listener for matrix inputs — attached once to avoid repeated registration.
+  // Using data-cat / data-partner avoids inline oninput with JSON-encoded quotes that
+  // break HTML attribute parsing and silently swallow all edits.
+  el('dmt').addEventListener('input', e => {
+    const inp = e.target;
+    if (!inp.dataset.cat) return;
+    onMatrixCell(inp.dataset.cat, inp.dataset.partner, inp.value);
+  });
 });
 
 // ── INDEXEDDB PRICING ─────────────────────────────────────────────────────────
@@ -667,9 +676,9 @@ function renderMatrix() {
     h += `<tr><td class="catlbl">${esc(cat)}</td>`;
     PARTNERS.forEach(p => {
       const v = discountMatrix[cat]?.[p.key] ?? '';
-      h += `<td><input type="number" min="0" max="100" step="0.1"
+      h += `<td><input type="text" inputmode="decimal"
         value="${esc(String(v))}" placeholder="—"
-        oninput="onMatrixCell(${JSON.stringify(cat)}, ${JSON.stringify(p.key)}, this.value)"
+        data-cat="${esc(cat)}" data-partner="${esc(p.key)}"
         title="${esc(cat)} · ${esc(p.label)} discount %"></td>`;
     });
     h += '</tr>';
