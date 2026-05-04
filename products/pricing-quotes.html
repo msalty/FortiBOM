@@ -297,26 +297,38 @@ const PARTNERS = [
   {key:'exception',      label:'Exception'}
 ];
 
-const LS_MATRIX = 'fabricbom_discount_matrix';
-const LS_CART   = 'fortibom_cart';
-const LS_SAVED  = 'fortibom_saved';
-const LS_PI     = 'fortibom_pi';
+const LS_MATRIX    = 'fabricbom_discount_matrix';
+const LS_CUSTOMERS = 'fabricbom_qcust';
+const LS_CART      = 'fortibom_cart';
+const LS_SAVED     = 'fortibom_saved';
+const LS_PI        = 'fortibom_pi';
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 
 let discountMatrix  = {};
+let customerNames   = [];   // named accounts loaded from CSV (kept separate from PARTNERS)
 let quoteRows       = [];
 let selectedPartner = '';
 let priceMap        = new Map();
 let catMap          = new Map();
 
+// Returns all matrix column definitions: standard partner types followed by named accounts
+function allCols() {
+  return [
+    ...PARTNERS.map(p => ({key: p.key, label: p.label})),
+    ...customerNames.map(n => ({key: n, label: n}))
+  ];
+}
+
 // ── BOOT ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async () => {
+  loadCustomers();     // must come before loadMatrix so customer keys are seeded
   loadMatrix();
   renderMatrix();
   updateMatrixSummary();
-  const hasData = CATEGORIES.some(c => PARTNERS.some(p => (discountMatrix[c]?.[p.key] ?? '') !== ''));
+  populatePartnerSelect();
+  const hasData = CATEGORIES.some(c => allCols().some(col => (discountMatrix[c]?.[col.key] ?? '') !== ''));
   if (!hasData) openMatrix();
   await loadPricing();
   populateSourceSelect();
@@ -619,22 +631,21 @@ function onPartnerChange() {
 }
 
 function highlightMatrixCol() {
-  document.querySelectorAll('#dmt th, #dmt td').forEach(c => {
-    c.classList.remove('ph-col');
-  });
+  document.querySelectorAll('#dmt th, #dmt td').forEach(c => c.classList.remove('ph-col'));
   if (!selectedPartner) return;
-  const pIdx = PARTNERS.findIndex(p => p.key === selectedPartner);
-  if (pIdx < 0) return;
-  const colIdx = pIdx + 1;
+  const cols = allCols();
+  const colIdx = cols.findIndex(c => c.key === selectedPartner);
+  if (colIdx < 0) return;
   document.querySelectorAll('#dmt tr').forEach(row => {
     const cells = row.querySelectorAll('th, td');
-    if (cells[colIdx]) cells[colIdx].classList.add('ph-col');
+    if (cells[colIdx + 1]) cells[colIdx + 1].classList.add('ph-col');
   });
 }
 
 function updateExpNote() {
+  if (!selectedPartner) { el('exp-note').textContent = ''; return; }
   const p = PARTNERS.find(p => p.key === selectedPartner);
-  el('exp-note').textContent = p ? `· ${p.label} discount schedule` : '';
+  el('exp-note').textContent = p ? `· ${p.label} discount schedule` : `· ${selectedPartner}`;
 }
 
 // ── DISCOUNT MATRIX ───────────────────────────────────────────────────────────
@@ -644,8 +655,18 @@ function emptyMatrix() {
   for (const cat of CATEGORIES) {
     m[cat] = {};
     for (const p of PARTNERS) m[cat][p.key] = '';
+    for (const n of customerNames) m[cat][n] = '';
   }
   return m;
+}
+
+function loadCustomers() {
+  try { customerNames = JSON.parse(localStorage.getItem(LS_CUSTOMERS) || '[]'); }
+  catch(e) { customerNames = []; }
+}
+
+function saveCustomers() {
+  localStorage.setItem(LS_CUSTOMERS, JSON.stringify(customerNames));
 }
 
 function loadMatrix() {
@@ -660,6 +681,9 @@ function loadMatrix() {
     for (const p of PARTNERS) {
       if (discountMatrix[cat][p.key] === undefined) discountMatrix[cat][p.key] = '';
     }
+    for (const n of customerNames) {
+      if (discountMatrix[cat][n] === undefined) discountMatrix[cat][n] = '';
+    }
   }
 }
 
@@ -668,18 +692,19 @@ function saveMatrix() {
 }
 
 function renderMatrix() {
-  const tbl = el('dmt');
+  const cols = allCols();
+  const tbl  = el('dmt');
   let h = '<thead><tr><th class="catcol">Category</th>';
-  PARTNERS.forEach(p => { h += `<th>${esc(p.label)}</th>`; });
+  cols.forEach(col => { h += `<th>${esc(col.label)}</th>`; });
   h += '</tr></thead><tbody>';
   for (const cat of CATEGORIES) {
     h += `<tr><td class="catlbl">${esc(cat)}</td>`;
-    PARTNERS.forEach(p => {
-      const v = discountMatrix[cat]?.[p.key] ?? '';
+    cols.forEach(col => {
+      const v = discountMatrix[cat]?.[col.key] ?? '';
       h += `<td><input type="text" inputmode="decimal"
         value="${esc(String(v))}" placeholder="—"
-        data-cat="${esc(cat)}" data-partner="${esc(p.key)}"
-        title="${esc(cat)} · ${esc(p.label)} discount %"></td>`;
+        data-cat="${esc(cat)}" data-partner="${esc(col.key)}"
+        title="${esc(cat)} · ${esc(col.label)} discount %"></td>`;
     });
     h += '</tr>';
   }
@@ -697,10 +722,32 @@ function onMatrixCell(cat, partnerKey, val) {
 }
 
 function updateMatrixSummary() {
+  const cols   = allCols();
   const filled = CATEGORIES.reduce((n, cat) =>
-    n + PARTNERS.filter(p => (discountMatrix[cat]?.[p.key] ?? '') !== '').length, 0);
-  const total = CATEGORIES.length * PARTNERS.length;
+    n + cols.filter(c => (discountMatrix[cat]?.[c.key] ?? '') !== '').length, 0);
+  const total  = CATEGORIES.length * cols.length;
   el('matrix-summary').textContent = filled ? `${filled} of ${total} rates set` : '';
+}
+
+// Rebuilds the partner-type dropdown, appending any loaded named accounts below a separator
+function populatePartnerSelect() {
+  const sel = el('partner-sel');
+  // Remove previously injected customer options and separator
+  sel.querySelectorAll('option[data-cust], option[data-sep]').forEach(o => o.remove());
+  if (!customerNames.length) return;
+  const sep = document.createElement('option');
+  sep.disabled = true;
+  sep.dataset.sep = '1';
+  sep.textContent = '──────────────────';
+  sel.appendChild(sep);
+  const sorted = [...customerNames].sort((a, b) => a.localeCompare(b));
+  for (const name of sorted) {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    opt.dataset.cust = '1';
+    sel.appendChild(opt);
+  }
 }
 
 function toggleMatrix() {
@@ -727,10 +774,11 @@ function resetMatrix() {
 }
 
 function exportMatrix() {
-  const lines = ['category_code,' + PARTNERS.map(p => p.key).join(',')];
+  const cols  = allCols();
+  const lines = ['category_code,' + cols.map(c => c.label).join(',')];
   for (const cat of CATEGORIES) {
     const key  = cat.replace('/','_');
-    const vals = PARTNERS.map(p => discountMatrix[cat]?.[p.key] ?? '');
+    const vals = cols.map(c => discountMatrix[cat]?.[c.key] ?? '');
     lines.push(key + ',' + vals.join(','));
   }
   dl(new Blob([lines.join('\r\n')], {type:'text/csv;charset=utf-8;'}), 'partner_rate_matrix.csv');
@@ -757,6 +805,22 @@ function importMatrixFile(file) {
     try {
       const result = parseMatrixCSV(e.target.result);
       if (!result.ok) { showMatrixMsg(result.error, 'al-warn'); return; }
+
+      // Merge any newly discovered named accounts
+      if (result.newCustomers?.length) {
+        for (const n of result.newCustomers) {
+          if (!customerNames.includes(n)) customerNames.push(n);
+        }
+        saveCustomers();
+        // Seed matrix rows for new customers
+        for (const cat of CATEGORIES) {
+          if (!discountMatrix[cat]) discountMatrix[cat] = {};
+          for (const n of customerNames) {
+            if (discountMatrix[cat][n] === undefined) discountMatrix[cat][n] = '';
+          }
+        }
+      }
+
       for (const [cat, vals] of Object.entries(result.data)) {
         if (!discountMatrix[cat]) discountMatrix[cat] = {};
         Object.assign(discountMatrix[cat], vals);
@@ -764,6 +828,7 @@ function importMatrixFile(file) {
       saveMatrix();
       renderMatrix();
       updateMatrixSummary();
+      populatePartnerSelect();
       if (quoteRows.length) renderQuoteTable();
       showMatrixMsg(`✓ Imported ${result.rowCount} categories from ${file.name}`, 'al-ok');
       toast(`✓ Matrix imported: ${file.name}`);
@@ -787,11 +852,13 @@ function parseMatrixCSV(text) {
   const valid = lines.filter(l => l.some(c => c));
   if (!valid.length) return {ok:false, error:'Empty file'};
 
-  const hdrs = valid[0].map(h => h.toLowerCase());
-  const catIdx = hdrs.indexOf('category_code');
+  const origHdrs = valid[0];                               // original casing
+  const hdrs     = origHdrs.map(h => h.toLowerCase());
+  const catIdx   = hdrs.indexOf('category_code');
   if (catIdx < 0) return {ok:false, error:'Missing "category_code" column header'};
 
-  const cols = [];
+  const cols          = [];
+  const newCustomers  = [];  // column names that don't match any standard partner key
   for (let i = 0; i < hdrs.length; i++) {
     if (i === catIdx) continue;
     const rawKey = hdrs[i].replace(/\s+/g,'_');
@@ -800,7 +867,14 @@ function parseMatrixCSV(text) {
       p.key.replace('_','') === rawKey.replace('_','') ||
       p.label.toLowerCase().replace(/[\s/]+/g,'_') === rawKey
     );
-    cols.push({idx:i, partnerKey: matched?.key || rawKey});
+    if (matched) {
+      cols.push({idx:i, partnerKey: matched.key});
+    } else {
+      // Unknown column → named account; preserve original casing
+      const custName = origHdrs[i].trim();
+      cols.push({idx:i, partnerKey: custName});
+      newCustomers.push(custName);
+    }
   }
 
   const data = {};
@@ -816,7 +890,7 @@ function parseMatrixCSV(text) {
     }
     rowCount++;
   }
-  return {ok:true, data, rowCount};
+  return {ok:true, data, rowCount, newCustomers};
 }
 
 // ── SFDC EXPORT ───────────────────────────────────────────────────────────────
