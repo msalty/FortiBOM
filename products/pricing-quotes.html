@@ -178,21 +178,18 @@
     <h2>BOM Source</h2>
   </div>
   <div class="cb">
-    <div class="fg">
+    <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
       <div class="grp">
         <label class="lbl">Project</label>
-        <select id="src-sel" onchange="onSrcChange()" style="min-width:260px">
+        <select id="src-sel" onchange="onSrcChange()" style="min-width:260px;max-width:400px">
           <option value="">— Select a BOM —</option>
           <option value="__current__">Current Project BOM</option>
         </select>
       </div>
-      <div class="grp" style="justify-content:flex-end">
-        <label class="lbl">&nbsp;</label>
-        <button class="btn bp" id="load-btn" onclick="loadBOM()" disabled>
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 001 1h9a1 1 0 001-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-          Load BOM
-        </button>
-      </div>
+      <button class="btn bp" id="load-btn" onclick="loadBOM()" disabled style="flex-shrink:0;margin-bottom:1px">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 001 1h9a1 1 0 001-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Load BOM
+      </button>
     </div>
     <div id="src-meta" style="margin-top:8px;font-size:11px;color:var(--text2);display:none"></div>
   </div>
@@ -512,13 +509,22 @@ function applyTerm(sku, term) {
 
 // ── RENDER QUOTE ──────────────────────────────────────────────────────────────
 
+// Single-letter categories that share a matrix row with another letter
+const CAT_GROUP_MAP = {'C':'C/S','S':'C/S','I':'I/J','J':'I/J'};
+
+function resolveMatrixCat(cat) {
+  if (discountMatrix[cat]) return cat;
+  return CAT_GROUP_MAP[cat] || cat;
+}
+
 function getEffectiveDisc(row) {
   if (row.excOverride !== null && row.excOverride !== '' && row.excOverride !== undefined) {
     const v = parseFloat(row.excOverride);
     return isNaN(v) ? null : v;
   }
   if (!selectedPartner) return null;
-  const cr = discountMatrix[row.cat];
+  const matrixCat = resolveMatrixCat(row.cat);
+  const cr = discountMatrix[matrixCat];
   if (!cr) return null;
   const v = cr[selectedPartner];
   if (v === '' || v === null || v === undefined) return null;
@@ -545,7 +551,7 @@ function renderQuoteTable() {
 
     const matrixDisc = (() => {
       if (!selectedPartner) return null;
-      const cr = discountMatrix[row.cat];
+      const cr = discountMatrix[resolveMatrixCat(row.cat)];
       if (!cr) return null;
       const v = cr[selectedPartner];
       if (v === '' || v === null || v === undefined) return null;
@@ -690,7 +696,7 @@ function updateMatrixSummary() {
 
 function toggleMatrix() {
   const body = el('matrix-body');
-  body.style.display ? closeMatrix() : openMatrix();
+  body.style.display === 'none' ? openMatrix() : closeMatrix();
 }
 function openMatrix() {
   el('matrix-body').style.display = '';
