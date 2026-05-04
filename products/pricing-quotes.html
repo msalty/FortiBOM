@@ -99,6 +99,10 @@
   .empty h3{font-size:15px;font-weight:600;color:var(--text);margin:10px 0 6px;}
   .empty p{font-size:12px;}
 
+  /* Customer column delete button */
+  .cust-del{margin-left:6px;background:none;border:none;cursor:pointer;color:var(--textm);font-size:13px;line-height:1;padding:0 1px;border-radius:2px;vertical-align:middle;}
+  .cust-del:hover{color:var(--red);}
+
   /* PARTNER HEADER ROW */
   .ph-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 
@@ -343,13 +347,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadPricing();
   populateSourceSelect();
 
-  // Delegated listener for matrix inputs — attached once to avoid repeated registration.
-  // Using data-cat / data-partner avoids inline oninput with JSON-encoded quotes that
-  // break HTML attribute parsing and silently swallow all edits.
+  // Delegated listeners for matrix — attached once to avoid repeated registration.
   el('dmt').addEventListener('input', e => {
     const inp = e.target;
     if (!inp.dataset.cat) return;
     onMatrixCell(inp.dataset.cat, inp.dataset.partner, inp.value);
+  });
+  el('dmt').addEventListener('click', e => {
+    const btn = e.target.closest('.cust-del');
+    if (!btn) return;
+    deleteCustomer(btn.dataset.cust);
   });
 });
 
@@ -705,7 +712,12 @@ function renderMatrix() {
   const cols = visibleCols();
   const tbl  = el('dmt');
   let h = '<thead><tr><th class="catcol">Category</th>';
-  cols.forEach(col => { h += `<th>${esc(col.label)}</th>`; });
+  cols.forEach(col => {
+    const isCustomer = !PARTNERS.find(p => p.key === col.key);
+    h += isCustomer
+      ? `<th style="white-space:nowrap">${esc(col.label)}<button class="cust-del" data-cust="${esc(col.key)}" title="Remove ${esc(col.label)}">×</button></th>`
+      : `<th>${esc(col.label)}</th>`;
+  });
   h += '</tr></thead><tbody>';
   for (const cat of CATEGORIES) {
     h += `<tr><td class="catlbl">${esc(cat)}</td>`;
@@ -729,6 +741,22 @@ function onMatrixCell(cat, partnerKey, val) {
   saveMatrix();
   updateMatrixSummary();
   if (quoteRows.length) renderQuoteTable();
+}
+
+function deleteCustomer(name) {
+  customerNames = customerNames.filter(n => n !== name);
+  for (const cat of CATEGORIES) {
+    if (discountMatrix[cat]) delete discountMatrix[cat][name];
+  }
+  saveCustomers();
+  saveMatrix();
+  selectedPartner = '';
+  el('partner-sel').value = '';
+  renderMatrix();
+  updateMatrixSummary();
+  populatePartnerSelect();
+  if (quoteRows.length) renderQuoteTable();
+  toast(`Removed "${name}"`);
 }
 
 function updateMatrixSummary() {
