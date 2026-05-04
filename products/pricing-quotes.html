@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing &amp; Quotes — FabricBOM</title>
+<style>
+:root {
+  --forti-red:#EE3124; --forti-dark:#1A1D23; --forti-sidebar:#21252D;
+  --c-white:#fff; --c-bg:#F2F4F7; --c-border:#DDE1E9;
+  --c-text:#2A2F3A; --c-text2:#6B7589; --c-textm:#9BA5BA;
+  --c-sh:#F8F9FB; --c-ib:#C8CDD9; --c-th:#EEF0F4; --c-hover:#F0F2F7;
+  --radius:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Helvetica Neue,Arial,sans-serif;font-size:13px;color:var(--c-text);background:var(--c-bg);min-height:100vh;}
+
+/* ── TOP BAR ── */
+.tb{height:52px;background:var(--forti-dark);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:100;flex-shrink:0;}
+.tb-logo{width:28px;height:28px;background:var(--forti-red);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tb-logo svg{width:16px;height:16px;}
+.tb-title{color:#E8EAF0;font-size:15px;font-weight:600;}
+.tb-sub{color:#8A93A8;font-size:13px;}
+.tb-sep{flex:1;}
+.tb-info{color:#8A93A8;font-size:11px;max-width:340px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ── LAYOUT ── */
+.main{max-width:1400px;margin:0 auto;padding:20px;}
+
+/* ── CARDS ── */
+.card{background:var(--c-white);border:1px solid var(--c-border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;}
+.ch{padding:11px 16px;border-bottom:1px solid var(--c-border);display:flex;align-items:center;gap:8px;min-height:44px;}
+.ch h2{font-size:13px;font-weight:600;color:var(--c-text);flex:1;}
+.ch svg{flex-shrink:0;}
+.cb{padding:16px;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;white-space:nowrap;font-family:inherit;line-height:1;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.bp{background:var(--forti-red);color:#fff;border-color:var(--forti-red);}
+.bp:hover:not(:disabled){background:#cc2a1e;border-color:#cc2a1e;}
+.bs{background:var(--c-white);color:var(--c-text);border-color:var(--c-ib);}
+.bs:hover:not(:disabled){background:var(--c-hover);}
+.bsm{padding:4px 10px;font-size:11px;}
+
+/* ── FORM ── */
+select,input[type=text],input[type=number]{border:1px solid var(--c-ib);border-radius:5px;padding:5px 9px;font-size:12px;font-family:inherit;background:var(--c-white);color:var(--c-text);}
+select:focus,input:focus{outline:2px solid var(--forti-red);outline-offset:-1px;}
+label.fl{display:block;font-size:11px;font-weight:600;color:var(--c-text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
+
+/* ── SOURCE ROW ── */
+.src-row{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;}
+.src-row .fld{display:flex;flex-direction:column;}
+
+/* ── DISCOUNT MATRIX TABLE ── */
+.dm-wrap{overflow-x:auto;}
+.dmt{width:100%;border-collapse:collapse;font-size:12px;}
+.dmt th{background:var(--c-th);padding:7px 10px;text-align:center;font-weight:600;font-size:11px;border:1px solid var(--c-border);white-space:nowrap;}
+.dmt th.catcol{text-align:left;min-width:72px;}
+.dmt td{border:1px solid var(--c-border);padding:3px 5px;text-align:center;}
+.dmt td.catlbl{font-weight:700;background:var(--c-sh);padding:6px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;text-align:left;color:var(--c-text);}
+.dmt input[type=number]{width:72px;border:1px solid transparent;border-radius:3px;padding:4px 6px;text-align:center;font-size:12px;background:transparent;}
+.dmt input[type=number]:hover{border-color:var(--c-ib);background:var(--c-white);}
+.dmt input[type=number]:focus{border-color:var(--forti-red);outline:none;background:#fff8f8;}
+
+/* ── QUOTE TABLE ── */
+.qt-outer{overflow-x:auto;}
+table.qt{width:100%;border-collapse:collapse;font-size:12px;}
+table.qt th{background:var(--c-th);border:1px solid var(--c-border);padding:7px 10px;font-weight:600;font-size:11px;white-space:nowrap;text-align:left;position:sticky;top:52px;z-index:5;}
+table.qt th.r{text-align:right;}
+table.qt td{border:1px solid var(--c-border);padding:6px 10px;vertical-align:middle;}
+table.qt td.r{text-align:right;}
+table.qt tr.qr:hover td{background:var(--c-hover);}
+.sku-cell{font-family:Consolas,'Courier New',monospace;font-size:11px;font-weight:600;white-space:nowrap;}
+.catbadge{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700;background:var(--c-th);color:var(--c-text2);white-space:nowrap;}
+.exc-inp{width:72px;text-align:center;padding:3px 6px;}
+.exc-inp.overridden{border-color:var(--forti-red)!important;background:#fff8f8!important;}
+.no-price{color:var(--c-textm);}
+table.qt tfoot td{background:var(--c-th);font-weight:700;border:1px solid var(--c-border);padding:7px 10px;}
+table.qt tfoot td.r{text-align:right;}
+
+/* ── EMPTY / INFO STATES ── */
+.empty{padding:56px 20px;text-align:center;color:var(--c-text2);}
+.empty .ei{font-size:40px;margin-bottom:12px;}
+.empty h3{font-size:15px;font-weight:600;color:var(--c-text);margin-bottom:6px;}
+.empty p{font-size:12px;}
+
+/* ── ALERTS ── */
+.al{padding:10px 14px;border-radius:5px;font-size:12px;margin-top:10px;}
+.al-info{background:#EEF3FF;border:1px solid #C0CFEF;color:#2A4A9A;}
+.al-warn{background:#FFF8EE;border:1px solid #F0D090;color:#7A4F00;}
+.al-ok{background:#F0FAF0;border:1px solid #9BD6B8;color:#1A6B3A;}
+
+/* ── DROP ZONE ── */
+.dz{border:2px dashed var(--c-border);border-radius:6px;padding:16px 20px;text-align:center;color:var(--c-text2);cursor:pointer;transition:border-color .2s,background .2s;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;}
+.dz:hover,.dz.over{border-color:var(--forti-red);background:#fff5f4;}
+.dz-text{text-align:left;}
+.dz-text strong{display:block;font-size:12px;color:var(--c-text);}
+.dz-text span{font-size:11px;color:var(--c-text2);}
+
+/* ── COLLAPSIBLE ── */
+.cv{transition:transform .2s;flex-shrink:0;}
+.cv.open{transform:rotate(180deg);}
+
+/* ── TOOLBAR ROW ── */
+.tool-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A1D23;color:#E8EAF0;padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .2s,transform .2s;z-index:9999;pointer-events:none;white-space:nowrap;}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── EXPORT ROW ── */
+.exp-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+
+/* ── SECTION DIVIDER ── */
+.sdiv{margin:0 0 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--c-text2);padding-bottom:6px;border-bottom:1px solid var(--c-border);}
+
+/* ── PARTNER HIGHLIGHT ── */
+.dmt th.ph,.dmt td.ph{background:#fff5f4!important;}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="tb">
+  <div class="tb-logo">
+    <svg viewBox="0 0 16 16" fill="none">
+      <path d="M8 1.5L2 4.8v6.4L8 14.5l6-3.3V4.8L8 1.5z" fill="white" opacity=".85"/>
+      <path d="M5.5 7h5M5.5 9.5h3.5" stroke="#EE3124" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <span class="tb-title">FabricBOM</span>
+  <span class="tb-sub">/ Pricing &amp; Quotes</span>
+  <div class="tb-sep"></div>
+  <div class="tb-info" id="tb-info">Loading price list…</div>
+</div>
+
+<div class="main">
+
+  <!-- ── BOM SOURCE ── -->
+  <div class="card">
+    <div class="ch">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2.5h10M2 5.5h10M2 8.5h7" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <h2>BOM Source</h2>
+    </div>
+    <div class="cb">
+      <div class="src-row">
+        <div class="fld">
+          <label class="fl">Project</label>
+          <select id="src-sel" style="min-width:280px" onchange="onSrcChange()">
+            <option value="">— Select a BOM —</option>
+            <option value="__current__">Current Project BOM</option>
+          </select>
+        </div>
+        <button class="btn bp" id="load-btn" onclick="loadBOM()" disabled>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 001 1h9a1 1 0 001-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Load BOM
+        </button>
+        <div id="src-meta" style="font-size:12px;color:var(--c-text2)"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DISCOUNT MATRIX ── -->
+  <div class="card">
+    <div class="ch" style="cursor:pointer" onclick="toggleMatrix()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="4" height="4" rx=".75" stroke="#6B7589" stroke-width="1.2"/><rect x="8.5" y="1.5" width="4" height="4" rx=".75" stroke="#6B7589" stroke-width="1.2"/><rect x="1.5" y="8.5" width="4" height="4" rx=".75" stroke="#6B7589" stroke-width="1.2"/><rect x="8.5" y="8.5" width="4" height="4" rx=".75" stroke="#6B7589" stroke-width="1.2"/></svg>
+      <h2>Discount Matrix</h2>
+      <div id="matrix-summary" style="font-size:11px;color:var(--c-text2);margin-left:4px"></div>
+      <svg id="mcv" class="cv" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div id="matrix-body" style="display:none">
+      <div class="cb" style="border-bottom:1px solid var(--c-border)">
+        <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">
+          <div class="dz" id="csv-dz"
+               ondragover="event.preventDefault();this.classList.add('over')"
+               ondragleave="this.classList.remove('over')"
+               ondrop="onMatrixDrop(event)"
+               onclick="document.getElementById('csv-file').click()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;opacity:.45"><path d="M12 3v13M7 12l5 5 5-5" stroke="#6B7589" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 18v1.5A1.5 1.5 0 004.5 21h15A1.5 1.5 0 0021 19.5V18" stroke="#6B7589" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <div class="dz-text">
+              <strong>Import partner_rate_matrix.csv</strong>
+              <span>Drop file here or click to browse — sets discount % per category &amp; partner type</span>
+            </div>
+            <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="onMatrixFileChosen(this)">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+            <button class="btn bs bsm" onclick="exportMatrix()">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3.5 5.5L6 8l2.5-2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 9v1a1 1 0 001 1h8a1 1 0 001-1V9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Export CSV
+            </button>
+            <button class="btn bs bsm" onclick="resetMatrix()">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6a4 4 0 104-4H4M4 2L2 4l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Reset
+            </button>
+          </div>
+        </div>
+        <div id="matrix-msg" style="display:none;margin-top:10px"></div>
+      </div>
+      <div class="cb" style="padding:12px 16px">
+        <div class="dm-wrap">
+          <table class="dmt" id="dmt"></table>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--c-text2)">Enter discount percentages (0–100). Changes save automatically. Exception column is the manual override default per category.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUOTE TABLE ── -->
+  <div class="card">
+    <div class="ch">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 4h12M1 8h12M1 12h12" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <h2>Quote</h2>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label class="fl" style="margin:0;white-space:nowrap">Partner type:</label>
+        <select id="partner-sel" style="width:190px" onchange="onPartnerChange()">
+          <option value="">— Select partner type —</option>
+          <option value="advocate">Advocate</option>
+          <option value="select">Select</option>
+          <option value="advanced">Advanced</option>
+          <option value="expert_global">Expert / Global</option>
+          <option value="registered_opp">Registered Opp</option>
+          <option value="exception">Exception (Manual)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="q-empty" class="empty">
+      <div class="ei">📋</div>
+      <h3>No BOM loaded</h3>
+      <p>Select a BOM source above and click <strong>Load BOM</strong> to populate the quote.</p>
+    </div>
+
+    <div id="q-wrap" style="display:none">
+      <div class="qt-outer">
+        <table class="qt">
+          <thead>
+            <tr>
+              <th style="width:36px">#</th>
+              <th>SKU</th>
+              <th>Description</th>
+              <th class="r" style="width:52px">Qty</th>
+              <th style="width:72px">Category</th>
+              <th class="r" style="width:100px">List Price</th>
+              <th class="r" style="width:110px">Total List</th>
+              <th class="r" style="width:90px" title="Discount % from partner type matrix. Type a value to override this line.">Disc %</th>
+              <th class="r" style="width:110px">Unit Disc</th>
+              <th class="r" style="width:110px">Total Disc</th>
+            </tr>
+          </thead>
+          <tbody id="q-tbody"></tbody>
+          <tfoot id="q-tfoot"></tfoot>
+        </table>
+      </div>
+      <div id="q-warn" style="padding:0 16px 12px;display:none"></div>
+    </div>
+  </div>
+
+  <!-- ── SFDC EXPORT ── -->
+  <div class="card" id="exp-card" style="display:none">
+    <div class="ch">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v9M4 7l3 3 3-3" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 11v1a1 1 0 001 1h10a1 1 0 001-1v-1" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <h2>SFDC Export</h2>
+    </div>
+    <div class="cb">
+      <p style="font-size:12px;color:var(--c-text2);margin-bottom:12px">Exports in Salesforce CPQ format: <code style="font-family:monospace;font-size:11px">UID, Quantity, Disti Discount, Quote Line Item Notes</code>. Disti Discount is populated from the active discount schedule.</p>
+      <div class="exp-row">
+        <button class="btn bs" onclick="exportSFDC('AMER')">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 001 1h9a1 1 0 001-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Export SFDC-AMER
+        </button>
+        <button class="btn bs" onclick="exportSFDC('EMEA')">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 001 1h9a1 1 0 001-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Export SFDC-EMEA
+        </button>
+        <button class="btn bs" onclick="exportSFDC('APAC')">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 001 1h9a1 1 0 001-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Export SFDC-APAC
+        </button>
+        <div style="flex:1"></div>
+        <div id="exp-note" style="font-size:11px;color:var(--c-text2)"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<div id="toast"></div>
+
+<script>
+// ── CONSTANTS ─────────────────────────────────────────────────────────────────
+
+const CATEGORIES = ['A','B','C/S','E','F','D','I/J','L'];
+
+// Maps CSV category_code values → display names used as keys in discountMatrix
+const CAT_CSV_MAP = {
+  'A':'A','B':'B','C_S':'C/S','C/S':'C/S',
+  'E':'E','F':'F','D':'D',
+  'I_J':'I/J','I/J':'I/J','L':'L'
+};
+
+const PARTNERS = [
+  {key:'advocate',      label:'Advocate'},
+  {key:'select',        label:'Select'},
+  {key:'advanced',      label:'Advanced'},
+  {key:'expert_global', label:'Expert / Global'},
+  {key:'registered_opp',label:'Registered Opp'},
+  {key:'exception',     label:'Exception'}
+];
+
+const LS_MATRIX  = 'fabricbom_discount_matrix';
+const LS_CART    = 'fortibom_cart';
+const LS_SAVED   = 'fortibom_saved';
+const LS_PI      = 'fortibom_pi';
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+
+let discountMatrix = {};   // { 'A': { advocate: '15', select: '20', ... }, ... }
+let quoteRows      = [];   // [ {sku, desc, qty, cat, listPrice, excOverride} ]
+let selectedPartner= '';
+let priceMap       = new Map();  // sku → number
+let catMap         = new Map();  // sku → category string
+
+// ── BOOT ─────────────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', async () => {
+  loadMatrix();
+  renderMatrix();
+  updateMatrixSummary();
+  // Open matrix if it has no data yet
+  const hasData = CATEGORIES.some(c => PARTNERS.some(p => (discountMatrix[c]?.[p.key]??'') !== ''));
+  if (!hasData) { openMatrix(); }
+  await loadPricing();
+  populateSourceSelect();
+});
+
+// ── INDEXEDDB PRICING ─────────────────────────────────────────────────────────
+
+function openSharedDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('toolbox_shared', 2);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('datasets')) {
+        db.createObjectStore('datasets', {keyPath:'key'});
+      }
+    };
+    req.onsuccess  = e => resolve(e.target.result);
+    req.onerror    = () => reject(req.error);
+  });
+}
+
+async function loadPricing() {
+  try {
+    const db = await openSharedDB();
+    await new Promise(resolve => {
+      const req = db.transaction('datasets','readonly').objectStore('datasets').get('pricing');
+      req.onsuccess = e => {
+        const rec = e.target.result;
+        if (rec?.data?.rows?.length) {
+          for (const r of rec.data.rows) {
+            const sku = r['SKU'];
+            if (!sku) continue;
+            const price = parseFloat(String(r['Price']||'').replace(/[^0-9.]/g,''));
+            if (!isNaN(price)) priceMap.set(sku, price);
+            if (r['Category']) catMap.set(sku, r['Category']);
+          }
+          const name = rec.data.name || 'Price list loaded';
+          const date = rec.data.effectiveDate ? ` · ${rec.data.effectiveDate}` : '';
+          el('tb-info').textContent = `${name}${date} · ${priceMap.size.toLocaleString()} SKUs`;
+        } else {
+          el('tb-info').textContent = 'No price list loaded — import one in FabricBOM to see prices';
+        }
+        resolve();
+      };
+      req.onerror = () => { el('tb-info').textContent = 'Price list unavailable'; resolve(); };
+    });
+  } catch(e) {
+    el('tb-info').textContent = 'Price list unavailable';
+  }
+}
+
+// ── SOURCE SELECT ─────────────────────────────────────────────────────────────
+
+function populateSourceSelect() {
+  const sel = el('src-sel');
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); } catch(e) {}
+
+  // Group by projectKey → take most recent (array is newest-first due to unshift)
+  const groupMap = {};
+  for (const p of saved) {
+    const key = p.projectKey || p.id;
+    if (!groupMap[key]) groupMap[key] = p;
+  }
+  const projects = Object.values(groupMap).sort((a,b) => new Date(b.savedAt) - new Date(a.savedAt));
+
+  if (projects.length) {
+    const grp = document.createElement('optgroup');
+    grp.label = 'Saved Projects';
+    for (const p of projects) {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      const date = p.savedAt ? new Date(p.savedAt).toLocaleDateString() : '';
+      const opp  = p.meta?.opp ? ` · ${p.meta.opp}` : '';
+      opt.textContent = `${p.meta?.cust || 'Unnamed'}${opp} (${date})`;
+      grp.appendChild(opt);
+    }
+    sel.appendChild(grp);
+  }
+}
+
+function onSrcChange() {
+  const val = el('src-sel').value;
+  el('load-btn').disabled = !val;
+
+  if (val === '__current__') {
+    try {
+      const pi = JSON.parse(localStorage.getItem(LS_PI) || '{}');
+      el('src-meta').textContent = pi.cust
+        ? `Customer: ${pi.cust}${pi.opp ? ' · ' + pi.opp : ''} · Term: ${pi.term || 'DD'}`
+        : 'Current project';
+    } catch(e) { el('src-meta').textContent = ''; }
+  } else if (val) {
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); } catch(e) {}
+    const p = saved.find(s => s.id === val);
+    if (p) el('src-meta').textContent = `Saved ${new Date(p.savedAt).toLocaleString()} · Term: ${p.meta?.term || 'DD'}`;
+  } else {
+    el('src-meta').textContent = '';
+  }
+}
+
+function loadBOM() {
+  const val = el('src-sel').value;
+  if (!val) return;
+
+  let cartData = [], meta = {};
+
+  if (val === '__current__') {
+    // Try parent window first (when running in iframe inside index.html)
+    try {
+      if (window.parent && window.parent !== window && Array.isArray(window.parent.cart)) {
+        cartData = window.parent.cart;
+      }
+    } catch(e) {}
+    // Fall back to localStorage
+    if (!cartData.length) {
+      try { cartData = JSON.parse(localStorage.getItem(LS_CART) || '{}').cart || []; } catch(e) {}
+    }
+    try { meta = JSON.parse(localStorage.getItem(LS_PI) || '{}'); } catch(e) {}
+  } else {
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); } catch(e) {}
+    const p = saved.find(s => s.id === val);
+    if (p) { cartData = p.cart || []; meta = p.meta || {}; }
+  }
+
+  buildQuoteRows(cartData, meta);
+}
+
+// ── BUILD QUOTE ───────────────────────────────────────────────────────────────
+
+function buildQuoteRows(cartData, meta) {
+  quoteRows = [];
+  const term = meta?.term || 'DD';
+
+  for (const entry of cartData) {
+    if (!entry || entry._type === 'group') continue;
+    if (!Array.isArray(entry.rows)) continue;
+
+    for (const r of entry.rows) {
+      if (r.section !== undefined) continue;   // section headers
+      if (!r.sku) continue;                    // empty rows
+      if (r.kind === 'note') continue;          // note rows
+
+      // Respect kind overrides; skip excluded items
+      const effectiveKind = r._kindOverride !== undefined ? r._kindOverride : r.kind;
+      if (effectiveKind === 'excl') continue;
+
+      // Apply term substitution to SKU
+      const sku = applyTerm(r.sku, term);
+
+      // Pricing lookup (try term-applied SKU first, then raw)
+      const listPrice = priceMap.get(sku) ?? priceMap.get(r.sku) ?? null;
+      const cat       = catMap.get(sku)   || catMap.get(r.sku)   || '';
+      const qty       = (typeof r.qty === 'number' && r.qty > 0) ? r.qty : 1;
+
+      quoteRows.push({ sku, desc: r.desc || '', qty, cat, listPrice, excOverride: null });
+    }
+  }
+
+  const missing = quoteRows.filter(r => r.listPrice === null).length;
+
+  if (!quoteRows.length) {
+    el('q-empty').style.display = '';
+    el('q-empty').querySelector('h3').textContent = 'BOM has no quotable SKUs';
+    el('q-empty').querySelector('p').textContent  =
+      'All items may be excluded, or the selected BOM contains no SKU rows.';
+    el('q-wrap').style.display    = 'none';
+    el('exp-card').style.display  = 'none';
+    return;
+  }
+
+  el('q-empty').style.display   = 'none';
+  el('q-wrap').style.display    = '';
+  el('exp-card').style.display  = '';
+
+  const warn = el('q-warn');
+  if (missing) {
+    warn.style.display = '';
+    warn.innerHTML = `<div class="al al-warn">${missing} SKU${missing>1?'s have':' has'} no price in the loaded price list. Prices and totals will show "—" for those items.</div>`;
+  } else {
+    warn.style.display = 'none';
+  }
+
+  renderQuoteTable();
+  toast(`✓ Loaded ${quoteRows.length} SKU${quoteRows.length!==1?'s':''}${missing?' ('+missing+' unpriced)':''}`);
+}
+
+function applyTerm(sku, term) {
+  if (!sku || !term || term === 'DD') return sku;
+  return String(sku).replace(/-DD$/i, `-${term}`);
+}
+
+// ── RENDER QUOTE ──────────────────────────────────────────────────────────────
+
+function getEffectiveDisc(row) {
+  // Per-row manual override takes priority
+  if (row.excOverride !== null && row.excOverride !== '' && row.excOverride !== undefined) {
+    const v = parseFloat(row.excOverride);
+    return isNaN(v) ? null : v;
+  }
+  if (!selectedPartner) return null;
+  const catRates = discountMatrix[row.cat];
+  if (!catRates) return null;
+  const v = catRates[selectedPartner];
+  if (v === '' || v === null || v === undefined) return null;
+  const n = parseFloat(v);
+  return isNaN(n) ? null : n;
+}
+
+function renderQuoteTable() {
+  const tbody = el('q-tbody');
+  const tfoot = el('q-tfoot');
+  tbody.innerHTML = '';
+
+  let totList = 0, totDisc = 0, hasAnyList = false, hasAnyDisc = false;
+
+  quoteRows.forEach((row, i) => {
+    const disc     = getEffectiveDisc(row);
+    const lp       = row.listPrice;
+    const lineList = lp !== null ? lp * row.qty : null;
+    const unitDisc = (lp !== null && disc !== null) ? lp * (1 - disc/100) : null;
+    const lineDisc = (lp !== null && disc !== null) ? lineList * (1 - disc/100) : null;
+
+    if (lineList !== null) { totList += lineList; hasAnyList = true; }
+    if (lineDisc !== null) { totDisc += lineDisc; hasAnyDisc = true; }
+
+    // Determine placeholder for Disc % cell
+    const matrixDisc = (() => {
+      if (!selectedPartner) return null;
+      const cr = discountMatrix[row.cat];
+      if (!cr) return null;
+      const v = cr[selectedPartner];
+      if (v === '' || v === null || v === undefined) return null;
+      const n = parseFloat(v);
+      return isNaN(n) ? null : n;
+    })();
+
+    const isOverridden = row.excOverride !== null && row.excOverride !== '' && row.excOverride !== undefined;
+    const excVal = isOverridden ? row.excOverride : '';
+    const placeholder = matrixDisc !== null && !isOverridden ? `${matrixDisc.toFixed(1)}` : '';
+
+    const tr = document.createElement('tr');
+    tr.className = 'qr';
+    tr.innerHTML = `
+      <td style="color:var(--c-textm);font-size:11px;text-align:center">${i+1}</td>
+      <td class="sku-cell">${esc(row.sku)}</td>
+      <td style="max-width:320px;min-width:180px">${esc(row.desc)}</td>
+      <td class="r">${row.qty}</td>
+      <td><span class="catbadge">${esc(row.cat||'—')}</span></td>
+      <td class="r">${lp !== null ? fmt(lp) : '<span class="no-price">—</span>'}</td>
+      <td class="r">${lineList !== null ? fmt(lineList) : '<span class="no-price">—</span>'}</td>
+      <td class="r" style="padding:3px 6px">
+        <input type="number" class="exc-inp${isOverridden?' overridden':''}" min="0" max="100" step="0.1"
+          placeholder="${esc(placeholder)}"
+          value="${esc(String(excVal))}"
+          title="Type to override discount % for this line"
+          oninput="onExcInput(${i},this.value)">
+      </td>
+      <td class="r">${unitDisc !== null ? fmt(unitDisc) : '<span class="no-price">—</span>'}</td>
+      <td class="r">${lineDisc !== null ? fmt(lineDisc) : '<span class="no-price">—</span>'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  tfoot.innerHTML = `<tr>
+    <td colspan="5" style="text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--c-text2)">Totals</td>
+    <td></td>
+    <td class="r">${hasAnyList ? fmt(totList) : '—'}</td>
+    <td></td>
+    <td></td>
+    <td class="r">${hasAnyDisc ? fmt(totDisc) : '—'}</td>
+  </tr>`;
+
+  updateExpNote();
+}
+
+function onExcInput(idx, val) {
+  quoteRows[idx].excOverride = val === '' ? null : val;
+  renderQuoteTable();
+}
+
+function onPartnerChange() {
+  selectedPartner = el('partner-sel').value;
+  if (quoteRows.length) renderQuoteTable();
+  // Highlight active column in matrix
+  highlightMatrixCol();
+}
+
+function highlightMatrixCol() {
+  document.querySelectorAll('#dmt th, #dmt td').forEach(c => c.classList.remove('ph'));
+  if (!selectedPartner) return;
+  const pIdx = PARTNERS.findIndex(p => p.key === selectedPartner);
+  if (pIdx < 0) return;
+  const colIdx = pIdx + 1; // +1 for category label column
+  document.querySelectorAll(`#dmt tr`).forEach(row => {
+    const cells = row.querySelectorAll('th, td');
+    if (cells[colIdx]) cells[colIdx].classList.add('ph');
+  });
+}
+
+function updateExpNote() {
+  const p = PARTNERS.find(p => p.key === selectedPartner);
+  el('exp-note').textContent = p ? `Discount schedule: ${p.label}` : 'No discount schedule selected';
+}
+
+// ── DISCOUNT MATRIX ───────────────────────────────────────────────────────────
+
+function emptyMatrix() {
+  const m = {};
+  for (const cat of CATEGORIES) {
+    m[cat] = {};
+    for (const p of PARTNERS) m[cat][p.key] = '';
+  }
+  return m;
+}
+
+function loadMatrix() {
+  try {
+    const raw = localStorage.getItem(LS_MATRIX);
+    discountMatrix = raw ? JSON.parse(raw) : emptyMatrix();
+  } catch(e) {
+    discountMatrix = emptyMatrix();
+  }
+  // Ensure all categories and partner keys exist
+  for (const cat of CATEGORIES) {
+    if (!discountMatrix[cat]) discountMatrix[cat] = {};
+    for (const p of PARTNERS) {
+      if (discountMatrix[cat][p.key] === undefined) discountMatrix[cat][p.key] = '';
+    }
+  }
+}
+
+function saveMatrix() {
+  localStorage.setItem(LS_MATRIX, JSON.stringify(discountMatrix));
+}
+
+function renderMatrix() {
+  const tbl = el('dmt');
+  let h = '<thead><tr><th class="catcol">Category</th>';
+  PARTNERS.forEach(p => { h += `<th>${esc(p.label)}</th>`; });
+  h += '</tr></thead><tbody>';
+  for (const cat of CATEGORIES) {
+    h += `<tr><td class="catlbl">${esc(cat)}</td>`;
+    PARTNERS.forEach(p => {
+      const v = discountMatrix[cat]?.[p.key] ?? '';
+      h += `<td><input type="number" min="0" max="100" step="0.1"
+        value="${esc(String(v))}" placeholder="—"
+        oninput="onMatrixCell(${JSON.stringify(cat)},${JSON.stringify(p.key)},this.value)"
+        title="${esc(cat)} · ${esc(p.label)} discount %"></td>`;
+    });
+    h += '</tr>';
+  }
+  h += '</tbody>';
+  tbl.innerHTML = h;
+  highlightMatrixCol();
+}
+
+function onMatrixCell(cat, partnerKey, val) {
+  if (!discountMatrix[cat]) discountMatrix[cat] = {};
+  discountMatrix[cat][partnerKey] = val;
+  saveMatrix();
+  updateMatrixSummary();
+  if (quoteRows.length) renderQuoteTable();
+}
+
+function updateMatrixSummary() {
+  const filled = CATEGORIES.reduce((n, cat) =>
+    n + PARTNERS.filter(p => (discountMatrix[cat]?.[p.key]??'') !== '').length, 0);
+  const total  = CATEGORIES.length * PARTNERS.length;
+  el('matrix-summary').textContent = filled ? `${filled}/${total} rates set` : '';
+}
+
+function toggleMatrix() {
+  const body = el('matrix-body');
+  body.style.display ? closeMatrix() : openMatrix();
+}
+function openMatrix() {
+  el('matrix-body').style.display = '';
+  el('mcv').classList.add('open');
+}
+function closeMatrix() {
+  el('matrix-body').style.display = 'none';
+  el('mcv').classList.remove('open');
+}
+
+function resetMatrix() {
+  if (!confirm('Reset all discount rates to blank?')) return;
+  discountMatrix = emptyMatrix();
+  saveMatrix();
+  renderMatrix();
+  updateMatrixSummary();
+  if (quoteRows.length) renderQuoteTable();
+  toast('Discount matrix reset');
+}
+
+function exportMatrix() {
+  const lines = ['category_code,' + PARTNERS.map(p => p.key).join(',')];
+  for (const cat of CATEGORIES) {
+    const key  = cat.replace('/','_');
+    const vals = PARTNERS.map(p => discountMatrix[cat]?.[p.key] ?? '');
+    lines.push(key + ',' + vals.join(','));
+  }
+  dl(new Blob([lines.join('\r\n')], {type:'text/csv;charset=utf-8;'}), 'partner_rate_matrix.csv');
+  toast('✓ Matrix exported');
+}
+
+// ── CSV IMPORT ────────────────────────────────────────────────────────────────
+
+function onMatrixDrop(e) {
+  e.preventDefault();
+  el('csv-dz').classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f) importMatrixFile(f);
+}
+
+function onMatrixFileChosen(inp) {
+  if (inp.files[0]) importMatrixFile(inp.files[0]);
+  inp.value = '';
+}
+
+function importMatrixFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const result = parseMatrixCSV(e.target.result);
+      if (!result.ok) { showMatrixMsg(result.error, 'warn'); return; }
+
+      // Merge parsed data into discountMatrix
+      for (const [cat, vals] of Object.entries(result.data)) {
+        if (!discountMatrix[cat]) discountMatrix[cat] = {};
+        Object.assign(discountMatrix[cat], vals);
+      }
+      saveMatrix();
+      renderMatrix();
+      updateMatrixSummary();
+      if (quoteRows.length) renderQuoteTable();
+      showMatrixMsg(`✓ Imported ${result.rowCount} categories from ${esc(file.name)}`, 'ok');
+      toast(`✓ Matrix imported: ${file.name}`);
+    } catch(err) {
+      showMatrixMsg('Parse error: ' + err.message, 'warn');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function showMatrixMsg(text, type) {
+  const d = el('matrix-msg');
+  d.className = `al al-${type}`;
+  d.textContent = text;
+  d.style.display = '';
+}
+
+function parseMatrixCSV(text) {
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n')
+    .map(l => l.split(',').map(c => c.trim()));
+  const valid = lines.filter(l => l.some(c => c));
+  if (!valid.length) return {ok:false, error:'Empty file'};
+
+  const hdrs = valid[0].map(h => h.toLowerCase());
+  const catIdx = hdrs.indexOf('category_code');
+  if (catIdx < 0) return {ok:false, error:'Missing "category_code" column header'};
+
+  // Map column indices to partner keys
+  const cols = [];
+  for (let i = 0; i < hdrs.length; i++) {
+    if (i === catIdx) continue;
+    const rawKey = hdrs[i].replace(/\s+/g,'_');
+    // Find the matching partner key (flexible matching)
+    const matched = PARTNERS.find(p =>
+      p.key === rawKey ||
+      p.key.replace('_','') === rawKey.replace('_','') ||
+      p.label.toLowerCase().replace(/[\s/]+/g,'_') === rawKey
+    );
+    cols.push({idx:i, partnerKey: matched?.key || rawKey});
+  }
+
+  const data = {};
+  let rowCount = 0;
+  for (let r = 1; r < valid.length; r++) {
+    const cells = valid[r];
+    const rawCat = cells[catIdx] || '';
+    if (!rawCat) continue;
+    const catDisplay = CAT_CSV_MAP[rawCat] || CAT_CSV_MAP[rawCat.toUpperCase()] || rawCat.replace('_','/');
+    data[catDisplay] = {};
+    for (const col of cols) {
+      data[catDisplay][col.partnerKey] = cells[col.idx] ?? '';
+    }
+    rowCount++;
+  }
+  return {ok:true, data, rowCount};
+}
+
+// ── SFDC EXPORT ───────────────────────────────────────────────────────────────
+
+function exportSFDC(region) {
+  if (!quoteRows.length) { toast('No quote rows to export'); return; }
+
+  const rows = [['UID','Quantity','Disti Discount','Quote Line Item Notes']];
+  for (const row of quoteRows) {
+    if (!row.sku) continue;
+    const disc = getEffectiveDisc(row);
+    // Use actual discount if available, otherwise fall back to 28 (standard disti default)
+    const distiDisc = disc !== null ? disc : 28;
+    rows.push([`${row.sku}${region}`, row.qty ?? 1, distiDisc, '']);
+  }
+
+  const csv = rows.map(r => r.map(c => String(c).replace(/,/g,'')).join(',')).join('\r\n');
+  dl(new Blob([csv],{type:'text/csv;charset=utf-8;'}), `SFDC_${region}_${new Date().toISOString().slice(0,10)}.csv`);
+  toast(`✓ SFDC-${region} exported (${rows.length-1} rows)`);
+}
+
+// ── UTILITIES ─────────────────────────────────────────────────────────────────
+
+function el(id) { return document.getElementById(id); }
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmt(n) {
+  if (typeof n !== 'number' || isNaN(n)) return '—';
+  return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+}
+
+function dl(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+}
+
+let _toastTmr;
+function toast(msg) {
+  const t = el('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(_toastTmr);
+  _toastTmr = setTimeout(() => t.classList.remove('on'), 3200);
+}
+</script>
+</body>
+</html>
