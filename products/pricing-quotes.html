@@ -802,11 +802,16 @@ function closeMatrix() {
 }
 
 function resetMatrix() {
-  if (!confirm('Reset all discount rates to blank?')) return;
-  discountMatrix = emptyMatrix();
+  if (!confirm('Reset all discount rates and remove all customers?')) return;
+  customerNames   = [];
+  discountMatrix  = emptyMatrix();
+  selectedPartner = '';
+  el('partner-sel').value = '';
+  saveCustomers();
   saveMatrix();
   renderMatrix();
   updateMatrixSummary();
+  populatePartnerSelect();
   if (quoteRows.length) renderQuoteTable();
   toast('Discount matrix reset');
 }
