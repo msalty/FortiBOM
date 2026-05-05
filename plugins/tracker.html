@@ -162,6 +162,17 @@ table.btree td.bc-empty{background:var(--c-sh);color:var(--c-textm);font-style:i
 .bn-badges{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-bottom:1px;}
 .bc-cust .bn-meta{font-size:10px;color:var(--c-text2);margin-top:1px;}
 .no-branch{text-align:center;padding:40px 20px;color:var(--c-text2);font-style:italic;}
+.bn-id{display:flex;align-items:center;gap:5px;}
+.bn-edit{background:none;border:1px solid var(--c-ib);border-radius:3px;cursor:pointer;font-size:11px;color:var(--c-text2);padding:1px 5px;font-family:inherit;line-height:1.4;flex-shrink:0;transition:background .1s,color .1s,border-color .1s;}
+.bn-edit:hover{background:#EEF1F6;color:var(--c-text);border-color:#B0B8CC;}
+
+/* TAC contact footer */
+.tac-footer{flex-shrink:0;background:var(--c-white);border-top:1px solid var(--c-border);padding:5px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.tac-footer-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--c-textm);}
+.tac-footer a{font-size:11px;color:#1A4E82;text-decoration:none;white-space:nowrap;}
+.tac-footer a:hover{text-decoration:underline;}
+.tac-footer .tf-sep{color:var(--c-ib);font-size:12px;}
+.tac-footer .tf-phone{font-size:11px;color:var(--c-text2);white-space:nowrap;font-family:'Courier New',monospace;}
 </style>
 </head>
 <body>
@@ -268,6 +279,19 @@ table.btree td.bc-empty{background:var(--c-sh);color:var(--c-textm);font-style:i
     </div>
   </div>
 
+</div>
+
+<!-- TAC CONTACT FOOTER -->
+<div class="tac-footer">
+  <span class="tac-footer-label">Fortinet TAC</span>
+  <span class="tf-sep">·</span>
+  <a href="https://www.fortinet.com/support/contact" target="_blank" rel="noopener">Contact TAC ↗</a>
+  <span class="tf-sep">·</span>
+  <a href="https://support.fortinet.com/WebChatOnline.aspx" target="_blank" rel="noopener">Web Chat ↗</a>
+  <span class="tf-sep">·</span>
+  <span class="tf-phone">+1 408 542 7780</span>
+  <span class="tf-sep">·</span>
+  <span class="tf-phone">+1 408 541 3214 <span style="font-family:inherit;font-size:10px;color:var(--c-textm);">(EN)</span></span>
 </div>
 
 <!-- TAC MODAL -->
@@ -721,7 +745,7 @@ function renderBranch(d) {
         const tacCell=firstOfTac?`<td class="bc-tac" rowspan="${rowCount}">
           <div class="bn">
             <div class="bn-badges">${statusBadge(t.status)} ${sevBadge(t.sev)}</div>
-            <div class="bn-id">${tacStub}<a href="${esc(tacURL(t.id))}" target="_blank" rel="noopener" class="id-link">${esc(t.id)}</a></div>
+            <div class="bn-id">${tacStub}<a href="${esc(tacURL(t.id))}" target="_blank" rel="noopener" class="id-link">${esc(t.id)}</a><button class="bn-edit" title="Edit TAC case" onclick="openTACModal('${esc(t.id)}')">✎</button></div>
             <div class="bn-sum" title="${esc(t.summary)}">${esc(t.summary)}</div>
           </div>
         </td>`:'';
@@ -734,7 +758,7 @@ function renderBranch(d) {
           mantisCell=`<td class="bc-mantis">
             <div class="bn">
               <div class="bn-badges">${sevBadge(m.sev)}</div>
-              <div class="bn-id">${mStub}<a href="${esc(mantisURL(m.id))}" target="_blank" rel="noopener" class="id-link">${padMantis(m.id)}</a></div>
+              <div class="bn-id">${mStub}<a href="${esc(mantisURL(m.id))}" target="_blank" rel="noopener" class="id-link">${padMantis(m.id)}</a><button class="bn-edit" title="Edit Mantis bug" onclick="openMantisModal('${esc(m.id)}')">✎</button></div>
               <div class="bn-sum" title="${esc(m.summary)}">${esc(m.summary)}</div>
             </div>
           </td>`;
