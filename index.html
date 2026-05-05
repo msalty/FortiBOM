@@ -475,6 +475,28 @@
     #proj-info-card.view-mode:not(.pi-expanded) .lcb{padding:18px!important;}
     .pi-vv a{color:#1A4E82;text-decoration:none;border-bottom:1px solid #B8CBF5;}
   }
+
+  /* ── PLUGIN MANAGER (in Saved Projects view) ───────────────────────────── */
+  .plugin-dz{padding:14px 18px;border-top:1px solid var(--c-border);}
+  .plugin-dz-inner{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1.5px dashed var(--c-ib);border-radius:4px;cursor:pointer;transition:border-color .15s,background .15s;}
+  .plugin-dz-inner:hover{border-color:rgba(238,49,36,.5);background:#FEF8F7;}
+  .dz-active .plugin-dz-inner{border-color:var(--forti-red);background:#FEF0EE;}
+  .plugin-dz-svg{opacity:.3;flex-shrink:0;transition:opacity .15s;}
+  .plugin-dz-inner:hover .plugin-dz-svg,.dz-active .plugin-dz-svg{opacity:.6;}
+  .plugin-dz-text{flex:1;font-size:12px;color:var(--c-text2);line-height:1.6;}
+  .plugin-dz-text code{font-size:10px;font-family:'Courier New',monospace;background:var(--c-sh);border:1px solid var(--c-ib);border-radius:2px;padding:1px 4px;}
+  .plugin-dz-cta{color:var(--forti-red);font-weight:600;}
+  .pi-item{display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1px solid var(--c-border);}
+  .pi-item:last-of-type{border-bottom:none;}
+  .pi-item-icon{width:18px;height:18px;flex-shrink:0;opacity:.6;}
+  .pi-item-info{flex:1;min-width:0;}
+  .pi-item-name{font-size:12px;font-weight:600;color:var(--c-text);}
+  .pi-item-meta{font-size:11px;color:var(--c-text2);margin-top:1px;}
+  .pi-type-badge{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-radius:2px;padding:1px 4px;margin-left:4px;background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;vertical-align:middle;}
+  .pi-type-badge.ext{background:#FFF8EE;color:#8A5800;border-color:#F5D9A0;}
+  .pi-remove-btn{font-size:10px;font-weight:600;padding:3px 8px;border-radius:2px;background:#FEF0EE;color:#C0392B;border:1px solid #F5C6C2;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;}
+  .pi-remove-btn:hover{background:#F5C6C2;}
+  .pi-empty{padding:14px 18px;font-size:12px;color:var(--c-textm);font-style:italic;}
 </style>
 <script>var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$",e={};function t(r,o){if(!e[r]){e[r]={};for(var n=0;n<r.length;n++)e[r][r.charAt(n)]=n}return e[r][o]}var i={compressToBase64:function(r){if(null==r)return"";var n=i._compress(r,6,function(r){return o.charAt(r)});switch(n.length%4){default:case 0:return n;case 1:return n+"===";case 2:return n+"==";case 3:return n+"="}},decompressFromBase64:function(r){return null==r?"":""==r?null:i._decompress(r.length,32,function(n){return t(o,r.charAt(n))})},compressToUTF16:function(o){return null==o?"":i._compress(o,15,function(o){return r(o+32)})+" "},decompressFromUTF16:function(r){return null==r?"":""==r?null:i._decompress(r.length,16384,function(o){return r.charCodeAt(o)-32})},compressToUint8Array:function(r){for(var o=i.compress(r),n=new Uint8Array(2*o.length),e=0,t=o.length;e<t;e++){var s=o.charCodeAt(e);n[2*e]=s>>>8,n[2*e+1]=s%256}return n},decompressFromUint8Array:function(o){if(null==o)return i.decompress(o);for(var n=new Array(o.length/2),e=0,t=n.length;e<t;e++)n[e]=256*o[2*e]+o[2*e+1];var s=[];return n.forEach(function(o){s.push(r(o))}),i.decompress(s.join(""))},compressToEncodedURIComponent:function(r){return null==r?"":i._compress(r,6,function(r){return n.charAt(r)})},decompressFromEncodedURIComponent:function(r){return null==r?"":""==r?null:(r=r.replace(/ /g,"+"),i._decompress(r.length,32,function(o){return t(n,r.charAt(o))}))},compress:function(o){return i._compress(o,16,function(o){return r(o)})},_compress:function(r,o,n){if(null==r)return"";var e,t,i,s={},u={},a="",p="",c="",l=2,f=3,h=2,d=[],m=0,v=0;for(i=0;i<r.length;i+=1)if(a=r.charAt(i),Object.prototype.hasOwnProperty.call(s,a)||(s[a]=f++,u[a]=!0),p=c+a,Object.prototype.hasOwnProperty.call(s,p))c=p;else{if(Object.prototype.hasOwnProperty.call(u,c)){if(c.charCodeAt(0)<256){for(e=0;e<h;e++)m<<=1,v==o-1?(v=0,d.push(n(m)),m=0):v++;for(t=c.charCodeAt(0),e=0;e<8;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;e<h;e++)m=m<<1|t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=c.charCodeAt(0),e=0;e<16;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}0==--l&&(l=Math.pow(2,h),h++),delete u[c]}else for(t=s[c],e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;0==--l&&(l=Math.pow(2,h),h++),s[p]=f++,c=String(a)}if(""!==c){if(Object.prototype.hasOwnProperty.call(u,c)){if(c.charCodeAt(0)<256){for(e=0;e<h;e++)m<<=1,v==o-1?(v=0,d.push(n(m)),m=0):v++;for(t=c.charCodeAt(0),e=0;e<8;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;e<h;e++)m=m<<1|t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=c.charCodeAt(0),e=0;e<16;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}0==--l&&(l=Math.pow(2,h),h++),delete u[c]}else for(t=s[c],e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;0==--l&&(l=Math.pow(2,h),h++)}for(t=2,e=0;e<h;e++)m=m<<1|1&t,v==o-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;for(;;){if(m<<=1,v==o-1){d.push(n(m));break}v++}return d.join("")},decompress:function(r){return null==r?"":""==r?null:i._decompress(r.length,32768,function(o){return r.charCodeAt(o)})},_decompress:function(o,n,e){var t,i,s,u,a,p,c,l=[],f=4,h=4,d=3,m="",v=[],g={val:e(0),position:n,index:1};for(t=0;t<3;t+=1)l[t]=t;for(s=0,a=Math.pow(2,2),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;switch(s){case 0:for(s=0,a=Math.pow(2,8),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;c=r(s);break;case 1:for(s=0,a=Math.pow(2,16),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;c=r(s);break;case 2:return""}for(l[3]=c,i=c,v.push(c);;){if(g.index>o)return"";for(s=0,a=Math.pow(2,d),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;switch(c=s){case 0:for(s=0,a=Math.pow(2,8),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;l[h++]=r(s),c=h-1,f--;break;case 1:for(s=0,a=Math.pow(2,16),p=1;p!=a;)u=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(u>0?1:0)*p,p<<=1;l[h++]=r(s),c=h-1,f--;break;case 2:return v.join("")}if(0==f&&(f=Math.pow(2,d),d++),l[c])m=l[c];else{if(c!==h)return null;m=i+i.charAt(0)}v.push(m),l[h++]=i+m.charAt(0),i=m,0==--f&&(f=Math.pow(2,d),d++)}}};return i}();"function"==typeof define&&define.amd?define(function(){return LZString}):"undefined"!=typeof module&&null!=module?module.exports=LZString:"undefined"!=typeof angular&&null!=angular&&angular.module("LZString",[]).factory("LZString",function(){return LZString});</script>
 </head>
@@ -693,6 +715,30 @@
         </div>
         <div id="pricing-content" class="lcb"></div>
       </div>
+      <!-- Plugin Manager -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path d="M5 1.5h3v2.5h2.5v2H9v5H4v-5H2.5v-2H5V1.5z" stroke="#6B7589" stroke-width="1.1" stroke-linejoin="round"/>
+          </svg>
+          <h2>Installed Plugins</h2>
+        </div>
+        <div id="plugin-list"></div>
+        <div class="plugin-dz" id="plugin-drop-zone">
+          <div class="plugin-dz-inner" onclick="browsePlugin()" title="Click to browse for a plugin file, or drag and drop one here">
+            <svg class="plugin-dz-svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M7 3.5h4v4H3v3h1.5v9h15v-9H21v-3h-8V3.5H7z" stroke="#6B7589" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M12 10v5M9.5 12.5l2.5-2.5 2.5 2.5" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="plugin-dz-text">
+              Drop a <code>.html</code> plugin file here to install
+              <br><span class="plugin-dz-cta">or click to browse</span>
+              <span style="color:var(--c-textm);font-size:11px;"> — also accepts <code>.json</code> manifests for external URLs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="pbv-watermark">
         Powered by
         <a href="https://msalty.github.io/FabricBOM/" target="_blank" rel="noopener noreferrer">
@@ -705,6 +751,7 @@
 </div>
 
 <input type="file" id="pricing-file" accept=".csv,.xlsx" style="display:none" onchange="pricingFileChosen(this)">
+<input type="file" id="plugin-file-input" accept=".html,.json" style="display:none" onchange="handlePluginFile(this)">
 <div id="toast"></div>
 
 <!-- Copy/Export dropdown menu (position:fixed so it escapes overflow-y:auto parents) -->
@@ -1154,6 +1201,45 @@ const PLUGIN_STORE_KEY = 'fortibom_plugins';
 function loadPlugins() { try { return JSON.parse(localStorage.getItem(PLUGIN_STORE_KEY)||'[]'); } catch { return []; } }
 function savePlugins(arr) { try { localStorage.setItem(PLUGIN_STORE_KEY, JSON.stringify(arr)); } catch(e) { toast('⚠ Could not save plugin list: '+e.message); } }
 
+// IDB helpers — reuse the existing datasets store keyed with a plugin_ prefix
+async function _savePluginHTML(id, html) {
+  const db = await openSharedDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('datasets','readwrite');
+    tx.objectStore('datasets').put({ key:`plugin_html_${id}`, html });
+    tx.oncomplete = res; tx.onerror = e => rej(e.target.error);
+  });
+}
+async function _getPluginHTML(id) {
+  const db = await openSharedDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('datasets','readonly');
+    const req = tx.objectStore('datasets').get(`plugin_html_${id}`);
+    req.onsuccess = () => res(req.result?.html || null);
+    req.onerror = e => rej(e.target.error);
+  });
+}
+async function _delPluginHTML(id) {
+  const db = await openSharedDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('datasets','readwrite');
+    tx.objectStore('datasets').delete(`plugin_html_${id}`);
+    tx.oncomplete = res; tx.onerror = e => rej(e.target.error);
+  });
+}
+
+// Session-level blob URL cache (rebuilt each page load from IDB)
+const _blobURLs = {};
+async function _resolvePluginURL(p) {
+  if (p.type !== 'html') return p.url;
+  if (_blobURLs[p.id]) return _blobURLs[p.id];
+  const html = await _getPluginHTML(p.id);
+  if (!html) return null;
+  const blob = new Blob([html], { type:'text/html' });
+  _blobURLs[p.id] = URL.createObjectURL(blob);
+  return _blobURLs[p.id];
+}
+
 function pluginNavIcon(icon) {
   const ic = {
     tracker:  `<svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 6.5h7M5.5 9h5M5.5 11.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="13" cy="12" r="3" fill="var(--forti-sidebar)" stroke="currentColor" stroke-width="1.1"/><path d="M11.8 12l.7.8 1.5-1.6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
@@ -1170,20 +1256,26 @@ function pluginNavIcon(icon) {
   return ic[icon] || `<svg class="ni-icon" viewBox="0 0 18 18" fill="none"><path d="M9 3v2M9 13v2M3 9h2M13 9h2M5.2 5.2l1.4 1.4M11.4 11.4l1.4 1.4M5.2 12.8l1.4-1.4M11.4 6.6l1.4-1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.2"/></svg>`;
 }
 
-function renderPluginNav() {
+async function renderPluginNav() {
   const plugins = loadPlugins();
   const container = document.getElementById('plugin-nav-items');
   container.innerHTML = '';
   if (!plugins.length) return;
   const groups = {};
   for (const p of plugins) { const cat = p.category||'Tools'; if (!groups[cat]) groups[cat]=[]; groups[cat].push(p); }
-  const sep = document.createElement('div'); sep.className = 'n-sep'; container.appendChild(sep);
+  const sep = document.createElement('div'); sep.className='n-sep'; container.appendChild(sep);
   for (const [cat, items] of Object.entries(groups)) {
     const lbl = document.createElement('div'); lbl.className='nsl'; lbl.textContent=cat; lbl.style.paddingTop='14px'; container.appendChild(lbl);
     for (const p of items) {
       const el = document.createElement('div'); el.className='ni'; el.id=`nav-plugin-${p.id}`;
       el.innerHTML = `${pluginNavIcon(p.icon)}<span class="ni-label">${p.name}</span>`;
-      el.onclick = () => loadProduct(p.url, p.name, el);
+      // Pre-resolve blob URL now so the click is instant
+      if (p.type === 'html') _resolvePluginURL(p).catch(()=>{});
+      el.onclick = async () => {
+        const url = await _resolvePluginURL(p);
+        if (!url) { toast('⚠ Plugin files not found — try reinstalling.'); return; }
+        loadProduct(url, p.name, el);
+      };
       container.appendChild(el);
     }
   }
@@ -1199,45 +1291,73 @@ function renderPluginList() {
     <div class="pi-item">
       ${pluginNavIcon(p.icon).replace('class="ni-icon"','class="pi-item-icon"')}
       <div class="pi-item-info">
-        <div class="pi-item-name">${_plugEsc(p.name)}</div>
-        <div class="pi-item-meta">${_plugEsc(p.category||'Tools')}${p.description?' — '+_plugEsc(p.description):''}</div>
+        <div class="pi-item-name">${_plugEsc(p.name)}${p.version?`<span style="font-size:10px;color:var(--c-textm);font-weight:400;margin-left:5px;">v${_plugEsc(p.version)}</span>`:''}</div>
+        <div class="pi-item-meta">${_plugEsc(p.category||'Tools')}${p.description?' — '+_plugEsc(p.description):''}
+          <span class="pi-type-badge${p.type==='html'?'':' ext'}">${p.type==='html'?'Offline':'External URL'}</span>
+        </div>
       </div>
       <button class="pi-remove-btn" onclick="removePlugin('${_plugEsc(p.id)}')">Remove</button>
     </div>`).join('')
-  : '<div class="pi-empty">No plugins installed.</div>';
+  : '<div class="pi-empty">No plugins installed yet.</div>';
 }
 
-function installPlugin(manifest) {
-  if (!manifest || !manifest.fabricbomPlugin) { toast('⚠ Not a valid FabricBOM plugin file.'); return; }
-  if (!manifest.name || !manifest.url) { toast('⚠ Plugin manifest missing required fields (name, url).'); return; }
+async function installPlugin(content, fileType) {
+  let meta, html = null;
+  if (fileType === 'html') {
+    // Extract metadata from <script id="fabricbom-plugin-meta"> block
+    const m = content.match(/<script[^>]+id=["']fabricbom-plugin-meta["'][^>]*>([\s\S]*?)<\/script>/i);
+    if (!m) { toast('⚠ This HTML file has no FabricBOM plugin metadata block.'); return; }
+    try { meta = JSON.parse(m[1].trim()); } catch { toast('⚠ Plugin metadata JSON is invalid.'); return; }
+    html = content;
+  } else {
+    meta = content; // already-parsed JSON object
+  }
+  if (!meta?.fabricbomPlugin) { toast('⚠ Not a valid FabricBOM plugin file.'); return; }
+  if (!meta.name) { toast('⚠ Plugin metadata missing required field: name.'); return; }
+  if (fileType !== 'html' && !meta.url) { toast('⚠ Plugin manifest missing required field: url.'); return; }
+
   const plugins = loadPlugins();
-  const idx = plugins.findIndex(p => p.url === manifest.url);
+  const idx = plugins.findIndex(p => p.name === meta.name && p.type === (fileType==='html'?'html':'url'));
+  const id  = idx >= 0 ? plugins[idx].id : Date.now().toString(36);
   const plug = {
-    id: idx >= 0 ? plugins[idx].id : Date.now().toString(36),
-    name: manifest.name, category: manifest.category||'Tools',
-    icon: manifest.icon||'gear', url: manifest.url,
-    description: manifest.description||'',
+    id, type: fileType==='html' ? 'html' : 'url',
+    name: meta.name, category: meta.category||'Tools',
+    icon: meta.icon||'gear', url: fileType!=='html' ? meta.url : null,
+    description: meta.description||'', version: meta.version||'',
     installedAt: idx >= 0 ? plugins[idx].installedAt : new Date().toISOString(),
   };
   if (idx >= 0) plugins[idx]=plug; else plugins.push(plug);
   savePlugins(plugins);
-  renderPluginNav(); renderPluginList();
+  if (html) {
+    if (_blobURLs[id]) { URL.revokeObjectURL(_blobURLs[id]); delete _blobURLs[id]; }
+    await _savePluginHTML(id, html);
+  }
+  await renderPluginNav(); renderPluginList();
   toast(idx >= 0 ? `✓ Plugin "${plug.name}" updated.` : `✓ Plugin "${plug.name}" installed.`);
 }
 
-function removePlugin(id) {
+async function removePlugin(id) {
   const plugins = loadPlugins();
   const rem = plugins.find(p => p.id === id);
+  if (!rem) return;
+  if (rem.type === 'html') {
+    if (_blobURLs[id]) { URL.revokeObjectURL(_blobURLs[id]); delete _blobURLs[id]; }
+    await _delPluginHTML(id).catch(()=>{});
+  }
   savePlugins(plugins.filter(p => p.id !== id));
-  renderPluginNav(); renderPluginList();
+  await renderPluginNav(); renderPluginList();
   if (rem) toast(`Plugin "${rem.name}" removed.`);
 }
 
 function browsePlugin() { document.getElementById('plugin-file-input').value=''; document.getElementById('plugin-file-input').click(); }
 function handlePluginFile(input) {
   const file = input.files[0]; if (!file) return;
+  const isHTML = file.name.toLowerCase().endsWith('.html');
   const r = new FileReader();
-  r.onload = e => { try { installPlugin(JSON.parse(e.target.result)); } catch { toast('⚠ Could not read plugin file — must be valid JSON.'); } };
+  r.onload = e => {
+    if (isHTML) { installPlugin(e.target.result, 'html'); }
+    else { try { installPlugin(JSON.parse(e.target.result), 'json'); } catch { toast('⚠ Could not parse plugin file — must be valid JSON.'); } }
+  };
   r.readAsText(file); input.value='';
 }
 function initPluginDropZone() {
@@ -1247,8 +1367,12 @@ function initPluginDropZone() {
   zone.addEventListener('drop', e => {
     e.preventDefault(); zone.classList.remove('dz-active');
     const file = e.dataTransfer.files[0]; if (!file) return;
+    const isHTML = file.name.toLowerCase().endsWith('.html');
     const r = new FileReader();
-    r.onload = ev => { try { installPlugin(JSON.parse(ev.target.result)); } catch { toast('⚠ Could not read plugin file — must be valid JSON.'); } };
+    r.onload = ev => {
+      if (isHTML) { installPlugin(ev.target.result, 'html'); }
+      else { try { installPlugin(JSON.parse(ev.target.result), 'json'); } catch { toast('⚠ Could not parse plugin file — must be valid JSON.'); } }
+    };
     r.readAsText(file);
   });
 }
@@ -1866,6 +1990,7 @@ function showSavedProjects() {
   document.getElementById('spv-filter-clear').style.display = 'none';
   renderSavedProjects();
   renderPricingSection();
+  renderPluginList();
 }
 
 function filterSavedProjects(q) {
@@ -3491,7 +3616,9 @@ function initDemoLink() {
   updateSaveIndicator();
   if (cart.length) showPBV();
   buildNav();
-  buildPluginNav();
+  await renderPluginNav();
+  renderPluginList();
+  initPluginDropZone();
   checkBOMFragment();
   initPiMode();
   ['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
