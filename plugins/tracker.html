@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAC &amp; Mantis Tracker</title>
+
+<!-- FabricBOM Plugin Metadata — parsed by the app at install time -->
+<script type="application/json" id="fabricbom-plugin-meta">
+{
+  "fabricbomPlugin": true,
+  "name": "TAC & Mantis Tracker",
+  "category": "Tools",
+  "icon": "tracker",
+  "version": "1.0",
+  "description": "Track Fortinet TAC support cases and Mantis bugs with bidirectional linking"
+}
+</script>
+
+<style>
+/* ── PLUGIN THEME (inlined — no external dependencies) ───────────────────── */
+:root {
+  --forti-red:#EE3124; --forti-dark:#1A1D23; --forti-sidebar:#21252D;
+  --forti-border:#363C4A; --forti-text-primary:#E8EAF0;
+  --forti-text-secondary:#8A93A8; --forti-content-bg:#F2F4F7;
+  --c-white:#fff; --c-border:#DDE1E9; --c-text:#2A2F3A;
+  --c-text2:#6B7589; --c-textm:#9BA5BA; --c-sh:#F7F9FC;
+  --c-ib:#C8CDD9; --c-th:#EEF1F6;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:1.5;color:var(--c-text);background:var(--forti-content-bg);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+
+/* Cards */
+.lc{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;overflow:hidden;}
+.lch{background:var(--c-sh);border-bottom:1px solid var(--c-border);padding:9px 18px;display:flex;align-items:center;gap:8px;}
+.lch h2{font-size:11px;font-weight:700;color:var(--c-text);letter-spacing:.04em;text-transform:uppercase;}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:3px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:inherit;transition:background .12s;white-space:nowrap;line-height:1.2;}
+.btn-sm{padding:5px 9px;font-size:11px;}
+.btn svg{width:13px;height:13px;flex-shrink:0;}
+.bp{background:var(--forti-red);color:#fff;border-color:var(--forti-red);}
+.bp:hover{background:#d42a1e;}
+.bs{background:var(--c-white);color:var(--c-text);border-color:var(--c-ib);}
+.bs:hover{background:var(--c-sh);}
+.bd{background:#FEF0EE;color:#C0392B;border-color:#F5C6C2;}
+.bd:hover{background:#F5C6C2;}
+/* Form inputs */
+.fi{background:var(--c-white);border:1px solid var(--c-ib);border-radius:3px;padding:6px 9px;font-size:13px;color:var(--c-text);font-family:inherit;outline:none;transition:border-color .15s;width:100%;}
+.fi:focus{border-color:var(--forti-red);box-shadow:0 0 0 2px rgba(238,49,36,.1);}
+.fi:read-only{background:var(--c-sh);color:var(--c-text2);}
+textarea.fi{resize:vertical;min-height:60px;line-height:1.5;}
+select.fi{cursor:pointer;}
+.fl{font-size:10px;font-weight:700;color:var(--c-text2);text-transform:uppercase;letter-spacing:.07em;display:block;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:480px){.fg{grid-template-columns:1fr;}}
+.fg1,.fg2{display:flex;flex-direction:column;gap:4px;}
+/* Table */
+.bt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table.bt{width:100%;border-collapse:collapse;font-size:12px;table-layout:auto;}
+table.bt thead th{background:var(--c-th);border:1px solid var(--c-border);padding:6px 10px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#4A5268;white-space:nowrap;}
+table.bt tbody td{border:1px solid var(--c-border);padding:7px 10px;vertical-align:middle;font-size:12px;}
+table.bt tbody tr.bt-even td{background:var(--c-sh);}
+table.bt tbody tr.data-row:hover td{background:#EEF1F6;}
+/* Count badge */
+.cnt-badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;background:var(--forti-red);color:#fff;font-size:10px;font-weight:700;border-radius:9px;padding:0 5px;}
+.cnt-badge.zero{background:var(--c-ib);}
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.on{display:flex;}
+.modal-box{background:#fff;border-radius:5px;box-shadow:0 8px 32px rgba(0,0,0,.25);width:100%;max-width:520px;display:flex;flex-direction:column;max-height:90vh;}
+.modal-hdr{padding:14px 18px;border-bottom:1px solid var(--c-border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.modal-hdr h3{font-size:14px;font-weight:600;color:var(--c-text);flex:1;}
+.modal-close{background:none;border:none;cursor:pointer;font-size:22px;color:var(--c-text2);padding:0 2px;line-height:1;}
+.modal-close:hover{color:var(--c-text);}
+.modal-body{padding:18px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;}
+.modal-ftr{padding:12px 18px;border-top:1px solid var(--c-border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;background:var(--c-sh);border-radius:0 0 5px 5px;}
+/* Chip input */
+.chip-wrap{display:flex;flex-wrap:wrap;gap:4px;padding:5px 7px;border:1px solid var(--c-ib);border-radius:3px;background:var(--c-white);min-height:34px;align-items:center;cursor:text;transition:border-color .15s;}
+.chip-wrap:focus-within{border-color:var(--forti-red);box-shadow:0 0 0 2px rgba(238,49,36,.1);}
+.chip{display:inline-flex;align-items:center;gap:3px;background:#EEF3FF;border:1px solid #B8CBF5;border-radius:2px;padding:2px 5px;font-size:11px;font-family:'Courier New',monospace;font-weight:700;color:#3557A5;white-space:nowrap;}
+.chip button{background:none;border:none;cursor:pointer;color:#3557A5;font-size:14px;padding:0 0 0 2px;line-height:1;opacity:.6;}
+.chip button:hover{opacity:1;}
+.chip-inp{border:none;outline:none;font-size:12px;color:var(--c-text);font-family:inherit;background:transparent;flex:1;min-width:100px;padding:1px;}
+/* Link chips (table cells) */
+a.lchip{display:inline-block;font-family:'Courier New',monospace;font-size:10px;font-weight:700;color:#1A4E82;background:#EEF3FF;border:1px solid #B8CBF5;border-radius:2px;padding:1px 5px;margin:1px 1px 1px 0;text-decoration:none;white-space:nowrap;}
+a.lchip:hover{background:#D6E4FF;text-decoration:underline;}
+a.id-link{color:#1A4E82;font-family:'Courier New',monospace;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;}
+a.id-link:hover{text-decoration:underline;}
+.co-tag{display:inline-block;font-size:11px;color:var(--c-text);background:var(--c-sh);border:1px solid var(--c-border);border-radius:2px;padding:1px 6px;}
+.spacer{flex:1;}
+
+/* ── TRACKER-SPECIFIC ────────────────────────────────────────────────────── */
+.tracker-bar{height:44px;background:var(--c-white);border-bottom:1px solid var(--c-border);display:flex;align-items:center;padding:0 16px;gap:8px;flex-shrink:0;}
+.t-stats{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--c-text2);}
+.t-stats b{color:var(--c-text);font-weight:700;}
+.t-sep{color:var(--c-textm);}
+.tracker-scroll{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;}
+.tracker-scroll::-webkit-scrollbar{width:6px;}
+.tracker-scroll::-webkit-scrollbar-thumb{background:var(--c-ib);border-radius:3px;}
+/* Status badges */
+.sbadge{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:2px;padding:2px 6px;white-space:nowrap;border:1px solid transparent;}
+.st-cp{background:#FFF8EE;color:#8A5800;border-color:#F5D9A0;}
+.st-tp{background:#EEF3FF;color:#3557A5;border-color:#B8CBF5;}
+.st-wt{background:#F0F0F2;color:#6B7280;border-color:#D1D5DB;}
+.st-rs{background:#EEFBF2;color:#1A7A3A;border-color:#A8DDB5;}
+/* Row actions */
+.act-cell{white-space:nowrap;text-align:right;padding-right:8px!important;}
+.ic-btn{background:none;border:1px solid var(--c-ib);border-radius:3px;cursor:pointer;font-size:13px;color:var(--c-text2);padding:2px 7px;font-family:inherit;transition:background .1s,color .1s,border-color .1s;margin-left:3px;line-height:1.4;}
+.ic-btn:hover{background:var(--c-sh);color:var(--c-text);}
+.chk-btn:hover{background:#EEFBF2;color:#1A7A3A;border-color:#A8DDB5;}
+.del-btn:hover{background:#FEF0EE;color:#C0392B;border-color:#F5C6C2;}
+/* Expand rows */
+tr.data-row{cursor:pointer;}
+tr.exp-row>td{padding:0!important;border-top:none!important;background:#F7FAFF!important;}
+.exp-body{padding:12px 20px;display:flex;flex-direction:column;gap:8px;}
+.exp-notes{font-size:12px;color:var(--c-text);line-height:1.6;white-space:pre-wrap;background:#fff;border:1px solid var(--c-border);border-radius:3px;padding:8px 10px;}
+.exp-meta{display:flex;gap:16px;font-size:11px;color:var(--c-text2);flex-wrap:wrap;align-items:center;}
+.exp-link{color:var(--forti-red);text-decoration:none;font-weight:600;font-size:11px;}
+.exp-link:hover{text-decoration:underline;}
+/* Empty state */
+tr.empty-row td{text-align:center;color:var(--c-text2);font-style:italic;padding:28px 10px!important;background:transparent!important;}
+/* Freshness */
+.stale{color:#C0392B!important;}
+.warn{color:#8A5800!important;}
+/* Delete / import modals */
+#del-modal .modal-box,#imp-confirm .modal-box{max-width:400px;}
+#del-modal .modal-body p,#imp-confirm .modal-body p{font-size:13px;color:var(--c-text2);line-height:1.6;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ TOOLBAR ══════════════════════════════════ -->
+<div class="tracker-bar">
+  <div class="t-stats">
+    <b id="s-tac">0</b> TAC Cases
+    <span class="t-sep">·</span>
+    <b id="s-mantis">0</b> Mantis Bugs
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-sm bs" onclick="importData()" title="Import from a .json backup file">
+    <svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v7M3.5 5.5l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+    Import
+  </button>
+  <button class="btn btn-sm bs" onclick="exportData()" title="Export all data to a .json backup file">
+    <svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+    Export
+  </button>
+  <button class="btn btn-sm bs" onclick="openMantisModal(null)">
+    <svg viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 4v5M4 6.5h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    Mantis Bug
+  </button>
+  <button class="btn btn-sm bp" onclick="openTACModal(null)">
+    <svg viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#fff" stroke-width="1.2"/><path d="M6.5 4v5M4 6.5h5" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/></svg>
+    TAC Case
+  </button>
+</div>
+
+<!-- ═══════════════════════════ SCROLL AREA ══════════════════════════════════ -->
+<div class="tracker-scroll">
+
+  <!-- TAC CASES ────────────────────────────────────────────────────────────── -->
+  <div class="lc">
+    <div class="lch">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1.5" stroke="#6B7589" stroke-width="1.2"/><path d="M3.5 4.5h6M3.5 6.5h6M3.5 8.5h3.5" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <h2>TAC Support Cases</h2>
+      <span class="cnt-badge zero" id="tac-cnt">0</span>
+    </div>
+    <div class="bt-wrap">
+      <table class="bt">
+        <thead>
+          <tr>
+            <th style="width:108px;">Status</th>
+            <th style="width:112px;">Case ID</th>
+            <th>Summary</th>
+            <th style="width:130px;">Customer</th>
+            <th style="width:150px;">Mantis Links</th>
+            <th style="width:96px;">Checked</th>
+            <th style="width:88px;"></th>
+          </tr>
+        </thead>
+        <tbody id="tac-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MANTIS BUGS ───────────────────────────────────────────────────────────── -->
+  <div class="lc">
+    <div class="lch">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="#6B7589" stroke-width="1.2"/><path d="M4.5 2.5c0-1.1.9-2 2-2s2 .9 2 2" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round"/><path d="M2.5 5.5H1M11.5 5.5H12M2.5 8.5H1M11.5 8.5H12" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <h2>Mantis Bugs</h2>
+      <span class="cnt-badge zero" id="mantis-cnt">0</span>
+    </div>
+    <div class="bt-wrap">
+      <table class="bt">
+        <thead>
+          <tr>
+            <th style="width:112px;">Bug ID</th>
+            <th>Summary</th>
+            <th style="width:130px;">Company</th>
+            <th style="width:140px;">Related Bugs</th>
+            <th style="width:140px;">TAC Cases</th>
+            <th style="width:96px;">Checked</th>
+            <th style="width:88px;"></th>
+          </tr>
+        </thead>
+        <tbody id="mantis-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /tracker-scroll -->
+
+
+<!-- ═══════════════════════════ TAC MODAL ════════════════════════════════════ -->
+<div class="modal-bg" id="tac-modal" onclick="bgClose(event,'tac-modal')">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3 id="tac-modal-title">Add TAC Case</h3>
+      <button class="modal-close" onclick="closeTACModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <div class="fg2">
+          <label class="fl">Case ID <span style="color:var(--forti-red)">*</span></label>
+          <input type="text" class="fi" id="f-tac-id" placeholder="e.g. 19612920" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="fg2">
+          <label class="fl">Status</label>
+          <select class="fi" id="f-tac-status">
+            <option value="tac-pending">TAC Pending</option>
+            <option value="customer-pending">Customer Pending</option>
+            <option value="waiting">Waiting</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg1">
+        <label class="fl">Summary <span style="color:var(--forti-red)">*</span></label>
+        <input type="text" class="fi" id="f-tac-summary" placeholder="Brief description of the issue">
+      </div>
+      <div class="fg1">
+        <label class="fl">Customer</label>
+        <input type="text" class="fi" id="f-tac-cust" list="co-list" placeholder="Customer name" autocomplete="off">
+      </div>
+      <div class="fg1">
+        <label class="fl">Related Mantis Bugs</label>
+        <p style="font-size:11px;color:var(--c-textm);margin-bottom:2px;">Type a Bug ID and press <kbd style="font-size:10px;padding:1px 4px;border:1px solid var(--c-ib);border-radius:2px;background:var(--c-sh);">Enter</kbd> to add</p>
+        <div class="chip-wrap" id="tac-mantis-wrap" onclick="document.getElementById('tac-mantis-input').focus()">
+          <input type="text" class="chip-inp" id="tac-mantis-input" placeholder="Bug ID…" onkeydown="chipKey(event,'tac-mantis','tac-mantis-wrap','tac-mantis-input')" autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+      <div class="fg1">
+        <label class="fl">Notes</label>
+        <textarea class="fi" id="f-tac-notes" rows="3" placeholder="Any relevant notes, history, or context…"></textarea>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn bs" onclick="closeTACModal()">Cancel</button>
+      <button class="btn bp" onclick="saveTAC()">Save Case</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MANTIS MODAL ═════════════════════════════════ -->
+<div class="modal-bg" id="mantis-modal" onclick="bgClose(event,'mantis-modal')">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3 id="mantis-modal-title">Add Mantis Bug</h3>
+      <button class="modal-close" onclick="closeMantisModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <div class="fg2">
+          <label class="fl">Bug ID <span style="color:var(--forti-red)">*</span></label>
+          <input type="text" class="fi" id="f-m-id" placeholder="e.g. 0974190" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="fg2">
+          <label class="fl">Company</label>
+          <input type="text" class="fi" id="f-m-company" list="co-list" placeholder="Company name" autocomplete="off">
+        </div>
+      </div>
+      <div class="fg1">
+        <label class="fl">Summary <span style="color:var(--forti-red)">*</span></label>
+        <input type="text" class="fi" id="f-m-summary" placeholder="Brief description of the bug">
+      </div>
+      <div class="fg1">
+        <label class="fl">Related Mantis Bugs</label>
+        <p style="font-size:11px;color:var(--c-textm);margin-bottom:2px;">Type a Bug ID and press <kbd style="font-size:10px;padding:1px 4px;border:1px solid var(--c-ib);border-radius:2px;background:var(--c-sh);">Enter</kbd> to add</p>
+        <div class="chip-wrap" id="mantis-rel-wrap" onclick="document.getElementById('mantis-rel-input').focus()">
+          <input type="text" class="chip-inp" id="mantis-rel-input" placeholder="Bug ID…" onkeydown="chipKey(event,'mantis-rel','mantis-rel-wrap','mantis-rel-input')" autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+      <div class="fg1">
+        <label class="fl">Linked TAC Cases</label>
+        <p style="font-size:11px;color:var(--c-textm);margin-bottom:2px;">Type a Case ID and press <kbd style="font-size:10px;padding:1px 4px;border:1px solid var(--c-ib);border-radius:2px;background:var(--c-sh);">Enter</kbd> to add</p>
+        <div class="chip-wrap" id="mantis-tac-wrap" onclick="document.getElementById('mantis-tac-input').focus()">
+          <input type="text" class="chip-inp" id="mantis-tac-input" placeholder="Case ID…" onkeydown="chipKey(event,'mantis-tac','mantis-tac-wrap','mantis-tac-input')" autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+      <div class="fg1">
+        <label class="fl">Notes</label>
+        <textarea class="fi" id="f-m-notes" rows="3" placeholder="Any relevant notes, reproduction steps, or context…"></textarea>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn bs" onclick="closeMantisModal()">Cancel</button>
+      <button class="btn bp" onclick="saveMantis()">Save Bug</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ DELETE CONFIRM ══════════════════════════════════ -->
+<div class="modal-bg" id="del-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3>Confirm Delete</h3>
+      <button class="modal-close" onclick="closeDelModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p id="del-msg"></p>
+      <p style="margin-top:4px;font-size:11px;color:var(--c-textm);">Linked references in other records will also be cleaned up.</p>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn bs" onclick="closeDelModal()">Cancel</button>
+      <button class="btn bd" id="del-confirm-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ IMPORT CONFIRM ════════════════════════════════════ -->
+<div class="modal-bg" id="imp-confirm">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3>Import Tracker Data</h3>
+      <button class="modal-close" onclick="closeImpConfirm()">×</button>
+    </div>
+    <div class="modal-body">
+      <p id="imp-summary"></p>
+      <p style="margin-top:6px;font-size:12px;color:var(--c-text2);line-height:1.6;">Existing records with matching IDs will be <strong>overwritten</strong>. Records not in the import file are kept as-is.</p>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn bs" onclick="closeImpConfirm()">Cancel</button>
+      <button class="btn bp" id="imp-confirm-btn">Import</button>
+    </div>
+  </div>
+</div>
+
+<datalist id="co-list"></datalist>
+<input type="file" id="import-input" accept=".json" style="display:none" onchange="handleImport(event)">
+
+<script>
+'use strict';
+
+const STORE_KEY = 'fabricbom_tracker';
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+function loadData() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+    d.tac       = d.tac       || [];
+    d.mantis    = d.mantis    || [];
+    d.companies = d.companies || [];
+    return d;
+  } catch { return { tac:[], mantis:[], companies:[] }; }
+}
+function saveData(d) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
+  catch(e) { alert('Storage error — data may not have been saved: ' + e.message); }
+}
+
+// ── URLS ──────────────────────────────────────────────────────────────────────
+function tacURL(id)    { return `https://forticare.fortinet.com/customersupport/default.aspx?TID=${id}`; }
+function mantisURL(id) { return `https://mantis.fortinet.com/bug_view_page.php?bug_id=${padMantis(id)}`; }
+function padMantis(id) { return String(id).replace(/\D/g,'').padStart(7,'0'); }
+function normMantis(id){ return String(id).replace(/\D/g,'') || '0'; }
+function normTAC(id)   { return String(id).replace(/\D/g,''); }
+
+// ── TIME ──────────────────────────────────────────────────────────────────────
+function relTime(iso) {
+  if (!iso) return '—';
+  const d = Date.now() - new Date(iso).getTime(), m = Math.floor(d/60000);
+  if (m<1)  return 'just now';
+  if (m<60) return m+'m ago';
+  const h = Math.floor(m/60);
+  if (h<24) return h+'h ago';
+  const dy = Math.floor(h/24);
+  if (dy<30) return dy+'d ago';
+  const mo = Math.floor(dy/30);
+  return mo<12 ? mo+'mo ago' : Math.floor(mo/12)+'y ago';
+}
+function fmtDate(iso) { return iso ? new Date(iso).toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'}) : ''; }
+function checkedClass(iso) {
+  if (!iso) return 'stale';
+  const d = (Date.now()-new Date(iso).getTime())/86400000;
+  return d>14 ? 'stale' : d>7 ? 'warn' : '';
+}
+
+// ── STATUS ────────────────────────────────────────────────────────────────────
+const STATUS_META = {
+  'customer-pending':{ cls:'st-cp', label:'Cust Pending' },
+  'tac-pending':     { cls:'st-tp', label:'TAC Pending'  },
+  'waiting':         { cls:'st-wt', label:'Waiting'      },
+  'resolved':        { cls:'st-rs', label:'Resolved'     },
+};
+function statusBadge(s) {
+  const m = STATUS_META[s] || { cls:'st-wt', label:s||'Unknown' };
+  return `<span class="sbadge ${m.cls}">${m.label}</span>`;
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function linkChips(ids, urlFn) {
+  if (!ids?.length) return '<span style="color:var(--c-textm)">—</span>';
+  return ids.map(id=>`<a href="${esc(urlFn(id))}" target="_blank" rel="noopener" class="lchip">${esc(id)}</a>`).join('');
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  const d = loadData();
+  updateDatalist(d.companies);
+  renderTAC(d); renderMantis(d); renderStats(d);
+}
+function renderStats(d) {
+  document.getElementById('s-tac').textContent    = d.tac.length;
+  document.getElementById('s-mantis').textContent = d.mantis.length;
+  const tc = document.getElementById('tac-cnt'), mc = document.getElementById('mantis-cnt');
+  tc.textContent = d.tac.length;    tc.className = 'cnt-badge'+(d.tac.length    ?'':' zero');
+  mc.textContent = d.mantis.length; mc.className = 'cnt-badge'+(d.mantis.length ?'':' zero');
+}
+function renderTAC(d) {
+  const tbody = document.getElementById('tac-tbody');
+  if (!d.tac.length) { tbody.innerHTML=`<tr class="empty-row"><td colspan="7">No TAC cases yet — click <strong>+ TAC Case</strong> to add one.</td></tr>`; return; }
+  const ord = {'tac-pending':0,'customer-pending':1,'waiting':2,'resolved':3};
+  const sorted = [...d.tac].sort((a,b)=>{ const ao=ord[a.status]??2,bo=ord[b.status]??2; return ao!==bo?ao-bo:new Date(b.createdAt)-new Date(a.createdAt); });
+  tbody.innerHTML = sorted.map((t,i)=>{
+    const cc=checkedClass(t.lastChecked), rid=`tac-exp-${CSS.escape(t.id)}`;
+    return `
+    <tr class="data-row${i%2?' bt-even':''}" onclick="toggleExp('${esc(rid)}',event)">
+      <td>${statusBadge(t.status)}</td>
+      <td><a href="${esc(tacURL(t.id))}" target="_blank" rel="noopener" class="id-link" onclick="event.stopPropagation()">${esc(t.id)}</a></td>
+      <td style="word-break:break-word;min-width:120px;">${esc(t.summary)}</td>
+      <td>${t.customer?`<span class="co-tag">${esc(t.customer)}</span>`:'<span style="color:var(--c-textm)">—</span>'}</td>
+      <td>${linkChips(t.relatedMantis,mantisURL)}</td>
+      <td class="${cc}" title="${esc(fmtDate(t.lastChecked))}">${relTime(t.lastChecked)}</td>
+      <td class="act-cell" onclick="event.stopPropagation()">
+        <button class="ic-btn chk-btn" title="Mark checked now" onclick="checkTAC('${esc(t.id)}')">✓</button>
+        <button class="ic-btn" title="Edit" onclick="openTACModal('${esc(t.id)}')">✎</button>
+        <button class="ic-btn del-btn" title="Delete" onclick="confirmDel('tac','${esc(t.id)}')">✕</button>
+      </td>
+    </tr>
+    <tr class="exp-row" id="${esc(rid)}" style="display:none;"><td colspan="7">
+      <div class="exp-body">
+        ${t.notes?`<div class="exp-notes">${esc(t.notes)}</div>`:'<span style="font-size:11px;color:var(--c-textm);font-style:italic;">No notes.</span>'}
+        <div class="exp-meta">
+          <span>Created: ${fmtDate(t.createdAt)}</span>
+          ${t.lastChecked?`<span>Last checked: ${fmtDate(t.lastChecked)}</span>`:'<span style="color:#C0392B;">Never checked</span>'}
+          <a href="${esc(tacURL(t.id))}" target="_blank" rel="noopener" class="exp-link">Open in FortiCare ↗</a>
+        </div>
+      </div>
+    </td></tr>`;
+  }).join('');
+}
+function renderMantis(d) {
+  const tbody = document.getElementById('mantis-tbody');
+  if (!d.mantis.length) { tbody.innerHTML=`<tr class="empty-row"><td colspan="7">No Mantis bugs yet — click <strong>+ Mantis Bug</strong> to add one.</td></tr>`; return; }
+  const sorted = [...d.mantis].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  tbody.innerHTML = sorted.map((m,i)=>{
+    const cc=checkedClass(m.lastChecked), rid=`mantis-exp-${CSS.escape(m.id)}`;
+    return `
+    <tr class="data-row${i%2?' bt-even':''}" onclick="toggleExp('${esc(rid)}',event)">
+      <td><a href="${esc(mantisURL(m.id))}" target="_blank" rel="noopener" class="id-link" style="font-family:'Courier New',monospace;" onclick="event.stopPropagation()">${padMantis(m.id)}</a></td>
+      <td style="word-break:break-word;min-width:120px;">${esc(m.summary)}</td>
+      <td>${m.company?`<span class="co-tag">${esc(m.company)}</span>`:'<span style="color:var(--c-textm)">—</span>'}</td>
+      <td>${linkChips(m.relatedMantis,mantisURL)}</td>
+      <td>${linkChips(m.linkedTAC,tacURL)}</td>
+      <td class="${cc}" title="${esc(fmtDate(m.lastChecked))}">${relTime(m.lastChecked)}</td>
+      <td class="act-cell" onclick="event.stopPropagation()">
+        <button class="ic-btn chk-btn" title="Mark checked now" onclick="checkMantis('${esc(m.id)}')">✓</button>
+        <button class="ic-btn" title="Edit" onclick="openMantisModal('${esc(m.id)}')">✎</button>
+        <button class="ic-btn del-btn" title="Delete" onclick="confirmDel('mantis','${esc(m.id)}')">✕</button>
+      </td>
+    </tr>
+    <tr class="exp-row" id="${esc(rid)}" style="display:none;"><td colspan="7">
+      <div class="exp-body">
+        ${m.notes?`<div class="exp-notes">${esc(m.notes)}</div>`:'<span style="font-size:11px;color:var(--c-textm);font-style:italic;">No notes.</span>'}
+        <div class="exp-meta">
+          <span>Created: ${fmtDate(m.createdAt)}</span>
+          ${m.lastChecked?`<span>Last checked: ${fmtDate(m.lastChecked)}</span>`:'<span style="color:#C0392B;">Never checked</span>'}
+          <a href="${esc(mantisURL(m.id))}" target="_blank" rel="noopener" class="exp-link">Open in Mantis ↗</a>
+        </div>
+      </div>
+    </td></tr>`;
+  }).join('');
+}
+function toggleExp(id, event) {
+  const row = document.getElementById(id); if (!row) return;
+  row.style.display = row.style.display==='none' ? 'table-row' : 'none';
+}
+function updateDatalist(companies) {
+  document.getElementById('co-list').innerHTML = (companies||[]).map(c=>`<option value="${esc(c)}">`).join('');
+}
+
+// ── MARK CHECKED ──────────────────────────────────────────────────────────────
+function checkTAC(id) {
+  const d=loadData(), t=d.tac.find(x=>x.id===id);
+  if(t){ t.lastChecked=new Date().toISOString(); saveData(d); render(); }
+}
+function checkMantis(id) {
+  const d=loadData(), m=d.mantis.find(x=>x.id===id);
+  if(m){ m.lastChecked=new Date().toISOString(); saveData(d); render(); }
+}
+
+// ── DELETE ────────────────────────────────────────────────────────────────────
+function confirmDel(type, id) {
+  document.getElementById('del-msg').textContent =
+    `Delete ${type==='tac'?`TAC case ${id}`:`Mantis bug ${padMantis(id)}`}? This cannot be undone.`;
+  document.getElementById('del-confirm-btn').onclick = ()=>doDelete(type,id);
+  document.getElementById('del-modal').classList.add('on');
+}
+function closeDelModal() { document.getElementById('del-modal').classList.remove('on'); }
+function doDelete(type, id) {
+  const d=loadData();
+  if(type==='tac'){
+    const t=d.tac.find(x=>x.id===id);
+    if(t)(t.relatedMantis||[]).forEach(mid=>{ const m=d.mantis.find(x=>x.id===mid); if(m) m.linkedTAC=(m.linkedTAC||[]).filter(tid=>tid!==id); });
+    d.tac=d.tac.filter(x=>x.id!==id);
+  } else {
+    const m=d.mantis.find(x=>x.id===id);
+    if(m)(m.linkedTAC||[]).forEach(tid=>{ const t=d.tac.find(x=>x.id===tid); if(t) t.relatedMantis=(t.relatedMantis||[]).filter(mid=>mid!==id&&mid!==padMantis(id)); });
+    d.mantis=d.mantis.filter(x=>x.id!==id);
+  }
+  saveData(d); render(); closeDelModal();
+}
+
+// ── CHIP INPUT ────────────────────────────────────────────────────────────────
+const _chips = {};
+function initChips(key, wrapId, inputId, ids) {
+  _chips[key] = ids ? [...ids] : [];
+  renderChips(key, wrapId, inputId);
+}
+function renderChips(key, wrapId, inputId) {
+  const wrap=document.getElementById(wrapId), inp=document.getElementById(inputId);
+  wrap.querySelectorAll('.chip').forEach(c=>c.remove());
+  _chips[key].forEach((id,i)=>{
+    const chip=document.createElement('span'); chip.className='chip';
+    chip.innerHTML=`${esc(id)}<button type="button" onclick="removeChip('${key}','${wrapId}','${inputId}',${i})" title="Remove">×</button>`;
+    wrap.insertBefore(chip,inp);
+  });
+}
+function removeChip(key,wrapId,inputId,i){ _chips[key].splice(i,1); renderChips(key,wrapId,inputId); }
+function chipKey(event, key, wrapId, inputId) {
+  if(event.key==='Enter'||event.key===','){
+    event.preventDefault();
+    const val=event.target.value.trim().replace(/,$/,'');
+    if(val&&!_chips[key].includes(val)){ _chips[key].push(val); renderChips(key,wrapId,inputId); }
+    event.target.value='';
+  }
+}
+
+// ── TAC MODAL ─────────────────────────────────────────────────────────────────
+let _editTACId = null;
+function openTACModal(id) {
+  _editTACId=id;
+  const d=loadData(); updateDatalist(d.companies);
+  const t=id?d.tac.find(x=>x.id===id):null;
+  document.getElementById('tac-modal-title').textContent=id?'Edit TAC Case':'Add TAC Case';
+  const idFld=document.getElementById('f-tac-id');
+  idFld.value=t?t.id:''; idFld.readOnly=!!id;
+  document.getElementById('f-tac-summary').value=t?t.summary:'';
+  document.getElementById('f-tac-cust').value=t?(t.customer||''):'';
+  document.getElementById('f-tac-status').value=t?(t.status||'tac-pending'):'tac-pending';
+  document.getElementById('f-tac-notes').value=t?(t.notes||''):'';
+  initChips('tac-mantis','tac-mantis-wrap','tac-mantis-input',t?t.relatedMantis:[]);
+  document.getElementById('tac-modal').classList.add('on');
+  setTimeout(()=>document.getElementById(id?'f-tac-summary':'f-tac-id').focus(),60);
+}
+function closeTACModal(){ document.getElementById('tac-modal').classList.remove('on'); }
+function saveTAC() {
+  const id=normTAC(document.getElementById('f-tac-id').value.trim());
+  if(!id){ alert('Case ID is required.'); return; }
+  const summary=document.getElementById('f-tac-summary').value.trim();
+  if(!summary){ alert('Summary is required.'); return; }
+  const customer=document.getElementById('f-tac-cust').value.trim();
+  const status=document.getElementById('f-tac-status').value;
+  const notes=document.getElementById('f-tac-notes').value.trim();
+  const relatedMantis=[..._chips['tac-mantis']];
+  const d=loadData();
+  if(!_editTACId&&d.tac.find(x=>x.id===id)){ alert(`TAC case ${id} is already being tracked.`); return; }
+  let t;
+  if(_editTACId){
+    t=d.tac.find(x=>x.id===_editTACId); if(!t) return;
+    (t.relatedMantis||[]).forEach(mid=>{ const m=d.mantis.find(x=>x.id===mid); if(m) m.linkedTAC=(m.linkedTAC||[]).filter(tid=>tid!==_editTACId); });
+    Object.assign(t,{summary,customer,status,notes,relatedMantis});
+  } else {
+    t={id,summary,customer,status,relatedMantis,lastChecked:null,notes,createdAt:new Date().toISOString()};
+    d.tac.push(t);
+  }
+  if(customer&&!d.companies.includes(customer)) d.companies.push(customer);
+  relatedMantis.forEach(mid=>{ const m=d.mantis.find(x=>x.id===mid); if(m&&!(m.linkedTAC||[]).includes(t.id)) m.linkedTAC=[...(m.linkedTAC||[]),t.id]; });
+  saveData(d); render(); closeTACModal();
+}
+
+// ── MANTIS MODAL ──────────────────────────────────────────────────────────────
+let _editMantisId = null;
+function openMantisModal(id) {
+  _editMantisId=id;
+  const d=loadData(); updateDatalist(d.companies);
+  const m=id?d.mantis.find(x=>x.id===id):null;
+  document.getElementById('mantis-modal-title').textContent=id?'Edit Mantis Bug':'Add Mantis Bug';
+  const idFld=document.getElementById('f-m-id');
+  idFld.value=m?m.id:''; idFld.readOnly=!!id;
+  document.getElementById('f-m-summary').value=m?m.summary:'';
+  document.getElementById('f-m-company').value=m?(m.company||''):'';
+  document.getElementById('f-m-notes').value=m?(m.notes||''):'';
+  initChips('mantis-rel','mantis-rel-wrap','mantis-rel-input',m?m.relatedMantis:[]);
+  initChips('mantis-tac','mantis-tac-wrap','mantis-tac-input',m?m.linkedTAC:[]);
+  document.getElementById('mantis-modal').classList.add('on');
+  setTimeout(()=>document.getElementById(id?'f-m-summary':'f-m-id').focus(),60);
+}
+function closeMantisModal(){ document.getElementById('mantis-modal').classList.remove('on'); }
+function saveMantis() {
+  const id=normMantis(document.getElementById('f-m-id').value.trim());
+  if(!id||id==='0'){ alert('Bug ID is required.'); return; }
+  const summary=document.getElementById('f-m-summary').value.trim();
+  if(!summary){ alert('Summary is required.'); return; }
+  const company=document.getElementById('f-m-company').value.trim();
+  const notes=document.getElementById('f-m-notes').value.trim();
+  const relatedMantis=[..._chips['mantis-rel']], linkedTAC=[..._chips['mantis-tac']];
+  const d=loadData();
+  if(!_editMantisId&&d.mantis.find(x=>x.id===id)){ alert(`Mantis bug ${padMantis(id)} is already being tracked.`); return; }
+  let m;
+  if(_editMantisId){
+    m=d.mantis.find(x=>x.id===_editMantisId); if(!m) return;
+    (m.linkedTAC||[]).forEach(tid=>{ const t=d.tac.find(x=>x.id===tid); if(t) t.relatedMantis=(t.relatedMantis||[]).filter(mid=>mid!==_editMantisId); });
+    Object.assign(m,{summary,company,notes,relatedMantis,linkedTAC});
+  } else {
+    m={id,summary,company,relatedMantis,linkedTAC,lastChecked:null,notes,createdAt:new Date().toISOString()};
+    d.mantis.push(m);
+  }
+  if(company&&!d.companies.includes(company)) d.companies.push(company);
+  linkedTAC.forEach(tid=>{ const t=d.tac.find(x=>x.id===tid); if(t&&!(t.relatedMantis||[]).includes(m.id)) t.relatedMantis=[...(t.relatedMantis||[]),m.id]; });
+  saveData(d); render(); closeMantisModal();
+}
+
+// ── EXPORT / IMPORT ───────────────────────────────────────────────────────────
+function exportData() {
+  const blob=new Blob([JSON.stringify(loadData(),null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`fabricbom-tracker-${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+}
+let _pendingImport=null;
+function importData(){ document.getElementById('import-input').value=''; document.getElementById('import-input').click(); }
+function handleImport(event) {
+  const file=event.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try {
+      const inc=JSON.parse(e.target.result);
+      if(!Array.isArray(inc.tac)||!Array.isArray(inc.mantis)){ alert('Not a valid tracker backup file.'); return; }
+      _pendingImport=inc;
+      document.getElementById('imp-summary').innerHTML=
+        `Found <strong>${inc.tac.length}</strong> TAC case${inc.tac.length!==1?'s':''} and `+
+        `<strong>${inc.mantis.length}</strong> Mantis bug${inc.mantis.length!==1?'s':''} in <em>${esc(file.name)}</em>.`;
+      document.getElementById('imp-confirm-btn').onclick=doImport;
+      document.getElementById('imp-confirm').classList.add('on');
+    } catch { alert('Failed to read file — is it a valid JSON backup?'); }
+  };
+  r.readAsText(file);
+}
+function doImport() {
+  if(!_pendingImport) return;
+  const d=loadData();
+  _pendingImport.tac.forEach(t=>{ const i=d.tac.findIndex(x=>x.id===t.id); i>=0?d.tac[i]=t:d.tac.push(t); });
+  _pendingImport.mantis.forEach(m=>{ const i=d.mantis.findIndex(x=>x.id===m.id); i>=0?d.mantis[i]=m:d.mantis.push(m); });
+  (_pendingImport.companies||[]).forEach(c=>{ if(!d.companies.includes(c)) d.companies.push(c); });
+  saveData(d); render(); _pendingImport=null; closeImpConfirm();
+}
+function closeImpConfirm(){ document.getElementById('imp-confirm').classList.remove('on'); _pendingImport=null; }
+
+// ── MODAL UTILS ───────────────────────────────────────────────────────────────
+function bgClose(event,id){ if(event.target.id===id) document.getElementById(id).classList.remove('on'); }
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')['tac-modal','mantis-modal','del-modal','imp-confirm'].forEach(id=>document.getElementById(id).classList.remove('on'));
+});
+
+render();
+</script>
+</body>
+</html>
