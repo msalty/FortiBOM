@@ -538,7 +538,7 @@
     <div class="n-sep" style="margin-top:8px;"></div>
     <div class="nsl">Products</div>
     <div class="nav-search-wrap">
-      <input id="nav-search-input" type="text" placeholder="Filter products…" oninput="filterNav(this.value)" autocomplete="off" spellcheck="false">
+      <input id="nav-search-input" type="text" placeholder="Filter products &amp; plugins…" oninput="filterNav(this.value)" autocomplete="off" spellcheck="false">
       <button id="nav-search-clear" onclick="clearNavSearch()" title="Clear">&times;</button>
     </div>
     <div id="nav-items"><div class="n-load">Scanning products…</div></div>
@@ -1388,6 +1388,21 @@ function filterNav(q) {
     while (sib && !sib.classList.contains('nsl')) { if (sib.style.display !== 'none') anyVisible = true; sib = sib.nextElementSibling; }
     lbl.style.display = anyVisible ? '' : 'none';
   });
+  const pluginContainer = document.getElementById('plugin-nav-items');
+  if (!pluginContainer) return;
+  pluginContainer.querySelectorAll('.ni').forEach(el => {
+    el.style.display = (!term || el.querySelector('.ni-label').textContent.toLowerCase().includes(term)) ? '' : 'none';
+  });
+  pluginContainer.querySelectorAll('.nsl').forEach(lbl => {
+    let sib = lbl.nextElementSibling, anyVisible = false;
+    while (sib && !sib.classList.contains('nsl')) { if (sib.style.display !== 'none') anyVisible = true; sib = sib.nextElementSibling; }
+    lbl.style.display = anyVisible ? '' : 'none';
+  });
+  const sep = pluginContainer.querySelector('.n-sep');
+  if (sep) {
+    const anyPluginVisible = [...pluginContainer.querySelectorAll('.ni')].some(el => el.style.display !== 'none');
+    sep.style.display = anyPluginVisible ? '' : 'none';
+  }
 }
 function clearNavSearch() { const i=document.getElementById('nav-search-input'); i.value=''; filterNav(''); i.focus(); }
 
