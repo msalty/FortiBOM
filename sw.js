@@ -1,4 +1,4 @@
-const CACHE = 'fabricbom-v1.0.1f.3';
+const CACHE = 'fabricbom-v1.0.2';
 
 const SHELL = [
   './',
@@ -76,6 +76,8 @@ const SHELL = [
   './products/fortiswitch-bomgen.html',
   './products/fortiweb-bomgen.html',
   './products/placeholder-bomgen.html',
+  './plugins/plugin-theme.css',
+  './plugins/tracker.html',
   './docs/help-faq.html',
   './docs/screenshots/fabricbom-screenshot-demobom.jpg',
   './docs/screenshots/fabricbom-docs-adding_sku.gif',

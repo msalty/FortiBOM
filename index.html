@@ -520,6 +520,9 @@
       <button id="nav-search-clear" onclick="clearNavSearch()" title="Clear">&times;</button>
     </div>
     <div id="nav-items"><div class="n-load">Scanning products…</div></div>
+    <div class="n-sep" id="tools-sep" style="display:none;"></div>
+    <div class="nsl" id="tools-label" style="display:none;">Tools</div>
+    <div id="plugin-items"></div>
     <div class="n-sep"></div>
     <div class="nsl">Info</div>
     <div class="ni" onclick="showAbout()">
@@ -940,6 +943,10 @@ const CATALOG = [
   //{ file:'placeholder-bomgen.html',  label:'Placeholder',    cat:'Demo' },
 ];
 
+const PLUGINS = [
+  { file:'tracker.html', label:'TAC & Mantis Tracker' },
+];
+
 let cart = [], seq = 0, activeNav = null;
 let savedProjects = [];
 let bomDirty = false;
@@ -1147,6 +1154,31 @@ async function buildNav() {
   if (!any) c.innerHTML = `<div class="n-load">No product files found in products/</div>`;
 }
 async function exists(path) { try { return (await fetch(path,{method:'HEAD'})).ok; } catch { return false; } }
+
+// ── PLUGIN NAV ────────────────────────────────────────────────────────────────
+function pluginIcon(file) {
+  if (file === 'tracker.html') return `<svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 6.5h7M5.5 9h5M5.5 11.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="13.5" cy="11.5" r="2.5" fill="var(--forti-sidebar)" stroke="currentColor" stroke-width="1.1"/><path d="M12.5 11.5l.7.7 1.3-1.2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  return `<svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M6 9h6M9 6v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`;
+}
+async function buildPluginNav() {
+  const items = [];
+  for (const p of PLUGINS) {
+    if (await exists(`plugins/${p.file}`)) items.push(p);
+  }
+  if (!items.length) return;
+  document.getElementById('tools-sep').style.display   = '';
+  document.getElementById('tools-label').style.display = '';
+  const container = document.getElementById('plugin-items');
+  container.innerHTML = '';
+  for (const p of items) {
+    const el = document.createElement('div');
+    el.className = 'ni';
+    el.id = `nav-plugin-${p.file}`;
+    el.innerHTML = `${pluginIcon(p.file)}<span class="ni-label">${p.label}</span>`;
+    el.onclick = () => loadProduct(`plugins/${p.file}`, p.label, el);
+    container.appendChild(el);
+  }
+}
 function filterNav(q) {
   document.getElementById('nav-search-clear').style.display = q ? 'block' : 'none';
   const term = q.toLowerCase();
@@ -3385,6 +3417,7 @@ function initDemoLink() {
   updateSaveIndicator();
   if (cart.length) showPBV();
   buildNav();
+  buildPluginNav();
   checkBOMFragment();
   initPiMode();
   ['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
