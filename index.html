@@ -50,7 +50,7 @@
   #main{display:flex;flex:1;overflow:hidden;}
 
   /* SIDEBAR */
-  #sidebar{width:240px;background:var(--forti-sidebar);border-right:1px solid var(--forti-border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden;transition:width .25s ease,border .25s ease;}
+  #sidebar{width:240px;background:var(--forti-sidebar);border-right:1px solid var(--forti-border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden;overflow-anchor:none;transition:width .25s ease,border .25s ease;}
   #sidebar::-webkit-scrollbar{width:4px;}
   #sidebar::-webkit-scrollbar-thumb{background:var(--forti-border);border-radius:2px;}
   .nsl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--forti-text-muted);padding:20px 16px 8px;white-space:nowrap;overflow:hidden;}
@@ -1198,9 +1198,8 @@ async function buildNav() {
       frag.appendChild(el);
     }
   }
-  c.innerHTML = '';
-  if (any) c.appendChild(frag);
-  else c.innerHTML = `<div class="n-load">No product files found in products/</div>`;
+  if (!any) { const msg = document.createElement('div'); msg.className='n-load'; msg.textContent='No product files found in products/'; frag.appendChild(msg); }
+  c.replaceChildren(frag);
 }
 async function exists(path) { try { return (await fetch(path,{method:'HEAD'})).ok; } catch { return false; } }
 
