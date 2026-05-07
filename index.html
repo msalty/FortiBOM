@@ -50,9 +50,10 @@
   #main{display:flex;flex:1;overflow:hidden;}
 
   /* SIDEBAR */
-  #sidebar{width:240px;background:var(--forti-sidebar);border-right:1px solid var(--forti-border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden;transition:width .25s ease,border .25s ease;}
+  #sidebar{width:240px;background:var(--forti-sidebar);border-right:1px solid var(--forti-border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden;overflow-anchor:none;transition:width .25s ease,border .25s ease;}
   #sidebar::-webkit-scrollbar{width:4px;}
   #sidebar::-webkit-scrollbar-thumb{background:var(--forti-border);border-radius:2px;}
+  #sidebar > .nsl,#sidebar > .ni,#sidebar > .n-sep,#sidebar > .nav-search-wrap,#sidebar > #nav-items,#sidebar > #plugin-nav-items{flex-shrink:0;}
   .nsl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--forti-text-muted);padding:20px 16px 8px;white-space:nowrap;overflow:hidden;}
   .ni{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:background .12s;border-left:2px solid transparent;color:inherit;}
   .ni:hover{background:var(--forti-sidebar-hover);}
@@ -1173,27 +1174,33 @@ document.addEventListener('error', e => {
 // ── NAV BUILD ────────────────────────────────────────────────────────────────
 async function buildNav() {
   const c = document.getElementById('nav-items');
-  c.innerHTML = '';
   const groups = {};
   for (const p of CATALOG) { if (!groups[p.cat]) groups[p.cat]=[]; groups[p.cat].push(p); }
+  const [fileChecks, pricingData] = await Promise.all([
+    Promise.all(CATALOG.map(p => exists(`products/${p.file}`))),
+    getPricingIDB()
+  ]);
+  const existsMap = new Map(CATALOG.map((p, i) => [p.file, fileChecks[i]]));
+  const frag = document.createDocumentFragment();
   let any = false;
   for (const [cat, prods] of Object.entries(groups)) {
-    const items = [];
-    for (const p of prods) {
-      if (!await exists(`products/${p.file}`)) continue;
-      if (p.pricingOnly) { const pd = await getPricingIDB(); if (!pd?.data?.rows?.length) continue; }
-      items.push(p); any=true;
-    }
+    const items = prods.filter(p => {
+      if (!existsMap.get(p.file)) return false;
+      if (p.pricingOnly && !pricingData?.data?.rows?.length) return false;
+      return true;
+    });
     if (!items.length) continue;
-    const lbl = document.createElement('div'); lbl.className='nsl'; lbl.textContent=cat; lbl.style.paddingTop='14px'; c.appendChild(lbl);
+    any = true;
+    const lbl = document.createElement('div'); lbl.className='nsl'; lbl.textContent=cat; lbl.style.paddingTop='14px'; frag.appendChild(lbl);
     for (const p of items) {
       const el = document.createElement('div'); el.className='ni';
       el.innerHTML = `${icon(p.file)}<span class="ni-label">${p.label}</span>`;
       el.onclick = () => loadProduct(`products/${p.file}`, p.label, el);
-      c.appendChild(el);
+      frag.appendChild(el);
     }
   }
-  if (!any) c.innerHTML = `<div class="n-load">No product files found in products/</div>`;
+  if (!any) { const msg = document.createElement('div'); msg.className='n-load'; msg.textContent='No product files found in products/'; frag.appendChild(msg); }
+  c.replaceChildren(frag);
 }
 async function exists(path) { try { return (await fetch(path,{method:'HEAD'})).ok; } catch { return false; } }
 
