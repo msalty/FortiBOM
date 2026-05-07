@@ -142,8 +142,10 @@
 
   /* BOM groups */
   .bg{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;overflow:hidden;}
-  .bgh{background:var(--c-th);border-bottom:1px solid var(--c-border);padding:8px 14px;display:flex;align-items:center;gap:10px;}
+  .bgh{background:var(--c-th);border-bottom:1px solid var(--c-border);padding:8px 14px 8px 4px;display:flex;align-items:center;gap:10px;}
+  .bgh .drag-handle{padding:0 4px;}
   .bgp{font-size:12px;font-weight:700;color:var(--c-text);flex:1;}
+  input.bgp.label-input{padding-left:0;padding-right:0;}
   .bgm{font-size:11px;color:var(--c-text2);}
   .bg-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;border-radius:2px;padding:1px 6px;}
   .bg-del{background:#FEF0EE;border:1px solid #F5C6C2;color:#C0392B;font-size:11px;font-weight:600;padding:3px 8px;border-radius:2px;cursor:pointer;font-family:inherit;margin-left:auto;}
@@ -220,7 +222,7 @@
   .label-input{font-family:inherit;border:1px solid transparent;border-radius:3px;background:transparent;padding:1px 4px;box-sizing:border-box;}
   .label-input:hover{border-color:var(--c-border);}
   .label-input:focus{border-color:#4A90D9;outline:none;background:#fff;}
-  .bgr-label.label-input{font-size:13px;font-weight:700;color:var(--c-text);flex:1;width:auto;min-width:40px;}
+  .bgr-label.label-input{font-size:13px;font-weight:700;color:var(--c-text);display:block;width:100%;}
   input.bgp.label-input{font-size:12px;font-weight:700;color:var(--c-text);width:100%;display:block;}
   .sr .label-input{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--c-text2);width:100%;display:block;}
 
@@ -229,9 +231,11 @@
   .bom-group-row.dragging{opacity:.45;box-shadow:0 4px 18px rgba(0,0,0,.18);}
   .bom-group-row.drag-over{outline:2px dashed var(--forti-red);outline-offset:2px;}
   .bgr-accent{width:4px;background:var(--forti-red);flex-shrink:0;border-radius:3px 0 0 3px;}
-  .bgr-body{flex:1;padding:9px 14px;display:flex;align-items:center;gap:12px;}
+  .bgr-body{flex:1;min-width:0;padding:9px 0;display:flex;align-items:center;gap:8px;}
+  .bom-group-row .drag-handle{padding:0 4px 0 4px;}
   .bgr-icon{color:var(--forti-red);flex-shrink:0;}
   .bgr-label{font-size:13px;font-weight:700;color:var(--c-text);flex:1;}
+  .bom-group-row .bgr-label.label-input{padding-left:0;}
   .bgr-note{font-size:11px;color:var(--c-text2);font-style:italic;}
   .bgr-actions{display:flex;gap:5px;align-items:center;padding:0 10px;}
   .bgr-btn{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);font-size:11px;font-weight:600;padding:3px 8px;cursor:pointer;font-family:inherit;transition:background .12s;display:inline-flex;align-items:center;}
@@ -239,10 +243,17 @@
   .bgr-btn:hover{background:var(--c-sh);color:var(--c-text);}
   .bgr-btn.del{border-color:#F5C6C2;color:#C0392B;background:#FEF0EE;}
   .bgr-btn.del:hover{background:#F5C6C2;}
-  .bgr-price{font-size:12px;font-weight:700;color:var(--forti-red);background:#fff;border:1px solid var(--c-border);border-radius:3px;padding:2px 8px;white-space:nowrap;margin-left:4px;position:relative;cursor:default;}
+  .bgr-price{font-size:11px;font-weight:700;color:var(--forti-red);background:#fff;border:1px solid var(--c-border);border-radius:3px;padding:2px 8px;white-space:nowrap;margin-left:4px;position:relative;cursor:default;}
   .bgr-price .bgr-price-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);right:0;white-space:nowrap;background:#333;color:#fff;font-size:11px;font-weight:500;letter-spacing:.02em;padding:5px 9px;border-radius:4px;pointer-events:none;z-index:10;}
   .bgr-price .bgr-price-tooltip::after{content:'';position:absolute;top:100%;right:10px;border:5px solid transparent;border-top-color:#333;}
   .bgr-price:hover .bgr-price-tooltip{display:block;}
+  .bgr-toggle{background:none;border:none;cursor:pointer;color:var(--forti-red);width:24px;height:24px;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .15s;flex:0 0 auto;}
+  .bgr-toggle:hover{color:#B8231A;}
+  .bgr-toggle svg{width:16px;height:16px;display:block;}
+  .bgr-toggle.collapsed{transform:rotate(-90deg);}
+  .bgr-text{flex:1;min-width:0;}
+  .bgr-meta{font-size:11px;color:var(--c-text2);margin-top:1px;}
+  .bgr-count{font-weight:500;}
 
   /* Project Total */
   #project-total{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;padding:14px 20px;display:flex;justify-content:flex-end;align-items:center;gap:20px;}
@@ -1003,6 +1014,7 @@ let savedProjects = [];
 let bomDirty = false;
 let spvFilter = '';
 let spRevExpanded = {}; // projectKey -> boolean, tracks which revision lists are expanded
+let collapsedGroups = new Set(); // ids of group-header entries currently collapsed in the BOM view
 // cart entries are either product-entries {id, product, label, rows, meta}
 // or group-header entries {id, _type:'group', label, note}
 
@@ -1073,7 +1085,10 @@ async function loadPiData() {
 }
 function saveCart() {
   try {
-    localStorage.setItem('fortibom_cart', JSON.stringify({ cart, seq }));
+    const groupIds = new Set(cart.filter(e => e._type === 'group').map(e => e.id));
+    const collapsed = [...collapsedGroups].filter(id => groupIds.has(id));
+    collapsedGroups = new Set(collapsed);
+    localStorage.setItem('fortibom_cart', JSON.stringify({ cart, seq, collapsed }));
   } catch(e) {
     toast('Could not save cart — browser storage may be full.');
   }
@@ -1085,6 +1100,7 @@ function loadCart() {
     const saved = JSON.parse(raw);
     cart = saved.cart || [];
     seq  = saved.seq  || 0;
+    collapsedGroups = new Set(Array.isArray(saved.collapsed) ? saved.collapsed : []);
   } catch(e) { /* corrupt data — start fresh */ }
 }
 function saveSaved() {
@@ -1562,6 +1578,25 @@ function toggleDetail(btn) {
   btn.classList.toggle('open', !open);
   btn.textContent = open ? '+' : '−';
 }
+function toggleGroupCollapse(ev, groupId) {
+  ev.stopPropagation();
+  const row = document.querySelector(`.bom-group-row[data-id="${groupId}"]`);
+  if (!row) return;
+  const willCollapse = !collapsedGroups.has(groupId);
+  if (willCollapse) collapsedGroups.add(groupId); else collapsedGroups.delete(groupId);
+  let n = row.nextElementSibling;
+  while (n && !n.classList.contains('bom-group-row')) {
+    n.style.display = willCollapse ? 'none' : '';
+    n = n.nextElementSibling;
+  }
+  const btn = row.querySelector('.bgr-toggle');
+  if (btn) {
+    btn.classList.toggle('collapsed', willCollapse);
+    btn.setAttribute('aria-expanded', String(!willCollapse));
+    btn.setAttribute('title', willCollapse ? 'Expand section' : 'Collapse section');
+  }
+  saveCart();
+}
 function updateQty(entryId, rowIdx, rawVal) {
   const entry = cart.find(e => e.id === entryId);
   if (!entry) return;
@@ -1692,8 +1727,21 @@ async function renderGroups() {
   let totL=0, totQ=0;
   let grandTotal=0, grandTotalValid=false, grandTotalExclOpt=0, hasOptional=false;
 
-  // Pre-compute per-group pricing totals (items between each group header and the next)
+  // Pre-compute per-group pricing totals and item counts (items between each group header and the next)
   const groupTotals = {};
+  const groupItemCounts = {};
+  {
+    let curId = null, curCount = 0;
+    for (const entry of cart) {
+      if (entry._type === 'group') {
+        if (curId !== null) groupItemCounts[curId] = curCount;
+        curId = entry.id; curCount = 0;
+      } else if (curId !== null) {
+        curCount++;
+      }
+    }
+    if (curId !== null) groupItemCounts[curId] = curCount;
+  }
   if (hasPricing) {
     let curGrpId = null, curTotal = 0, curValid = false, curExclOpt = 0, curHasOpt = false;
     for (const entry of cart) {
@@ -1724,18 +1772,23 @@ async function renderGroups() {
       const groupPriceHtml = (gt && gt.valid)
         ? `<span class="bgr-price">$${gt.total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}${gt.hasOpt ? `<span class="bgr-price-tooltip">Excluding Optional — $${gt.exclOpt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>` : ''}</span>`
         : '';
+      const isCollapsed = collapsedGroups.has(entry.id);
+      const itemN = groupItemCounts[entry.id] || 0;
       const el = document.createElement('div');
       el.className = 'bom-group-row';
       el.dataset.id = entry.id;
+      el.id = `bgr-section-${entry.id}`;
       el.innerHTML = `
         <div class="bgr-accent"></div>
         <div class="drag-handle" title="Drag to reorder">
           <svg width="12" height="18" viewBox="0 0 12 18" fill="none"><circle cx="4" cy="4" r="1.3" fill="currentColor"/><circle cx="8" cy="4" r="1.3" fill="currentColor"/><circle cx="4" cy="9" r="1.3" fill="currentColor"/><circle cx="8" cy="9" r="1.3" fill="currentColor"/><circle cx="4" cy="14" r="1.3" fill="currentColor"/><circle cx="8" cy="14" r="1.3" fill="currentColor"/></svg>
         </div>
         <div class="bgr-body">
-          <svg class="bgr-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="4" width="12" height="6" rx="1" stroke="#EE3124" stroke-width="1.3"/><path d="M4 7h6" stroke="#EE3124" stroke-width="1.3" stroke-linecap="round"/></svg>
-          <input type="text" class="label-input bgr-label" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)">
-          ${entry.note ? `<span class="bgr-note">${h(entry.note)}</span>` : ''}
+          <button class="bgr-toggle${isCollapsed?' collapsed':''}" aria-expanded="${!isCollapsed}" aria-controls="bgr-section-${entry.id}" title="${isCollapsed?'Expand section':'Collapse section'}" onclick="toggleGroupCollapse(event,${entry.id})"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="bgr-text">
+            <input type="text" class="label-input bgr-label" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)">
+            <div class="bgr-meta"><span class="bgr-count">${itemN} group${itemN!==1?'s':''}</span>${entry.note ? ` · <span class="bgr-note">${h(entry.note)}</span>` : ''}</div>
+          </div>
           ${groupPriceHtml}
         </div>
         <div class="bgr-actions">
@@ -1803,6 +1856,17 @@ async function renderGroups() {
       c.appendChild(el);
     }
   }
+  // Apply collapsed state: hide siblings under each collapsed group row up to the next group row.
+  for (const row of c.children) {
+    if (!row.classList.contains('bom-group-row')) continue;
+    const gid = Number(row.dataset.id);
+    if (!collapsedGroups.has(gid)) continue;
+    let n = row.nextElementSibling;
+    while (n && !n.classList.contains('bom-group-row')) {
+      n.style.display = 'none';
+      n = n.nextElementSibling;
+    }
+  }
   const prodCount = cart.filter(e=>!e._type).length;
   document.getElementById('sum-g').textContent = prodCount;
   document.getElementById('sum-l').textContent = totL;
@@ -1838,6 +1902,16 @@ function _doDrop(targetId) {
   if (srcIdx === -1 || tgtIdx === -1) return;
   const [moved] = cart.splice(srcIdx, 1);
   cart.splice(tgtIdx, 0, moved);
+  // If a product was dropped into a collapsed section, auto-expand so it's visible.
+  if (!moved._type) {
+    const newIdx = cart.indexOf(moved);
+    for (let i = newIdx - 1; i >= 0; i--) {
+      if (cart[i]._type === 'group') {
+        if (collapsedGroups.has(cart[i].id)) collapsedGroups.delete(cart[i].id);
+        break;
+      }
+    }
+  }
   dragSrcId = null;
   renderGroups();
   saveCart();
@@ -2019,7 +2093,8 @@ function saveProject() {
     savedAt: new Date().toISOString(),
     meta,
     cart: JSON.parse(JSON.stringify(cart)),
-    seq
+    seq,
+    collapsed: [...collapsedGroups]
   };
   savedProjects.unshift(snapshot);
   saveSaved();
@@ -2151,6 +2226,7 @@ function loadSavedProject(id) {
   if (cart.length && !confirm(`Load "${snap.meta.cust || 'this project'}"? Your current Project BOM will be replaced.`)) return;
   cart = JSON.parse(JSON.stringify(snap.cart));
   seq  = snap.seq;
+  collapsedGroups = new Set(Array.isArray(snap.collapsed) ? snap.collapsed : []);
   // skip cust/opp/notes when encrypted — applyPasswordHashFromMeta handles decryption
   if (!snap.meta.cust_enc) document.getElementById('pi-cust').value  = snap.meta.cust  || '';
   if (!snap.meta.cust_enc) document.getElementById('pi-opp').value   = snap.meta.opp   || '';
@@ -2674,6 +2750,7 @@ function doImport() {
   // Rebuild cart preserving order
   cart = [];
   seq = 0;
+  collapsedGroups = new Set();
   for (const item of items) {
     if (item._type === 'group') {
       cart.push({ id:++seq, _type:'group', label:item.label, note:item.note||'' });
@@ -2712,6 +2789,7 @@ function applySharedBOM(parsed) {
   _restoreReadOnly(meta);
   applyPasswordHashFromMeta(meta);
   cart = []; seq = 0;
+  collapsedGroups = new Set();
   for (const item of items) {
     if (item._type === 'group') {
       cart.push({ id: ++seq, _type: 'group', label: item.label, note: item.note || '', showPricing: !!item.showPricing });
