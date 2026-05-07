@@ -142,18 +142,9 @@
 
   <div id="matrix-body" style="display:none">
     <div class="cb" style="border-bottom:1px solid var(--border)">
-      <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">
-        <div class="dz" id="csv-dz"
-             ondragover="event.preventDefault();this.classList.add('over')"
-             ondragleave="this.classList.remove('over')"
-             ondrop="onMatrixDrop(event)"
-             onclick="document.getElementById('csv-file').click()">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="flex-shrink:0;opacity:.35"><path d="M14 4v14M8 13l6 5 6-5" stroke="#6B7589" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 22v1.5A1.5 1.5 0 005.5 25h17A1.5 1.5 0 0024 23.5V22" stroke="#6B7589" stroke-width="1.6" stroke-linecap="round"/></svg>
-          <div class="dz-text">
-            <strong>Import partner_rate_matrix.csv</strong>
-            <span>Drop file here or click — sets discount % per category &amp; partner type</span>
-          </div>
-          <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="onMatrixFileChosen(this)">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between">
+        <div style="font-size:11px;color:var(--textm);max-width:520px;line-height:1.5">
+          Import <code>partner_rate_matrix.csv</code> from <strong>Settings &rarr; Discount Rate Tables</strong> in the main FabricBOM sidebar. Edits to cells below are saved automatically.
         </div>
         <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;justify-content:center">
           <button class="btn bs bsm" onclick="exportMatrix()">
@@ -358,6 +349,7 @@ function visibleCols() {
 document.addEventListener('DOMContentLoaded', async () => {
   loadCustomers();     // must come before loadMatrix so customer keys are seeded
   loadMatrix();
+  applyPendingMatrixCSV();
   renderMatrix();
   updateMatrixSummary();
   populatePartnerSelect();
@@ -916,57 +908,62 @@ function exportMatrix() {
 
 // ── CSV IMPORT ────────────────────────────────────────────────────────────────
 
-function onMatrixDrop(e) {
-  e.preventDefault();
-  el('csv-dz').classList.remove('over');
-  const f = e.dataTransfer.files[0];
-  if (f) importMatrixFile(f);
-}
-
-function onMatrixFileChosen(inp) {
-  if (inp.files[0]) importMatrixFile(inp.files[0]);
-  inp.value = '';
-}
-
-function importMatrixFile(file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const result = parseMatrixCSV(e.target.result);
-      if (!result.ok) { showMatrixMsg(result.error, 'al-warn'); return; }
-
-      // Merge any newly discovered named accounts
-      if (result.newCustomers?.length) {
-        for (const n of result.newCustomers) {
-          if (!customerNames.includes(n)) customerNames.push(n);
-        }
-        saveCustomers();
-        // Seed matrix rows for new customers
-        for (const cat of CATEGORIES) {
-          if (!discountMatrix[cat]) discountMatrix[cat] = {};
-          for (const n of customerNames) {
-            if (discountMatrix[cat][n] === undefined) discountMatrix[cat][n] = '';
-          }
-        }
+// Apply CSV text into discountMatrix; returns {ok, error?, rowCount?}
+function applyMatrixCSVText(text, sourceName) {
+  try {
+    const result = parseMatrixCSV(text);
+    if (!result.ok) return result;
+    if (result.newCustomers?.length) {
+      for (const n of result.newCustomers) {
+        if (!customerNames.includes(n)) customerNames.push(n);
       }
-
-      for (const [cat, vals] of Object.entries(result.data)) {
+      saveCustomers();
+      for (const cat of CATEGORIES) {
         if (!discountMatrix[cat]) discountMatrix[cat] = {};
-        Object.assign(discountMatrix[cat], vals);
+        for (const n of customerNames) {
+          if (discountMatrix[cat][n] === undefined) discountMatrix[cat][n] = '';
+        }
       }
-      saveMatrix();
-      renderMatrix();
-      updateMatrixSummary();
-      populatePartnerSelect();
-      if (quoteRows.length) renderQuoteTable();
-      showMatrixMsg(`✓ Imported ${result.rowCount} categories from ${file.name}`, 'al-ok');
-      toast(`✓ Matrix imported: ${file.name}`);
-    } catch(err) {
-      showMatrixMsg('Parse error: ' + err.message, 'al-warn');
     }
-  };
-  reader.readAsText(file);
+    for (const [cat, vals] of Object.entries(result.data)) {
+      if (!discountMatrix[cat]) discountMatrix[cat] = {};
+      Object.assign(discountMatrix[cat], vals);
+    }
+    saveMatrix();
+    showMatrixMsg(`✓ Imported ${result.rowCount} categories${sourceName?` from ${sourceName}`:''}`, 'al-ok');
+    return result;
+  } catch(err) {
+    showMatrixMsg('Parse error: ' + err.message, 'al-warn');
+    return { ok:false, error:err.message };
+  }
 }
+
+// Consume a CSV stashed by the parent's Settings → Discount Rate Tables import.
+const PENDING_MATRIX_KEY = 'fabricbom_pending_matrix_csv';
+function applyPendingMatrixCSV() {
+  let pending = null;
+  try { pending = JSON.parse(localStorage.getItem(PENDING_MATRIX_KEY) || 'null'); } catch {}
+  if (!pending || !pending.csv) return;
+  const r = applyMatrixCSVText(pending.csv, pending.name);
+  if (r.ok) {
+    try { localStorage.removeItem(PENDING_MATRIX_KEY); } catch {}
+    toast(`✓ Matrix imported: ${pending.name}`);
+  }
+}
+
+// Live import: parent posts the CSV when this page is already open.
+window.addEventListener('message', e => {
+  if (!e.data || e.data.type !== 'FABRICBOM_MATRIX_CSV') return;
+  const r = applyMatrixCSVText(e.data.csv, e.data.name);
+  if (r.ok) {
+    try { localStorage.removeItem(PENDING_MATRIX_KEY); } catch {}
+    renderMatrix();
+    updateMatrixSummary();
+    populatePartnerSelect();
+    if (quoteRows.length) renderQuoteTable();
+    toast(`✓ Matrix imported: ${e.data.name}`);
+  }
+});
 
 function showMatrixMsg(text, cls) {
   const d = el('matrix-msg');
