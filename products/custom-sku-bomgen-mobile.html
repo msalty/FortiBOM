@@ -1143,11 +1143,7 @@ function addToProjectBOM() {
     meta:    _lastMeta,
   }, '*');
 
-  const msg = document.getElementById('smsg');
-  msg.textContent = _isEditing ? `✓ "${_lastLabel || 'group'}" updated` : `✓ "${_lastLabel || 'group'}" added`;
-  msg.className = '';
-  msg.style.display = 'inline';
-  setTimeout(() => { msg.style.display = 'none'; }, 4000);
+  closePopover();
 }
 
 // ─────────────────────────────────────────────
