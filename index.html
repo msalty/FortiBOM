@@ -118,10 +118,13 @@
   .sbar{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;padding:8px 14px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;}
   #sbar{position:sticky;top:0;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.12);background:var(--forti-content-bg);border-color:#B8BECC;border-left:3px solid var(--forti-red);}
   #sbar.unpinned{position:static;box-shadow:none;}
-  #pin-btn{background:none;border:none;cursor:pointer;padding:4px;border-radius:3px;color:var(--c-textm);display:inline-flex;align-items:center;flex-shrink:0;transition:color .12s,background .12s;line-height:1;}
+  #pin-btn{background:none;border:none;cursor:pointer;padding:3px;border-radius:3px;color:var(--c-textm);display:inline-flex;align-items:center;flex-shrink:0;transition:color .12s,background .12s;line-height:1;}
   #pin-btn:hover{background:var(--c-sh);color:var(--c-text);}
   #pin-btn.pinned{color:var(--forti-red);}
   #pin-btn svg{width:13px;height:13px;}
+  #sbar .btn{padding:5px 8px;font-size:11px;gap:5px;}
+  #sbar .btn svg{width:12px;height:12px;}
+  #sbar .act-row{gap:6px;}
   .si .sl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--c-textm);}
   .si .sv{font-size:13px;font-weight:600;color:var(--c-text);}
   .si.hi .sv{color:var(--forti-red);}
@@ -658,7 +661,7 @@
             <button class="btn bs" id="project-btn" onclick="toggleProjectMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>File<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <button class="btn bs" id="copy-export-btn" onclick="toggleCopyMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/></svg>Share<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <button id="clear-btn" class="btn bd" onclick="clearCart()" title="Clear All"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
-            <button id="pin-btn" onclick="togglePin()" title="Pin toolbar"><svg viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1.5" width="10" height="2.5" rx="1.2" stroke="currentColor" stroke-width="1.1"/><path d="M4 4L5 7H8L9 4" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/><line x1="6.5" y1="7" x2="6.5" y2="12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button id="pin-btn" onclick="togglePin()" title="Pin toolbar"><svg viewBox="0 0 13 13" fill="none"><circle cx="8.5" cy="3.5" r="2.3" stroke="currentColor" stroke-width="1.1"/><path d="M6.8 5.2L9.5 5.8L8.5 8.5L5.8 7.8Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><line x1="5.8" y1="7.8" x2="1.5" y2="12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
           </div>
         </div>
       </div>
