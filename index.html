@@ -247,8 +247,9 @@
   .bgr-price .bgr-price-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);right:0;white-space:nowrap;background:#333;color:#fff;font-size:11px;font-weight:500;letter-spacing:.02em;padding:5px 9px;border-radius:4px;pointer-events:none;z-index:10;}
   .bgr-price .bgr-price-tooltip::after{content:'';position:absolute;top:100%;right:10px;border:5px solid transparent;border-top-color:#333;}
   .bgr-price:hover .bgr-price-tooltip{display:block;}
-  .bgr-toggle{background:none;border:none;cursor:pointer;color:var(--forti-red);font-size:18px;line-height:1;width:20px;height:20px;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .15s;flex:0 0 auto;}
+  .bgr-toggle{background:none;border:none;cursor:pointer;color:var(--forti-red);width:24px;height:24px;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .15s;flex:0 0 auto;}
   .bgr-toggle:hover{color:#B8231A;}
+  .bgr-toggle svg{width:16px;height:16px;display:block;}
   .bgr-toggle.collapsed{transform:rotate(-90deg);}
   .bgr-text{flex:1;min-width:0;}
   .bgr-meta{font-size:11px;color:var(--c-text2);margin-top:1px;}
@@ -1783,7 +1784,7 @@ async function renderGroups() {
           <svg width="12" height="18" viewBox="0 0 12 18" fill="none"><circle cx="4" cy="4" r="1.3" fill="currentColor"/><circle cx="8" cy="4" r="1.3" fill="currentColor"/><circle cx="4" cy="9" r="1.3" fill="currentColor"/><circle cx="8" cy="9" r="1.3" fill="currentColor"/><circle cx="4" cy="14" r="1.3" fill="currentColor"/><circle cx="8" cy="14" r="1.3" fill="currentColor"/></svg>
         </div>
         <div class="bgr-body">
-          <button class="bgr-toggle${isCollapsed?' collapsed':''}" aria-expanded="${!isCollapsed}" aria-controls="bgr-section-${entry.id}" title="${isCollapsed?'Expand section':'Collapse section'}" onclick="toggleGroupCollapse(event,${entry.id})">▾</button>
+          <button class="bgr-toggle${isCollapsed?' collapsed':''}" aria-expanded="${!isCollapsed}" aria-controls="bgr-section-${entry.id}" title="${isCollapsed?'Expand section':'Collapse section'}" onclick="toggleGroupCollapse(event,${entry.id})"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           <div class="bgr-text">
             <input type="text" class="label-input bgr-label" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)">
             <div class="bgr-meta"><span class="bgr-count">${itemN} group${itemN!==1?'s':''}</span>${entry.note ? ` · <span class="bgr-note">${h(entry.note)}</span>` : ''}</div>
