@@ -1173,27 +1173,34 @@ document.addEventListener('error', e => {
 // ── NAV BUILD ────────────────────────────────────────────────────────────────
 async function buildNav() {
   const c = document.getElementById('nav-items');
-  c.innerHTML = '';
   const groups = {};
   for (const p of CATALOG) { if (!groups[p.cat]) groups[p.cat]=[]; groups[p.cat].push(p); }
+  const [fileChecks, pricingData] = await Promise.all([
+    Promise.all(CATALOG.map(p => exists(`products/${p.file}`))),
+    getPricingIDB()
+  ]);
+  const existsMap = new Map(CATALOG.map((p, i) => [p.file, fileChecks[i]]));
+  const frag = document.createDocumentFragment();
   let any = false;
   for (const [cat, prods] of Object.entries(groups)) {
-    const items = [];
-    for (const p of prods) {
-      if (!await exists(`products/${p.file}`)) continue;
-      if (p.pricingOnly) { const pd = await getPricingIDB(); if (!pd?.data?.rows?.length) continue; }
-      items.push(p); any=true;
-    }
+    const items = prods.filter(p => {
+      if (!existsMap.get(p.file)) return false;
+      if (p.pricingOnly && !pricingData?.data?.rows?.length) return false;
+      return true;
+    });
     if (!items.length) continue;
-    const lbl = document.createElement('div'); lbl.className='nsl'; lbl.textContent=cat; lbl.style.paddingTop='14px'; c.appendChild(lbl);
+    any = true;
+    const lbl = document.createElement('div'); lbl.className='nsl'; lbl.textContent=cat; lbl.style.paddingTop='14px'; frag.appendChild(lbl);
     for (const p of items) {
       const el = document.createElement('div'); el.className='ni';
       el.innerHTML = `${icon(p.file)}<span class="ni-label">${p.label}</span>`;
       el.onclick = () => loadProduct(`products/${p.file}`, p.label, el);
-      c.appendChild(el);
+      frag.appendChild(el);
     }
   }
-  if (!any) c.innerHTML = `<div class="n-load">No product files found in products/</div>`;
+  c.innerHTML = '';
+  if (any) c.appendChild(frag);
+  else c.innerHTML = `<div class="n-load">No product files found in products/</div>`;
 }
 async function exists(path) { try { return (await fetch(path,{method:'HEAD'})).ok; } catch { return false; } }
 
