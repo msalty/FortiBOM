@@ -1595,6 +1595,7 @@ function loadProduct(path, label, navEl) {
   document.getElementById('bc').textContent = label;
   document.getElementById('pbv').style.display = 'none';
   document.getElementById('spv').style.display = 'none';
+  const stv = document.getElementById('stv'); if (stv) stv.style.display = 'none';
   document.getElementById('pfw').style.display = 'flex';
   document.getElementById('ws').style.display = 'none';
   const f = document.getElementById('pf');
