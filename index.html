@@ -806,13 +806,6 @@
   <div class="dm-section">File</div>
   <button class="dm-item" onclick="exportCSV();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Export FabricBOM</button>
   <button class="dm-item" onclick="openImport();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Import FabricBOM</button>
-  <div id="project-sfdc-section" style="display:none">
-    <div class="dm-sep"></div>
-    <div class="dm-section">SFDC Export (Download CSV)</div>
-    <button class="dm-item" onclick="exportSFDC('AMER');closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Export SFDC-AMER</button>
-    <button class="dm-item" onclick="exportSFDC('EMEA');closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Export SFDC-EMEA</button>
-    <button class="dm-item" onclick="exportSFDC('APAC');closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Export SFDC-APAC</button>
-  </div>
   <div class="dm-sep"></div>
   <button class="dm-item" onclick="window.print();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><rect x="1.5" y="4" width="10" height="6" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 4V2h6v2M3.5 10h6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Print</button>
 </div>
@@ -2464,8 +2457,7 @@ async function toggleProjectMenu(e) {
   const btn = e.currentTarget;
   try {
     const pricing = await getPricingIDB();
-    const sfdc = document.getElementById('project-sfdc-section');
-    if (sfdc) sfdc.style.display = (pricing && pricing.data && pricing.data.rows && pricing.data.rows.length) ? '' : 'none';
+
   } catch(_) {}
   const rect = btn.getBoundingClientRect();
   menu.style.top  = (rect.bottom + 4) + 'px';
@@ -2534,20 +2526,6 @@ function copyMD() {
     lines.push('| ' + cells.map(c => c.replace(/\|/g,'\\|')).join(' | ') + ' |');
   }
   clipboardWrite(lines.join('\n'), '✓ Markdown copied to clipboard');
-}
-function exportSFDC(region) {
-  closeCopyMenu();
-  const rows = [['UID','Quantity','Disti Discount','Quote Line Item Notes']];
-  for (const r of bomDataRows()) {
-    if (!r.sku) continue;
-    rows.push([`${r.sku}${region}`, r.qty??'', 28, r.note||'']);
-  }
-  const csv = rows.map(r => r.map(c => String(c).replace(/,/g,'')).join(',')).join('\r\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
-  a.download = `SFDC_${region}_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  toast(`✓ SFDC-${region} CSV exported`);
 }
 
 // ── IMPORT CSV ───────────────────────────────────────────────────────────────
