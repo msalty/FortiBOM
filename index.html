@@ -95,10 +95,10 @@
   #ws .hint{margin-top:8px;font-size:11px;color:#9BA5BA;border:1px dashed #C8CDD9;border-radius:4px;padding:8px 16px;}
 
   /* PROJECT BOM VIEW */
-  #pbv{flex:1;overflow-y:auto;display:none;flex-direction:column;background:var(--forti-content-bg);padding:20px;gap:14px;}
-  #pbv > *{flex-shrink:0;}
-  #pbv::-webkit-scrollbar{width:6px;}
-  #pbv::-webkit-scrollbar-thumb{background:#C8CDD9;border-radius:3px;}
+  #pbv,#stv{flex:1;overflow-y:auto;display:none;flex-direction:column;background:var(--forti-content-bg);padding:20px;gap:14px;}
+  #pbv > *,#stv > *{flex-shrink:0;}
+  #pbv::-webkit-scrollbar,#stv::-webkit-scrollbar{width:6px;}
+  #pbv::-webkit-scrollbar-thumb,#stv::-webkit-scrollbar-thumb{background:#C8CDD9;border-radius:3px;}
 
   /* Light cards */
   .lc{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;overflow:hidden;}
@@ -571,6 +571,12 @@
     <div id="nav-items"><div class="n-load">Scanning products…</div></div>
     <div id="plugin-nav-items"></div>
     <div class="n-sep"></div>
+    <div class="nsl">Configuration</div>
+    <div class="ni" id="nav-settings" onclick="showSettings()">
+      <svg class="ni-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.2" stroke="currentColor" stroke-width="1.2"/><path d="M9 1.8v1.8M9 14.4v1.8M3.92 3.92l1.27 1.27M12.81 12.81l1.27 1.27M1.8 9h1.8M14.4 9h1.8M3.92 14.08l1.27-1.27M12.81 5.19l1.27-1.27" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span class="ni-label">Settings</span>
+    </div>
+    <div class="n-sep"></div>
     <div class="nsl">Info</div>
     <div class="ni" onclick="showAbout()">
       <svg class="ni-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.5" stroke="#8A93A8" stroke-width="1.2"/><path d="M9 8v5M9 6.5v.5" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round"/></svg>
@@ -773,6 +779,82 @@
           <svg class="pbv-wm-logo" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect width="28" height="28" rx="4" fill="#EE3124"/><path d="M6 8h16v3H6zM6 12.5h10v3H6zM6 17h16v3H6z" fill="white"/></svg>
           <span>FabricBOM</span>
         </a>
+      </div>
+    </div>
+
+    <!-- Settings view -->
+    <div id="stv">
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="1.6" stroke="#6B7589" stroke-width="1.1"/><path d="M6.5 1.3v1.3M6.5 10.4v1.3M2.8 2.8l.9.9M9.3 9.3l.9.9M1.3 6.5h1.3M10.4 6.5h1.3M2.8 10.2l.9-.9M9.3 3.7l.9-.9" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <h2>Settings</h2>
+        </div>
+        <div class="lcb" style="font-size:12px;color:var(--c-text2);line-height:1.6;">
+          Configure pricelists, discount rate tables, plugins, and preferences. These settings persist across projects.
+        </div>
+      </div>
+
+      <!-- Pricing config -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 1h5l6 6-5 5-6-6V1z" stroke="#6B7589" stroke-width="1.1" stroke-linejoin="round"/><circle cx="4" cy="4" r="1" fill="#6B7589"/></svg>
+          <h2>Pricing</h2>
+        </div>
+        <div id="settings-pricing-content" class="lcb"></div>
+      </div>
+
+      <!-- Discount rate tables -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 11L11 2M3.5 4.5a1 1 0 100-2 1 1 0 000 2zM9.5 10.5a1 1 0 100-2 1 1 0 000 2z" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <h2>Discount Rate Tables</h2>
+        </div>
+        <div id="settings-discount-content" class="lcb" style="font-size:12px;color:var(--c-text2);">
+          <em>No discount rate tables configured yet.</em>
+        </div>
+      </div>
+
+      <!-- Plugins -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M5 1.5h3v2.5h2.5v2H9v5H4v-5H2.5v-2H5V1.5z" stroke="#6B7589" stroke-width="1.1" stroke-linejoin="round"/></svg>
+          <h2>Plugins</h2>
+        </div>
+        <div id="settings-plugin-list"></div>
+        <div class="plugin-dz">
+          <div class="plugin-dz-inner" onclick="browsePlugin()" title="Click to browse for a plugin file, or drag and drop one here">
+            <svg class="plugin-dz-svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M7 3.5h4v4H3v3h1.5v9h15v-9H21v-3h-8V3.5H7z" stroke="#6B7589" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M12 10v5M9.5 12.5l2.5-2.5 2.5 2.5" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="plugin-dz-text">
+              Drop a <code>.html</code> plugin file here to install
+              <br><span class="plugin-dz-cta">or click to browse</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preferences -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1.5" width="10" height="10" rx="1" stroke="#6B7589" stroke-width="1.1"/><path d="M3.5 5h6M3.5 7.5h4" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <h2>Preferences</h2>
+        </div>
+        <div class="lcb" style="font-size:12px;color:var(--c-text2);">
+          <em>Currency, default discount, and export defaults will live here.</em>
+        </div>
+      </div>
+
+      <!-- Data -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><ellipse cx="6.5" cy="3" rx="4.5" ry="1.5" stroke="#6B7589" stroke-width="1.1"/><path d="M2 3v7c0 .8 2 1.5 4.5 1.5S11 10.8 11 10V3" stroke="#6B7589" stroke-width="1.1"/></svg>
+          <h2>Data</h2>
+        </div>
+        <div class="lcb" style="font-size:12px;color:var(--c-text2);">
+          <em>Export / import all settings, clear cache.</em>
+        </div>
       </div>
     </div>
   </div>
@@ -1487,13 +1569,25 @@ function showPBV() {
   document.getElementById('bc').textContent = 'Project BOM';
   document.getElementById('pfw').style.display = 'none';
   document.getElementById('spv').style.display = 'none';
+  const stv = document.getElementById('stv'); if (stv) stv.style.display = 'none';
   document.getElementById('pbv').style.display = 'flex';
+}
+function showSettings() {
+  setActiveNav(document.getElementById('nav-settings'));
+  document.getElementById('bc').textContent = 'Settings';
+  document.getElementById('pfw').style.display = 'none';
+  document.getElementById('pbv').style.display = 'none';
+  document.getElementById('spv').style.display = 'none';
+  document.getElementById('stv').style.display = 'flex';
+  // Shell only — pricing/plugin renderers will be wired here in a follow-up
+  // once renderPricingSection() and renderPluginList() accept a target id.
 }
 function showAbout() {
   setActiveNav(null);
   document.getElementById('bc').textContent = 'About';
   document.getElementById('pbv').style.display = 'none';
   document.getElementById('spv').style.display = 'none';
+  const stv = document.getElementById('stv'); if (stv) stv.style.display = 'none';
   document.getElementById('pfw').style.display = 'flex';
   document.getElementById('pf').style.display = 'none';
   const ws = document.getElementById('ws');
@@ -2108,6 +2202,7 @@ function showSavedProjects() {
   document.getElementById('bc').textContent = 'Saved Projects';
   document.getElementById('pfw').style.display = 'none';
   document.getElementById('pbv').style.display = 'none';
+  const stv = document.getElementById('stv'); if (stv) stv.style.display = 'none';
   document.getElementById('spv').style.display = 'flex';
   spvFilter = '';
   document.getElementById('spv-filter').value = '';
