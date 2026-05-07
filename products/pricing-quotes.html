@@ -634,7 +634,10 @@ function renderQuoteTable() {
         <input type="text" inputmode="decimal" class="exc-inp${isOverridden ? ' ov' : ''}"
           placeholder="${esc(placeholder)}"
           value="${esc(String(excVal))}"
-          title="Type to override discount % for this line"
+          data-matrix-disc="${matrixDisc !== null ? matrixDisc : ''}"
+          title="Click to edit — defaults to partner-type discount, type to override"
+          onfocus="onExcFocus(${i}, this)"
+          onblur="onExcBlur(${i}, this)"
           oninput="onExcInput(${i}, this.value, this)">
       </td>
       <td class="r">${unitDisc !== null ? fmt(unitDisc) : '<span class="no-p">—</span>'}</td>
@@ -653,6 +656,33 @@ function renderQuoteTable() {
   </tr>`;
 
   updateExpNote();
+}
+
+function onExcFocus(idx, inputEl) {
+  // If the field is empty but a matrix discount is showing as a placeholder,
+  // prefill with that value so the user can select it and type over it.
+  if (inputEl.value === '' && inputEl.dataset.matrixDisc !== '') {
+    inputEl.value = inputEl.dataset.matrixDisc;
+  }
+  // Defer select() — calling it inside focus from a click would be undone
+  // by the click placing the caret. setTimeout lets the click finish first.
+  setTimeout(() => {
+    try { inputEl.select(); } catch(e) {}
+  }, 0);
+}
+
+function onExcBlur(idx, inputEl) {
+  // If the value is identical to the matrix-derived default, treat it as
+  // "not overridden" so the cell goes back to placeholder display and the
+  // override flag clears.
+  const v = inputEl.value.trim();
+  const md = inputEl.dataset.matrixDisc;
+  if (v === '' || (md !== '' && parseFloat(v) === parseFloat(md))) {
+    quoteRows[idx].excOverride = null;
+    inputEl.value = '';
+    inputEl.classList.remove('ov');
+    updateQuoteRowTotals(idx, inputEl);
+  }
 }
 
 function onExcInput(idx, val, inputEl) {
