@@ -239,7 +239,10 @@
   .bgr-btn:hover{background:var(--c-sh);color:var(--c-text);}
   .bgr-btn.del{border-color:#F5C6C2;color:#C0392B;background:#FEF0EE;}
   .bgr-btn.del:hover{background:#F5C6C2;}
-  .bgr-price{font-size:12px;font-weight:700;color:var(--forti-red);background:#fff;border:1px solid var(--c-border);border-radius:3px;padding:2px 8px;white-space:nowrap;margin-left:4px;}
+  .bgr-price{font-size:12px;font-weight:700;color:var(--forti-red);background:#fff;border:1px solid var(--c-border);border-radius:3px;padding:2px 8px;white-space:nowrap;margin-left:4px;position:relative;cursor:default;}
+  .bgr-price .bgr-price-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);right:0;white-space:nowrap;background:#333;color:#fff;font-size:11px;font-weight:500;letter-spacing:.02em;padding:5px 9px;border-radius:4px;pointer-events:none;z-index:10;}
+  .bgr-price .bgr-price-tooltip::after{content:'';position:absolute;top:100%;right:10px;border:5px solid transparent;border-top-color:#333;}
+  .bgr-price:hover .bgr-price-tooltip{display:block;}
 
   /* Project Total */
   #project-total{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;padding:14px 20px;display:flex;justify-content:flex-end;align-items:center;gap:20px;}
@@ -1699,11 +1702,11 @@ async function renderGroups() {
   // Pre-compute per-group pricing totals (items between each group header and the next)
   const groupTotals = {};
   if (hasPricing) {
-    let curGrpId = null, curTotal = 0, curValid = false;
+    let curGrpId = null, curTotal = 0, curValid = false, curExclOpt = 0, curHasOpt = false;
     for (const entry of cart) {
       if (entry._type === 'group') {
-        if (curGrpId !== null) groupTotals[curGrpId] = { total: curTotal, valid: curValid };
-        curGrpId = entry.id; curTotal = 0; curValid = false;
+        if (curGrpId !== null) groupTotals[curGrpId] = { total: curTotal, valid: curValid, exclOpt: curExclOpt, hasOpt: curHasOpt };
+        curGrpId = entry.id; curTotal = 0; curValid = false; curExclOpt = 0; curHasOpt = false;
       } else {
         for (const r of rowsWithTerm(entry.rows)) {
           if (r.section !== undefined) continue;
@@ -1713,10 +1716,12 @@ async function renderGroups() {
           const lpn = lp ? parseFloat(String(lp).replace(/[^0-9.]/g, '')) : NaN;
           const tot = (!isNaN(lpn) && typeof r.qty === 'number') ? lpn * r.qty : NaN;
           if (!isNaN(tot)) { curTotal += tot; curValid = true; }
+          if (!isNaN(tot) && ek !== 'opt') { curExclOpt += tot; }
+          if (!isNaN(tot) && ek === 'opt') { curHasOpt = true; }
         }
       }
     }
-    if (curGrpId !== null) groupTotals[curGrpId] = { total: curTotal, valid: curValid };
+    if (curGrpId !== null) groupTotals[curGrpId] = { total: curTotal, valid: curValid, exclOpt: curExclOpt, hasOpt: curHasOpt };
   }
 
   c.innerHTML = '';
@@ -1724,7 +1729,7 @@ async function renderGroups() {
     if (entry._type === 'group') {
       const gt = hasPricing && entry.showPricing ? groupTotals[entry.id] : null;
       const groupPriceHtml = (gt && gt.valid)
-        ? `<span class="bgr-price">$${gt.total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>`
+        ? `<span class="bgr-price">$${gt.total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}${gt.hasOpt ? `<span class="bgr-price-tooltip">Excluding Optional — $${gt.exclOpt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>` : ''}</span>`
         : '';
       const el = document.createElement('div');
       el.className = 'bom-group-row';
