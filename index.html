@@ -142,8 +142,10 @@
 
   /* BOM groups */
   .bg{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;overflow:hidden;}
-  .bgh{background:var(--c-th);border-bottom:1px solid var(--c-border);padding:8px 14px;display:flex;align-items:center;gap:10px;}
+  .bgh{background:var(--c-th);border-bottom:1px solid var(--c-border);padding:8px 14px 8px 4px;display:flex;align-items:center;gap:10px;}
+  .bgh .drag-handle{padding:0 4px;}
   .bgp{font-size:12px;font-weight:700;color:var(--c-text);flex:1;}
+  input.bgp.label-input{padding-left:0;padding-right:0;}
   .bgm{font-size:11px;color:var(--c-text2);}
   .bg-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;border-radius:2px;padding:1px 6px;}
   .bg-del{background:#FEF0EE;border:1px solid #F5C6C2;color:#C0392B;font-size:11px;font-weight:600;padding:3px 8px;border-radius:2px;cursor:pointer;font-family:inherit;margin-left:auto;}
@@ -220,7 +222,7 @@
   .label-input{font-family:inherit;border:1px solid transparent;border-radius:3px;background:transparent;padding:1px 4px;box-sizing:border-box;}
   .label-input:hover{border-color:var(--c-border);}
   .label-input:focus{border-color:#4A90D9;outline:none;background:#fff;}
-  .bgr-label.label-input{font-size:13px;font-weight:700;color:var(--c-text);flex:1;width:auto;min-width:40px;}
+  .bgr-label.label-input{font-size:13px;font-weight:700;color:var(--c-text);display:block;width:100%;}
   input.bgp.label-input{font-size:12px;font-weight:700;color:var(--c-text);width:100%;display:block;}
   .sr .label-input{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--c-text2);width:100%;display:block;}
 
@@ -248,7 +250,9 @@
   .bgr-toggle{background:none;border:none;cursor:pointer;color:var(--forti-red);font-size:18px;line-height:1;width:20px;height:20px;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .15s;flex:0 0 auto;}
   .bgr-toggle:hover{color:#B8231A;}
   .bgr-toggle.collapsed{transform:rotate(-90deg);}
-  .bgr-count{font-size:11px;color:var(--c-text2);font-weight:500;white-space:nowrap;}
+  .bgr-text{flex:1;min-width:0;}
+  .bgr-meta{font-size:11px;color:var(--c-text2);margin-top:1px;}
+  .bgr-count{font-weight:500;}
 
   /* Project Total */
   #project-total{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;padding:14px 20px;display:flex;justify-content:flex-end;align-items:center;gap:20px;}
@@ -1780,10 +1784,11 @@ async function renderGroups() {
         </div>
         <div class="bgr-body">
           <button class="bgr-toggle${isCollapsed?' collapsed':''}" aria-expanded="${!isCollapsed}" aria-controls="bgr-section-${entry.id}" title="${isCollapsed?'Expand section':'Collapse section'}" onclick="toggleGroupCollapse(event,${entry.id})">▾</button>
-          <input type="text" class="label-input bgr-label" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)">
-          ${entry.note ? `<span class="bgr-note">${h(entry.note)}</span>` : ''}
+          <div class="bgr-text">
+            <input type="text" class="label-input bgr-label" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)">
+            <div class="bgr-meta"><span class="bgr-count">${itemN} group${itemN!==1?'s':''}</span>${entry.note ? ` · <span class="bgr-note">${h(entry.note)}</span>` : ''}</div>
+          </div>
           ${groupPriceHtml}
-          <span class="bgr-count">(${itemN} group${itemN!==1?'s':''})</span>
         </div>
         <div class="bgr-actions">
           <button class="bgr-btn" onclick="openEditGroup(${entry.id})" title="Edit group header"><svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg></button>
