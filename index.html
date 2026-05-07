@@ -243,8 +243,11 @@
 
   /* Project Total */
   #project-total{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;padding:14px 20px;display:flex;justify-content:flex-end;align-items:center;gap:20px;}
-  #project-total .pt-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--c-text2);}
+  #project-total .pt-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--c-text2);position:relative;cursor:default;}
   #project-total .pt-value{font-size:22px;font-weight:700;color:var(--forti-red);}
+  #project-total .pt-label .pt-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);right:0;white-space:nowrap;background:#333;color:#fff;font-size:11px;font-weight:500;letter-spacing:.02em;text-transform:none;padding:5px 9px;border-radius:4px;pointer-events:none;z-index:10;}
+  #project-total .pt-label .pt-tooltip::after{content:'';position:absolute;top:100%;right:10px;border:5px solid transparent;border-top-color:#333;}
+  #project-total .pt-label:hover .pt-tooltip{display:block;}
 
   /* Import modal */
   #imp-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.55);align-items:center;justify-content:center;}
@@ -691,7 +694,7 @@
 
       <!-- Project Total (only shown when pricing data is loaded) -->
       <div id="project-total" style="display:none;">
-        <span class="pt-label">Project Total</span>
+        <span class="pt-label">Project Total<span class="pt-tooltip" id="pt-tooltip"></span></span>
         <span class="pt-value" id="pt-value"></span>
       </div>
 
@@ -1691,7 +1694,7 @@ async function renderGroups() {
   ec.style.display = 'none';
   document.getElementById('bom-stats').style.display = '';
   let totL=0, totQ=0;
-  let grandTotal=0, grandTotalValid=false;
+  let grandTotal=0, grandTotalValid=false, grandTotalExclOpt=0, hasOptional=false;
 
   // Pre-compute per-group pricing totals (items between each group header and the next)
   const groupTotals = {};
@@ -1764,6 +1767,8 @@ async function renderGroups() {
         if (hasPricing) {
           const totalNum = (!isNaN(listPriceNum) && typeof r.qty === 'number') ? listPriceNum * r.qty : NaN;
           if (!isExcluded && !isNaN(totalNum)) { grandTotal += totalNum; grandTotalValid = true; }
+          if (!isExcluded && !isNaN(totalNum) && effectiveKind !== 'opt') { grandTotalExclOpt += totalNum; }
+          if (!isExcluded && !isNaN(totalNum) && effectiveKind === 'opt') { hasOptional = true; }
           const totalDisplay = isExcluded ? '$0.00' : (!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '');
           const listPriceDisplay = !isNaN(listPriceNum) ? '$'+listPriceNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : (listPrice ? h(listPrice) : '');
           priceCells = `<td class="nc" style="text-align:right;white-space:nowrap;">${listPriceDisplay}</td><td class="nc" style="text-align:right;white-space:nowrap;">${totalDisplay}</td>`;
@@ -1812,6 +1817,12 @@ async function renderGroups() {
   const ptEl = document.getElementById('project-total');
   if (hasPricing && grandTotalValid) {
     document.getElementById('pt-value').textContent = '$' + grandTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const tooltipEl = document.getElementById('pt-tooltip');
+    if (hasOptional) {
+      tooltipEl.textContent = 'Excluding Optional — $' + grandTotalExclOpt.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    } else {
+      tooltipEl.textContent = '';
+    }
     ptEl.style.display = 'flex';
   } else {
     ptEl.style.display = 'none';
