@@ -1,0 +1,151 @@
+/*
+ * FabricBOM Plugin Theme
+ * Shared stylesheet for all FabricBOM plugins.
+ * Import this in every plugin page to inherit the app design language.
+ */
+
+:root {
+  --forti-red:#EE3124; --forti-dark:#1A1D23; --forti-sidebar:#21252D;
+  --forti-sidebar-hover:#2A2F3A; --forti-sidebar-active:#2E3340;
+  --forti-border:#363C4A; --forti-text-primary:#E8EAF0;
+  --forti-text-secondary:#8A93A8; --forti-text-muted:#555E72;
+  --forti-content-bg:#F2F4F7; --hh:52px;
+  --c-white:#fff; --c-border:#DDE1E9; --c-text:#2A2F3A;
+  --c-text2:#6B7589; --c-textm:#9BA5BA; --c-sh:#F7F9FC;
+  --c-ib:#C8CDD9; --c-th:#EEF1F6;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body.plugin-body {
+  font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;
+  font-size:13px;
+  line-height:1.5;
+  color:var(--c-text);
+  background:var(--forti-content-bg);
+}
+
+/* ── PLUGIN TOOLBAR ──────────────────────────────────────────────────────── */
+/* Sticky top bar within the plugin iframe — mirrors the app's #ch breadcrumb height */
+.plugin-bar {
+  height:44px;
+  background:var(--c-white);
+  border-bottom:1px solid var(--c-border);
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  gap:8px;
+  flex-shrink:0;
+}
+
+/* ── BREADCRUMB (optional sub-nav inside plugin) ─────────────────────────── */
+.pbr { height:40px; background:var(--c-white); border-bottom:1px solid var(--c-border); display:flex; align-items:center; padding:0 20px; gap:6px; flex-shrink:0; }
+.pbr-item { font-size:12px; color:var(--c-text2); white-space:nowrap; }
+.pbr-sep { font-size:11px; color:var(--c-textm); }
+.pbr-item.cur { color:var(--c-text); font-weight:500; }
+
+/* ── CARDS ───────────────────────────────────────────────────────────────── */
+.lc { background:var(--c-white); border:1px solid var(--c-border); border-radius:4px; overflow:hidden; }
+.lch { background:var(--c-sh); border-bottom:1px solid var(--c-border); padding:9px 18px; display:flex; align-items:center; gap:8px; }
+.lch h2 { font-size:11px; font-weight:700; color:var(--c-text); letter-spacing:.04em; text-transform:uppercase; }
+.lcb { padding:18px; }
+
+/* ── BUTTONS ─────────────────────────────────────────────────────────────── */
+.btn { display:inline-flex; align-items:center; gap:6px; padding:7px 10px; border-radius:3px; font-size:12px; font-weight:500; cursor:pointer; border:1px solid transparent; font-family:inherit; transition:background .12s; white-space:nowrap; line-height:1.2; }
+.btn-sm { padding:5px 9px; font-size:11px; }
+.btn svg { width:13px; height:13px; flex-shrink:0; }
+/* Primary — Fortinet red */
+.bp { background:var(--forti-red); color:#fff; border-color:var(--forti-red); }
+.bp:hover { background:#d42a1e; }
+/* Secondary — ghost */
+.bs { background:var(--c-white); color:var(--c-text); border-color:var(--c-ib); }
+.bs:hover { background:var(--c-sh); }
+/* Danger */
+.bd { background:#FEF0EE; color:#C0392B; border-color:#F5C6C2; }
+.bd:hover { background:#F5C6C2; }
+/* Success/positive */
+.bg-ok { background:#EEFBF2; color:#1A7A3A; border-color:#A8DDB5; }
+.bg-ok:hover { background:#D4F2E0; }
+
+/* ── FORM INPUTS ─────────────────────────────────────────────────────────── */
+.fi { background:var(--c-white); border:1px solid var(--c-ib); border-radius:3px; padding:6px 9px; font-size:13px; color:var(--c-text); font-family:inherit; outline:none; transition:border-color .15s; width:100%; }
+.fi:focus { border-color:var(--forti-red); box-shadow:0 0 0 2px rgba(238,49,36,.1); }
+.fi:read-only { background:var(--c-sh); color:var(--c-text2); cursor:default; }
+textarea.fi { resize:vertical; min-height:60px; line-height:1.5; }
+select.fi { cursor:pointer; }
+.fl { font-size:10px; font-weight:700; color:var(--c-text2); text-transform:uppercase; letter-spacing:.07em; display:block; }
+.fg { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:500px) { .fg { grid-template-columns:1fr; } }
+.fg1, .fg2 { display:flex; flex-direction:column; gap:4px; }
+
+/* ── TABLE ───────────────────────────────────────────────────────────────── */
+.bt-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+table.bt { width:100%; border-collapse:collapse; font-size:12px; }
+table.bt thead th { background:var(--c-th); border:1px solid var(--c-border); padding:6px 10px; text-align:left; font-weight:700; font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:#4A5268; white-space:nowrap; }
+table.bt tbody td { border:1px solid var(--c-border); padding:7px 10px; vertical-align:middle; font-size:12px; }
+table.bt tbody tr.bt-even td { background:var(--c-sh); }
+table.bt tbody tr.data-row:hover td { background:#EEF1F6; }
+
+/* ── BADGES ──────────────────────────────────────────────────────────────── */
+/* Generic inline badge — apply color modifier class */
+.br { display:inline-block; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; border-radius:2px; padding:2px 5px; white-space:nowrap; }
+.br-red   { background:#FEE0DE; color:#C0392B; border:1px solid #F5C6C2; }
+.br-blue  { background:#EEF3FF; color:#3557A5; border:1px solid #B8CBF5; }
+.br-amber { background:#FFF8EE; color:#8A5800; border:1px solid #F5D9A0; }
+.br-gray  { background:#F0F0F2; color:#6B7280; border:1px solid #D1D5DB; }
+.br-green { background:#EEFBF2; color:#1A7A3A; border:1px solid #A8DDB5; }
+.br-attn  { background:#FFF3CD; color:#7A4F00; border:1px solid #FECB2E; }
+
+/* Section count badge (used in .lch) */
+.cnt-badge {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:20px; height:18px; background:var(--forti-red); color:#fff;
+  font-size:10px; font-weight:700; border-radius:9px; padding:0 5px;
+}
+.cnt-badge.zero { background:#C8CDD9; }
+
+/* ── MODAL ───────────────────────────────────────────────────────────────── */
+.modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+.modal-bg.on { display:flex; }
+.modal-box { background:#fff; border-radius:5px; box-shadow:0 8px 32px rgba(0,0,0,.25); width:100%; max-width:520px; display:flex; flex-direction:column; max-height:90vh; }
+.modal-hdr { padding:14px 18px; border-bottom:1px solid var(--c-border); display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.modal-hdr h3 { font-size:14px; font-weight:600; color:var(--c-text); flex:1; }
+.modal-close { background:none; border:none; cursor:pointer; font-size:22px; color:var(--c-text2); padding:0 2px; line-height:1; }
+.modal-close:hover { color:var(--c-text); }
+.modal-body { padding:18px; overflow-y:auto; display:flex; flex-direction:column; gap:14px; }
+.modal-ftr { padding:12px 18px; border-top:1px solid var(--c-border); display:flex; gap:8px; justify-content:flex-end; flex-shrink:0; background:var(--c-sh); border-radius:0 0 5px 5px; }
+
+/* ── CHIP INPUT ──────────────────────────────────────────────────────────── */
+/* Wrap a .chip-inp input with .chip-wrap to get a multi-tag input field */
+.chip-wrap {
+  display:flex; flex-wrap:wrap; gap:4px; padding:5px 7px;
+  border:1px solid var(--c-ib); border-radius:3px; background:var(--c-white);
+  min-height:34px; align-items:center; cursor:text; transition:border-color .15s;
+}
+.chip-wrap:focus-within { border-color:var(--forti-red); box-shadow:0 0 0 2px rgba(238,49,36,.1); }
+.chip {
+  display:inline-flex; align-items:center; gap:3px;
+  background:#EEF3FF; border:1px solid #B8CBF5; border-radius:2px;
+  padding:2px 5px; font-size:11px; font-family:'Courier New',monospace;
+  font-weight:700; color:#3557A5; white-space:nowrap;
+}
+.chip button { background:none; border:none; cursor:pointer; color:#3557A5; font-size:14px; padding:0 0 0 2px; line-height:1; opacity:.6; }
+.chip button:hover { opacity:1; }
+.chip-inp { border:none; outline:none; font-size:12px; color:var(--c-text); font-family:inherit; background:transparent; flex:1; min-width:100px; padding:1px; }
+
+/* ── LINK CHIPS (read-only, in table cells) ──────────────────────────────── */
+a.lchip {
+  display:inline-block; font-family:'Courier New',monospace; font-size:10px;
+  font-weight:700; color:#1A4E82; background:#EEF3FF; border:1px solid #B8CBF5;
+  border-radius:2px; padding:1px 5px; margin:1px 1px 1px 0; text-decoration:none; white-space:nowrap;
+}
+a.lchip:hover { background:#D6E4FF; text-decoration:underline; }
+
+/* ── MISC UTILITIES ──────────────────────────────────────────────────────── */
+.act-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.spacer { flex:1; }
+.mono { font-family:'Courier New',monospace; }
+a.id-link { color:#1A4E82; font-family:'Courier New',monospace; font-size:11px; font-weight:700; text-decoration:none; white-space:nowrap; }
+a.id-link:hover { text-decoration:underline; }
+.co-tag { display:inline-block; font-size:11px; color:var(--c-text); background:var(--c-sh); border:1px solid var(--c-border); border-radius:2px; padding:1px 6px; }
+.t-sep { color:var(--c-textm); }
