@@ -773,28 +773,6 @@
         <div id="pricing-content" class="lcb"></div>
       </div>
 
-      <!-- Discount rate tables -->
-      <div class="lc">
-        <div class="lch">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 11L11 2M3.5 4.5a1 1 0 100-2 1 1 0 000 2zM9.5 10.5a1 1 0 100-2 1 1 0 000 2z" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>
-          <h2>Discount Rate Tables</h2>
-        </div>
-        <div id="discount-content" class="lcb"></div>
-        <div class="plugin-dz" id="matrix-drop-zone">
-          <div class="plugin-dz-inner" onclick="document.getElementById('matrix-file-input').click()" title="Click to browse for a partner_rate_matrix.csv file, or drag and drop one here">
-            <svg class="plugin-dz-svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M14 4v14M8 13l6 5 6-5" stroke="#6B7589" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M4 22v1.5A1.5 1.5 0 005.5 25h17A1.5 1.5 0 0024 23.5V22" stroke="#6B7589" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <div class="plugin-dz-text">
-              Import <code>partner_rate_matrix.csv</code>
-              <br><span class="plugin-dz-cta">drop file here or click to browse</span>
-              <span style="color:var(--c-textm);font-size:11px;"> — sets discount % per category &amp; partner type</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Plugins -->
       <div class="lc">
         <div class="lch">
@@ -844,7 +822,6 @@
 
 <input type="file" id="pricing-file" accept=".csv,.xlsx" style="display:none" onchange="pricingFileChosen(this)">
 <input type="file" id="plugin-file-input" accept=".html,.json" style="display:none" onchange="handlePluginFile(this)">
-<input type="file" id="matrix-file-input" accept=".csv" style="display:none" onchange="handleMatrixFile(this)">
 <div id="toast"></div>
 
 <!-- Copy/Export dropdown menu (position:fixed so it escapes overflow-y:auto parents) -->
@@ -1474,59 +1451,6 @@ function initPluginDropZone() {
   });
 }
 
-// ── DISCOUNT MATRIX (partner_rate_matrix.csv) ────────────────────────────────
-const PENDING_MATRIX_KEY = 'fabricbom_pending_matrix_csv';
-const LS_MATRIX_KEY = 'fabricbom_discount_matrix';
-
-function handleMatrixFile(input) {
-  const file = input.files[0]; if (!file) { return; }
-  importMatrixCSV(file);
-  input.value = '';
-}
-function initMatrixDropZone() {
-  const zone = document.getElementById('matrix-drop-zone'); if (!zone) return;
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dz-active'); });
-  zone.addEventListener('dragleave', e => { if (!zone.contains(e.relatedTarget)) zone.classList.remove('dz-active'); });
-  zone.addEventListener('drop', e => {
-    e.preventDefault(); zone.classList.remove('dz-active');
-    const file = e.dataTransfer.files[0]; if (!file) return;
-    importMatrixCSV(file);
-  });
-}
-function importMatrixCSV(file) {
-  if (!/\.csv$/i.test(file.name)) { toast('⚠ Expected a .csv file'); return; }
-  const r = new FileReader();
-  r.onload = ev => {
-    const text = ev.target.result;
-    try {
-      localStorage.setItem(PENDING_MATRIX_KEY, JSON.stringify({ csv:text, name:file.name, uploadedAt:Date.now() }));
-    } catch(e) { toast('⚠ Could not stash matrix CSV: '+e.message); return; }
-    // If the pricing-quotes iframe is currently loaded, notify it to apply immediately.
-    const pf = document.getElementById('pf');
-    if (pf && pf.contentWindow && /pricing-quotes\.html/.test(pf.src || '')) {
-      try { pf.contentWindow.postMessage({ type:'FABRICBOM_MATRIX_CSV', csv:text, name:file.name }, '*'); } catch {}
-    }
-    toast(`✓ ${file.name} imported — applied next time Pricing Quotes opens`);
-    renderDiscountSection();
-  };
-  r.onerror = () => toast('⚠ Could not read file');
-  r.readAsText(file);
-}
-function renderDiscountSection() {
-  const el = document.getElementById('discount-content'); if (!el) return;
-  let pending = null;
-  try { pending = JSON.parse(localStorage.getItem(PENDING_MATRIX_KEY) || 'null'); } catch {}
-  let hasMatrix = false;
-  try { hasMatrix = !!localStorage.getItem(LS_MATRIX_KEY); } catch {}
-  if (pending) {
-    const when = new Date(pending.uploadedAt).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
-    el.innerHTML = `<div style="font-size:12px;color:var(--c-text2);">Pending import: <strong>${h(pending.name)}</strong> <span style="color:var(--c-textm);">— uploaded ${when}, will apply next time the Pricing Quotes page opens.</span></div>`;
-  } else if (hasMatrix) {
-    el.innerHTML = `<div style="font-size:12px;color:var(--c-text2);">A discount matrix is configured. Edit cells in the <strong>Pricing Quotes</strong> product page, or import a new CSV below to overwrite.</div>`;
-  } else {
-    el.innerHTML = `<div style="font-size:12px;color:var(--c-text2);"><em>No discount matrix configured yet. Import a <code>partner_rate_matrix.csv</code> below.</em></div>`;
-  }
-}
 
 function filterNav(q) {
   document.getElementById('nav-search-clear').style.display = q ? 'block' : 'none';
@@ -1619,7 +1543,6 @@ function showSettings() {
   document.getElementById('stv').style.display = 'flex';
   renderPricingSection();
   renderPluginList();
-  renderDiscountSection();
 }
 function showAbout() {
   setActiveNav(null);
@@ -3870,7 +3793,6 @@ function initDemoLink() {
   await renderPluginNav();
   renderPluginList();
   initPluginDropZone();
-  initMatrixDropZone();
   checkBOMFragment();
   initPiMode();
   ['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
