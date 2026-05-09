@@ -852,6 +852,43 @@
         </div>
       </div>
 
+      <!-- Editor Behavior -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M7.5 1.5l3 3L4 11H1V8L7.5 1.5z" stroke="#6B7589" stroke-width="1.1" stroke-linejoin="round"/></svg>
+          <h2>Editor Behavior</h2>
+        </div>
+        <div class="lcb">
+          <div class="pfg">
+            <div class="pg">
+              <label class="pl">Confirm Before Delete</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:6px 0;">
+                <input type="checkbox" id="set-confirm-delete" style="width:auto;cursor:pointer;accent-color:var(--forti-red);" onchange="onSettingChange('confirmDelete', this.checked)">
+                <span>Confirm before deleting line items / groups</span>
+              </label>
+            </div>
+            <div class="pg">
+              <label class="pl" for="set-undo-depth">Undo History Depth</label>
+              <select class="pi" id="set-undo-depth" onchange="onSettingChange('undoDepth', this.value === 'unlimited' ? 'unlimited' : parseInt(this.value, 10))">
+                <option value="1">1 step</option>
+                <option value="5">5 steps</option>
+                <option value="10">10 steps</option>
+                <option value="25">25 steps</option>
+                <option value="unlimited">Unlimited</option>
+              </select>
+              <div style="font-size:10px;color:var(--c-textm);margin-top:3px;">Undo with <kbd style="font-family:inherit;font-size:10px;background:#EEF1F6;border:1px solid var(--c-ib);border-radius:2px;padding:0 4px;">Ctrl/⌘+Z</kbd>. Reducing the depth trims older entries.</div>
+            </div>
+            <div class="pg">
+              <label class="pl">Read-Only on Open</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:6px 0;">
+                <input type="checkbox" id="set-readonly-on-open" style="width:auto;cursor:pointer;accent-color:var(--forti-red);" onchange="onSettingChange('readOnlyOnOpen', this.checked)">
+                <span>Open saved / imported / shared projects in Read-Only mode</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Data -->
       <div class="lc">
         <div class="lch">
@@ -1182,6 +1219,13 @@ function saveCart() {
     const groupIds = new Set(cart.filter(e => e._type === 'group').map(e => e.id));
     const collapsed = [...collapsedGroups].filter(id => groupIds.has(id));
     collapsedGroups = new Set(collapsed);
+    const cur = _undoSnap();
+    if (_undoBaseline !== null && cur !== _undoBaseline) {
+      _undoStack.push(_undoBaseline);
+      const cap = _undoCap();
+      while (_undoStack.length > cap) _undoStack.shift();
+    }
+    _undoBaseline = cur;
     localStorage.setItem('fortibom_cart', JSON.stringify({ cart, seq, collapsed }));
   } catch(e) {
     toast('Could not save cart — browser storage may be full.');
@@ -1329,7 +1373,10 @@ const SETTINGS_DEFAULTS = {
   roundPrices: false,                 // false = show cents, true = round to whole dollars
   defaultSeName: '',
   defaultScopeBoilerplate: '',
-  defaultGroupSubtotals: false
+  defaultGroupSubtotals: false,
+  confirmDelete: true,                // confirm before deleting line items / groups
+  undoDepth: 10,                      // 1 | 5 | 10 | 25 | 'unlimited'
+  readOnlyOnOpen: false               // force Read-Only when opening a saved/imported/shared project
 };
 function loadSettings() {
   try { return { ...SETTINGS_DEFAULTS, ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') }; }
@@ -1347,6 +1394,48 @@ function fmtMoney(n) {
     : { minimumFractionDigits: 2, maximumFractionDigits: 2 };
   return '$' + Number(n).toLocaleString('en-US', opts);
 }
+
+// ── UNDO ──────────────────────────────────────────────────────────────────────
+let _undoStack = [];
+let _undoBaseline = null;
+function _undoSnap() {
+  return JSON.stringify({ cart, seq, collapsed: [...collapsedGroups] });
+}
+function _undoRestore(s) {
+  const d = JSON.parse(s);
+  cart = d.cart;
+  seq = d.seq;
+  collapsedGroups = new Set(Array.isArray(d.collapsed) ? d.collapsed : []);
+}
+function _undoCap() {
+  const v = getSetting('undoDepth');
+  if (v === 'unlimited') return Infinity;
+  const n = parseInt(v, 10);
+  return n > 0 ? n : 10;
+}
+function initUndoBaseline() { _undoBaseline = _undoSnap(); }
+function undoCart() {
+  if (!_undoStack.length) { toast('Nothing to undo'); return; }
+  const prev = _undoStack.pop();
+  _undoRestore(prev);
+  _undoBaseline = prev;
+  try {
+    localStorage.setItem('fortibom_cart', JSON.stringify({ cart, seq, collapsed: [...collapsedGroups] }));
+  } catch(e) {}
+  updateBadges();
+  renderGroups();
+  markDirty();
+  toast('↶ Undone');
+}
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'z' || e.key === 'Z')) {
+    const t = e.target;
+    const tag = t && t.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || (t && t.isContentEditable)) return;
+    e.preventDefault();
+    undoCart();
+  }
+});
 
 // ── PLUGIN SYSTEM ─────────────────────────────────────────────────────────────
 const PLUGIN_STORE_KEY = 'fortibom_plugins';
@@ -1631,16 +1720,26 @@ function renderSettingsForm() {
   const se = document.getElementById('set-default-se');
   const subs = document.getElementById('set-default-subtotals');
   const scope = document.getElementById('set-default-scope');
+  const cfd = document.getElementById('set-confirm-delete');
+  const ud  = document.getElementById('set-undo-depth');
+  const roo = document.getElementById('set-readonly-on-open');
   if (term)  term.value     = s.defaultTerm;
   if (round) round.checked  = !!s.roundPrices;
   if (se)    se.value       = s.defaultSeName || '';
   if (subs)  subs.checked   = !!s.defaultGroupSubtotals;
   if (scope) scope.value    = s.defaultScopeBoilerplate || '';
+  if (cfd)   cfd.checked    = !!s.confirmDelete;
+  if (ud)    ud.value       = String(s.undoDepth);
+  if (roo)   roo.checked    = !!s.readOnlyOnOpen;
 }
 
 function onSettingChange(key, value) {
   setSetting(key, value);
   if (key === 'roundPrices') renderGroups();
+  if (key === 'undoDepth') {
+    const cap = _undoCap();
+    while (_undoStack.length > cap) _undoStack.shift();
+  }
 }
 function showAbout() {
   setActiveNav(null);
@@ -1721,7 +1820,19 @@ function updateSaveIndicator() {
 function markDirty() { bomDirty = true; updateSaveIndicator(); }
 function markSaved() { bomDirty = false; updateSaveIndicator(); }
 
-function removeFromCart(id) { cart = cart.filter(c=>c.id!==id); updateBadges(); renderGroups(); saveCart(); markDirty(); }
+function removeFromCart(id) {
+  if (getSetting('confirmDelete')) {
+    const entry = cart.find(c => c.id === id);
+    let label = 'this entry';
+    if (entry) {
+      if (entry._type === 'group') label = `group header "${entry.label || 'Untitled'}"`;
+      else label = `${entry.product || 'product'} group${entry.label ? ` "${entry.label}"` : ''}`;
+    }
+    if (!confirm(`Delete ${label}?`)) return;
+  }
+  cart = cart.filter(c=>c.id!==id);
+  updateBadges(); renderGroups(); saveCart(); markDirty();
+}
 
 function toggleDetail(btn) {
   const row = btn.closest('tr');
@@ -2883,7 +2994,7 @@ function parseCSV(text) {
 }
 
 function _restoreReadOnly(meta) {
-  const ro = !!meta.readOnly;
+  const ro = !!meta.readOnly || !!getSetting('readOnlyOnOpen');
   document.getElementById('pi-readonly').checked = ro;
   toggleReadOnly(ro);
 }
@@ -3876,6 +3987,7 @@ function initDemoLink() {
     document.getElementById('pi-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   }
   loadCart();
+  initUndoBaseline();
   loadSaved();
   updateBadges();
   updateSavedBadge();
