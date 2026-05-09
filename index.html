@@ -936,6 +936,14 @@
               Restores only the options on this Settings page (license term, price rounding, BOM defaults, editor behavior) to their factory values. <strong>Your saved projects, active BOM, pricelist, and plugins are not touched.</strong> Use <em>Clear Everything</em> above for a full wipe.
             </div>
           </div>
+
+          <div style="border-top:1px solid var(--c-border);padding-top:14px;margin-top:14px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-text2);margin-bottom:8px;">Service Worker &amp; Cache</div>
+            <button class="btn bd" onclick="clearServiceWorkerAndReload()">Clear Cache &amp; Hard Reload</button>
+            <div style="font-size:11px;color:var(--c-textm);margin-top:6px;line-height:1.5;">
+              Unregisters the service worker, deletes all cached assets, and reloads the page from the network. Use this if you're seeing stale content after an update. <strong>Your saved data is not affected.</strong>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -3407,6 +3415,28 @@ async function clearScope(scope) {
   } catch(e) {
     toast('⚠ ' + e.message);
   }
+}
+
+async function clearServiceWorkerAndReload() {
+  if (!confirm('Clear cache and hard reload?\n\nThis will unregister the service worker and delete all cached assets, then reload the page from the network. Your saved projects, settings, pricelist, and plugins are NOT affected.')) return;
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister()));
+    }
+    if (window.caches && caches.keys) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+    toast('✓ Cache cleared — reloading…');
+  } catch(e) {
+    toast('⚠ ' + e.message);
+  }
+  setTimeout(() => {
+    const u = new URL(location.href);
+    u.searchParams.set('_cb', Date.now());
+    location.replace(u.toString());
+  }, 500);
 }
 
 function resetSettingsToDefaults() {
