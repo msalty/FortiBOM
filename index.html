@@ -895,8 +895,47 @@
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><ellipse cx="6.5" cy="3" rx="4.5" ry="1.5" stroke="#6B7589" stroke-width="1.1"/><path d="M2 3v7c0 .8 2 1.5 4.5 1.5S11 10.8 11 10V3" stroke="#6B7589" stroke-width="1.1"/></svg>
           <h2>Data</h2>
         </div>
-        <div class="lcb" style="font-size:12px;color:var(--c-text2);">
-          <em>Export / import all settings, clear cache.</em>
+        <div class="lcb">
+          <div style="font-size:12px;color:var(--c-text2);margin-bottom:14px;">
+            Back up everything (settings, saved projects, pricelist, plugins, and plugin data stored in the shared database) to a single JSON file, or restore from one.
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
+            <button class="btn bs" onclick="exportBackup()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Export Backup</button>
+            <button class="btn bs" onclick="triggerImportBackup('merge')"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Import &amp; Merge</button>
+            <button class="btn bd" onclick="triggerImportBackup('replace')"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Import &amp; Replace</button>
+            <input type="file" id="backup-file-input" accept=".json,application/json" style="display:none" onchange="backupFileChosen(this)">
+          </div>
+          <div style="font-size:11px;color:var(--c-textm);margin:-8px 0 18px;line-height:1.5;">
+            <strong>Merge</strong> adds backup contents alongside what's already here (saved projects and plugins union by ID; current settings and active BOM kept). <strong>Replace</strong> wipes existing data first, then restores the backup exactly.
+          </div>
+
+          <div style="border-top:1px solid var(--c-border);padding-top:14px;margin-bottom:14px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-text2);margin-bottom:8px;">Clear Cache</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <button class="btn bd" onclick="clearScope('pricing')">Clear Pricelist</button>
+              <button class="btn bd" onclick="clearScope('history')">Clear Version History</button>
+              <button class="btn bd" onclick="clearScope('saved')">Clear Saved Projects</button>
+              <button class="btn bd" onclick="clearScope('all')">Clear Everything</button>
+            </div>
+            <div style="font-size:11px;color:var(--c-textm);margin-top:6px;line-height:1.5;">
+              <strong>Version History</strong> keeps the most recent save of each project and removes prior revisions. <strong>Everything</strong> erases all FabricBOM data including settings, the active BOM, saved projects, pricelist, and installed plugins.
+            </div>
+          </div>
+
+          <div style="border-top:1px solid var(--c-border);padding-top:14px;margin-bottom:14px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-text2);margin-bottom:8px;">Storage Usage</div>
+            <div id="storage-meter"></div>
+            <div style="font-size:11px;color:var(--c-textm);margin-top:6px;">Browser-reported usage across localStorage and IndexedDB for this origin.</div>
+          </div>
+
+          <div style="border-top:1px solid var(--c-border);padding-top:14px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-text2);margin-bottom:8px;">Reset Settings</div>
+            <button class="btn bd" onclick="resetSettingsToDefaults()">Reset Settings to Defaults</button>
+            <div style="font-size:11px;color:var(--c-textm);margin-top:6px;line-height:1.5;">
+              Restores only the options on this Settings page (license term, price rounding, BOM defaults, editor behavior) to their factory values. <strong>Your saved projects, active BOM, pricelist, and plugins are not touched.</strong> Use <em>Clear Everything</em> above for a full wipe.
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1711,6 +1750,7 @@ function showSettings() {
   renderPricingSection();
   renderPluginList();
   renderSettingsForm();
+  renderStorageMeter();
 }
 
 function renderSettingsForm() {
@@ -3178,6 +3218,235 @@ async function deletePricingIDB() {
     tx.oncomplete = resolve;
     tx.onerror = e => reject(e.target.error);
   });
+}
+
+// ── DATA: BACKUP / RESTORE / CLEAR / METER ────────────────────────────────────
+const BACKUP_LS_PREFIXES = ['fortibom_'];
+const BACKUP_LS_EXTRA = ['sbar-pinned'];
+const BACKUP_LS_EXCLUDE = new Set(['fortibom_pw_plain']); // session-only password cache
+
+function _collectBackupLocalStorage() {
+  const out = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || BACKUP_LS_EXCLUDE.has(k)) continue;
+    if (BACKUP_LS_EXTRA.includes(k) || BACKUP_LS_PREFIXES.some(p => k.startsWith(p))) {
+      out[k] = localStorage.getItem(k);
+    }
+  }
+  return out;
+}
+function _clearBackupLocalStorage() {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k) continue;
+    if (BACKUP_LS_EXTRA.includes(k) || BACKUP_LS_PREFIXES.some(p => k.startsWith(p))) keys.push(k);
+  }
+  keys.forEach(k => localStorage.removeItem(k));
+}
+async function _idbGetAllRecords() {
+  const db = await openSharedDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('datasets', 'readonly');
+    const req = tx.objectStore('datasets').getAll();
+    req.onsuccess = () => res(req.result || []);
+    req.onerror = e => rej(e.target.error);
+  });
+}
+async function _idbClearAll() {
+  const db = await openSharedDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('datasets', 'readwrite');
+    tx.objectStore('datasets').clear();
+    tx.oncomplete = res;
+    tx.onerror = e => rej(e.target.error);
+  });
+}
+async function _idbPutRecord(record) {
+  const db = await openSharedDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('datasets', 'readwrite');
+    tx.objectStore('datasets').put(record);
+    tx.oncomplete = res;
+    tx.onerror = e => rej(e.target.error);
+  });
+}
+
+async function exportBackup() {
+  try {
+    const ls = _collectBackupLocalStorage();
+    const idbRecords = await _idbGetAllRecords();
+    const backup = {
+      kind: 'fabricbom-backup',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      counts: {
+        localStorageKeys: Object.keys(ls).length,
+        idbRecords: idbRecords.length
+      },
+      localStorage: ls,
+      idb: { 'toolbox_shared/datasets': idbRecords }
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `FabricBOM-backup-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 0);
+    toast('✓ Backup downloaded');
+  } catch(e) {
+    toast('⚠ Could not create backup: ' + e.message);
+  }
+}
+
+let _pendingBackupMode = null;
+function triggerImportBackup(mode) {
+  _pendingBackupMode = mode;
+  const inp = document.getElementById('backup-file-input');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+function backupFileChosen(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file || !_pendingBackupMode) return;
+  const mode = _pendingBackupMode;
+  _pendingBackupMode = null;
+  const warn = mode === 'replace'
+    ? 'REPLACE: Erase all existing FabricBOM data and restore from this backup file. The page will reload. Continue?'
+    : 'MERGE: Add saved projects and plugins from this backup alongside your current data. The page will reload. Continue?';
+  if (!confirm(warn)) return;
+  importBackupFile(file, mode);
+}
+
+async function importBackupFile(file, mode) {
+  try {
+    const txt = await file.text();
+    const data = JSON.parse(txt);
+    if (!data || data.kind !== 'fabricbom-backup') throw new Error('Not a FabricBOM backup file.');
+    const incLS = data.localStorage || {};
+    const incRecs = (data.idb && data.idb['toolbox_shared/datasets']) || [];
+
+    if (mode === 'replace') {
+      _clearBackupLocalStorage();
+      await _idbClearAll();
+      for (const [k, v] of Object.entries(incLS)) localStorage.setItem(k, v);
+      for (const r of incRecs) await _idbPutRecord(r);
+    } else {
+      // MERGE: union saved projects and plugins by id; keep current settings/active BOM.
+      try {
+        const cur = JSON.parse(localStorage.getItem('fortibom_saved') || '[]');
+        const inc = JSON.parse(incLS.fortibom_saved || '[]');
+        const byId = new Map(cur.map(p => [p.id, p]));
+        for (const p of inc) byId.set(p.id, p);
+        const merged = [...byId.values()].sort((a,b) => new Date(b.savedAt) - new Date(a.savedAt));
+        localStorage.setItem('fortibom_saved', JSON.stringify(merged));
+      } catch {}
+      try {
+        const cur = JSON.parse(localStorage.getItem('fortibom_plugins') || '[]');
+        const inc = JSON.parse(incLS.fortibom_plugins || '[]');
+        const byId = new Map(cur.map(p => [p.id, p]));
+        for (const p of inc) byId.set(p.id, p);
+        localStorage.setItem('fortibom_plugins', JSON.stringify([...byId.values()]));
+      } catch {}
+      // Settings: only seed if absent.
+      if (!localStorage.getItem('fortibom_settings') && incLS.fortibom_settings) {
+        localStorage.setItem('fortibom_settings', incLS.fortibom_settings);
+      }
+      // IDB: keep existing pricing if any; always restore plugin html records.
+      const havePricing = !!(await getPricingIDB());
+      for (const r of incRecs) {
+        if (r.key === 'pricing' && havePricing) continue;
+        await _idbPutRecord(r);
+      }
+    }
+    toast('✓ Backup imported — reloading…');
+    setTimeout(() => location.reload(), 700);
+  } catch(e) {
+    toast('⚠ Import failed: ' + e.message);
+  }
+}
+
+async function clearScope(scope) {
+  try {
+    if (scope === 'pricing') {
+      if (!confirm('Delete the saved pricelist? Saved projects will not be affected.')) return;
+      await deletePricingIDB();
+      renderPricingSection();
+      toast('✓ Pricelist cleared');
+    } else if (scope === 'saved') {
+      if (!confirm('Delete ALL saved projects (including version history)?\n\nThis cannot be undone.')) return;
+      localStorage.removeItem('fortibom_saved');
+      savedProjects = [];
+      updateSavedBadge();
+      toast('✓ Saved projects cleared');
+    } else if (scope === 'history') {
+      if (!confirm('Delete prior versions of saved projects?\n\nOnly the most recent save of each project will be kept.')) return;
+      const seen = new Set();
+      const trimmed = [];
+      for (const p of savedProjects) { // newest-first
+        const k = p.projectKey || p.id;
+        if (seen.has(k)) continue;
+        seen.add(k);
+        trimmed.push(p);
+      }
+      const removed = savedProjects.length - trimmed.length;
+      savedProjects = trimmed;
+      localStorage.setItem('fortibom_saved', JSON.stringify(savedProjects));
+      updateSavedBadge();
+      toast(`✓ Removed ${removed} prior version${removed === 1 ? '' : 's'}`);
+    } else if (scope === 'all') {
+      if (!confirm('Erase ALL FabricBOM data?\n\nActive BOM, saved projects, pricelist, plugins, and settings will all be deleted. The page will reload.\n\nThis cannot be undone.')) return;
+      _clearBackupLocalStorage();
+      await _idbClearAll();
+      toast('✓ All data cleared — reloading…');
+      setTimeout(() => location.reload(), 700);
+      return;
+    }
+    renderStorageMeter();
+  } catch(e) {
+    toast('⚠ ' + e.message);
+  }
+}
+
+function resetSettingsToDefaults() {
+  if (!confirm('Reset all settings to defaults?\n\nOnly the options on this Settings page (license term, price rounding, BOM defaults, editor behavior) are reset. Your saved projects, active BOM, pricelist, and plugins are not affected.')) return;
+  localStorage.removeItem(SETTINGS_KEY);
+  renderSettingsForm();
+  renderGroups();
+  toast('✓ Settings reset to defaults');
+}
+
+function _fmtBytes(b) {
+  if (!b && b !== 0) return '—';
+  if (b < 1024) return b + ' B';
+  if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
+  if (b < 1024*1024*1024) return (b/1024/1024).toFixed(1) + ' MB';
+  return (b/1024/1024/1024).toFixed(2) + ' GB';
+}
+async function renderStorageMeter() {
+  const el = document.getElementById('storage-meter');
+  if (!el) return;
+  if (!navigator.storage || !navigator.storage.estimate) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--c-textm);">Storage stats not available in this browser.</div>';
+    return;
+  }
+  try {
+    const est = await navigator.storage.estimate();
+    const usage = est.usage || 0;
+    const quota = est.quota || 0;
+    const pct = quota ? Math.min(100, (usage/quota)*100) : 0;
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--c-text2);margin-bottom:6px;">
+        <span><strong>${_fmtBytes(usage)}</strong> used${quota ? ` of ${_fmtBytes(quota)}` : ''}</span>
+        <span style="color:var(--c-textm);">${pct.toFixed(2)}%</span>
+      </div>
+      <div style="height:8px;background:var(--c-sh);border:1px solid var(--c-border);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#5BA84A,#EE3124);transition:width .3s;"></div>
+      </div>`;
+  } catch(e) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--c-textm);">Could not read storage estimate.</div>';
+  }
 }
 
 function parsePricingLine(line) {
