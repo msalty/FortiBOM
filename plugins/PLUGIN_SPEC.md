@@ -6,7 +6,7 @@
 
 ## Overview
 
-A FabricBOM plugin is a **single, self-contained HTML file** that can be installed by dragging it onto the Installed Plugins drop zone in the Saved Projects screen. Once installed, it appears as a first-class nav item in the sidebar and runs inside the main content iframe. Plugins have full access to the browser's localStorage and IndexedDB under the app's origin.
+A FabricBOM plugin is a **single, self-contained HTML file** that can be installed by dragging it onto the Installed Plugins drop zone in the Saved Projects screen. Once installed, it appears as a first-class nav item in the sidebar and runs inside the main content iframe. Plugins share the app's origin and persist their data in the shared `toolbox_shared` IndexedDB so it is included in the app's **Backup All / Restore** flow on the Settings page.
 
 An alternative **external URL manifest** (`.json` file) is also supported for tools hosted on external servers, but these do not work offline.
 
@@ -479,28 +479,71 @@ tr.empty-row td { text-align: center; color: var(--c-text2); font-style: italic;
 
 ## Storage Guidelines
 
-### Plugin Data
+### Plugin Data — Use IndexedDB
 
-Store all plugin data in `localStorage` under a namespaced key:
+**All plugin data must be stored in the app's shared IndexedDB** (`toolbox_shared`, object store `datasets`), keyed with the prefix `plugin_data_<pluginname>`. This is required so that the **Backup All / Restore** flow on the Settings page (`index.html`) captures and restores your plugin's data alongside the rest of the app.
+
+Because plugins are loaded as Blob URLs derived from the app's origin, they share the origin with the host app and can open `toolbox_shared` directly. The `datasets` store is keyed by a string `key` field; the app already exports every record in that store as part of a backup, so anything you put there round-trips automatically.
+
+> **Do not store plugin data in `localStorage`.** The backup routine only collects `localStorage` keys prefixed with `fortibom_`. Anything you put under `fabricbom_*` (or any other `localStorage` key) will be silently lost when the user restores from a backup. `localStorage` is acceptable for transient UI state only (e.g. last-selected tab, scroll position) — never for user-authored data.
+
+### Storage Helper (paste into every plugin)
 
 ```js
-const STORE_KEY = 'fabricbom_myplugin';   // unique per plugin
+const STORE_KEY = 'plugin_data_myplugin';   // unique per plugin; must start with `plugin_data_`
 
-function loadData() {
-  try {
-    const d = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
-    d.items = d.items || [];
-    return d;
-  } catch { return { items: [] }; }
+function _openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('toolbox_shared', 2);
+    // The host app owns schema migrations; do not declare onupgradeneeded here.
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = e => reject(e.target.error);
+  });
 }
-function saveData(d) {
-  localStorage.setItem(STORE_KEY, JSON.stringify(d));
+
+async function loadData() {
+  try {
+    const db = await _openDB();
+    return await new Promise((res, rej) => {
+      const tx  = db.transaction('datasets', 'readonly');
+      const req = tx.objectStore('datasets').get(STORE_KEY);
+      req.onsuccess = () => {
+        const rec = req.result;
+        const d = (rec && rec.data) || {};
+        d.items = d.items || [];
+        res(d);
+      };
+      req.onerror = e => rej(e.target.error);
+    });
+  } catch {
+    return { items: [] };
+  }
+}
+
+async function saveData(d) {
+  const db = await _openDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('datasets', 'readwrite');
+    tx.objectStore('datasets').put({ key: STORE_KEY, data: d, updatedAt: Date.now() });
+    tx.oncomplete = res;
+    tx.onerror = e => rej(e.target.error);
+  });
 }
 ```
 
+Records you write must be plain objects with a top-level `key` matching `STORE_KEY`. Wrapping the actual payload under a `data` field (as above) keeps your shape future-proof if you later add metadata.
+
 ### Key Naming Convention
 
-Use the prefix `fabricbom_` to avoid collisions with other apps sharing the same origin:
+Reserved keys in the shared `datasets` store (do not reuse):
+
+| Key | Owner |
+|---|---|
+| `pricing` | App — pricelist dataset |
+| `plugin_html_<id>` | App — installed plugin HTML blobs |
+| `plugin_data_<pluginname>` | **Your plugin's data** — use this prefix |
+
+`localStorage` keys (reference only — do not write app keys from a plugin):
 
 | Key | Owner |
 |---|---|
@@ -508,12 +551,7 @@ Use the prefix `fabricbom_` to avoid collisions with other apps sharing the same
 | `fortibom_saved` | App — saved projects |
 | `fortibom_pi` | App — project info fields |
 | `fortibom_plugins` | App — plugin registry |
-| `fabricbom_tracker` | TAC & Mantis Tracker plugin |
-| `fabricbom_myplugin` | Your plugin |
-
-### IndexedDB Access
-
-Because plugins are loaded as Blob URLs derived from the app's origin, they inherit the same origin and can access `toolbox_shared` (the app's IndexedDB) directly if needed. Use this for large data (pricing sets, etc.). Do not use it for routine plugin data — prefer localStorage.
+| `fortibom_settings` | App — settings |
 
 ---
 
@@ -539,8 +577,9 @@ Plugins should support JSON export/import for data portability:
 
 ```js
 // Export
-function exportData() {
-  const blob = new Blob([JSON.stringify(loadData(), null, 2)], { type: 'application/json' });
+async function exportData() {
+  const d = await loadData();
+  const blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `fabricbom-myplugin-${new Date().toISOString().slice(0,10)}.json`;
@@ -552,15 +591,17 @@ function exportData() {
 function handleImport(event) {
   const file = event.target.files[0]; if (!file) return;
   const r = new FileReader();
-  r.onload = e => {
+  r.onload = async e => {
     try {
       const incoming = JSON.parse(e.target.result);
-      // validate shape, then show confirmation modal before merging
+      // validate shape, then show confirmation modal before merging via saveData()
     } catch { alert('Invalid file format.'); }
   };
   r.readAsText(file);
 }
 ```
+
+> Per-plugin export/import is a convenience for moving data between installs. The app's **Backup All** in Settings already captures every `plugin_data_*` record automatically — you don't need to do anything beyond writing to IDB under the correct key prefix.
 
 Filename convention: `fabricbom-{pluginname}-YYYY-MM-DD.json`
 
@@ -643,13 +684,39 @@ body { height: 100vh; overflow: hidden; display: flex; flex-direction: column; b
 
 <script>
 'use strict';
-const STORE_KEY = 'fabricbom_myplugin';
-function loadData() { try { const d=JSON.parse(localStorage.getItem(STORE_KEY)||'{}'); d.items=d.items||[]; return d; } catch { return {items:[]}; } }
-function saveData(d) { localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
+const STORE_KEY = 'plugin_data_myplugin';
+
+function _openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('toolbox_shared', 2);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+async function loadData() {
+  try {
+    const db = await _openDB();
+    return await new Promise((res, rej) => {
+      const tx = db.transaction('datasets','readonly');
+      const req = tx.objectStore('datasets').get(STORE_KEY);
+      req.onsuccess = () => { const d = (req.result && req.result.data) || {}; d.items = d.items || []; res(d); };
+      req.onerror = e => rej(e.target.error);
+    });
+  } catch { return { items: [] }; }
+}
+async function saveData(d) {
+  const db = await _openDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('datasets','readwrite');
+    tx.objectStore('datasets').put({ key: STORE_KEY, data: d, updatedAt: Date.now() });
+    tx.oncomplete = res;
+    tx.onerror = e => rej(e.target.error);
+  });
+}
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-function render() {
-  const d = loadData();
+async function render() {
+  const d = await loadData();
   const cnt = document.getElementById('item-cnt');
   cnt.textContent = d.items.length;
   cnt.className = 'cnt-badge' + (d.items.length ? '' : ' zero');
@@ -664,18 +731,18 @@ function openAddModal() {
   document.getElementById('add-modal').classList.add('on');
   setTimeout(() => document.getElementById('f-name').focus(), 60);
 }
-function saveItem() {
+async function saveItem() {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { alert('Name is required.'); return; }
-  const d = loadData();
+  const d = await loadData();
   d.items.push({ id: Date.now().toString(36), name });
-  saveData(d); render();
+  await saveData(d); await render();
   document.getElementById('add-modal').classList.remove('on');
 }
-function deleteItem(id) {
-  const d = loadData();
+async function deleteItem(id) {
+  const d = await loadData();
   d.items = d.items.filter(x => x.id !== id);
-  saveData(d); render();
+  await saveData(d); await render();
 }
 
 document.addEventListener('keydown', e => {
