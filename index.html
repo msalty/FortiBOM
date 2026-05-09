@@ -795,14 +795,60 @@
         </div>
       </div>
 
-      <!-- Preferences -->
+      <!-- Currency & Pricing -->
       <div class="lc">
         <div class="lch">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1.5" width="10" height="10" rx="1" stroke="#6B7589" stroke-width="1.1"/><path d="M3.5 5h6M3.5 7.5h4" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>
-          <h2>Preferences</h2>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="#6B7589" stroke-width="1.1"/><path d="M8 4.5c-.4-.6-1-.9-1.7-.9-1 0-1.7.5-1.7 1.3 0 .8.7 1.1 1.7 1.3 1 .2 1.7.5 1.7 1.3 0 .8-.7 1.3-1.7 1.3-.7 0-1.3-.3-1.7-.9M6.3 3v.5M6.3 9v.5" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <h2>Currency &amp; Pricing</h2>
         </div>
-        <div class="lcb" style="font-size:12px;color:var(--c-text2);">
-          <em>Currency, default discount, and export defaults will live here.</em>
+        <div class="lcb">
+          <div class="pfg">
+            <div class="pg">
+              <label class="pl" for="set-default-term">Default License Term</label>
+              <select class="pi" id="set-default-term" onchange="onSettingChange('defaultTerm', this.value)">
+                <option value="DD">Co-term / Date-driven (-DD)</option>
+                <option value="12">1 Year (-12)</option>
+                <option value="36">3 Years (-36)</option>
+                <option value="60">5 Years (-60)</option>
+              </select>
+              <div style="font-size:10px;color:var(--c-textm);margin-top:3px;">Pre-selected for new projects.</div>
+            </div>
+            <div class="pg">
+              <label class="pl">Price Display</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:6px 0;">
+                <input type="checkbox" id="set-round-prices" style="width:auto;cursor:pointer;accent-color:var(--forti-red);" onchange="onSettingChange('roundPrices', this.checked)">
+                <span>Round prices to nearest dollar (hide cents)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOM Defaults -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1.5" width="10" height="10" rx="1" stroke="#6B7589" stroke-width="1.1"/><path d="M3.5 4.5h6M3.5 6.5h6M3.5 8.5h4" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <h2>BOM Defaults</h2>
+        </div>
+        <div class="lcb">
+          <div class="pfg">
+            <div class="pg">
+              <label class="pl" for="set-default-se">Default SE / Engineer Name</label>
+              <input type="text" class="pi" id="set-default-se" placeholder="Your name" oninput="onSettingChange('defaultSeName', this.value)">
+              <div style="font-size:10px;color:var(--c-textm);margin-top:3px;">Pre-filled in new projects.</div>
+            </div>
+            <div class="pg">
+              <label class="pl">Group Subtotals</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:6px 0;">
+                <input type="checkbox" id="set-default-subtotals" style="width:auto;cursor:pointer;accent-color:var(--forti-red);" onchange="onSettingChange('defaultGroupSubtotals', this.checked)">
+                <span>Show group subtotals on by default</span>
+              </label>
+            </div>
+            <div class="pg full">
+              <label class="pl" for="set-default-scope">Default Project Scope / Notes</label>
+              <textarea class="pi" id="set-default-scope" placeholder="Boilerplate text inserted into the Project Scope / Notes field of new projects…" oninput="onSettingChange('defaultScopeBoilerplate', this.value)" style="min-height:70px;"></textarea>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1087,7 +1133,13 @@ async function savePiData() {
 async function loadPiData() {
   try {
     const raw = localStorage.getItem('fortibom_pi');
-    if (!raw) return;
+    if (!raw) {
+      const s = loadSettings();
+      if (s.defaultSeName) document.getElementById('pi-eng').value = s.defaultSeName;
+      if (s.defaultScopeBoilerplate) document.getElementById('pi-notes').value = s.defaultScopeBoilerplate;
+      if (s.defaultTerm) document.getElementById('pi-term').value = s.defaultTerm;
+      return;
+    }
     const d = JSON.parse(raw);
     if (d.eng   !== undefined) document.getElementById('pi-eng').value   = d.eng;
     if (d.date  !== undefined) document.getElementById('pi-date').value  = d.date;
@@ -1269,6 +1321,32 @@ async function buildNav() {
   c.replaceChildren(frag);
 }
 async function exists(path) { try { return (await fetch(path,{method:'HEAD'})).ok; } catch { return false; } }
+
+// ── GLOBAL SETTINGS ───────────────────────────────────────────────────────────
+const SETTINGS_KEY = 'fortibom_settings';
+const SETTINGS_DEFAULTS = {
+  defaultTerm: 'DD',                  // 'DD' | '12' | '36' | '60'
+  roundPrices: false,                 // false = show cents, true = round to whole dollars
+  defaultSeName: '',
+  defaultScopeBoilerplate: '',
+  defaultGroupSubtotals: false
+};
+function loadSettings() {
+  try { return { ...SETTINGS_DEFAULTS, ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') }; }
+  catch { return { ...SETTINGS_DEFAULTS }; }
+}
+function saveSettings(s) {
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
+  catch(e) { toast('⚠ Could not save settings: ' + e.message); }
+}
+function getSetting(k) { return loadSettings()[k]; }
+function setSetting(k, v) { const s = loadSettings(); s[k] = v; saveSettings(s); }
+function fmtMoney(n) {
+  const opts = getSetting('roundPrices')
+    ? { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+    : { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+  return '$' + Number(n).toLocaleString('en-US', opts);
+}
 
 // ── PLUGIN SYSTEM ─────────────────────────────────────────────────────────────
 const PLUGIN_STORE_KEY = 'fortibom_plugins';
@@ -1543,6 +1621,26 @@ function showSettings() {
   document.getElementById('stv').style.display = 'flex';
   renderPricingSection();
   renderPluginList();
+  renderSettingsForm();
+}
+
+function renderSettingsForm() {
+  const s = loadSettings();
+  const term = document.getElementById('set-default-term');
+  const round = document.getElementById('set-round-prices');
+  const se = document.getElementById('set-default-se');
+  const subs = document.getElementById('set-default-subtotals');
+  const scope = document.getElementById('set-default-scope');
+  if (term)  term.value     = s.defaultTerm;
+  if (round) round.checked  = !!s.roundPrices;
+  if (se)    se.value       = s.defaultSeName || '';
+  if (subs)  subs.checked   = !!s.defaultGroupSubtotals;
+  if (scope) scope.value    = s.defaultScopeBoilerplate || '';
+}
+
+function onSettingChange(key, value) {
+  setSetting(key, value);
+  if (key === 'roundPrices') renderGroups();
 }
 function showAbout() {
   setActiveNav(null);
@@ -1691,12 +1789,13 @@ function newProject() {
   if (cart.length && !confirm('Start a new project? The current BOM and project info will be cleared.')) return;
   cart=[]; seq=0;
   if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname);
+  const _settings = loadSettings();
   document.getElementById('pi-cust').value  = '';
   document.getElementById('pi-opp').value   = '';
-  document.getElementById('pi-eng').value   = '';
+  document.getElementById('pi-eng').value   = _settings.defaultSeName || '';
   document.getElementById('pi-date').value  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('pi-term').value  = 'DD';
-  document.getElementById('pi-notes').value = '';
+  document.getElementById('pi-term').value  = _settings.defaultTerm || 'DD';
+  document.getElementById('pi-notes').value = _settings.defaultScopeBoilerplate || '';
   document.getElementById('pi-readonly').checked = false;
   toggleReadOnly(false);
   bomPasswordHash = ''; bomUnlocked = false; _sessionUnlockPlain = '';
@@ -1826,7 +1925,7 @@ async function renderGroups() {
     if (entry._type === 'group') {
       const gt = hasPricing && entry.showPricing ? groupTotals[entry.id] : null;
       const groupPriceHtml = (gt && gt.valid)
-        ? `<span class="bgr-price">$${gt.total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}${gt.hasOpt ? `<span class="bgr-price-tooltip">Excluding Optional — $${gt.exclOpt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>` : ''}</span>`
+        ? `<span class="bgr-price">${fmtMoney(gt.total)}${gt.hasOpt ? `<span class="bgr-price-tooltip">Excluding Optional — ${fmtMoney(gt.exclOpt)}</span>` : ''}</span>`
         : '';
       const isCollapsed = collapsedGroups.has(entry.id);
       const itemN = groupItemCounts[entry.id] || 0;
@@ -1876,8 +1975,8 @@ async function renderGroups() {
           if (!isExcluded && !isNaN(totalNum)) { grandTotal += totalNum; grandTotalValid = true; }
           if (!isExcluded && !isNaN(totalNum) && effectiveKind !== 'opt') { grandTotalExclOpt += totalNum; }
           if (!isExcluded && !isNaN(totalNum) && effectiveKind === 'opt') { hasOptional = true; }
-          const totalDisplay = isExcluded ? '$0.00' : (!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '');
-          const listPriceDisplay = !isNaN(listPriceNum) ? '$'+listPriceNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : (listPrice ? h(listPrice) : '');
+          const totalDisplay = isExcluded ? fmtMoney(0) : (!isNaN(totalNum) ? fmtMoney(totalNum) : '');
+          const listPriceDisplay = !isNaN(listPriceNum) ? fmtMoney(listPriceNum) : (listPrice ? h(listPrice) : '');
           priceCells = `<td class="nc" style="text-align:right;white-space:nowrap;">${listPriceDisplay}</td><td class="nc" style="text-align:right;white-space:nowrap;">${totalDisplay}</td>`;
         }
         const detailRows = [];
@@ -1934,10 +2033,10 @@ async function renderGroups() {
   sumTermEl.classList.toggle('term-warn', term === 'DD');
   const ptEl = document.getElementById('project-total');
   if (hasPricing && grandTotalValid) {
-    document.getElementById('pt-value').textContent = '$' + grandTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    document.getElementById('pt-value').textContent = fmtMoney(grandTotal);
     const tooltipEl = document.getElementById('pt-tooltip');
     if (hasOptional) {
-      tooltipEl.textContent = 'Excluding Optional — $' + grandTotalExclOpt.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+      tooltipEl.textContent = 'Excluding Optional — ' + fmtMoney(grandTotalExclOpt);
     } else {
       tooltipEl.textContent = '';
     }
@@ -2057,7 +2156,7 @@ function openAddGroup() {
   document.getElementById('grp-ok').textContent = 'Add Group';
   document.getElementById('grp-label').value = '';
   document.getElementById('grp-note').value = '';
-  document.getElementById('grp-show-pricing').checked = false;
+  document.getElementById('grp-show-pricing').checked = !!getSetting('defaultGroupSubtotals');
   document.getElementById('grp-modal').classList.add('on');
   setTimeout(() => document.getElementById('grp-label').focus(), 60);
 }
@@ -3337,12 +3436,13 @@ function togglePiEdit() {
 
 function clearPiFields() {
   if (!confirm('Clear all Project Information fields?')) return;
+  const _settings = loadSettings();
   document.getElementById('pi-cust').value  = '';
   document.getElementById('pi-opp').value   = '';
-  document.getElementById('pi-eng').value   = '';
+  document.getElementById('pi-eng').value   = _settings.defaultSeName || '';
   document.getElementById('pi-date').value  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('pi-term').value  = 'DD';
-  document.getElementById('pi-notes').value = '';
+  document.getElementById('pi-term').value  = _settings.defaultTerm || 'DD';
+  document.getElementById('pi-notes').value = _settings.defaultScopeBoilerplate || '';
   document.getElementById('pi-readonly').checked = false;
   toggleReadOnly(false);
   bomPasswordHash = ''; bomUnlocked = false; _sessionUnlockPlain = '';
