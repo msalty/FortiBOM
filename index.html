@@ -246,6 +246,8 @@
   .bgr-btn:hover{background:var(--c-sh);color:var(--c-text);}
   .bgr-btn.del{border-color:#F5C6C2;color:#C0392B;background:#FEF0EE;}
   .bgr-btn.del:hover{background:#F5C6C2;}
+  .bgr-btn.add{color:var(--forti-red);}
+  .bgr-btn.add:hover{background:#FEF0EE;border-color:#F5C6C2;color:var(--forti-red);}
   .bgr-price{font-size:11px;font-weight:700;color:var(--forti-red);background:#fff;border:1px solid var(--c-border);border-radius:3px;padding:2px 8px;white-space:nowrap;margin-left:4px;position:relative;cursor:default;}
   .bgr-price .bgr-price-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);right:0;white-space:nowrap;background:#333;color:#fff;font-size:11px;font-weight:500;letter-spacing:.02em;padding:5px 9px;border-radius:4px;pointer-events:none;z-index:10;}
   .bgr-price .bgr-price-tooltip::after{content:'';position:absolute;top:100%;right:10px;border:5px solid transparent;border-top-color:#333;}
@@ -1864,6 +1866,7 @@ function showAbout() {
 
 // ── postMessage RECEIVER ─────────────────────────────────────────────────────
 let _skuEditId = null;
+let _skuInsertGroupId = null;
 
 window.addEventListener('message', e => {
   if (!e.data) return;
@@ -1880,7 +1883,20 @@ window.addEventListener('message', e => {
     markDirty();
     toast(`✓ Updated: ${label || 'Custom SKU group'}`);
   } else {
-    cart.push({ id:++seq, product, label, rows, meta });
+    const newEntry = { id:++seq, product, label, rows, meta };
+    if (_skuInsertGroupId !== null) {
+      const gIdx = cart.findIndex(c => c.id === _skuInsertGroupId && c._type === 'group');
+      if (gIdx !== -1) {
+        let insertAt = gIdx + 1;
+        while (insertAt < cart.length && cart[insertAt]._type !== 'group') insertAt++;
+        cart.splice(insertAt, 0, newEntry);
+      } else {
+        cart.push(newEntry);
+      }
+      _skuInsertGroupId = null;
+    } else {
+      cart.push(newEntry);
+    }
     updateBadges();
     renderGroups();
     saveCart();
@@ -2154,6 +2170,7 @@ async function renderGroups() {
           ${groupPriceHtml}
         </div>
         <div class="bgr-actions">
+          <button class="bgr-btn add" onclick="openSkuModalForGroup(${entry.id})" title="Add SKU to this group" aria-label="Add SKU to this group"><svg viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M5.5 1.5v8M1.5 5.5h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
           <button class="bgr-btn" onclick="openEditGroup(${entry.id})" title="Edit group header"><svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg></button>
           <button class="bgr-btn del" onclick="removeFromCart(${entry.id})">✕</button>
         </div>`;
@@ -2949,6 +2966,18 @@ function toggleAddMenu(e) {
 function closeAddMenu() { document.getElementById('add-menu').classList.remove('on'); }
 function openSkuModal() {
   _skuEditId = null;
+  _skuInsertGroupId = null;
+  const frame = document.getElementById('sku-frame');
+  if (!frame.src.includes('custom-sku-bomgen-mobile.html')) {
+    frame.src = 'products/custom-sku-bomgen-mobile.html';
+  } else {
+    try { frame.contentWindow.resetForm(); } catch(_) {}
+  }
+  document.getElementById('sku-modal').classList.add('on');
+}
+function openSkuModalForGroup(groupId) {
+  _skuEditId = null;
+  _skuInsertGroupId = groupId;
   const frame = document.getElementById('sku-frame');
   if (!frame.src.includes('custom-sku-bomgen-mobile.html')) {
     frame.src = 'products/custom-sku-bomgen-mobile.html';
@@ -2975,6 +3004,7 @@ function openSkuModalForEdit(entryId) {
 }
 function closeSkuModal() {
   _skuEditId = null;
+  _skuInsertGroupId = null;
   document.getElementById('sku-modal').classList.remove('on');
 }
 document.getElementById('sku-modal').addEventListener('click', function(e) {
