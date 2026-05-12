@@ -230,6 +230,8 @@
   .bom-group-row{background:#D8DCE6;border:1px solid #B4BAC8;border-radius:4px;display:flex;align-items:stretch;gap:0;cursor:default;}
   .bom-group-row.dragging{opacity:.45;box-shadow:0 4px 18px rgba(0,0,0,.18);}
   .bom-group-row.drag-over{outline:2px dashed var(--forti-red);outline-offset:2px;}
+  .bom-drop-sentinel{min-height:32px;border-radius:4px;transition:outline .1s;}
+  .bom-drop-sentinel.drag-over{outline:2px dashed var(--forti-red);outline-offset:2px;}
   .bgr-accent{width:4px;background:var(--forti-red);flex-shrink:0;border-radius:3px 0 0 3px;}
   .bgr-body{flex:1;min-width:0;padding:9px 0;display:flex;align-items:center;gap:8px;}
   .bom-group-row .drag-handle{padding:0 4px 0 4px;}
@@ -2248,11 +2250,19 @@ async function renderGroups() {
   } else {
     ptEl.style.display = 'none';
   }
+  if (!isReadOnly()) {
+    const sentinel = document.createElement('div');
+    sentinel.className = 'bom-drop-sentinel';
+    sentinel.dataset.id = SENTINEL_ID;
+    addDragListeners(sentinel);
+    c.appendChild(sentinel);
+  }
   if (isReadOnly()) applyReadOnlyToDOM();
 }
 
 // ── DRAG-TO-REORDER ──────────────────────────────────────────────────────────
 let dragSrcId = null;
+const SENTINEL_ID = 0; // drop-zone at end of list; no real cart entry ever has id 0
 
 // Returns [startIdx, endIdxExclusive] of a group's block in `cart`:
 // the header itself plus the contiguous run of non-group entries after it.
@@ -2265,10 +2275,30 @@ function _groupBlockRange(headerIdx) {
 function _doDrop(targetId) {
   if (dragSrcId === null || dragSrcId === targetId) return;
   const srcIdx = cart.findIndex(c => c.id === dragSrcId);
-  const tgtIdx = cart.findIndex(c => c.id === targetId);
-  if (srcIdx === -1 || tgtIdx === -1) return;
+  if (srcIdx === -1) return;
 
   const src = cart[srcIdx];
+
+  if (targetId === SENTINEL_ID) {
+    // Append dragged item/group to the very end of the list.
+    if (src._type === 'group') {
+      const [s, e] = _groupBlockRange(srcIdx);
+      const block = cart.splice(s, e - s);
+      cart.push(...block);
+    } else {
+      const [moved] = cart.splice(srcIdx, 1);
+      cart.push(moved);
+    }
+    dragSrcId = null;
+    renderGroups();
+    saveCart();
+    markDirty();
+    return;
+  }
+
+  const tgtIdx = cart.findIndex(c => c.id === targetId);
+  if (tgtIdx === -1) return;
+
   if (src._type === 'group') {
     const [s, e] = _groupBlockRange(srcIdx);
 
