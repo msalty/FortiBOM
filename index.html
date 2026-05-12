@@ -230,6 +230,9 @@
   .bom-group-row{background:#D8DCE6;border:1px solid #B4BAC8;border-radius:4px;display:flex;align-items:stretch;gap:0;cursor:default;}
   .bom-group-row.dragging{opacity:.45;box-shadow:0 4px 18px rgba(0,0,0,.18);}
   .bom-group-row.drag-over{outline:2px dashed var(--forti-red);outline-offset:2px;}
+  .bom-drop-sentinel{min-height:32px;border-radius:4px;transition:outline .1s;}
+  .bom-drop-sentinel.drag-over{outline:2px dashed var(--forti-red);outline-offset:2px;}
+  .bg.group-dragging{opacity:.45;}
   .bgr-accent{width:4px;background:var(--forti-red);flex-shrink:0;border-radius:3px 0 0 3px;}
   .bgr-body{flex:1;min-width:0;padding:9px 0;display:flex;align-items:center;gap:8px;}
   .bom-group-row .drag-handle{padding:0 4px 0 4px;}
@@ -1943,7 +1946,7 @@ function toggleGroupCollapse(ev, groupId) {
   const willCollapse = !collapsedGroups.has(groupId);
   if (willCollapse) collapsedGroups.add(groupId); else collapsedGroups.delete(groupId);
   let n = row.nextElementSibling;
-  while (n && !n.classList.contains('bom-group-row')) {
+  while (n && !n.classList.contains('bom-group-row') && !n.classList.contains('bom-drop-sentinel')) {
     n.style.display = willCollapse ? 'none' : '';
     n = n.nextElementSibling;
   }
@@ -2215,13 +2218,22 @@ async function renderGroups() {
       c.appendChild(el);
     }
   }
+  // Sentinel must be in the DOM before the collapsed-state loop so the loop can use it as a stop marker.
+  if (!isReadOnly()) {
+    const sentinel = document.createElement('div');
+    sentinel.className = 'bom-drop-sentinel';
+    sentinel.dataset.id = SENTINEL_ID;
+    addDragListeners(sentinel);
+    c.appendChild(sentinel);
+  }
   // Apply collapsed state: hide siblings under each collapsed group row up to the next group row.
+  // Stop at the sentinel too so it is never hidden by a collapsed last group.
   for (const row of c.children) {
     if (!row.classList.contains('bom-group-row')) continue;
     const gid = Number(row.dataset.id);
     if (!collapsedGroups.has(gid)) continue;
     let n = row.nextElementSibling;
-    while (n && !n.classList.contains('bom-group-row')) {
+    while (n && !n.classList.contains('bom-group-row') && !n.classList.contains('bom-drop-sentinel')) {
       n.style.display = 'none';
       n = n.nextElementSibling;
     }
@@ -2253,21 +2265,79 @@ async function renderGroups() {
 
 // ── DRAG-TO-REORDER ──────────────────────────────────────────────────────────
 let dragSrcId = null;
+const SENTINEL_ID = 0; // drop-zone at end of list; no real cart entry ever has id 0
+
+// Returns [startIdx, endIdxExclusive] of a group's block in `cart`:
+// the header itself plus the contiguous run of non-group entries after it.
+function _groupBlockRange(headerIdx) {
+  let end = headerIdx + 1;
+  while (end < cart.length && cart[end]._type !== 'group') end++;
+  return [headerIdx, end];
+}
 
 function _doDrop(targetId) {
   if (dragSrcId === null || dragSrcId === targetId) return;
   const srcIdx = cart.findIndex(c => c.id === dragSrcId);
+  if (srcIdx === -1) return;
+
+  const src = cart[srcIdx];
+
+  if (targetId === SENTINEL_ID) {
+    // Append dragged item/group to the very end of the list.
+    if (src._type === 'group') {
+      const [s, e] = _groupBlockRange(srcIdx);
+      const block = cart.splice(s, e - s);
+      cart.push(...block);
+    } else {
+      const [moved] = cart.splice(srcIdx, 1);
+      cart.push(moved);
+    }
+    dragSrcId = null;
+    renderGroups();
+    saveCart();
+    markDirty();
+    return;
+  }
+
   const tgtIdx = cart.findIndex(c => c.id === targetId);
-  if (srcIdx === -1 || tgtIdx === -1) return;
-  const [moved] = cart.splice(srcIdx, 1);
-  cart.splice(tgtIdx, 0, moved);
-  // If a product was dropped into a collapsed section, auto-expand so it's visible.
-  if (!moved._type) {
-    const newIdx = cart.indexOf(moved);
-    for (let i = newIdx - 1; i >= 0; i--) {
-      if (cart[i]._type === 'group') {
-        if (collapsedGroups.has(cart[i].id)) collapsedGroups.delete(cart[i].id);
-        break;
+  if (tgtIdx === -1) return;
+
+  if (src._type === 'group') {
+    const [s, e] = _groupBlockRange(srcIdx);
+
+    // Find the target group's block start: walk backward from tgtIdx to its header (or 0).
+    let tgtBlockStart = tgtIdx;
+    if (cart[tgtIdx]._type !== 'group') {
+      tgtBlockStart = 0;
+      for (let i = tgtIdx - 1; i >= 0; i--) {
+        if (cart[i]._type === 'group') { tgtBlockStart = i; break; }
+      }
+    }
+
+    // No-op: dropping onto itself or onto an item inside its own block.
+    if (tgtBlockStart === s) return;
+
+    if (s < tgtBlockStart) {
+      // Dragging down: land after the target group's block.
+      const [, tgt_e] = _groupBlockRange(tgtBlockStart);
+      const block = cart.splice(s, e - s);
+      cart.splice(tgt_e - (e - s), 0, ...block);
+    } else {
+      // Dragging up: land before the target group's block.
+      const block = cart.splice(s, e - s);
+      cart.splice(tgtBlockStart, 0, ...block);
+    }
+  } else {
+    const [moved] = cart.splice(srcIdx, 1);
+    cart.splice(tgtIdx, 0, moved);
+    // If a product was dropped into a collapsed section, auto-expand so it's visible.
+    if (!moved._type) {
+      const newIdx = cart.indexOf(moved);
+      for (let i = newIdx - 1; i >= 0; i--) {
+        if (cart[i]._type === 'group') {
+          if (collapsedGroups.has(cart[i].id)) collapsedGroups.delete(cart[i].id);
+          break;
+        }
       }
     }
   }
@@ -2283,6 +2353,20 @@ function _topItem(node) {
   return (node && node.dataset.id) ? node : null;
 }
 
+// Fades the item rows belonging to a group header in/out while the header is being dragged.
+function _applyGroupBlockClass(headerId, add) {
+  const bgc = document.getElementById('bgc');
+  let inBlock = false;
+  for (const child of bgc.children) {
+    if (!inBlock) {
+      if (Number(child.dataset.id) === headerId) inBlock = true;
+      continue;
+    }
+    if (child.classList.contains('bom-group-row') || child.classList.contains('bom-drop-sentinel')) break;
+    child.classList.toggle('group-dragging', add);
+  }
+}
+
 function addDragListeners(el) {
   // ── Mouse / HTML5 drag ──
   el.addEventListener('mousedown', e => {
@@ -2293,17 +2377,21 @@ function addDragListeners(el) {
     if (!el.draggable || isReadOnly()) { e.preventDefault(); return; }
     dragSrcId = Number(el.dataset.id);
     el.classList.add('dragging');
+    if (el.classList.contains('bom-group-row')) _applyGroupBlockClass(dragSrcId, true);
     e.dataTransfer.effectAllowed = 'move';
   });
   el.addEventListener('dragend', () => {
     el.classList.remove('dragging');
-    document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
+    document.querySelectorAll('#bgc > *').forEach(n => {
+      n.classList.remove('drag-over');
+      n.classList.remove('group-dragging');
+    });
   });
   el.addEventListener('dragover', e => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
-    if (Number(el.dataset.id) !== dragSrcId) el.classList.add('drag-over');
+    if (Number(el.dataset.id) !== dragSrcId && !el.classList.contains('group-dragging')) el.classList.add('drag-over');
   });
   el.addEventListener('drop', e => {
     e.preventDefault();
@@ -2316,6 +2404,7 @@ function addDragListeners(el) {
     e.preventDefault();
     dragSrcId = Number(el.dataset.id);
     el.classList.add('dragging');
+    if (el.classList.contains('bom-group-row')) _applyGroupBlockClass(dragSrcId, true);
   }, { passive: false });
 
   el.addEventListener('touchmove', e => {
@@ -2327,7 +2416,7 @@ function addDragListeners(el) {
     el.style.pointerEvents = '';
     const targetEl = under && _topItem(under);
     document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
-    if (targetEl && Number(targetEl.dataset.id) !== dragSrcId) targetEl.classList.add('drag-over');
+    if (targetEl && Number(targetEl.dataset.id) !== dragSrcId && !targetEl.classList.contains('group-dragging')) targetEl.classList.add('drag-over');
   }, { passive: false });
 
   el.addEventListener('touchend', e => {
@@ -2338,7 +2427,10 @@ function addDragListeners(el) {
     el.style.pointerEvents = 'none';
     const under = document.elementFromPoint(t.clientX, t.clientY);
     el.style.pointerEvents = '';
-    document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
+    document.querySelectorAll('#bgc > *').forEach(n => {
+      n.classList.remove('drag-over');
+      n.classList.remove('group-dragging');
+    });
     const targetEl = under && _topItem(under);
     if (targetEl) _doDrop(Number(targetEl.dataset.id));
     else dragSrcId = null;
@@ -2346,7 +2438,10 @@ function addDragListeners(el) {
 
   el.addEventListener('touchcancel', () => {
     el.classList.remove('dragging');
-    document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
+    document.querySelectorAll('#bgc > *').forEach(n => {
+      n.classList.remove('drag-over');
+      n.classList.remove('group-dragging');
+    });
     dragSrcId = null;
   });
 }
