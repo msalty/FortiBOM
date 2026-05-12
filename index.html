@@ -1946,7 +1946,7 @@ function toggleGroupCollapse(ev, groupId) {
   const willCollapse = !collapsedGroups.has(groupId);
   if (willCollapse) collapsedGroups.add(groupId); else collapsedGroups.delete(groupId);
   let n = row.nextElementSibling;
-  while (n && !n.classList.contains('bom-group-row')) {
+  while (n && !n.classList.contains('bom-group-row') && !n.classList.contains('bom-drop-sentinel')) {
     n.style.display = willCollapse ? 'none' : '';
     n = n.nextElementSibling;
   }
