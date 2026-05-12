@@ -2218,13 +2218,22 @@ async function renderGroups() {
       c.appendChild(el);
     }
   }
+  // Sentinel must be in the DOM before the collapsed-state loop so the loop can use it as a stop marker.
+  if (!isReadOnly()) {
+    const sentinel = document.createElement('div');
+    sentinel.className = 'bom-drop-sentinel';
+    sentinel.dataset.id = SENTINEL_ID;
+    addDragListeners(sentinel);
+    c.appendChild(sentinel);
+  }
   // Apply collapsed state: hide siblings under each collapsed group row up to the next group row.
+  // Stop at the sentinel too so it is never hidden by a collapsed last group.
   for (const row of c.children) {
     if (!row.classList.contains('bom-group-row')) continue;
     const gid = Number(row.dataset.id);
     if (!collapsedGroups.has(gid)) continue;
     let n = row.nextElementSibling;
-    while (n && !n.classList.contains('bom-group-row')) {
+    while (n && !n.classList.contains('bom-group-row') && !n.classList.contains('bom-drop-sentinel')) {
       n.style.display = 'none';
       n = n.nextElementSibling;
     }
@@ -2250,13 +2259,6 @@ async function renderGroups() {
     ptEl.style.display = 'flex';
   } else {
     ptEl.style.display = 'none';
-  }
-  if (!isReadOnly()) {
-    const sentinel = document.createElement('div');
-    sentinel.className = 'bom-drop-sentinel';
-    sentinel.dataset.id = SENTINEL_ID;
-    addDragListeners(sentinel);
-    c.appendChild(sentinel);
   }
   if (isReadOnly()) applyReadOnlyToDOM();
 }
