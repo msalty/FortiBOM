@@ -2317,12 +2317,16 @@ function _doDrop(targetId) {
     // No-op: dropping onto itself or onto an item inside its own block.
     if (tgtBlockStart === s) return;
 
-    const block = cart.slice(s, e);
-    cart.splice(s, e - s);
-    // Recompute insertion point after splice (target block shifted if it was after source block).
-    const insertAt = tgtBlockStart > s ? tgtBlockStart - (e - s) : tgtBlockStart;
-    // Group lands immediately before the target group's block.
-    cart.splice(insertAt, 0, ...block);
+    if (s < tgtBlockStart) {
+      // Dragging down: land after the target group's block.
+      const [, tgt_e] = _groupBlockRange(tgtBlockStart);
+      const block = cart.splice(s, e - s);
+      cart.splice(tgt_e - (e - s), 0, ...block);
+    } else {
+      // Dragging up: land before the target group's block.
+      const block = cart.splice(s, e - s);
+      cart.splice(tgtBlockStart, 0, ...block);
+    }
   } else {
     const [moved] = cart.splice(srcIdx, 1);
     cart.splice(tgtIdx, 0, moved);
