@@ -1403,6 +1403,7 @@ async function buildNav() {
     const lbl = document.createElement('div'); lbl.className='nsl'; lbl.textContent=cat; lbl.style.paddingTop='14px'; frag.appendChild(lbl);
     for (const p of items) {
       const el = document.createElement('div'); el.className='ni';
+      el.dataset.productPath = `products/${p.file}`;
       el.innerHTML = `${icon(p.file)}<span class="ni-label">${p.label}</span>`;
       el.onclick = () => loadProduct(`products/${p.file}`, p.label, el);
       frag.appendChild(el);
@@ -1412,6 +1413,45 @@ async function buildNav() {
   c.replaceChildren(frag);
 }
 async function exists(path) { try { return (await fetch(path,{method:'HEAD'})).ok; } catch { return false; } }
+
+// ── NAV STATE PERSISTENCE ─────────────────────────────────────────────────────
+const NAV_STATE_KEY = 'fabricbom_nav_state';
+let _navReady = false;
+
+function _saveNavState(state) {
+  if (!_navReady) return;
+  try { sessionStorage.setItem(NAV_STATE_KEY, JSON.stringify(state)); } catch {}
+}
+
+async function _restoreNavState() {
+  let state;
+  try { state = JSON.parse(sessionStorage.getItem(NAV_STATE_KEY) || 'null'); } catch {}
+  if (!state) return false;
+  switch (state.type) {
+    case 'pbv': showPBV(); return true;
+    case 'spv': showSavedProjects(); return true;
+    case 'stv': showSettings(); return true;
+    case 'about': showAbout(); return true;
+    case 'product':
+      if (state.path && state.label) {
+        const navEl = document.querySelector(`#nav-items .ni[data-product-path="${CSS.escape(state.path)}"]`);
+        loadProduct(state.path, state.label, navEl);
+        return true;
+      }
+      break;
+    case 'plugin':
+      if (state.pluginId) {
+        const p = loadPlugins().find(x => x.id === state.pluginId);
+        if (p) {
+          const el = document.getElementById(`nav-plugin-${p.id}`);
+          const url = await _resolvePluginURL(p);
+          if (url) { loadProduct(url, p.name, el); return true; }
+        }
+      }
+      break;
+  }
+  return false;
+}
 
 // ── GLOBAL SETTINGS ───────────────────────────────────────────────────────────
 const SETTINGS_KEY = 'fortibom_settings';
@@ -1562,6 +1602,7 @@ async function renderPluginNav() {
       el.onclick = async () => {
         const url = await _resolvePluginURL(p);
         if (!url) { toast('⚠ Plugin files not found — try reinstalling.'); return; }
+        _saveNavState({ type: 'plugin', pluginId: p.id });
         loadProduct(url, p.name, el);
       };
       container.appendChild(el);
@@ -1729,6 +1770,7 @@ function setActiveNav(el) {
   closeSidebar();
 }
 function loadProduct(path, label, navEl) {
+  if (!path.startsWith('blob:')) _saveNavState({ type: 'product', path, label });
   setActiveNav(navEl);
   document.getElementById('bc').textContent = label;
   document.getElementById('pbv').style.display = 'none';
@@ -1741,6 +1783,7 @@ function loadProduct(path, label, navEl) {
   f.src = path;
 }
 function showPBV() {
+  _saveNavState({ type: 'pbv' });
   setActiveNav(document.getElementById('nav-proj'));
   document.getElementById('bc').textContent = 'Project BOM';
   document.getElementById('pfw').style.display = 'none';
@@ -1749,6 +1792,7 @@ function showPBV() {
   document.getElementById('pbv').style.display = 'flex';
 }
 function showSettings() {
+  _saveNavState({ type: 'stv' });
   setActiveNav(document.getElementById('nav-settings'));
   document.getElementById('bc').textContent = 'Settings';
   document.getElementById('pfw').style.display = 'none';
@@ -1790,6 +1834,7 @@ function onSettingChange(key, value) {
   }
 }
 function showAbout() {
+  _saveNavState({ type: 'about' });
   setActiveNav(null);
   document.getElementById('bc').textContent = 'About';
   document.getElementById('pbv').style.display = 'none';
@@ -2418,6 +2463,7 @@ function saveProject() {
 }
 
 function showSavedProjects() {
+  _saveNavState({ type: 'spv' });
   setActiveNav(document.getElementById('nav-saved'));
   document.getElementById('bc').textContent = 'Saved Projects';
   document.getElementById('pfw').style.display = 'none';
@@ -4292,7 +4338,6 @@ function initDemoLink() {
   updateSavedBadge();
   renderGroups();
   updateSaveIndicator();
-  if (cart.length) showPBV();
   buildNav();
   (function(){
     const pinned = localStorage.getItem('sbar-pinned') !== 'false';
@@ -4306,6 +4351,9 @@ function initDemoLink() {
   initPluginDropZone();
   checkBOMFragment();
   initPiMode();
+  const _navRestored = await _restoreNavState();
+  if (!_navRestored && cart.length) showPBV();
+  _navReady = true;
   ['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
     document.getElementById(id).addEventListener('input', () => { savePiData(); if (cart.length) markDirty(); });
   });
