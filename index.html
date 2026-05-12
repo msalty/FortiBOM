@@ -2254,20 +2254,53 @@ async function renderGroups() {
 // ── DRAG-TO-REORDER ──────────────────────────────────────────────────────────
 let dragSrcId = null;
 
+// Returns [startIdx, endIdxExclusive] of a group's block in `cart`:
+// the header itself plus the contiguous run of non-group entries after it.
+function _groupBlockRange(headerIdx) {
+  let end = headerIdx + 1;
+  while (end < cart.length && cart[end]._type !== 'group') end++;
+  return [headerIdx, end];
+}
+
 function _doDrop(targetId) {
   if (dragSrcId === null || dragSrcId === targetId) return;
   const srcIdx = cart.findIndex(c => c.id === dragSrcId);
   const tgtIdx = cart.findIndex(c => c.id === targetId);
   if (srcIdx === -1 || tgtIdx === -1) return;
-  const [moved] = cart.splice(srcIdx, 1);
-  cart.splice(tgtIdx, 0, moved);
-  // If a product was dropped into a collapsed section, auto-expand so it's visible.
-  if (!moved._type) {
-    const newIdx = cart.indexOf(moved);
-    for (let i = newIdx - 1; i >= 0; i--) {
-      if (cart[i]._type === 'group') {
-        if (collapsedGroups.has(cart[i].id)) collapsedGroups.delete(cart[i].id);
-        break;
+
+  const src = cart[srcIdx];
+  if (src._type === 'group') {
+    const [s, e] = _groupBlockRange(srcIdx);
+
+    // Find the target group's block start: walk backward from tgtIdx to its header (or 0).
+    let tgtBlockStart = tgtIdx;
+    if (cart[tgtIdx]._type !== 'group') {
+      tgtBlockStart = 0;
+      for (let i = tgtIdx - 1; i >= 0; i--) {
+        if (cart[i]._type === 'group') { tgtBlockStart = i; break; }
+      }
+    }
+
+    // No-op: dropping onto itself or onto an item inside its own block.
+    if (tgtBlockStart === s) return;
+
+    const block = cart.slice(s, e);
+    cart.splice(s, e - s);
+    // Recompute insertion point after splice (target block shifted if it was after source block).
+    const insertAt = tgtBlockStart > s ? tgtBlockStart - (e - s) : tgtBlockStart;
+    // Group lands immediately before the target group's block.
+    cart.splice(insertAt, 0, ...block);
+  } else {
+    const [moved] = cart.splice(srcIdx, 1);
+    cart.splice(tgtIdx, 0, moved);
+    // If a product was dropped into a collapsed section, auto-expand so it's visible.
+    if (!moved._type) {
+      const newIdx = cart.indexOf(moved);
+      for (let i = newIdx - 1; i >= 0; i--) {
+        if (cart[i]._type === 'group') {
+          if (collapsedGroups.has(cart[i].id)) collapsedGroups.delete(cart[i].id);
+          break;
+        }
       }
     }
   }
