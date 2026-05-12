@@ -232,6 +232,7 @@
   .bom-group-row.drag-over{outline:2px dashed var(--forti-red);outline-offset:2px;}
   .bom-drop-sentinel{min-height:32px;border-radius:4px;transition:outline .1s;}
   .bom-drop-sentinel.drag-over{outline:2px dashed var(--forti-red);outline-offset:2px;}
+  .bg.group-dragging{opacity:.45;}
   .bgr-accent{width:4px;background:var(--forti-red);flex-shrink:0;border-radius:3px 0 0 3px;}
   .bgr-body{flex:1;min-width:0;padding:9px 0;display:flex;align-items:center;gap:8px;}
   .bom-group-row .drag-handle{padding:0 4px 0 4px;}
@@ -2346,6 +2347,20 @@ function _topItem(node) {
   return (node && node.dataset.id) ? node : null;
 }
 
+// Fades the item rows belonging to a group header in/out while the header is being dragged.
+function _applyGroupBlockClass(headerId, add) {
+  const bgc = document.getElementById('bgc');
+  let inBlock = false;
+  for (const child of bgc.children) {
+    if (!inBlock) {
+      if (Number(child.dataset.id) === headerId) inBlock = true;
+      continue;
+    }
+    if (child.classList.contains('bom-group-row') || child.classList.contains('bom-drop-sentinel')) break;
+    child.classList.toggle('group-dragging', add);
+  }
+}
+
 function addDragListeners(el) {
   // ── Mouse / HTML5 drag ──
   el.addEventListener('mousedown', e => {
@@ -2356,11 +2371,15 @@ function addDragListeners(el) {
     if (!el.draggable || isReadOnly()) { e.preventDefault(); return; }
     dragSrcId = Number(el.dataset.id);
     el.classList.add('dragging');
+    if (el.classList.contains('bom-group-row')) _applyGroupBlockClass(dragSrcId, true);
     e.dataTransfer.effectAllowed = 'move';
   });
   el.addEventListener('dragend', () => {
     el.classList.remove('dragging');
-    document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
+    document.querySelectorAll('#bgc > *').forEach(n => {
+      n.classList.remove('drag-over');
+      n.classList.remove('group-dragging');
+    });
   });
   el.addEventListener('dragover', e => {
     e.preventDefault();
@@ -2379,6 +2398,7 @@ function addDragListeners(el) {
     e.preventDefault();
     dragSrcId = Number(el.dataset.id);
     el.classList.add('dragging');
+    if (el.classList.contains('bom-group-row')) _applyGroupBlockClass(dragSrcId, true);
   }, { passive: false });
 
   el.addEventListener('touchmove', e => {
@@ -2401,7 +2421,10 @@ function addDragListeners(el) {
     el.style.pointerEvents = 'none';
     const under = document.elementFromPoint(t.clientX, t.clientY);
     el.style.pointerEvents = '';
-    document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
+    document.querySelectorAll('#bgc > *').forEach(n => {
+      n.classList.remove('drag-over');
+      n.classList.remove('group-dragging');
+    });
     const targetEl = under && _topItem(under);
     if (targetEl) _doDrop(Number(targetEl.dataset.id));
     else dragSrcId = null;
@@ -2409,7 +2432,10 @@ function addDragListeners(el) {
 
   el.addEventListener('touchcancel', () => {
     el.classList.remove('dragging');
-    document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
+    document.querySelectorAll('#bgc > *').forEach(n => {
+      n.classList.remove('drag-over');
+      n.classList.remove('group-dragging');
+    });
     dragSrcId = null;
   });
 }
