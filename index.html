@@ -2385,7 +2385,7 @@ function addDragListeners(el) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
-    if (Number(el.dataset.id) !== dragSrcId) el.classList.add('drag-over');
+    if (Number(el.dataset.id) !== dragSrcId && !el.classList.contains('group-dragging')) el.classList.add('drag-over');
   });
   el.addEventListener('drop', e => {
     e.preventDefault();
@@ -2410,7 +2410,7 @@ function addDragListeners(el) {
     el.style.pointerEvents = '';
     const targetEl = under && _topItem(under);
     document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
-    if (targetEl && Number(targetEl.dataset.id) !== dragSrcId) targetEl.classList.add('drag-over');
+    if (targetEl && Number(targetEl.dataset.id) !== dragSrcId && !targetEl.classList.contains('group-dragging')) targetEl.classList.add('drag-over');
   }, { passive: false });
 
   el.addEventListener('touchend', e => {
