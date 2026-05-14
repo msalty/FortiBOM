@@ -192,22 +192,57 @@ tbody tr:nth-child(even) td{background:var(--forti-table-stripe);}
 
       <!-- VM SUBSCRIPTION -->
       <div class="deploy-section" id="ds-vmsub">
-        <div class="callout info">💡 <div>VM Subscription (S-series) is all-in-one: FortiCare Premium, IOC, Outbreak Detection, Security Automation included. Stackable — purchase multiple for more capacity.</div></div>
-        <div class="section-divider">GB/Day Band</div>
-        <div class="model-grid">
-          <div class="model-card selected" id="vms-fc1" onclick="selectVMSBand('fc1')"><div class="mc-sku">FC1 · 5 GB/Day</div><div class="mc-sub">FortiAnalyzer-VMS</div><div class="mc-cap">FC1-10-AZVMS-465-01-DD</div></div>
-          <div class="model-card" id="vms-fc2" onclick="selectVMSBand('fc2')"><div class="mc-sku">FC2 · 50 GB/Day</div><div class="mc-sub">FortiAnalyzer-VMS</div><div class="mc-cap">FC2-10-AZVMS-465-01-DD</div></div>
-          <div class="model-card" id="vms-fc3" onclick="selectVMSBand('fc3')"><div class="mc-sku">FC3 · 500 GB/Day</div><div class="mc-sub">FortiAnalyzer-VMS</div><div class="mc-cap">FC3-10-AZVMS-465-01-DD</div></div>
-        </div>
+        <div class="callout info">💡 <div>VM Subscription (S-series) licenses are stackable. Enter the GB/Day you need per node and the calculator packs the optimal combination of 500/50/5 GB/Day SKUs automatically. For HA or multi-node deployments, configure each node separately and accumulate them into the preview before adding to the Project BOM.</div></div>
+
+        <div class="section-divider">Node Configuration</div>
         <div class="form-row">
           <div class="form-group">
-            <label>Quantity <span style="color:var(--forti-red)">*</span></label>
-            <input type="number" id="vms-qty" min="1" value="1" style="width:100px;" oninput="resetPreview()">
-            <div class="err" id="err-vms-qty">Enter quantity ≥ 1</div>
+            <label>Node label (optional)</label>
+            <input type="text" id="vms-node-label" placeholder="e.g. Node 1, Primary, Site A" style="max-width:220px;">
+          </div>
+          <div class="form-group">
+            <label>GB/Day needed for this node <span style="color:var(--forti-red)">*</span></label>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" id="vms-gbday" min="1" value="5" style="width:110px;" oninput="onVMSGbDayChange()">
+              <div class="err" id="err-vms-gbday" style="display:none;">Enter a value ≥ 1</div>
+            </div>
           </div>
         </div>
-        <div class="section-divider">Optional Service Add-ons</div>
+
+        <!-- Live packing breakdown -->
+        <div id="vms-pack-preview" style="display:none;margin-bottom:14px;">
+          <div class="section-divider">License Breakdown</div>
+          <div id="vms-pack-table-wrap" style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>SKU</th><th>Description</th><th>Qty</th><th>GB/Day</th></tr></thead>
+              <tbody id="vms-pack-tbody"></tbody>
+            </table>
+          </div>
+          <div id="vms-pack-total" style="font-size:12px;color:var(--forti-info-text);background:var(--forti-info-bg);border:1px solid var(--forti-info-border);border-radius:3px;padding:5px 12px;margin-top:6px;"></div>
+        </div>
+
+        <div class="section-divider">Optional Service Add-ons <span style="font-size:10px;font-weight:400;color:var(--forti-text-muted);">(applied to this node)</span></div>
         <div class="addon-grid" id="vms-addons"></div>
+
+        <div style="margin-top:14px;">
+          <button class="btn btn-primary" onclick="vmsAddNode()" id="vms-add-node-btn">Add Node to Preview</button>
+          <span style="font-size:12px;color:var(--forti-text-muted);margin-left:10px;" id="vms-node-count-msg"></span>
+        </div>
+
+        <!-- Accumulated nodes preview -->
+        <div id="vms-accumulated" style="display:none;margin-top:14px;">
+          <div class="section-divider" style="display:flex;justify-content:space-between;align-items:center;">
+            <span>Accumulated Nodes</span>
+            <button class="btn btn-ghost" style="font-size:11px;padding:2px 10px;" onclick="vmsClearAll()">Clear All</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Node</th><th>SKU</th><th>Description</th><th>Qty</th><th>Type</th><th></th></tr></thead>
+              <tbody id="vms-accum-tbody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--forti-text-secondary);" id="vms-accum-summary"></div>
+        </div>
       </div>
 
       <!-- VM PERPETUAL -->
@@ -718,6 +753,12 @@ const HW_ADDON_DESC = {
   eup:  (m)=>`FortiAnalyzer-${m} 1 Year Upgrade FortiCare Premium to Elite (Requires FortiCare Premium support)`,
   bkp:  ()=>'FAZ Backup to Cloud Service 1 Year Subscription to FortiAnalyzer storage connector service for 10TB data transfer to public cloud.',
 };
+const VMS_TIERS = [
+  {gb:500, band:'fc3', sku:'FC3-10-AZVMS-465-01-DD', desc:'FortiAnalyzer-VM Subscription License with Support 1 Year Subscription license for 500 GB/Day Central Logging & Analytics. Include FortiCare Premium support, IOC, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {gb:50,  band:'fc2', sku:'FC2-10-AZVMS-465-01-DD', desc:'FortiAnalyzer-VM Subscription License with Support 1 Year Subscription license for 50 GB/Day Central Logging & Analytics. Include FortiCare Premium support, IOC, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {gb:5,   band:'fc1', sku:'FC1-10-AZVMS-465-01-DD', desc:'FortiAnalyzer-VM Subscription License with Support 1 Year Subscription license for 5 GB/Day Central Logging & Analytics. Include FortiCare Premium support, IOC, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+];
+
 const VMS_BANDS = {
   fc1:{band:'FC1',gbday:5,  sku:'FC1-10-AZVMS-465-01-DD',desc:'FortiAnalyzer-VM Subscription License with Support 1 Year Subscription license for 5 GB/Day Central Logging & Analytics. Include FortiCare Premium support, IOC, Security Automation Service and FortiGuard Outbreak Detection Service.'},
   fc2:{band:'FC2',gbday:50, sku:'FC2-10-AZVMS-465-01-DD',desc:'FortiAnalyzer-VM Subscription License with Support 1 Year Subscription license for 50 GB/Day Central Logging & Analytics. Include FortiCare Premium support, IOC, Security Automation Service and FortiGuard Outbreak Detection Service.'},
@@ -771,6 +812,7 @@ const CLD_ADDONS=[
 // ===== STATE =====
 let _deploy='appliance',_selectedModel='150G',_vmsBand='fc1',_cldBand='fc1',_cldMode='device';
 let _lastRows=[],_lastLabel='',_lastMeta={};
+let _vmsAccumRows=[],_vmsNodeCount=0;
 
 // ===== HELPERS =====
 function getVMPBandLabel(b){const r=VMP_BAND_RANGES.find(x=>x.band===b);return r?r.label:b;}
@@ -981,15 +1023,17 @@ function generateBOM(){
     _lastMeta={model:m.sku,qty,purchaseType:ptype,gbdayMax:m.gbday};
 
   }else if(_deploy==='vmsub'){
-    const b=VMS_BANDS[_vmsBand];const qty=parseInt($id('vms-qty').value)||0;
-    if(qty<1){showErr('err-vms-qty',true);setInvalid('vms-qty',true);valid=false;}else{showErr('err-vms-qty',false);setInvalid('vms-qty',false);}
-    if(!valid)return false;
-    const bn=_vmsBand.replace('fc','');
-    rows.push({section:'VM Subscription Bundle'});rows.push({sku:b.sku,desc:b.desc,qty,kind:'req',note:`${b.gbday} GB/Day per license (stackable)`});
-    const ar=[];VMS_ADDONS.forEach(a=>{if($id(`vmsc-${a.id}`)?.checked)ar.push({sku:a.fn(bn),desc:a.desc(bn),qty,kind:'opt',note:`Must match ${b.gbday}GB/Day tier`});});
-    if(ar.length){rows.push({section:'Service Add-Ons'});rows.push(...ar);}
-    _lastLabel=`FortiAnalyzer VM Subscription ${b.band} (${b.gbday}GB/Day) ×${qty}`;
-    _lastMeta={band:b.band,gbdayPerLicense:b.gbday,qty,totalGBDay:b.gbday*qty};
+    if(_vmsAccumRows.length===0){
+      $id('vms-node-count-msg').textContent='Add at least one node first.';
+      $id('vms-node-count-msg').style.color='#C0392B';
+      return false;
+    }
+    rows.push(..._vmsAccumRows);
+    const totalGB=_vmsAccumRows.filter(r=>!r.section&&r.sku&&!r.sku.startsWith('⚠')).reduce((s,r)=>{
+      const m=VMS_TIERS.find(t=>t.sku===r.sku);return s+(m?m.gb*r.qty:0);
+    },0);
+    _lastLabel=`FortiAnalyzer VM Subscription — ${_vmsNodeCount} node(s), ${totalGB} GB/Day total`;
+    _lastMeta={nodes:_vmsNodeCount,totalGBDay:totalGB};
 
   }else if(_deploy==='vmperp'){
     const totalGB=parseInt($id('vmp-gbday').value)||0;
@@ -1069,7 +1113,7 @@ function resetForm(){
   _selectedModel='150G';buildModelGrid();
   $id('hw-qty').value=1;$id('hw-purchase-type').value='new-bundle';
   document.querySelectorAll('input[type=checkbox]').forEach(c=>{if(!c.disabled)c.checked=false;});
-  $id('vms-qty').value=1;selectVMSBand('fc1');
+  vmsClearAll();$id('vms-gbday').value=5;$id('vms-node-label').value='';$id('vms-node-count-msg').textContent='';onVMSGbDayChange();
   $id('vmp-gbday').value=10;$id('vmp-support').value='premium';onVMPerpChange();
   selectCldBand('fc1');setCldMode('device');
   $id('cld-dev-rows').innerHTML='';addCloudDevRow();
@@ -1162,6 +1206,144 @@ function calcStorage(){
 })();
 
 window.addEventListener('load',init);
+
+// ===== VM SUBSCRIPTION ACCUMULATION =====
+function packVMS(total) {
+  let rem = total;
+  const result = [];
+  for (const t of VMS_TIERS) {
+    const qty = Math.floor(rem / t.gb);
+    if (qty > 0) { result.push({...t, qty}); rem -= qty * t.gb; }
+  }
+  if (rem > 0) {
+    const smallest = VMS_TIERS[VMS_TIERS.length - 1];
+    result.push({...smallest, qty: 1});
+  }
+  return result;
+}
+
+function onVMSGbDayChange() {
+  const total = parseInt($id('vms-gbday').value) || 0;
+  const wrap = $id('vms-pack-preview');
+  const tbody = $id('vms-pack-tbody');
+  const totEl = $id('vms-pack-total');
+  if (total < 1) { wrap.style.display = 'none'; return; }
+  const packed = packVMS(total);
+  const actualTotal = packed.reduce((s, t) => s + t.gb * t.qty, 0);
+  tbody.innerHTML = packed.map(t => `
+    <tr>
+      <td class="sku-cell">${t.sku}</td>
+      <td class="nc" style="font-size:11px;">${t.desc.substring(0, 80)}…</td>
+      <td style="text-align:center;">${t.qty}</td>
+      <td style="text-align:center;">${t.gb * t.qty} GB/Day</td>
+    </tr>`).join('');
+  const over = actualTotal - total;
+  totEl.textContent = `Total capacity: ${actualTotal} GB/Day${over > 0 ? ` (rounds up by ${over} GB/Day — smallest tier is 5 GB/Day)` : ''}`;
+  wrap.style.display = 'block';
+}
+
+function vmsGetAddonRows(packed) {
+  // Determine the dominant band for add-on SKUs (highest GB/Day tier present)
+  const topTier = packed[0]; // VMS_TIERS sorted largest-first
+  const bn = topTier.band.replace('fc', '');
+  const addonRows = [];
+  VMS_ADDONS.forEach(a => {
+    if ($id(`vmsc-${a.id}`)?.checked) {
+      // qty=1 per node for add-ons; band matches the top tier
+      addonRows.push({sku: a.fn(bn), desc: a.desc(bn), qty: 1, kind: 'opt',
+        note: `Add-on for ${topTier.gb} GB/Day band (FC${bn})`});
+    }
+  });
+  return addonRows;
+}
+
+function vmsAddNode() {
+  const total = parseInt($id('vms-gbday').value) || 0;
+  const errEl = $id('err-vms-gbday');
+  if (total < 1) {
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  const label = $id('vms-node-label').value.trim() || `Node ${_vmsNodeCount + 1}`;
+  _vmsNodeCount++;
+  const packed = packVMS(total);
+  const addonRows = vmsGetAddonRows(packed);
+  const actualTotal = packed.reduce((s, t) => s + t.gb * t.qty, 0);
+
+  _vmsAccumRows.push({section: `${label} — ${actualTotal} GB/Day`});
+  packed.forEach(t => _vmsAccumRows.push({sku: t.sku, desc: t.desc, qty: t.qty, kind: 'req',
+    note: `${t.gb} GB/Day × ${t.qty}`}));
+  if (addonRows.length) _vmsAccumRows.push(...addonRows);
+
+  vmsRenderAccum();
+
+  // Reset for next node
+  $id('vms-node-label').value = '';
+  $id('vms-gbday').value = 5;
+  onVMSGbDayChange();
+  // Uncheck add-ons
+  VMS_ADDONS.forEach(a => { const cb = $id(`vmsc-${a.id}`); if(cb) cb.checked = false; });
+
+  const msg = $id('vms-node-count-msg');
+  msg.textContent = `${_vmsNodeCount} node(s) accumulated — click "Preview BOM" or "Add to Project BOM" when done.`;
+  msg.style.color = '#2E7D32';
+  resetPreview();
+}
+
+function vmsRenderAccum() {
+  const tbody = $id('vms-accum-tbody');
+  const wrap  = $id('vms-accumulated');
+  const sumEl = $id('vms-accum-summary');
+  if (!_vmsAccumRows.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+
+  let currentSection = '';
+  tbody.innerHTML = _vmsAccumRows.map((r, i) => {
+    if (r.section) {
+      currentSection = r.section;
+      return `<tr class="section-row"><td colspan="6">${r.section}</td></tr>`;
+    }
+    const badge = r.kind === 'req'
+      ? '<span class="badge badge-req">REQUIRED</span>'
+      : '<span class="badge badge-opt">OPTIONAL</span>';
+    return `<tr>
+      <td class="nc" style="font-size:11px;">${currentSection}</td>
+      <td class="sku-cell">${r.sku}</td>
+      <td class="nc" style="font-size:11px;">${r.desc.substring(0,70)}…</td>
+      <td style="text-align:center;">${r.qty}</td>
+      <td>${badge}</td>
+      <td><button onclick="vmsRemoveNode(${i})" style="background:none;border:none;cursor:pointer;color:var(--forti-text-muted);font-size:13px;" title="Remove this row">✕</button></td>
+    </tr>`;
+  }).join('');
+
+  // Summary line
+  const totalGB = _vmsAccumRows.filter(r => !r.section && r.sku && !r.sku.startsWith('⚠'))
+    .reduce((s,r) => { const t = VMS_TIERS.find(t=>t.sku===r.sku); return s+(t?t.gb*r.qty:0); }, 0);
+  sumEl.textContent = `${_vmsNodeCount} node(s) · ${totalGB} GB/Day total capacity`;
+}
+
+function vmsRemoveNode(rowIdx) {
+  // Find the section this row belongs to and remove the whole node group
+  let sectionStart = rowIdx;
+  while (sectionStart > 0 && !_vmsAccumRows[sectionStart].section) sectionStart--;
+  let sectionEnd = sectionStart + 1;
+  while (sectionEnd < _vmsAccumRows.length && !_vmsAccumRows[sectionEnd].section) sectionEnd++;
+  _vmsAccumRows.splice(sectionStart, sectionEnd - sectionStart);
+  _vmsNodeCount = Math.max(0, _vmsNodeCount - 1);
+  vmsRenderAccum();
+  const msg = $id('vms-node-count-msg');
+  if (_vmsNodeCount === 0) { msg.textContent = ''; }
+  else { msg.textContent = `${_vmsNodeCount} node(s) accumulated.`; msg.style.color='#2E7D32'; }
+  resetPreview();
+}
+
+function vmsClearAll() {
+  _vmsAccumRows = []; _vmsNodeCount = 0;
+  vmsRenderAccum();
+  $id('vms-node-count-msg').textContent = '';
+  resetPreview();
+}
 </script>
 </body>
 </html>
