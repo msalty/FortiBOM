@@ -1,63 +1,85 @@
+<!--
+  FabricBOM Build Report
+  Product: FortiAnalyzer
+  Source ordering guide: FAZ-OG-R24-20251218
+  Price list verified against: 2026Q2_Null_Price_List_AMER_FINAL_EFF_050426.csv
+  Generated: 2026-05-14
+
+  SKU Reconciliation:
+  ✓  exact        FAZ-150G / FAZ-300G / FAZ-810G / FAZ-1000G / FAZ-3100G / FAZ-3510G / FAZ-3750G  (hardware, no term)
+  ✓  exact        FAZ-{model}-BDL-1263-DD        (multi-term -12/-36/-60, all 7 models)
+  ✓  exact        FC-10-{code}-1263-02-DD        (renew bundle, multi-term, all 7 model codes)
+  ✓  exact        FC-10-{code}-247-02-DD         (FortiCare Premium support, multi-term, all 7 model codes)
+  ✓  exact        FC-10-{code}-159/175/1118/464/204-02-DD  (service add-ons, multi-term, all 7 model codes)
+  ⚠  single-term  FC-10-FAZ00-286-02-12          (only -12 in price list; emitted literally)
+  ✓  exact        FC1-10-AITAZ-1089-02-DD        (FortiAI Token Top-up, multi-term)
+  ✓  exact        SP-FAD400F-PS / SP-FAZ800G-PS  (replacement PSUs, no term)
+  ✓  exact        FAZ-VM-GB1/5/25/100/500/2000   (VM perpetual, no term)
+  ✓  exact        FC1-7+FC4-10-LV0VM-*-02-DD     (all VM perp services, all bands, multi-term)
+  ✓  exact        FC1/2/3-10-AZVMS-465-01-DD     (VM Subscription bundles, multi-term)
+  ✓  exact        FC1/2/3-10-AZVMS-159/175/1118/1137-01-DD  (VM Sub add-ons, multi-term)
+  ✓  exact        FC1/2/3-10-AZCLD-463-01-DD     (FAZ Cloud GB/Day, multi-term)
+  ✓  exact        FC1/2/3-10-AZCLD-159/175/1118-01-DD  (FAZ Cloud add-ons, multi-term)
+  ✓  exact        FC-10-GT70G-585-02-DD          (Example 1 device, multi-term)
+  ✓  exact        FC-10-*-585-02-DD (216 models) (all per-device cloud SKUs embedded as searchable dropdown)
+
+  OG Anomalies resolved:
+  - OG p.5: "FAZ- 3100G"/"FAZ- 3510G" extra space → FAZ-3100G / FAZ-3510G
+  - OG p.5: "FFC-10-AZ1KG-247-02-DD" extra F prefix → FC-10-AZ1KG-247-02-DD
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="build-timestamp" content="2026-05-14T12:00:00Z" />
+<meta name="build-id" content="fortianalyzer-bomgen-20260514-120000" />
 <title>FortiAnalyzer BOM Generator</title>
 <style>
-:root {
-  --forti-red:#EE3124;--forti-border:#DDE1E9;--forti-bg:#F2F4F7;--forti-white:#FFFFFF;
-  --forti-text:#2A2F3A;--forti-text-secondary:#6B7589;--forti-text-muted:#9BA5BA;
-  --forti-section-header:#F7F9FC;--forti-input-border:#C8CDD9;--forti-table-head:#EEF1F6;
-  --forti-table-stripe:#F7F9FC;--forti-info-bg:#EEF3FF;--forti-info-border:#B8CBF5;
-  --forti-info-text:#3557A5;--forti-warn-bg:#FFF8EE;--forti-warn-border:#F5D9A0;--forti-warn-text:#8A5800;
-}
+:root{--forti-red:#EE3124;--forti-border:#DDE1E9;--forti-bg:#F2F4F7;--forti-white:#FFFFFF;--forti-text:#2A2F3A;--forti-text-secondary:#6B7589;--forti-text-muted:#9BA5BA;--forti-section-header:#F7F9FC;--forti-input-border:#C8CDD9;--forti-table-head:#EEF1F6;--forti-table-stripe:#F7F9FC;--forti-info-bg:#EEF3FF;--forti-info-border:#B8CBF5;--forti-info-text:#3557A5;--forti-warn-bg:#FFF8EE;--forti-warn-border:#F5D9A0;--forti-warn-text:#8A5800;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:1.5;
-  background:var(--forti-bg);color:var(--forti-text);padding:20px;}
-.page-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
-.icon-box{width:44px;height:44px;background:var(--forti-red);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.icon-box svg{fill:#fff;}
-.page-header h1{font-size:18px;font-weight:700;color:var(--forti-text);}
-.page-header p{font-size:11px;color:var(--forti-text-muted);margin-top:1px;}
+body{background:var(--forti-bg);padding:20px;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:13px;color:var(--forti-text);line-height:1.5;}
+.page-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.page-icon{width:40px;height:40px;background-color:var(--forti-red);background-image:url('../forti-icons/FortiAnalyzer-white.svg');background-size:70%;background-position:center;background-repeat:no-repeat;border-radius:4px;flex-shrink:0;}
+.page-title{font-size:18px;font-weight:700;color:var(--forti-text);}
+.page-sub{font-size:11px;color:var(--forti-text-muted);margin-top:2px;}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--forti-border);margin-bottom:14px;}
+.tab{padding:9px 18px;cursor:pointer;background:transparent;border:none;font-size:13px;color:var(--forti-text-secondary);border-bottom:2px solid transparent;margin-bottom:-1px;font-family:inherit;}
+.tab.active{color:var(--forti-text);border-bottom-color:var(--forti-red);font-weight:600;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
 .card{background:var(--forti-white);border:1px solid var(--forti-border);border-radius:4px;margin-bottom:14px;overflow:hidden;}
-.card-header{background:var(--forti-section-header);border-bottom:1px solid var(--forti-border);padding:9px 18px;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--forti-text-secondary);display:flex;align-items:center;gap:8px;}
+.card-header{background:var(--forti-section-header);border-bottom:1px solid var(--forti-border);padding:9px 18px;font-weight:600;font-size:13px;}
 .card-body{padding:14px 18px;}
-label{display:block;font-size:12px;font-weight:600;color:var(--forti-text-secondary);margin-bottom:4px;margin-top:10px;}
-label:first-child{margin-top:0;}
-label .req{color:var(--forti-red);}
-input[type=number],select{background:#fff;border:1px solid var(--forti-input-border);border-radius:3px;padding:6px 9px;font-size:13px;width:100%;}
-input[type=number]:focus,select:focus{outline:none;border-color:var(--forti-red);box-shadow:0 0 0 2px rgba(238,49,36,.1);}
-input.invalid,select.invalid{border-color:var(--forti-red)!important;}
-.err{display:none;font-size:11px;color:var(--forti-red);margin-top:3px;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-.model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;margin-top:4px;}
-.mc{border:1px solid var(--forti-border);border-radius:4px;padding:10px 12px;cursor:pointer;background:#fff;transition:all .15s;}
-.mc:hover{border-color:#aab;background:#fafbfc;}
-.mc.sel{border:2px solid var(--forti-red);background:#FEF8F8;}
-.mc .mn{font-weight:700;font-size:12px;color:var(--forti-text);}
-.mc .md{font-size:11px;color:var(--forti-text-muted);margin-top:2px;}
-.callout{border-radius:3px;padding:9px 12px;font-size:12px;line-height:1.6;display:flex;gap:8px;margin-top:8px;}
-.info{background:var(--forti-info-bg);border:1px solid var(--forti-info-border);color:var(--forti-info-text);}
-.warn{background:var(--forti-warn-bg);border:1px solid var(--forti-warn-border);color:var(--forti-warn-text);}
-.addon-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--forti-border);}
-.addon-row:last-child{border-bottom:none;}
-.addon-row input[type=checkbox]{margin-top:3px;flex-shrink:0;accent-color:var(--forti-red);}
-.addon-label{flex:1;}
-.addon-label strong{font-size:12px;color:var(--forti-text);}
-.addon-label span{display:block;font-size:11px;color:var(--forti-text-muted);}
-.addon-row.disabled{opacity:.4;pointer-events:none;}
-.btn-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px;}
-button{border:none;border-radius:3px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s;}
-.btn-primary{background:var(--forti-red);color:#fff;}
-.btn-green{background:#2E7D32;color:#fff;}
-.btn-neutral{background:#e2e5ec;color:var(--forti-text);}
-button:hover{opacity:.88;}
-#smsg{font-size:12px;color:var(--forti-text-muted);}
-#smsg.ok{color:#2E7D32;font-weight:600;}
-#smsg.err{color:var(--forti-red);font-weight:600;}
-#bom-section{display:none;margin-top:4px;}
+label{display:block;margin-bottom:3px;font-size:12px;color:var(--forti-text-secondary);font-weight:500;}
+input[type=text],input[type=number],select,textarea{background:white;border:1px solid var(--forti-input-border);border-radius:3px;padding:6px 9px;font-size:13px;width:100%;font-family:inherit;}
+input[type=text]:focus,input[type=number]:focus,select:focus{outline:none;border-color:var(--forti-red);box-shadow:0 0 0 2px rgba(238,49,36,.1);}
+input.invalid{border-color:#E53935;}
+.form-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:12px;margin-bottom:12px;}
+.form-group{margin-bottom:10px;}
+.err{display:none;color:#C0392B;font-size:11px;margin-top:3px;}
+.model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:8px;margin-bottom:12px;}
+.model-card{border:1px solid var(--forti-border);border-radius:4px;padding:10px 12px;cursor:pointer;background:white;transition:border-color .15s,background .15s;}
+.model-card:hover{border-color:var(--forti-red);}
+.model-card.selected{border:2px solid var(--forti-red);background:#FEF8F8;}
+.model-card .mc-sku{font-weight:700;font-size:12px;font-family:'Courier New',monospace;color:#1A4E82;}
+.model-card .mc-sub{font-size:11px;color:var(--forti-text-secondary);margin-top:2px;}
+.model-card .mc-cap{font-size:10px;color:var(--forti-text-muted);margin-top:1px;}
+.deploy-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.dtype-btn{padding:7px 16px;border:1px solid var(--forti-input-border);border-radius:3px;cursor:pointer;background:white;font-size:12px;font-weight:500;color:var(--forti-text-secondary);font-family:inherit;}
+.dtype-btn.active{background:var(--forti-red);color:white;border-color:var(--forti-red);}
+.deploy-section{display:none;}
+.deploy-section.active{display:block;}
+.btn{padding:7px 16px;border:none;border-radius:3px;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit;}
+.btn-primary{background:var(--forti-red);color:white;}
+.btn-green{background:#2E7D32;color:white;}
+.btn-ghost{background:transparent;border:1px solid var(--forti-input-border);color:var(--forti-text-secondary);}
+.btn:hover{opacity:.88;}
+.btn-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;}
+#smsg,.emsg{font-size:12px;font-weight:500;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead th{background:var(--forti-table-head);border:1px solid var(--forti-border);padding:7px 11px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--forti-text-secondary);text-align:left;}
 tbody td{border:1px solid var(--forti-border);padding:7px 11px;vertical-align:top;}
@@ -68,833 +90,1260 @@ tbody tr:nth-child(even) td{background:var(--forti-table-stripe);}
 .badge-opt{background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;}
 .badge-mand{background:#FFF8EE;color:#8A5800;border:1px solid #F5D9A0;}
 .badge-inc{background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;}
-.sku{font-family:'Courier New',monospace;font-size:11px;color:#1A4E82;}
-.nc{color:var(--forti-text-muted);font-size:11px;}
-.tbl-actions{display:flex;gap:8px;margin-bottom:8px;}
-.compare-table th{font-size:10px;padding:6px 10px;}
-.compare-table td{font-size:11px;padding:5px 10px;}
-.chk{color:#2E7D32;font-weight:700;}
-.dash{color:#bbb;}
-.note-small{font-size:10px;color:var(--forti-text-muted);margin-top:3px;}
-.tab-bar{display:flex;gap:4px;margin-bottom:-1px;}
-.tab{padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--forti-border);border-bottom:none;border-radius:3px 3px 0 0;background:var(--forti-bg);color:var(--forti-text-secondary);}
-.tab.active{background:#fff;color:var(--forti-red);border-bottom:1px solid #fff;}
-.tab-panel{display:none;}
-.tab-panel.active{display:block;}
-.band-ind{display:none;background:#EEF3FF;border:1px solid #B8CBF5;border-radius:3px;padding:4px 10px;font-size:12px;color:#3557A5;margin-top:4px;}
+.sku-cell{font-family:'Courier New',monospace;font-size:11px;color:#1A4E82;}
+.nc{color:var(--forti-text-muted);}
+.callout{border-radius:3px;padding:9px 12px;font-size:12px;line-height:1.6;display:flex;gap:8px;margin-bottom:10px;}
+.info{background:var(--forti-info-bg);border:1px solid var(--forti-info-border);color:var(--forti-info-text);}
+.warn{background:var(--forti-warn-bg);border:1px solid var(--forti-warn-border);color:var(--forti-warn-text);}
+#bom-preview{display:none;margin-top:14px;}
+.addon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px;margin-top:8px;}
+.addon-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid var(--forti-border);border-radius:3px;background:white;}
+.addon-item input[type=checkbox]{margin-top:2px;accent-color:var(--forti-red);flex-shrink:0;}
+.addon-item .ai-label{font-size:12px;font-weight:500;color:var(--forti-text);}
+.addon-item .ai-sku{font-size:10px;font-family:'Courier New',monospace;color:#1A4E82;}
+.addon-item.disabled{opacity:.4;pointer-events:none;}
+.mode-toggle{display:flex;gap:0;border:1px solid var(--forti-border);border-radius:3px;overflow:hidden;margin-bottom:12px;width:fit-content;}
+.mode-btn{padding:5px 14px;cursor:pointer;background:white;border:none;font-size:12px;font-family:inherit;color:var(--forti-text-secondary);font-weight:500;}
+.mode-btn.active{background:var(--forti-red);color:white;}
+.sizing-metric{background:white;border:1px solid var(--forti-border);border-radius:4px;padding:12px 16px;text-align:center;}
+.sizing-metric .val{font-size:24px;font-weight:700;color:var(--forti-red);}
+.sizing-metric .lbl{font-size:11px;color:var(--forti-text-muted);margin-top:2px;}
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px;}
+.arch-card{border:1px solid var(--forti-border);border-radius:4px;padding:12px;background:white;margin-bottom:8px;}
+.arch-card .ac-title{font-weight:700;font-size:12px;color:var(--forti-text);margin-bottom:4px;}
+.arch-card .ac-desc{font-size:11px;color:var(--forti-text-secondary);}
+.arch-card .ac-use{font-size:11px;color:var(--forti-info-text);margin-top:4px;}
+.psu-section{margin-top:10px;padding:8px 10px;background:var(--forti-table-stripe);border-radius:3px;border:1px solid var(--forti-border);}
+#stale-banner{display:none;background:#FEF0EE;color:#C0392B;border:1px solid #F5C6C2;border-radius:3px;padding:9px 12px;margin-bottom:14px;font-size:12px;}
+.build-stamp{margin-top:18px;padding-top:10px;border-top:1px solid var(--forti-border);font-size:11px;color:var(--forti-text-muted);text-align:right;}
+.section-divider{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--forti-text-muted);margin:14px 0 8px;border-bottom:1px solid var(--forti-border);padding-bottom:4px;}
+.vm-band-info{background:var(--forti-info-bg);border:1px solid var(--forti-info-border);border-radius:3px;padding:6px 12px;font-size:12px;color:var(--forti-info-text);margin-top:6px;display:none;}
+.qa-table td,.qa-table th{font-size:11px;padding:5px 8px;}
+/* Cloud per-device row */
+.cld-dev-row{border:1px solid var(--forti-border);border-radius:4px;padding:10px 12px;background:var(--forti-white);margin-bottom:8px;transition:border-color .15s;}
+.cld-dev-row:hover{border-color:#B8CBF5;}
+.cld-model-search{font-size:12px!important;padding:5px 8px!important;margin-bottom:4px;}
+.cld-sku-pill{display:none;margin-top:6px;padding:4px 10px;background:var(--forti-info-bg);border:1px solid var(--forti-info-border);border-radius:3px;font-size:11px;color:var(--forti-info-text);}
 </style>
 </head>
 <body>
 
-<!-- PAGE HEADER -->
+<div id="stale-banner">
+  ⚠ A newer version of this page is available.
+  <button onclick="location.reload(true)" style="margin-left:8px;background:var(--forti-red);color:white;border:none;padding:3px 10px;border-radius:3px;cursor:pointer;">Reload</button>
+</div>
+
 <div class="page-header">
-  <div class="icon-box">
-    <svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 3h18v4H3zm0 6h18v4H3zm0 6h18v4H3z"/></svg>
-  </div>
+  <div class="page-icon"></div>
   <div>
-    <h1>FortiAnalyzer™ BOM Generator</h1>
-    <p>Unified Data Lake, Visibility &amp; Automation · FAZ-OG-R24-20251218</p>
+    <div class="page-title">FortiAnalyzer</div>
+    <div class="page-sub">Unified Data Lake · SIEM · SOAR &nbsp;|&nbsp; FAZ-OG-R24-20251218 &nbsp;|&nbsp; Verified against 2026Q2 price list</div>
   </div>
 </div>
 
-<!-- DEPLOYMENT TYPE OVERVIEW -->
-<div class="card">
-  <div class="card-header">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--forti-text-secondary)"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.5 7.5L13 17v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5V2.05z"/></svg>
-    Deployment Type Comparison
-  </div>
-  <div class="card-body" style="overflow-x:auto;">
-    <table class="compare-table">
-      <thead>
-        <tr>
-          <th>Feature</th>
-          <th>Appliance (On-Prem)</th>
-          <th>VM (On-Prem)</th>
-          <th>FortiAnalyzer Cloud</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Ingestion-Based License</td><td class="chk">✓</td><td class="chk">✓</td><td class="dash">—</td></tr>
-        <tr><td>Per-Device License</td><td class="dash">—</td><td class="dash">—</td><td class="chk">✓</td></tr>
-        <tr><td>GB/Day Expansion</td><td class="dash">—</td><td class="chk">✓</td><td class="chk">✓</td></tr>
-        <tr><td>3rd-Party Logging</td><td class="chk">✓</td><td class="chk">✓</td><td class="nc" style="font-size:11px;">Via Cloud Connector*</td></tr>
-        <tr><td>Multi-Tenancy (ADOM)</td><td class="chk">✓</td><td class="chk">✓</td><td class="nc" style="font-size:11px;">FortiCloud OU</td></tr>
-        <tr><td>FortiAI Assist</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td></tr>
-        <tr><td>Security Automation</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td></tr>
-        <tr><td>IOC &amp; Outbreak Detection</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td></tr>
-        <tr><td>FortiTIP Integration</td><td class="chk">✓</td><td class="dash">—</td><td class="dash">—</td></tr>
-        <tr><td>High Availability</td><td class="chk">✓</td><td class="chk">✓</td><td class="dash">N/A</td></tr>
-        <tr><td>Log Forwarding</td><td class="chk">✓</td><td class="chk">✓</td><td class="dash">—</td></tr>
-        <tr><td>FortiCare Elite</td><td class="chk">✓</td><td class="chk">✓</td><td class="dash">N/A</td></tr>
-        <tr><td>Collector Mode</td><td class="chk">✓</td><td class="chk">✓</td><td class="dash">N/A</td></tr>
-        <tr><td>FortiFlex</td><td class="dash">N/A</td><td class="chk">✓</td><td class="dash">N/A</td></tr>
-        <tr><td>FAZaaS</td><td class="chk">✓</td><td class="dash">N/A</td><td class="dash">N/A</td></tr>
-      </tbody>
-    </table>
-    <div class="note-small" style="margin-top:6px;">* 3rd-party log sources via on-prem FortiAnalyzer Cloud Connector.</div>
-  </div>
+<div class="tabs">
+  <button class="tab active" data-panel="builder" onclick="switchTab('builder')">Builder</button>
+  <button class="tab" data-panel="sizing" onclick="switchTab('sizing')">Sizing &amp; Architecture</button>
+  <button class="tab" data-panel="examples" onclick="switchTab('examples')">Example BOMs</button>
+  <button class="tab" data-panel="buildreport" id="tab-buildreport" style="display:none;" onclick="switchTab('buildreport')">Build Report</button>
 </div>
 
-<!-- DEPLOYMENT TYPE TABS -->
-<div class="card">
-  <div class="card-header">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--forti-text-secondary)"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-    Select Deployment Type <span class="req">*</span>
-  </div>
-  <div class="card-body" style="padding-bottom:0;">
-    <div class="tab-bar">
-      <div class="tab active" id="tab-hw" onclick="switchTab('hw')">Hardware Appliance</div>
-      <div class="tab" id="tab-vm" onclick="switchTab('vm')">VM (On-Prem)</div>
-      <div class="tab" id="tab-cloud" onclick="switchTab('cloud')">FortiAnalyzer Cloud</div>
+<!-- ===== BUILDER ===== -->
+<div class="tab-panel active" id="panel-builder">
+  <div class="card">
+    <div class="card-header">Deployment Type</div>
+    <div class="card-body">
+      <div class="deploy-tabs">
+        <button class="dtype-btn active" onclick="setDeploy('appliance')">🖥 Appliance</button>
+        <button class="dtype-btn" onclick="setDeploy('vmsub')">☁ VM Subscription (S-series)</button>
+        <button class="dtype-btn" onclick="setDeploy('vmperp')">📦 VM Perpetual</button>
+        <button class="dtype-btn" onclick="setDeploy('cloud')">🌐 FortiAnalyzer Cloud</button>
+      </div>
+
+      <!-- APPLIANCE -->
+      <div class="deploy-section active" id="ds-appliance">
+        <div class="section-divider">Hardware Model</div>
+        <div class="model-grid" id="hw-model-grid"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Quantity <span style="color:var(--forti-red)">*</span></label>
+            <input type="number" id="hw-qty" min="1" value="1" style="width:100px;" oninput="resetPreview()">
+            <div class="err" id="err-hw-qty">Enter quantity ≥ 1</div>
+          </div>
+          <div class="form-group">
+            <label>Purchase Type</label>
+            <select id="hw-purchase-type" onchange="resetPreview()">
+              <option value="new-bundle">New — Hardware + Enterprise Bundle (best value)</option>
+              <option value="new-hw-care">New — Hardware + FortiCare Premium support only</option>
+              <option value="renew-bundle">Renewal — Enterprise Bundle</option>
+              <option value="renew-care">Renewal — FortiCare Premium support only</option>
+            </select>
+          </div>
+        </div>
+        <div id="hw-psu-note" class="psu-section" style="display:none;">
+          <span style="font-size:11px;color:var(--forti-text-secondary);">⚡ <strong>Replacement PSU:</strong> <span id="psu-sku-text" class="sku-cell"></span> — <span id="psu-desc-text"></span></span>
+          <label style="display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;cursor:pointer;">
+            <input type="checkbox" id="hw-add-psu" onchange="resetPreview()"> Add replacement PSU to BOM
+          </label>
+        </div>
+        <div class="section-divider" style="margin-top:10px;">Optional Service Add-ons</div>
+        <div class="addon-grid" id="hw-addons"></div>
+      </div>
+
+      <!-- VM SUBSCRIPTION -->
+      <div class="deploy-section" id="ds-vmsub">
+        <div class="callout info">💡 <div>VM Subscription (S-series) licenses are stackable. Enter the GB/Day you need per node and the calculator packs the optimal combination of 500/50/5 GB/Day SKUs automatically. For HA or multi-node deployments, configure each node separately and accumulate them into the preview before adding to the Project BOM.</div></div>
+
+        <div class="section-divider">Node Configuration</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Node label (optional)</label>
+            <input type="text" id="vms-node-label" placeholder="e.g. Node 1, Primary, Site A" style="max-width:220px;">
+          </div>
+          <div class="form-group">
+            <label>GB/Day needed for this node <span style="color:var(--forti-red)">*</span></label>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" id="vms-gbday" min="1" value="5" style="width:110px;" oninput="onVMSGbDayChange()">
+              <div class="err" id="err-vms-gbday" style="display:none;">Enter a value ≥ 1</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live packing breakdown -->
+        <div id="vms-pack-preview" style="display:none;margin-bottom:14px;">
+          <div class="section-divider">License Breakdown</div>
+          <div id="vms-pack-table-wrap" style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>SKU</th><th>Description</th><th>Qty</th><th>GB/Day</th></tr></thead>
+              <tbody id="vms-pack-tbody"></tbody>
+            </table>
+          </div>
+          <div id="vms-pack-total" style="font-size:12px;color:var(--forti-info-text);background:var(--forti-info-bg);border:1px solid var(--forti-info-border);border-radius:3px;padding:5px 12px;margin-top:6px;"></div>
+        </div>
+
+        <div class="section-divider">Optional Service Add-ons <span style="font-size:10px;font-weight:400;color:var(--forti-text-muted);">(applied to this node)</span></div>
+        <div class="addon-grid" id="vms-addons"></div>
+
+        <div style="margin-top:14px;">
+          <button class="btn btn-primary" onclick="vmsAddNode()" id="vms-add-node-btn">Add Node to Preview</button>
+          <span style="font-size:12px;color:var(--forti-text-muted);margin-left:10px;" id="vms-node-count-msg"></span>
+        </div>
+
+        <!-- Accumulated nodes preview -->
+        <div id="vms-accumulated" style="display:none;margin-top:14px;">
+          <div class="section-divider" style="display:flex;justify-content:space-between;align-items:center;">
+            <span>Accumulated Nodes</span>
+            <button class="btn btn-ghost" style="font-size:11px;padding:2px 10px;" onclick="vmsClearAll()">Clear All</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Node</th><th>SKU</th><th>Description</th><th>Qty</th><th>Type</th><th></th></tr></thead>
+              <tbody id="vms-accum-tbody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--forti-text-secondary);" id="vms-accum-summary"></div>
+        </div>
+      </div>
+
+      <!-- VM PERPETUAL -->
+      <div class="deploy-section" id="ds-vmperp">
+        <div class="callout info">💡 <div>Enter total GB/Day needed — licenses are packed automatically (largest-first). Support and services are purchased separately and must match your GB/Day band.</div></div>
+        <div class="section-divider">Log Volume</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Total GB/Day needed <span style="color:var(--forti-red)">*</span></label>
+            <input type="number" id="vmp-gbday" min="1" value="10" oninput="onVMPerpChange()" style="width:140px;">
+            <div class="err" id="err-vmp-gbday">Enter a value ≥ 1</div>
+            <div class="vm-band-info" id="vmp-band-info"></div>
+          </div>
+        </div>
+        <div class="section-divider">Support Level</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Support</label>
+            <select id="vmp-support" onchange="resetPreview()">
+              <option value="premium">FortiCare Premium (required)</option>
+              <option value="elite">FortiCare Elite (includes Premium features)</option>
+            </select>
+          </div>
+        </div>
+        <div class="section-divider">Optional Service Add-ons</div>
+        <div class="addon-grid" id="vmp-addons"></div>
+      </div>
+
+      <!-- FAZ CLOUD -->
+      <div class="deploy-section" id="ds-cloud">
+        <div class="section-divider">Cloud License Model</div>
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="cld-mode-dev" onclick="setCldMode('device')">Per-Device (FortiGate / FortiWiFi / FortiGateRugged / FortiWeb)</button>
+          <button class="mode-btn" id="cld-mode-gbday" onclick="setCldMode('gbday')">GB/Day Subscription</button>
+        </div>
+
+        <!-- Per-Device -->
+        <div id="cld-dev-section">
+          <div class="callout info">💡 <div>Select each FortiGate or FortiWiFi model from the dropdown — all entries sourced from the 2026Q2 price list. Each device requires its own per-device subscription. Use "+ Add Another Device" to add multiple device types.</div></div>
+          <div id="cld-dev-rows"></div>
+          <button class="btn btn-ghost" style="font-size:12px;padding:4px 12px;margin-top:2px;" onclick="addCloudDevRow()">+ Add Another Device</button>
+          <div class="section-divider" style="margin-top:12px;">Optional GB/Day Add-on (if per-device entitlement is insufficient)</div>
+          <div class="callout info" style="font-size:11px;margin-bottom:8px;">Only needed if daily log volume exceeds the per-device entitlement. Capacity is shared across the account.</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>GB/Day add-on</label>
+              <select id="cld-dev-gbday-band" onchange="resetPreview()">
+                <option value="">None</option>
+                <option value="fc1">5 GB/Day (FC1)</option>
+                <option value="fc2">50 GB/Day (FC2)</option>
+                <option value="fc3">500 GB/Day (FC3)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Qty</label>
+              <input type="number" id="cld-dev-gbday-qty" min="1" value="1" style="width:80px;" oninput="resetPreview()">
+            </div>
+          </div>
+        </div>
+
+        <!-- GB/Day -->
+        <div id="cld-gbday-section" style="display:none;">
+          <div class="callout info">💡 <div>GB/Day subscription is required for FortiClient, FortiMail, FortiNDR, FortiEndpoint, and third-party devices. Capacity is shared across all devices in the FortiCloud account.</div></div>
+          <div class="model-grid">
+            <div class="model-card selected" id="cld-fc1" onclick="selectCldBand('fc1')"><div class="mc-sku">FC1 · 5 GB/Day</div><div class="mc-sub">FAZ Cloud Storage</div><div class="mc-cap">FC1-10-AZCLD-463-01-DD</div></div>
+            <div class="model-card" id="cld-fc2" onclick="selectCldBand('fc2')"><div class="mc-sku">FC2 · 50 GB/Day</div><div class="mc-sub">FAZ Cloud Storage</div><div class="mc-cap">FC2-10-AZCLD-463-01-DD</div></div>
+            <div class="model-card" id="cld-fc3" onclick="selectCldBand('fc3')"><div class="mc-sku">FC3 · 500 GB/Day</div><div class="mc-sub">FAZ Cloud Storage</div><div class="mc-cap">FC3-10-AZCLD-463-01-DD</div></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Quantity <span style="color:var(--forti-red)">*</span></label>
+              <input type="number" id="cld-gbday-qty" min="1" value="1" style="width:100px;" oninput="resetPreview()">
+              <div class="err" id="err-cld-gbday-qty">Enter quantity ≥ 1</div>
+            </div>
+          </div>
+          <div class="section-divider">Optional Service Add-ons</div>
+          <div class="addon-grid" id="cld-addons"></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ── HARDWARE TAB ── -->
-  <div class="tab-panel active card-body" id="panel-hw" style="border-top:1px solid var(--forti-border);">
-    <label>Hardware Model <span class="req">*</span></label>
-    <div class="model-grid" id="hw-model-grid">
-      <div class="mc" onclick="selectHW('150G')"><div class="mn">FAZ-150G</div><div class="md">Entry · 500GB</div></div>
-      <div class="mc" onclick="selectHW('300G')"><div class="mn">FAZ-300G</div><div class="md">Entry · 4TB</div></div>
-      <div class="mc" onclick="selectHW('810G')"><div class="mn">FAZ-810G</div><div class="md">Mid-range</div></div>
-      <div class="mc" onclick="selectHW('1000G')"><div class="mn">FAZ-1000G</div><div class="md">Mid-range</div></div>
-      <div class="mc" onclick="selectHW('3100G')"><div class="mn">FAZ-3100G</div><div class="md">Enterprise</div></div>
-      <div class="mc" onclick="selectHW('3510G')"><div class="mn">FAZ-3510G</div><div class="md">Enterprise</div></div>
-      <div class="mc" onclick="selectHW('3750G')"><div class="mn">FAZ-3750G</div><div class="md">Enterprise</div></div>
-    </div>
-    <div class="err" id="err-hw-model">Please select a hardware model.</div>
-
-    <div class="grid2" style="margin-top:12px;">
-      <div>
-        <label>Quantity <span class="req">*</span></label>
-        <input type="number" id="hw-qty" min="1" value="1" oninput="onHwQtyChange()">
-        <div class="err" id="err-hw-qty">Quantity must be ≥ 1.</div>
-      </div>
-      <div>
-        <label>Bundle Type <span class="req">*</span></label>
-        <select id="hw-bundle" onchange="onHwBundleChange()">
-          <option value="bundle">Hardware Bundle (BDL-1263-DD) — Best Value</option>
-          <option value="hw-only">Hardware Only (no services)</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="hw-ha-section" style="margin-top:10px;">
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-        <input type="checkbox" id="hw-ha" onchange="onHwHaChange()" accent-color="var(--forti-red)"> Enable High Availability (HA) — doubles quantity, same model required
-      </label>
-      <div id="hw-ha-info" class="callout info" style="display:none;margin-top:6px;">
-        HA requires 2× same model, same firmware, same GB/day. Each node needs its own FortiAI subscription if selected.
-      </div>
-    </div>
-
-    <div id="hw-fortitip-row" style="margin-top:10px;">
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-        <input type="checkbox" id="hw-fortitip"> Add FortiTIP SaaS Extension (included in Hardware Bundle)
-      </label>
-      <div class="note-small">FortiTIP is exclusive to appliance deployments.</div>
-    </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="generateBOM()">Preview BOM</button>
+    <button class="btn btn-green" onclick="addToProjectBOM()">Add to Project BOM</button>
+    <button class="btn btn-ghost" onclick="resetForm()">Reset</button>
+    <span id="smsg"></span>
   </div>
 
-  <!-- ── VM TAB ── -->
-  <div class="tab-panel card-body" id="panel-vm" style="border-top:1px solid var(--forti-border);">
-    <div class="callout info">
-      <span>ℹ</span>
-      <span><strong>VM Subscription Bundle</strong> is all-in-one (FortiCare Premium + IOC + Outbreak + Security Automation). <strong>VM Perpetual</strong> has à-la-carte services; add-on tier must match GB/day tier.</span>
-    </div>
-
-    <label style="margin-top:12px;">VM License Type <span class="req">*</span></label>
-    <select id="vm-type" onchange="onVmTypeChange()">
-      <option value="sub">VM Subscription Bundle (FCx-10-AZVMS-465-01-DD) — Fully Stackable</option>
-      <option value="perp">VM Perpetual (FAZ-VM-GBx) — À-la-carte Services</option>
-    </select>
-
-    <label>GB/Day Ingestion Tier <span class="req">*</span></label>
-    <select id="vm-tier" onchange="onVmTierChange()">
-      <option value="">— Select tier —</option>
-      <option value="5">5 GB/Day</option>
-      <option value="25">25 GB/Day (Perpetual only)</option>
-      <option value="50">50 GB/Day (Subscription)</option>
-      <option value="100">100 GB/Day (Perpetual only)</option>
-      <option value="500">500 GB/Day</option>
-      <option value="2000">2000 GB/Day (Perpetual only)</option>
-    </select>
-    <div class="err" id="err-vm-tier">Please select a GB/day tier.</div>
-    <div class="band-ind" id="vm-band-ind">Band: <code id="vm-band-text">FC1</code> · <span id="vm-band-desc">1–6 GB/Day</span></div>
-
-    <div class="grid2" style="margin-top:12px;">
-      <div>
-        <label>Quantity (stacks) <span class="req">*</span></label>
-        <input type="number" id="vm-qty" min="1" value="1">
-        <div class="err" id="err-vm-qty">Quantity must be ≥ 1.</div>
+  <div id="bom-preview">
+    <div class="card">
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>BOM Preview</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost" style="font-size:11px;padding:3px 10px;" onclick="copyTSV()">Copy TSV</button>
+          <button class="btn btn-ghost" style="font-size:11px;padding:3px 10px;" onclick="window.print()">Print</button>
+        </div>
       </div>
-      <div id="vm-ha-col">
-        <label style="margin-top:0;display:flex;align-items:center;gap:8px;cursor:pointer;padding-top:20px;">
-          <input type="checkbox" id="vm-ha"> Enable HA (2× identical VM required)
-        </label>
+      <div style="overflow-x:auto;">
+        <table id="bom-table">
+          <thead><tr><th>Part Number</th><th>Description</th><th>Qty</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody id="bom-tbody"></tbody>
+        </table>
       </div>
-    </div>
-
-    <!-- Perpetual-only: à-la-carte services -->
-    <div id="vm-perp-services" style="margin-top:12px;display:none;">
-      <label>À-la-carte Services (Perpetual VM)</label>
-      <div class="addon-row">
-        <input type="checkbox" id="vp-forticare" checked>
-        <div class="addon-label"><strong>FortiCare Premium Support</strong><span>Required for support. FCx-10-LV0VM-248-02-DD</span></div>
-      </div>
-      <div class="addon-row">
-        <input type="checkbox" id="vp-ioc" checked>
-        <div class="addon-label"><strong>IOC &amp; Outbreak Detection Service</strong><span>Daily IOC updates + outbreak alerts. FCx-10-LV0VM-661-02-DD</span></div>
-      </div>
-      <div class="addon-row">
-        <input type="checkbox" id="vp-soc" checked>
-        <div class="addon-label"><strong>Security Automation Service</strong><span>SIEM rules, event handlers, SOAR playbooks. FCx-10-LV0VM-335-02-DD</span></div>
-      </div>
-      <div class="addon-row">
-        <input type="checkbox" id="vp-elite">
-        <div class="addon-label"><strong>FortiCare Elite (replaces Premium)</strong><span>Enhanced SLA support. FCx-10-LV0VM-285-02-DD</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── CLOUD TAB ── -->
-  <div class="tab-panel card-body" id="panel-cloud" style="border-top:1px solid var(--forti-border);">
-    <div class="callout info">
-      <span>ℹ</span>
-      <span>FortiAnalyzer Cloud includes IOC, Outbreak Detection, and Security Automation. Default retention: 3 months analytics / 12 months archive.</span>
-    </div>
-
-    <label style="margin-top:12px;">Cloud License Model <span class="req">*</span></label>
-    <select id="cld-model" onchange="onCldModelChange()">
-      <option value="perdev">Per-Device Subscription (FortiGate / FortiWeb)</option>
-      <option value="gbday">GB/Day Subscription (FortiClient, FortiMail, 3rd-party, extra capacity)</option>
-    </select>
-
-    <!-- Per-Device -->
-    <div id="cld-perdev-section">
-      <label>Device Type <span class="req">*</span></label>
-      <select id="cld-dev-type">
-        <option value="fg">FortiGate</option>
-        <option value="fw">FortiWeb</option>
-      </select>
-
-      <label>FortiGate / FortiWeb Model Code <span class="req">*</span></label>
-      <input type="text" id="cld-model-code" placeholder="e.g. GT70G, FWB00" oninput="onCldModelCodeInput()" style="text-transform:uppercase;">
-      <div class="err" id="err-cld-model-code">Enter a model code (e.g. GT70G).</div>
-      <div class="note-small">Used to build SKU: FC-10-[MODEL]-585-02-DD. Each device requires its own license.</div>
-
-      <label>Quantity of Devices <span class="req">*</span></label>
-      <input type="number" id="cld-dev-qty" min="1" value="1">
-      <div class="err" id="err-cld-dev-qty">Quantity must be ≥ 1.</div>
-
-      <div style="margin-top:8px;">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-          <input type="checkbox" id="cld-ha-pair"> Devices in HA pairs (2× licenses per HA pair)
-        </label>
-      </div>
-
-      <div style="margin-top:8px;">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-          <input type="checkbox" id="cld-extra-gb"> Add GB/Day expansion (beyond default device entitlement)
-        </label>
-      </div>
-      <div id="cld-extra-gb-section" style="display:none;margin-top:8px;">
-        <label>GB/Day Expansion Tier</label>
-        <select id="cld-extra-gb-tier">
-          <option value="5">5 GB/Day — FC1-10-AZCLD-463-01-DD</option>
-          <option value="50">50 GB/Day — FC2-10-AZCLD-463-01-DD</option>
-          <option value="500">500 GB/Day — FC3-10-AZCLD-463-01-DD</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- GB/Day -->
-    <div id="cld-gbday-section" style="display:none;">
-      <label>GB/Day Tier <span class="req">*</span></label>
-      <select id="cld-gb-tier">
-        <option value="5">5 GB/Day — FC1-10-AZCLD-463-01-DD</option>
-        <option value="50">50 GB/Day — FC2-10-AZCLD-463-01-DD</option>
-        <option value="500">500 GB/Day — FC3-10-AZCLD-463-01-DD</option>
-      </select>
-      <div class="note-small">Capacity is shared across all devices in the same FortiCloud account. Purchase multiple for &gt;5 GB/day if needed.</div>
-      <label>Quantity <span class="req">*</span></label>
-      <input type="number" id="cld-gb-qty" min="1" value="1">
-      <div class="err" id="err-cld-gb-qty">Quantity must be ≥ 1.</div>
     </div>
   </div>
 </div>
 
-<!-- ADD-ON SERVICES (universal) -->
-<div class="card">
-  <div class="card-header">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--forti-text-secondary)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-    Optional Add-On Services
+<!-- ===== SIZING ===== -->
+<div class="tab-panel" id="panel-sizing">
+  <div class="card">
+    <div class="card-header">Log Rate (LPS) Calculator</div>
+    <div class="card-body">
+      <div class="callout info" style="margin-bottom:12px;">📐 <div>Estimate your Logs Per Second requirement — the primary sizing metric. Based on the FortiAnalyzer 7.6 Architecture Guide.</div></div>
+      <div class="mode-toggle" style="margin-bottom:14px;">
+        <button class="mode-btn active" id="lps-mode-sess" onclick="setLpsMode('sessions')">From Sessions/sec</button>
+        <button class="mode-btn" id="lps-mode-users" onclick="setLpsMode('users')">From Users</button>
+      </div>
+      <div id="lps-sessions-form">
+        <div class="form-row">
+          <div class="form-group"><label>Sessions per second</label><input type="number" id="lps-sess" min="0" value="1000" oninput="calcLPS()"></div>
+        </div>
+        <div class="section-divider">Security Features Enabled</div>
+        <div class="addon-grid">
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">Antivirus (+5%)</div></div></label>
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">IPS (+5%)</div></div></label>
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">Application Control (+20%)</div></div></label>
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">Web Filtering (+20%)</div></div></label>
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">DNS (+5%)</div></div></label>
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">SD-WAN (+7.5%)</div></div></label>
+        </div>
+      </div>
+      <div id="lps-users-form" style="display:none;">
+        <div class="form-row">
+          <div class="form-group"><label>Total users</label><input type="number" id="lps-users" min="1" value="500" oninput="calcLPS()"></div>
+          <div class="form-group"><label>% Active per day</label><input type="number" id="lps-active-pct" min="1" max="100" value="50" oninput="calcLPS()"></div>
+        </div>
+        <div class="section-divider">Security Features</div>
+        <div class="addon-grid">
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">Antivirus (+5%)</div></div></label>
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">IPS (+5%)</div></div></label>
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">Application Control (+20%)</div></div></label>
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">Web Filtering (+20%)</div></div></label>
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">DNS (+5%)</div></div></label>
+          <label class="addon-item"><input type="checkbox" onchange="calcLPS()"> <div><div class="ai-label">SD-WAN (+7.5%)</div></div></label>
+        </div>
+      </div>
+      <div class="metrics-row" style="margin-top:14px;">
+        <div class="sizing-metric"><div class="val" id="lps-val">-</div><div class="lbl">Estimated LPS</div></div>
+        <div class="sizing-metric"><div class="val" id="gbday-val">-</div><div class="lbl">Est. GB/Day (archive)</div></div>
+        <div class="sizing-metric"><div class="val" id="model-rec-val" style="font-size:16px;">-</div><div class="lbl">Recommended model</div></div>
+      </div>
+    </div>
   </div>
-  <div class="card-body" id="addon-body">
-    <div class="addon-row" id="ao-ot">
-      <input type="checkbox" id="ao-ot-cb">
-      <div class="addon-label"><strong>OT Security Service</strong><span>Advanced OT analytics, risk/compliance reports, event handlers. FCx-10-xxxxx-159-0x-DD</span></div>
+  <div class="card">
+    <div class="card-header">Storage Requirements Calculator</div>
+    <div class="card-body">
+      <div class="callout info" style="margin-bottom:12px;">💾 <div>Archive logs ≈ 80 bytes/log. Analytic logs ≈ 150 bytes compressed (after 7 days), 600 bytes uncompressed.</div></div>
+      <div class="form-row">
+        <div class="form-group"><label>Log Rate (LPS)</label><input type="number" id="stor-lps" min="1" value="1000" oninput="calcStorage()"></div>
+        <div class="form-group"><label>Archive Retention (days)</label><input type="number" id="stor-arch" min="1" value="365" oninput="calcStorage()"></div>
+        <div class="form-group"><label>Analytic Retention (days)</label><input type="number" id="stor-anal" min="1" value="90" oninput="calcStorage()"></div>
+      </div>
+      <div class="metrics-row">
+        <div class="sizing-metric"><div class="val" id="stor-archive-val">-</div><div class="lbl">Archive Storage (TiB)</div></div>
+        <div class="sizing-metric"><div class="val" id="stor-analytic-val">-</div><div class="lbl">Analytic Storage (TiB)</div></div>
+        <div class="sizing-metric"><div class="val" id="stor-total-val">-</div><div class="lbl">Total Storage (TiB)</div></div>
+      </div>
     </div>
-    <div class="addon-row" id="ao-asr">
-      <input type="checkbox" id="ao-asr-cb">
-      <div class="addon-label"><strong>Attack Surface Rating &amp; Compliance</strong><span>Security posture scoring, PCI/CIS compliance, Shadow-IT. FCx-10-xxxxx-175-0x-DD</span></div>
-    </div>
-    <div class="addon-row" id="ao-fortiai">
-      <input type="checkbox" id="ao-fortiai-cb" onchange="onFortiAiChange()">
-      <div class="addon-label"><strong>FortiAI Service</strong><span>GenAI-powered SOC analysis, triage and investigation. FCx-10-xxxxx-1118-0x-DD</span></div>
-    </div>
-    <div class="addon-row" id="ao-fortiai-topup" style="padding-left:32px;display:none;">
-      <input type="checkbox" id="ao-fortiai-topup-cb">
-      <div class="addon-label"><strong>FortiAI Token Top-Up</strong><span>Additional AI tokens (base subscription required). FC1-10-AITAZ-1089-02-DD</span></div>
-    </div>
-    <div class="addon-row" id="ao-managed">
-      <input type="checkbox" id="ao-managed-cb">
-      <div class="addon-label"><strong>Managed FortiAnalyzer Service</strong><span>SOCaaS monitoring of FAZ health, config &amp; performance. FCx-10-xxxxx-464-0x-DD</span></div>
-    </div>
-    <div class="addon-row" id="ao-backup">
-      <input type="checkbox" id="ao-backup-cb">
-      <div class="addon-label"><strong>Backup to Public Cloud Service</strong><span>10TB storage connector to public cloud. FC-10-FAZ00-286-02-DD</span></div>
-    </div>
-    <div class="addon-row" id="ao-elite" style="display:none;">
-      <input type="checkbox" id="ao-elite-cb">
-      <div class="addon-label"><strong>FortiCare Elite Upgrade</strong><span>Upgrade from Premium to Elite support tier. FCx-10-xxxxx-204-0x-DD</span></div>
+  </div>
+  <div class="card">
+    <div class="card-header">Architecture Patterns</div>
+    <div class="card-body">
+      <div class="arch-card"><div class="ac-title">🖥 Single Tier Standalone</div><div class="ac-desc">Single FortiAnalyzer unit. All features supported. Cost-effective and simple. No redundancy — scheduled backups recommended.</div><div class="ac-use">Best for: SOHO and SMB with limited devices where redundancy is not a requirement.</div></div>
+      <div class="arch-card"><div class="ac-title">🔄 Single Tier High Availability (HA)</div><div class="ac-desc">Up to 4 cluster members. Real-time log and data synchronization. Distributes reporting/FortiView load. Purchase 2× the same FAZ model. Each unit must also have its own FortiAI subscription (if used).</div><div class="ac-use">Best for: SMB/SME seeking real-time log redundancy.</div></div>
+      <div class="arch-card"><div class="ac-title">🌐 Multiple Tiers — Collector + Analyzer HA</div><div class="ac-desc">Collector layer per region for log ingestion and archiving. Analyzer layer in HA for analytics. Logs buffer at collector if WAN link fails. Collector mode works on even the lowest FAZ model.</div><div class="ac-use">Best for: Large international companies with regional sites needing centralized analytics.</div></div>
+      <div class="arch-card"><div class="ac-title">🏗 Multiple Tiers — FortiAnalyzer Fabric</div><div class="ac-desc">Fabric Supervisor provides centralized visibility across all member FAZ units. Regional SOC teams retain full analyzer capability. Note: No HA on Supervisor in FAZ 7.6 and earlier.</div><div class="ac-use">Best for: Multinational customers with regional SOC teams needing local analytics and central oversight.</div></div>
+      <div class="arch-card"><div class="ac-title">📊 FortiAnalyzer BigData</div><div class="ac-desc">Hadoop/Spark/Kafka architecture. Horizontal scalability and built-in data resiliency. Starting at 100,000 LPS. Ideal for high log ingestion, HA, and resiliency at scale.</div><div class="ac-use">Best for: Large-scale data centers and high-bandwidth deployments.</div></div>
     </div>
   </div>
 </div>
 
-<!-- ACTION BUTTONS -->
-<div class="card">
-  <div class="card-body">
-    <div class="btn-row">
-      <button class="btn-primary" onclick="generateBOM()">▶ Preview BOM</button>
-      <button class="btn-green" onclick="addToProjectBOM()">＋ Add to Project BOM</button>
-      <button class="btn-neutral" onclick="resetForm()">↺ Reset</button>
-      <span id="smsg"></span>
+<!-- ===== EXAMPLES ===== -->
+<div class="tab-panel" id="panel-examples">
+  <div class="card example-card" data-example-id="cloud-device">
+    <div class="card-header">Example 1 — FortiAnalyzer Cloud: FortiGate Per-Device Subscription</div>
+    <div style="padding:14px;">
+      <p style="color:var(--forti-text-secondary);font-size:12px;margin-bottom:12px;">3× FortiGate-70G devices sending logs to FortiAnalyzer Cloud. Each device requires its own per-device subscription. Default entitlement: 200 MB/day per FortiGate-70G.</p>
+      <div style="overflow-x:auto;"><table class="example-table">
+        <thead><tr><th>Part Number</th><th>Description</th><th>Qty</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td class="sku-cell">FC-10-GT70G-585-02-DD</td><td>FortiGate-70G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics, IOC, Outbreak Detection and Security Automation Service</td><td><input type="number" min="1" value="3" style="width:60px;"></td><td><span class="badge badge-req">REQUIRED</span></td></tr>
+          <tr><td class="sku-cell">FC1-10-AZCLD-463-01-DD</td><td class="nc">FortiAnalyzer Cloud Storage Add-On: 5 GB/Day — only needed if 200 MB/day default is exceeded</td><td><input type="number" min="0" value="0" style="width:60px;"></td><td><span class="badge badge-opt">OPTIONAL</span></td></tr>
+        </tbody>
+      </table></div>
+      <div style="margin-top:10px;">
+        <button class="btn btn-green" onclick="addExampleToProjectBOM('cloud-device')">Add Example to Project BOM</button>
+        <button class="btn btn-ghost" style="margin-left:6px;" onclick="resetExample('cloud-device')">Reset Example</button>
+        <span class="emsg" id="emsg-cloud-device" style="margin-left:8px;"></span>
+      </div>
+    </div>
+  </div>
+  <div class="card example-card" data-example-id="cloud-gbday">
+    <div class="card-header">Example 2 — FortiAnalyzer Cloud: GB/Day for FortiClient &amp; FortiMail</div>
+    <div style="padding:14px;">
+      <p style="color:var(--forti-text-secondary);font-size:12px;margin-bottom:12px;">No FortiGate or FortiWeb devices. Logs from FortiClient and FortiMail ingested via shared GB/Day capacity. No on-prem FortiAnalyzer required.</p>
+      <div style="overflow-x:auto;"><table class="example-table">
+        <thead><tr><th>Part Number</th><th>Description</th><th>Qty</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td class="sku-cell">FC1-10-AZCLD-463-01-DD</td><td>FortiAnalyzer Cloud Storage Add-On: 5 GB/Day for Central Logging &amp; Analytics. FortiCare Premium Support included.</td><td><input type="number" min="1" value="1" style="width:60px;"></td><td><span class="badge badge-req">REQUIRED</span></td></tr>
+          <tr><td class="sku-cell">FC1-10-AZCLD-159-01-DD</td><td class="nc">FortiAnalyzer Cloud OT Security Service — OT analytics, compliance reports, event handlers (5 GB/Day tier)</td><td><input type="number" min="0" value="0" style="width:60px;"></td><td><span class="badge badge-opt">OPTIONAL</span></td></tr>
+          <tr><td class="sku-cell">FC1-10-AZCLD-1118-01-DD</td><td class="nc">FortiAnalyzer Cloud FortiAI Subscription — GenAI powered SOC assistance (5 GB/Day tier)</td><td><input type="number" min="0" value="0" style="width:60px;"></td><td><span class="badge badge-opt">OPTIONAL</span></td></tr>
+        </tbody>
+      </table></div>
+      <div style="margin-top:10px;">
+        <button class="btn btn-green" onclick="addExampleToProjectBOM('cloud-gbday')">Add Example to Project BOM</button>
+        <button class="btn btn-ghost" style="margin-left:6px;" onclick="resetExample('cloud-gbday')">Reset Example</button>
+        <span class="emsg" id="emsg-cloud-gbday" style="margin-left:8px;"></span>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- BOM PREVIEW -->
-<div id="bom-section" class="card">
-  <div class="card-header">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--forti-text-secondary)"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>
-    BOM Preview
-  </div>
-  <div class="card-body">
-    <div class="tbl-actions">
-      <button class="btn-neutral" onclick="copyTSV()" style="font-size:12px;padding:5px 12px;">Copy TSV</button>
-      <button class="btn-neutral" onclick="window.print()" style="font-size:12px;padding:5px 12px;">Print</button>
-    </div>
-    <div style="overflow-x:auto;">
-      <table id="bom-table">
-        <thead><tr><th>Part Number</th><th>Description</th><th>Qty</th><th>Type</th><th>Notes</th></tr></thead>
-        <tbody id="bom-tbody"></tbody>
+<!-- ===== BUILD REPORT ===== -->
+<div class="tab-panel" id="panel-buildreport">
+  <div class="card">
+    <div class="card-header">Build Report — SKU Reconciliation</div>
+    <div style="overflow-x:auto;padding:14px;">
+      <table class="qa-table">
+        <thead><tr><th>Status</th><th>SKU / Pattern</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>✓ exact</td><td class="sku-cell">FAZ-150G / 300G / 810G / 1000G / 3100G / 3510G / 3750G</td><td>Hardware appliances — no term suffix</td></tr>
+          <tr><td>✓ exact</td><td class="sku-cell">FAZ-{model}-BDL-1263-DD</td><td>Hardware bundles — multi-term (-12/-36/-60), emitted as -DD</td></tr>
+          <tr><td>✓ exact</td><td class="sku-cell">FC-10-{code}-1263/247/159/175/1118/464/204-02-DD</td><td>Renew, support, and service add-ons — multi-term, all 7 models</td></tr>
+          <tr><td style="color:#C0392B;">⚠ single-term</td><td class="sku-cell">FC-10-FAZ00-286-02-12</td><td>Backup to Cloud — only -12 in price list; emitted literally</td></tr>
+          <tr><td>✓ exact</td><td class="sku-cell">FC1-10-AITAZ-1089-02-DD</td><td>FortiAI Token Top-up — multi-term</td></tr>
+          <tr><td>✓ exact</td><td class="sku-cell">SP-FAD400F-PS / SP-FAZ800G-PS</td><td>Replacement PSUs — no term</td></tr>
+          <tr><td>✓ exact</td><td class="sku-cell">FAZ-VM-GB1/5/25/100/500/2000</td><td>VM Perpetual — no term (perpetual hardware)</td></tr>
+          <tr><td>✓ exact</td><td class="sku-cell">FC1-7+FC4-10-LV0VM-*-02-DD</td><td>VM Perpetual services — all 7 bands, multi-term</td></tr>
+          <tr><td>✓ exact</td><td class="sku-cell">FC1/2/3-10-AZVMS-465-01-DD</td><td>VM Subscription bundles — multi-term</td></tr>
+          <tr><td>✓ exact</td><td class="sku-cell">FC1/2/3-10-AZCLD-463-01-DD and add-ons</td><td>FAZ Cloud GB/Day — multi-term</td></tr>
+          <tr><td>✓ exact</td><td class="sku-cell">FC-10-*-585-02-DD (216 models)</td><td>All per-device cloud SKUs embedded as verified searchable dropdown; includes FortiGate, FortiWiFi, FortiGateRugged, FortiGate-VM, FortiWeb</td></tr>
+          <tr><td style="color:#2E7D32;">✓ note</td><td>OG Typos</td><td>"FAZ- 3100G"/"FAZ- 3510G" spaces corrected; "FFC-10-AZ1KG-247" extra-F corrected</td></tr>
+        </tbody>
       </table>
     </div>
   </div>
 </div>
 
+<div class="build-stamp">Build <code>fortianalyzer-bomgen-20260514-120000</code> · Generated 2026-05-14 12:00 UTC</div>
+
 <script>
-/* =====================================================================
-   DATA MODELS
-   ===================================================================== */
+const FG_CLOUD_MODELS = [
+  {sku:'FC-10-F100F-585-02-DD',model:'FortiGate-100F',cat:'FortiGate Desktop',desc:'FortiGate-100F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F101F-585-02-DD',model:'FortiGate-101F',cat:'FortiGate Desktop',desc:'FortiGate-101F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F120G-585-02-DD',model:'FortiGate-120G',cat:'FortiGate Desktop',desc:'FortiGate-120G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F121G-585-02-DD',model:'FortiGate-121G',cat:'FortiGate Desktop',desc:'FortiGate-121G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0030E-585-02-DD',model:'FortiGate-30E',cat:'FortiGate Desktop',desc:'FortiGate-30E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG30G-585-02-DD',model:'FortiGate-30G',cat:'FortiGate Desktop',desc:'FortiGate-30G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-GT31G-585-02-DD',model:'FortiGate-31G',cat:'FortiGate Desktop',desc:'FortiGate-31G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0040F-585-02-DD',model:'FortiGate-40F',cat:'FortiGate Desktop',desc:'FortiGate-40F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F40FG-585-02-DD',model:'FortiGate-40F-3G4G',cat:'FortiGate Desktop',desc:'FortiGate-40F-3G4G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0050E-585-02-DD',model:'FortiGate-50E',cat:'FortiGate Desktop',desc:'FortiGate-50E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-GT50G-585-02-DD',model:'FortiGate-50G',cat:'FortiGate Desktop',desc:'FortiGate-50G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F50G5-585-02-DD',model:'FortiGate-50G-5G',cat:'FortiGate Desktop',desc:'FortiGate-50G-5G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F50GD-585-02-DD',model:'FortiGate-50G-DSL',cat:'FortiGate Desktop',desc:'FortiGate-50G-DSL 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F50GS-585-02-DD',model:'FortiGate-50G-SFP',cat:'FortiGate Desktop',desc:'FortiGate-50G-SFP 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F50GP-585-02-DD',model:'FortiGate-50G-SFP-PoE',cat:'FortiGate Desktop',desc:'FortiGate-50G-SFP-PoE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0051E-585-02-DD',model:'FortiGate-51E',cat:'FortiGate Desktop',desc:'FortiGate-51E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-GT51G-585-02-DD',model:'FortiGate-51G',cat:'FortiGate Desktop',desc:'FortiGate-51G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F51G5-585-02-DD',model:'FortiGate-51G-5G',cat:'FortiGate Desktop',desc:'FortiGate-51G-5G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F51GP-585-02-DD',model:'FortiGate-51G-SFP-PoE',cat:'FortiGate Desktop',desc:'FortiGate-51G-SFP-PoE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG60E-585-02-DD',model:'FortiGate-60E-DSL',cat:'FortiGate Desktop',desc:'FortiGate-60E-DSL 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG60J-585-02-DD',model:'FortiGate-60E-DSLJ',cat:'FortiGate Desktop',desc:'FortiGate-60E-DSLJ 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG60P-585-02-DD',model:'FortiGate-60E-POE',cat:'FortiGate Desktop',desc:'FortiGate-60E-POE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0060F-585-02-DD',model:'FortiGate-60F',cat:'FortiGate Desktop',desc:'FortiGate-60F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0061F-585-02-DD',model:'FortiGate-61F',cat:'FortiGate Desktop',desc:'FortiGate-61F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0070F-585-02-DD',model:'FortiGate-70F',cat:'FortiGate Desktop',desc:'FortiGate-70F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-GT70G-585-02-DD',model:'FortiGate-70G',cat:'FortiGate Desktop',desc:'FortiGate-70G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-G70GP-585-02-DD',model:'FortiGate-70G-PoE',cat:'FortiGate Desktop',desc:'FortiGate-70G-PoE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0071F-585-02-DD',model:'FortiGate-71F',cat:'FortiGate Desktop',desc:'FortiGate-71F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-GT71G-585-02-DD',model:'FortiGate-71G',cat:'FortiGate Desktop',desc:'FortiGate-71G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-G71GP-585-02-DD',model:'FortiGate-71G-PoE',cat:'FortiGate Desktop',desc:'FortiGate-71G-PoE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0080E-585-02-DD',model:'FortiGate-80E-POE',cat:'FortiGate Desktop',desc:'FortiGate-80E-POE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0080F-585-02-DD',model:'FortiGate-80F',cat:'FortiGate Desktop',desc:'FortiGate-80F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F80FC-585-02-DD',model:'FortiGate-80F-BYPASS',cat:'FortiGate Desktop',desc:'FortiGate-80F-BYPASS 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F80FD-585-02-DD',model:'FortiGate-80F-DSL',cat:'FortiGate Desktop',desc:'FortiGate-80F-DSL 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F80FP-585-02-DD',model:'FortiGate-80F-POE',cat:'FortiGate Desktop',desc:'FortiGate-80F-POE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0081E-585-02-DD',model:'FortiGate-81E-POE',cat:'FortiGate Desktop',desc:'FortiGate-81E-POE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0081F-585-02-DD',model:'FortiGate-81F',cat:'FortiGate Desktop',desc:'FortiGate-81F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F81FP-585-02-DD',model:'FortiGate-81F-POE',cat:'FortiGate Desktop',desc:'FortiGate-81F-POE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0090G-585-02-DD',model:'FortiGate-90G',cat:'FortiGate Desktop',desc:'FortiGate-90G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0091G-585-02-DD',model:'FortiGate-91G',cat:'FortiGate Desktop',desc:'FortiGate-91G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FR5G5-585-02-DD',model:'FortiGateRugged-50G-5G',cat:'FortiGate Desktop',desc:'FortiGateRugged-50G-5G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0069F-585-02-DD',model:'FortiGateRugged-60F',cat:'FortiGate Desktop',desc:'FortiGateRugged-60F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F60FI-585-02-DD',model:'FortiGateRugged-60F-3G4G',cat:'FortiGate Desktop',desc:'FortiGateRugged-60F-3G4G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-GR60G-585-02-DD',model:'FortiGateRugged-60G',cat:'FortiGate Desktop',desc:'FortiGateRugged-60G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-R60G5-585-02-DD',model:'FortiGateRugged-60G-5G',cat:'FortiGate Desktop',desc:'FortiGateRugged-60G-5G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-R60GM-585-02-DD',model:'FortiGateRugged-60G-M12',cat:'FortiGate Desktop',desc:'FortiGateRugged-60G-M12 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F70FB-585-02-DD',model:'FortiGateRugged-70F',cat:'FortiGate Desktop',desc:'FortiGateRugged-70F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F70FM-585-02-DD',model:'FortiGateRugged-70F-3G4G',cat:'FortiGate Desktop',desc:'FortiGateRugged-70F-3G4G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-GR70P-585-02-DD',model:'FortiGateRugged-70G',cat:'FortiGate Desktop',desc:'FortiGateRugged-70G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F70G5-585-02-DD',model:'FortiGateRugged-70G-5G-DUAL',cat:'FortiGate Desktop',desc:'FortiGateRugged-70G-5G-DUAL 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-R70GM-585-02-DD',model:'FortiGateRuggged-70G-5G',cat:'FortiGate Desktop',desc:'FortiGateRuggged-70G-5G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FW30G-585-02-DD',model:'FortiWiFi-30G',cat:'FortiGate Desktop',desc:'FortiWiFi-30G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-WF31G-585-02-DD',model:'FortiWiFi-31G',cat:'FortiGate Desktop',desc:'FortiWiFi-31G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-W040F-585-02-DD',model:'FortiWiFi-40F',cat:'FortiGate Desktop',desc:'FortiWiFi-40F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F40FI-585-02-DD',model:'FortiWiFi-40F-3G4G',cat:'FortiGate Desktop',desc:'FortiWiFi-40F-3G4G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FW50G-585-02-DD',model:'FortiWiFi-50G',cat:'FortiGate Desktop',desc:'FortiWiFi-50G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-W50G5-585-02-DD',model:'FortiWiFi-50G-5G-II',cat:'FortiGate Desktop',desc:'FortiWiFi-50G-5G-II 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-W50GD-585-02-DD',model:'FortiWiFi-50G-DSL',cat:'FortiGate Desktop',desc:'FortiWiFi-50G-DSL 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-WS50G-585-02-DD',model:'FortiWiFi-50G-SFP',cat:'FortiGate Desktop',desc:'FortiWiFi-50G-SFP 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FW51G-585-02-DD',model:'FortiWiFi-51G',cat:'FortiGate Desktop',desc:'FortiWiFi-51G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-W060F-585-02-DD',model:'FortiWiFi-60F',cat:'FortiGate Desktop',desc:'FortiWiFi-60F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-W061F-585-02-DD',model:'FortiWiFi-61F',cat:'FortiGate Desktop',desc:'FortiWiFi-61F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FW70G-585-02-DD',model:'FortiWiFi-70G',cat:'FortiGate Desktop',desc:'FortiWiFi-70G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FW70P-585-02-DD',model:'FortiWiFi-70G-PoE',cat:'FortiGate Desktop',desc:'FortiWiFi-70G-PoE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FW71G-585-02-DD',model:'FortiWiFi-71G',cat:'FortiGate Desktop',desc:'FortiWiFi-71G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-W080F-585-02-DD',model:'FortiWiFi-80F-2R',cat:'FortiGate Desktop',desc:'FortiWiFi-80F-2R 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-W80FS-585-02-DD',model:'FortiWiFi-80F-2R-3G4G-DSL',cat:'FortiGate Desktop',desc:'FortiWiFi-80F-2R-3G4G-DSL 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-W081F-585-02-DD',model:'FortiWiFi-81F-2R',cat:'FortiGate Desktop',desc:'FortiWiFi-81F-2R 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-W81FS-585-02-DD',model:'FortiWiFi-81F-2R-3G4G-DSL',cat:'FortiGate Desktop',desc:'FortiWiFi-81F-2R-3G4G-DSL 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-W81FD-585-02-DD',model:'FortiWiFi-81F-2R-3G4G-POE',cat:'FortiGate Desktop',desc:'FortiWiFi-81F-2R-3G4G-POE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-WP81F-585-02-DD',model:'FortiWiFi-81F-2R-POE',cat:'FortiGate Desktop',desc:'FortiWiFi-81F-2R-POE 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FW60F-585-02-DD',model:'FortiWifi-60E-DSL',cat:'FortiGate Desktop',desc:'FortiWifi-60E-DSL 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-00207-585-02-DD',model:'FortiGate-200E',cat:'FortiGate Mid-Range',desc:'FortiGate-200E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F200F-585-02-DD',model:'FortiGate-200F',cat:'FortiGate Mid-Range',desc:'FortiGate-200F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG2HG-585-02-DD',model:'FortiGate-200G',cat:'FortiGate Mid-Range',desc:'FortiGate-200G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-00208-585-02-DD',model:'FortiGate-201E',cat:'FortiGate Mid-Range',desc:'FortiGate-201E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F201F-585-02-DD',model:'FortiGate-201F',cat:'FortiGate Mid-Range',desc:'FortiGate-201F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F2H1G-585-02-DD',model:'FortiGate-201G',cat:'FortiGate Mid-Range',desc:'FortiGate-201G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0400E-585-02-DD',model:'FortiGate-400E',cat:'FortiGate Mid-Range',desc:'FortiGate-400E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F4HBE-585-02-DD',model:'FortiGate-400E-BYPASS',cat:'FortiGate Mid-Range',desc:'FortiGate-400E-BYPASS 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0400F-585-02-DD',model:'FortiGate-400F',cat:'FortiGate Mid-Range',desc:'FortiGate-400F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FD4H0-585-02-DD',model:'FortiGate-400F-DC',cat:'FortiGate Mid-Range',desc:'FortiGate-400F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG4H0-585-02-DD',model:'FortiGate-400G',cat:'FortiGate Mid-Range',desc:'FortiGate-400G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0401E-585-02-DD',model:'FortiGate-401E',cat:'FortiGate Mid-Range',desc:'FortiGate-401E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D4H1E-585-02-DD',model:'FortiGate-401E-DC',cat:'FortiGate Mid-Range',desc:'FortiGate-401E-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0401F-585-02-DD',model:'FortiGate-401F',cat:'FortiGate Mid-Range',desc:'FortiGate-401F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FD4H1-585-02-DD',model:'FortiGate-401F-DC',cat:'FortiGate Mid-Range',desc:'FortiGate-401F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG4H1-585-02-DD',model:'FortiGate-401G',cat:'FortiGate Mid-Range',desc:'FortiGate-401G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F6H0E-585-02-DD',model:'FortiGate-600E',cat:'FortiGate Mid-Range',desc:'FortiGate-600E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0600F-585-02-DD',model:'FortiGate-600F',cat:'FortiGate Mid-Range',desc:'FortiGate-600F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F6H1E-585-02-DD',model:'FortiGate-601E',cat:'FortiGate Mid-Range',desc:'FortiGate-601E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-0601F-585-02-DD',model:'FortiGate-601F',cat:'FortiGate Mid-Range',desc:'FortiGate-601F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-G7H0G-585-02-DD',model:'FortiGate-700G',cat:'FortiGate Mid-Range',desc:'FortiGate-700G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-G7H1G-585-02-DD',model:'FortiGate-701G',cat:'FortiGate Mid-Range',desc:'FortiGate-701G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-00804-585-02-DD',model:'FortiGate-800D',cat:'FortiGate Mid-Range',desc:'FortiGate-800D 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-00900-585-02-DD',model:'FortiGate-900D',cat:'FortiGate Mid-Range',desc:'FortiGate-900D 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG9H0-585-02-DD',model:'FortiGate-900G',cat:'FortiGate Mid-Range',desc:'FortiGate-900G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FD9H0-585-02-DD',model:'FortiGate-900G-DC',cat:'FortiGate Mid-Range',desc:'FortiGate-900G-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG9H1-585-02-DD',model:'FortiGate-901G',cat:'FortiGate Mid-Range',desc:'FortiGate-901G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FD9H1-585-02-DD',model:'FortiGate-901G-DC',cat:'FortiGate Mid-Range',desc:'FortiGate-901G-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-01006-585-02-DD',model:'FortiGate-1000D',cat:'FortiGate High-End',desc:'FortiGate-1000D 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F1K0F-585-02-DD',model:'FortiGate-1000F',cat:'FortiGate High-End',desc:'FortiGate-1000F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F1K1F-585-02-DD',model:'FortiGate-1001F',cat:'FortiGate High-End',desc:'FortiGate-1001F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F11HE-585-02-DD',model:'FortiGate-1100E',cat:'FortiGate High-End',desc:'FortiGate-1100E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F11DE-585-02-DD',model:'FortiGate-1100E-DC',cat:'FortiGate High-End',desc:'FortiGate-1100E-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F11E1-585-02-DD',model:'FortiGate-1101E',cat:'FortiGate High-End',desc:'FortiGate-1101E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F18HF-585-02-DD',model:'FortiGate-1800F',cat:'FortiGate High-End',desc:'FortiGate-1800F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D18HF-585-02-DD',model:'FortiGate-1800F-DC',cat:'FortiGate High-End',desc:'FortiGate-1800F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F18F1-585-02-DD',model:'FortiGate-1801F',cat:'FortiGate High-End',desc:'FortiGate-1801F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D18F1-585-02-DD',model:'FortiGate-1801F-DC',cat:'FortiGate High-End',desc:'FortiGate-1801F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-002KE-585-02-DD',model:'FortiGate-2000E',cat:'FortiGate High-End',desc:'FortiGate-2000E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F22HE-585-02-DD',model:'FortiGate-2200E',cat:'FortiGate High-End',desc:'FortiGate-2200E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F22E1-585-02-DD',model:'FortiGate-2201E',cat:'FortiGate High-End',desc:'FortiGate-2201E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-02K5E-585-02-DD',model:'FortiGate-2500E',cat:'FortiGate High-End',desc:'FortiGate-2500E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F26HF-585-02-DD',model:'FortiGate-2600F',cat:'FortiGate High-End',desc:'FortiGate-2600F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FD26F-585-02-DD',model:'FortiGate-2600F-DC',cat:'FortiGate High-End',desc:'FortiGate-2600F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F26F1-585-02-DD',model:'FortiGate-2601F',cat:'FortiGate High-End',desc:'FortiGate-2601F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FD261-585-02-DD',model:'FortiGate-2601F-DC',cat:'FortiGate High-End',desc:'FortiGate-2601F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-03007-585-02-DD',model:'FortiGate-3000D',cat:'FortiGate High-End',desc:'FortiGate-3000D 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F3K0F-585-02-DD',model:'FortiGate-3000F',cat:'FortiGate High-End',desc:'FortiGate-3000F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FD3K0-585-02-DD',model:'FortiGate-3000F-DC',cat:'FortiGate High-End',desc:'FortiGate-3000F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-G3K0G-585-02-DD',model:'FortiGate-3000G',cat:'FortiGate High-End',desc:'FortiGate-3000G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F3K1F-585-02-DD',model:'FortiGate-3001F',cat:'FortiGate High-End',desc:'FortiGate-3001F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FD3K1-585-02-DD',model:'FortiGate-3001F-DC',cat:'FortiGate High-End',desc:'FortiGate-3001F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-G3K1G-585-02-DD',model:'FortiGate-3001G',cat:'FortiGate High-End',desc:'FortiGate-3001G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-03100-585-02-DD',model:'FortiGate-3100D',cat:'FortiGate High-End',desc:'FortiGate-3100D 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-03200-585-02-DD',model:'FortiGate-3200D',cat:'FortiGate High-End',desc:'FortiGate-3200D 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F3K2F-585-02-DD',model:'FortiGate-3200F',cat:'FortiGate High-End',desc:'FortiGate-3200F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F32F1-585-02-DD',model:'FortiGate-3201F',cat:'FortiGate High-End',desc:'FortiGate-3201F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F33HE-585-02-DD',model:'FortiGate-3300E',cat:'FortiGate High-End',desc:'FortiGate-3300E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F33E1-585-02-DD',model:'FortiGate-3301E',cat:'FortiGate High-End',desc:'FortiGate-3301E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F3K4E-585-02-DD',model:'FortiGate-3400E',cat:'FortiGate High-End',desc:'FortiGate-3400E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FD3K4-585-02-DD',model:'FortiGate-3400E-DC',cat:'FortiGate High-End',desc:'FortiGate-3400E-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F34E1-585-02-DD',model:'FortiGate-3401E',cat:'FortiGate High-End',desc:'FortiGate-3401E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FD34E-585-02-DD',model:'FortiGate-3401E-DC',cat:'FortiGate High-End',desc:'FortiGate-3401E-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F3K5F-585-02-DD',model:'FortiGate-3500F',cat:'FortiGate High-End',desc:'FortiGate-3500F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-G3K5G-585-02-DD',model:'FortiGate-3500G',cat:'FortiGate High-End',desc:'FortiGate-3500G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F35F1-585-02-DD',model:'FortiGate-3501F',cat:'FortiGate High-End',desc:'FortiGate-3501F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-G35G1-585-02-DD',model:'FortiGate-3501G',cat:'FortiGate High-End',desc:'FortiGate-3501G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F3K6E-585-02-DD',model:'FortiGate-3600E',cat:'FortiGate High-End',desc:'FortiGate-3600E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FD3K6-585-02-DD',model:'FortiGate-3600E-DC',cat:'FortiGate High-End',desc:'FortiGate-3600E-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F36E1-585-02-DD',model:'FortiGate-3601E',cat:'FortiGate High-End',desc:'FortiGate-3601E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-03700-585-02-DD',model:'FortiGate-3700D',cat:'FortiGate High-End',desc:'FortiGate-3700D 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-03701-585-02-DD',model:'FortiGate-3700D-DC',cat:'FortiGate High-End',desc:'FortiGate-3700D-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F3K7F-585-02-DD',model:'FortiGate-3700F',cat:'FortiGate High-End',desc:'FortiGate-3700F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F37F1-585-02-DD',model:'FortiGate-3701F',cat:'FortiGate High-End',desc:'FortiGate-3701F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-3K80G-585-02-DD',model:'FortiGate-3800G',cat:'FortiGate High-End',desc:'FortiGate-3800G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D380G-585-02-DD',model:'FortiGate-3800G-DC',cat:'FortiGate High-End',desc:'FortiGate-3800G-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-3K81G-585-02-DD',model:'FortiGate-3801G',cat:'FortiGate High-End',desc:'FortiGate-3801G 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D381G-585-02-DD',model:'FortiGate-3801G-DC',cat:'FortiGate High-End',desc:'FortiGate-3801G-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-03961-585-02-DD',model:'FortiGate-3960E',cat:'FortiGate High-End',desc:'FortiGate-3960E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-03960-585-02-DD',model:'FortiGate-3960E-DC',cat:'FortiGate High-End',desc:'FortiGate-3960E-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-03981-585-02-DD',model:'FortiGate-3980E',cat:'FortiGate High-End',desc:'FortiGate-3980E 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-03980-585-02-DD',model:'FortiGate-3980E-DC',cat:'FortiGate High-End',desc:'FortiGate-3980E-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F42HF-585-02-DD',model:'FortiGate-4200F',cat:'FortiGate High-End',desc:'FortiGate-4200F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D42HF-585-02-DD',model:'FortiGate-4200F-DC',cat:'FortiGate High-End',desc:'FortiGate-4200F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F421F-585-02-DD',model:'FortiGate-4201F',cat:'FortiGate High-End',desc:'FortiGate-4201F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D421F-585-02-DD',model:'FortiGate-4201F-DC',cat:'FortiGate High-End',desc:'FortiGate-4201F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F44HF-585-02-DD',model:'FortiGate-4400F',cat:'FortiGate High-End',desc:'FortiGate-4400F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D44HF-585-02-DD',model:'FortiGate-4400F-DC',cat:'FortiGate High-End',desc:'FortiGate-4400F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F441F-585-02-DD',model:'FortiGate-4401F',cat:'FortiGate High-End',desc:'FortiGate-4401F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D441F-585-02-DD',model:'FortiGate-4401F-DC',cat:'FortiGate High-End',desc:'FortiGate-4401F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F48HF-585-02-DD',model:'FortiGate-4800F',cat:'FortiGate High-End',desc:'FortiGate-4800F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D480F-585-02-DD',model:'FortiGate-4800F-DC',cat:'FortiGate High-End',desc:'FortiGate-4800F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F481F-585-02-DD',model:'FortiGate-4801F',cat:'FortiGate High-End',desc:'FortiGate-4801F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D481F-585-02-DD',model:'FortiGate-4801F-DC',cat:'FortiGate High-End',desc:'FortiGate-4801F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-ND481-585-02-DD',model:'FortiGate-4801F-DC-NEBS',cat:'FortiGate High-End',desc:'FortiGate-4801F-DC-NEBS 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-G481F-585-02-DD',model:'FortiGate-4801F-NEBS',cat:'FortiGate High-End',desc:'FortiGate-4801F-NEBS 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-6KF01-585-02-DD',model:'FortiGate-6001F',cat:'FortiGate Chassis',desc:'FortiGate-6001F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-6K30F-585-02-DD',model:'FortiGate-6300F',cat:'FortiGate Chassis',desc:'FortiGate-6300F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D630F-585-02-DD',model:'FortiGate-6300F-DC',cat:'FortiGate Chassis',desc:'FortiGate-6300F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-6K31F-585-02-DD',model:'FortiGate-6301F',cat:'FortiGate Chassis',desc:'FortiGate-6301F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D631F-585-02-DD',model:'FortiGate-6301F-DC',cat:'FortiGate Chassis',desc:'FortiGate-6301F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-6K50F-585-02-DD',model:'FortiGate-6500F',cat:'FortiGate Chassis',desc:'FortiGate-6500F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D650F-585-02-DD',model:'FortiGate-6500F-DC',cat:'FortiGate Chassis',desc:'FortiGate-6500F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-6K51F-585-02-DD',model:'FortiGate-6501F',cat:'FortiGate Chassis',desc:'FortiGate-6501F 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-D651F-585-02-DD',model:'FortiGate-6501F-DC',cat:'FortiGate Chassis',desc:'FortiGate-6501F-DC 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FVM00-585-02-DD',model:'FortiGate-VM00',cat:'FortiGate VM',desc:'FortiGate-VM00 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FVM01-585-02-DD',model:'FortiGate-VM01',cat:'FortiGate VM',desc:'FortiGate-VM01 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG1VM-585-02-DD',model:'FortiGate-VM01V',cat:'FortiGate VM',desc:'FortiGate-VM01V 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FVM02-585-02-DD',model:'FortiGate-VM02',cat:'FortiGate VM',desc:'FortiGate-VM02 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG2VM-585-02-DD',model:'FortiGate-VM02V',cat:'FortiGate VM',desc:'FortiGate-VM02V 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FVM04-585-02-DD',model:'FortiGate-VM04',cat:'FortiGate VM',desc:'FortiGate-VM04 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG4VM-585-02-DD',model:'FortiGate-VM04V',cat:'FortiGate VM',desc:'FortiGate-VM04V 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FVM08-585-02-DD',model:'FortiGate-VM08',cat:'FortiGate VM',desc:'FortiGate-VM08 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FG8VM-585-02-DD',model:'FortiGate-VM08V',cat:'FortiGate VM',desc:'FortiGate-VM08V 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FVM16-585-02-DD',model:'FortiGate-VM16',cat:'FortiGate VM',desc:'FortiGate-VM16 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F16VM-585-02-DD',model:'FortiGate-VM16V',cat:'FortiGate VM',desc:'FortiGate-VM16V 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FVM32-585-02-DD',model:'FortiGate-VM32',cat:'FortiGate VM',desc:'FortiGate-VM32 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-F32VM-585-02-DD',model:'FortiGate-VM32V',cat:'FortiGate VM',desc:'FortiGate-VM32V 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FVMUL-585-02-DD',model:'FortiGate-VMUL',cat:'FortiGate VM',desc:'FortiGate-VMUL 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FULVM-585-02-DD',model:'FortiGate-VMULV',cat:'FortiGate VM',desc:'FortiGate-VMULV 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC1-10-FGVVS-585-02-DD',model:'Subscription License for FortiGate-VM (1 CPU)',cat:'FortiGate VM',desc:'Subscription License for FortiGate-VM (1 CPU) 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC5-10-FGVVS-585-02-DD',model:'Subscription License for FortiGate-VM (16 CPU)',cat:'FortiGate VM',desc:'Subscription License for FortiGate-VM (16 CPU) 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC2-10-FGVVS-585-02-DD',model:'Subscription License for FortiGate-VM (2 CPU)',cat:'FortiGate VM',desc:'Subscription License for FortiGate-VM (2 CPU) 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC6-10-FGVVS-585-02-DD',model:'Subscription License for FortiGate-VM (32 CPU)',cat:'FortiGate VM',desc:'Subscription License for FortiGate-VM (32 CPU) 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC3-10-FGVVS-585-02-DD',model:'Subscription License for FortiGate-VM (4 CPU)',cat:'FortiGate VM',desc:'Subscription License for FortiGate-VM (4 CPU) 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC4-10-FGVVS-585-02-DD',model:'Subscription License for FortiGate-VM (8 CPU)',cat:'FortiGate VM',desc:'Subscription License for FortiGate-VM (8 CPU) 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC7-10-FGVVS-585-02-DD',model:'Subscription License for FortiGate-VM (unlimited CPU)',cat:'FortiGate VM',desc:'Subscription License for FortiGate-VM (unlimited CPU) 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {sku:'FC-10-FW60J-585-02-DD',model:'FortiWifi-60E-DSLJ',cat:'FortiWiFi',desc:'FortiWifi-60E-DSLJ 1 Year FortiAnalyzer Cloud: cloud-Based central logging &amp; analytics. Include All FortiGate log types, IOC Service, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+];
 
-const HW_MODELS = {
-  '150G':  { hw:'FAZ-150G',  bun:'FAZ-150G-BDL-1263-DD',  care:'FC-10-L150G-247-02-DD',  renew:'FC-10-L150G-1263-02-DD',  ot:'FC-10-L150G-159-02-DD',  asr:'FC-10-L150G-175-02-DD',  ai:'FC-10-L150G-1118-02-DD',  mng:'FC-10-L150G-464-02-DD',  elite:'FC-10-L150G-204-02-DD' },
-  '300G':  { hw:'FAZ-300G',  bun:'FAZ-300G-BDL-1263-DD',  care:'FC-10-L03HG-247-02-DD',  renew:'FC-10-L03HG-1263-02-DD', ot:'FC-10-L03HG-159-02-DD',  asr:'FC-10-L03HG-175-02-DD',  ai:'FC-10-L03HG-1118-02-DD',  mng:'FC-10-L03HG-464-02-DD',  elite:'FC-10-L03HG-204-02-DD' },
-  '810G':  { hw:'FAZ-810G',  bun:'FAZ-810G-BDL-1263-DD',  care:'FC-10-AZ81G-247-02-DD',  renew:'FC-10-AZ81G-1263-02-DD', ot:'FC-10-AZ81G-159-02-DD',  asr:'FC-10-AZ81G-175-02-DD',  ai:'FC-10-AZ81G-1118-02-DD',  mng:'FC-10-AZ81G-464-02-DD',  elite:'FC-10-AZ81G-204-02-DD' },
-  '1000G': { hw:'FAZ-1000G', bun:'FAZ-1000G-BDL-1263-DD', care:'FC-10-AZ1KG-247-02-DD',  renew:'FC-10-AZ1KG-1263-02-DD', ot:'FC-10-AZ1KG-159-02-DD',  asr:'FC-10-AZ1KG-175-02-DD',  ai:'FC-10-AZ1KG-1118-02-DD',  mng:'FC-10-AZ1KG-464-02-DD',  elite:'FC-10-AZ1KG-204-02-DD' },
-  '3100G': { hw:'FAZ-3100G', bun:'FAZ-3100G-BDL-1263-DD', care:'FC-10-AZ31G-247-02-DD',  renew:'FC-10-AZ31G-1263-02-DD', ot:'FC-10-AZ31G-159-02-DD',  asr:'FC-10-AZ31G-175-02-DD',  ai:'FC-10-AZ31G-1118-02-DD',  mng:'FC-10-AZ31G-464-02-DD',  elite:'FC-10-AZ31G-204-02-DD' },
-  '3510G': { hw:'FAZ-3510G', bun:'FAZ-3510G-BDL-1263-DD', care:'FC-10-AZ3AG-247-02-DD',  renew:'FC-10-AZ3AG-1263-02-DD', ot:'FC-10-AZ3AG-159-02-DD',  asr:'FC-10-AZ3AG-175-02-DD',  ai:'FC-10-AZ3AG-1118-02-DD',  mng:'FC-10-AZ3AG-464-02-DD',  elite:'FC-10-AZ3AG-204-02-DD' },
-  '3750G': { hw:'FAZ-3750G', bun:'FAZ-3750G-BDL-1263-DD', care:'FC-10-L375G-247-02-DD',  renew:'FC-10-L375G-1263-02-DD', ot:'FC-10-L375G-159-02-DD',  asr:'FC-10-L375G-175-02-DD',  ai:'FC-10-L375G-1118-02-DD',  mng:'FC-10-L375G-464-02-DD',  elite:'FC-10-L375G-204-02-DD' },
+const HW_MODELS = [
+  {id:'150G', sku:'FAZ-150G', storage:'4TB', gbday:25, ports:'2x GE RJ45', tag:'SOHO / Small',
+   hwDesc:'FortiAnalyzer-150G Centralized log & analysis appliance - 2x GE RJ45, 4TB storage, up to 25GB/Day of logs.',
+   bdlSku:'FAZ-150G-BDL-1263-DD', bdlDesc:'FortiAnalyzer-150G Hardware plus 1 Year FortiCare Premium and FortiAnalyzer Enterprise Protection',
+   renewSku:'FC-10-L150G-1263-02-DD', renewDesc:'FortiAnalyzer-150G 1 Year Enterprise Protection (FortiCare Premium plus Indicators of Compromise Service, Security Automation Service, FortiTIP SaaS Extension, and FortiGuard Outbreak Service)',
+   careSku:'FC-10-L150G-247-02-DD', careDesc:'FortiAnalyzer-150G 1 Year FortiCare Premium Support', svcCode:'L150G', psu:null},
+  {id:'300G', sku:'FAZ-300G', storage:'8TB', gbday:100, ports:'4x GE RJ45', tag:'SMB',
+   hwDesc:'FortiAnalyzer-300G Centralized log & analysis appliance - 4x GE RJ45, 8TB storage, up to 100GB/Day of logs.',
+   bdlSku:'FAZ-300G-BDL-1263-DD', bdlDesc:'FortiAnalyzer-300G Hardware plus 1 Year FortiCare Premium and FortiAnalyzer Enterprise Protection',
+   renewSku:'FC-10-L03HG-1263-02-DD', renewDesc:'FortiAnalyzer-300G 1 Year Enterprise Protection (FortiCare Premium plus Indicators of Compromise Service, Security Automation Service, FortiTIP SaaS Extension, and FortiGuard Outbreak Service)',
+   careSku:'FC-10-L03HG-247-02-DD', careDesc:'FortiAnalyzer-300G 1 Year FortiCare Premium Support', svcCode:'L03HG', psu:{sku:'SP-FAD400F-PS',desc:'AC power supply for FAZ-300G'}},
+  {id:'810G', sku:'FAZ-810G', storage:'16TB SED', gbday:200, ports:'4x GE + 2x SFP', tag:'Mid Enterprise',
+   hwDesc:'FortiAnalyzer-810G Centralized log & analysis appliance - 4x GE RJ45, 2x GE SFP, 16TB self-encrypting storage, up to 200 GB/Day of Logs',
+   bdlSku:'FAZ-810G-BDL-1263-DD', bdlDesc:'FortiAnalyzer-810G Hardware plus 1 Year FortiCare Premium and FortiAnalyzer Enterprise Protection',
+   renewSku:'FC-10-AZ81G-1263-02-DD', renewDesc:'FortiAnalyzer-810G 1 Year Enterprise Protection (FortiCare Premium plus Indicators of Compromise Service, Security Automation Service, FortiTIP SaaS Extension, and FortiGuard Outbreak Service)',
+   careSku:'FC-10-AZ81G-247-02-DD', careDesc:'FortiAnalyzer-810G 1 Year FortiCare Premium Support', svcCode:'AZ81G', psu:{sku:'SP-FAZ800G-PS',desc:'AC power supply for FAZ-810G'}},
+  {id:'1000G', sku:'FAZ-1000G', storage:'32TB', gbday:660, ports:'2x 2.5GbE + 2x 25GE SFP28', tag:'Large Enterprise',
+   hwDesc:'FortiAnalyzer-1000G Centralized logging & analysis appliance - 2x 2.5GbE RJ45 + 2 x 25GbE SFP28, 32TB storage, up to 660 GB/Day of Logs.',
+   bdlSku:'FAZ-1000G-BDL-1263-DD', bdlDesc:'FortiAnalyzer-1000G Hardware plus 1 Year FortiCare Premium and FortiAnalyzer Enterprise Protection',
+   renewSku:'FC-10-AZ1KG-1263-02-DD', renewDesc:'FortiAnalyzer-1000G 1 Year Enterprise Protection (FortiCare Premium plus Indicators of Compromise Service, Security Automation Service, FortiTIP SaaS Extension, and FortiGuard Outbreak Service)',
+   careSku:'FC-10-AZ1KG-247-02-DD', careDesc:'FortiAnalyzer-1000G 1 Year FortiCare Premium Support', svcCode:'AZ1KG', psu:null},
+  {id:'3100G', sku:'FAZ-3100G', storage:'64TB', gbday:3000, ports:'2x GE + 2x 25GE SFP28', tag:'Data Center',
+   hwDesc:'FortiAnalyzer-3100G Centralized log & analysis appliance - 2x GE RJ45, 2x 25GE SFP28, 64TB storage, up to 3000 GB/Day of Logs',
+   bdlSku:'FAZ-3100G-BDL-1263-DD', bdlDesc:'FortiAnalyzer-3100G Hardware plus 1 Year FortiCare Premium and FortiAnalyzer Enterprise Protection',
+   renewSku:'FC-10-AZ31G-1263-02-DD', renewDesc:'FortiAnalyzer-3100G 1 Year Enterprise Protection (FortiCare Premium plus Indicators of Compromise Service, Security Automation Service, FortiTIP SaaS Extension, and FortiGuard Outbreak Service)',
+   careSku:'FC-10-AZ31G-247-02-DD', careDesc:'FortiAnalyzer-3100G 1 Year FortiCare Premium Support', svcCode:'AZ31G', psu:null},
+  {id:'3510G', sku:'FAZ-3510G', storage:'96TB', gbday:5000, ports:'2x GE + 2x SFP28, dual PSU', tag:'Large DC',
+   hwDesc:'FortiAnalyzer-3510G Centralized log & analysis appliance - 2 x GbE RJ45 ports, 2x SFP28 ports, 96TB storage, dual power supplies, 5000 GB/Day of logs.',
+   bdlSku:'FAZ-3510G-BDL-1263-DD', bdlDesc:'FortiAnalyzer-3510G Hardware plus 1 Year FortiCare Premium and FortiAnalyzer Enterprise Protection',
+   renewSku:'FC-10-AZ3AG-1263-02-DD', renewDesc:'FortiAnalyzer-3510G 1 Year Enterprise Protection (FortiCare Premium plus Indicators of Compromise Service, Security Automation Service, FortiTIP SaaS Extension, and FortiGuard Outbreak Service)',
+   careSku:'FC-10-AZ3AG-247-02-DD', careDesc:'FortiAnalyzer-3510G 1 Year FortiCare Premium Support', svcCode:'AZ3AG', psu:null},
+  {id:'3750G', sku:'FAZ-3750G', storage:'384TB+60TB NVMe', gbday:8300, ports:'2x 10GE + 2x 25GE SFP28', tag:'Enterprise DC',
+   hwDesc:'FortiAnalyzer-3750G Centralized log & analysis appliance - 2x 10GE RJ-45 + 2x 25GE SFP28 slots, 384TB SAS SED HDD + 60TB NVMe SED SSD storage, up to 8300 GB/Day of Logs.',
+   bdlSku:'FAZ-3750G-BDL-1263-DD', bdlDesc:'FortiAnalyzer-3750G Hardware plus 1 Year FortiCare Premium and FortiAnalyzer Enterprise Protection',
+   renewSku:'FC-10-L375G-1263-02-DD', renewDesc:'FortiAnalyzer-3750G 1 Year Enterprise Protection (FortiCare Premium plus Indicators of Compromise Service, Security Automation Service, FortiTIP SaaS Extension, and FortiGuard Outbreak Service)',
+   careSku:'FC-10-L375G-247-02-DD', careDesc:'FortiAnalyzer-3750G 1 Year FortiCare Premium Support', svcCode:'L375G', psu:null},
+];
+const HW_ADDONS = [
+  {id:'ot',   label:'OT Security Service',              code:'159'},
+  {id:'surf', label:'Attack Surface Rating & Compliance',code:'175'},
+  {id:'ai',   label:'FortiAI Service',                  code:'1118'},
+  {id:'topup',label:'FortiAI Token Top-up (×500K tokens)',code:'topup'},
+  {id:'mgd',  label:'Managed FortiAnalyzer Service',    code:'464'},
+  {id:'eup',  label:'FortiCare Elite Upgrade',          code:'204'},
+  {id:'bkp',  label:'Backup to Public Cloud (10TB)',    code:'bkp'},
+];
+const HW_ADDON_DESC = {
+  ot:   (m)=>`FortiAnalyzer-${m} 1 Year OT Security Service including advanced OT analytics, risk and compliance reports, event handlers, and use-case correlation rules`,
+  surf: (m)=>`FortiAnalyzer-${m} 1 Year FortiAnalyzer Attack Surface Security Rating and Compliance`,
+  ai:   (m)=>`FortiAnalyzer-${m} 1 Year Generative AI powered security service utilizing large language models (LLMs) for real-time assistance in SOC analysis, incident investigation, triage and response`,
+  topup:()=>'FortiAnalyzer AI Top Up License 1 Year FortiAI Assistant upgrade license for adding 500,000 AI tokens',
+  mgd:  (m)=>`FortiAnalyzer-${m} 1 Year 24x7 SOCaaS expert-delivered monitoring and management of FortiAnalyzer health, availability, performance and event rule efficiency`,
+  eup:  (m)=>`FortiAnalyzer-${m} 1 Year Upgrade FortiCare Premium to Elite (Requires FortiCare Premium support)`,
+  bkp:  ()=>'FAZ Backup to Cloud Service 1 Year Subscription to FortiAnalyzer storage connector service for 10TB data transfer to public cloud.',
 };
+const VMS_TIERS = [
+  {gb:500, band:'fc3', sku:'FC3-10-AZVMS-465-01-DD', desc:'FortiAnalyzer-VM Subscription License with Support 1 Year Subscription license for 500 GB/Day Central Logging & Analytics. Include FortiCare Premium support, IOC, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {gb:50,  band:'fc2', sku:'FC2-10-AZVMS-465-01-DD', desc:'FortiAnalyzer-VM Subscription License with Support 1 Year Subscription license for 50 GB/Day Central Logging & Analytics. Include FortiCare Premium support, IOC, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  {gb:5,   band:'fc1', sku:'FC1-10-AZVMS-465-01-DD', desc:'FortiAnalyzer-VM Subscription License with Support 1 Year Subscription license for 5 GB/Day Central Logging & Analytics. Include FortiCare Premium support, IOC, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+];
 
-// VM Subscription tiers: only 5, 50, 500 GB/day
-const VM_SUB_TIERS = {
-  '5':   { bun:'FC1-10-AZVMS-465-01-DD', ot:'FC1-10-AZVMS-159-01-DD', asr:'FC1-10-AZVMS-175-01-DD', ai:'FC1-10-AZVMS-1118-01-DD', elite:'FC1-10-AZVMS-1137-01-DD' },
-  '50':  { bun:'FC2-10-AZVMS-465-01-DD', ot:'FC2-10-AZVMS-159-01-DD', asr:'FC2-10-AZVMS-175-01-DD', ai:'FC2-10-AZVMS-1118-01-DD', elite:'FC2-10-AZVMS-1137-01-DD' },
-  '500': { bun:'FC3-10-AZVMS-465-01-DD', ot:'FC3-10-AZVMS-159-01-DD', asr:'FC3-10-AZVMS-175-01-DD', ai:'FC3-10-AZVMS-1118-01-DD', elite:'FC3-10-AZVMS-1137-01-DD' },
+const VMS_BANDS = {
+  fc1:{band:'FC1',gbday:5,  sku:'FC1-10-AZVMS-465-01-DD',desc:'FortiAnalyzer-VM Subscription License with Support 1 Year Subscription license for 5 GB/Day Central Logging & Analytics. Include FortiCare Premium support, IOC, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  fc2:{band:'FC2',gbday:50, sku:'FC2-10-AZVMS-465-01-DD',desc:'FortiAnalyzer-VM Subscription License with Support 1 Year Subscription license for 50 GB/Day Central Logging & Analytics. Include FortiCare Premium support, IOC, Security Automation Service and FortiGuard Outbreak Detection Service.'},
+  fc3:{band:'FC3',gbday:500,sku:'FC3-10-AZVMS-465-01-DD',desc:'FortiAnalyzer-VM Subscription License with Support 1 Year Subscription license for 500 GB/Day Central Logging & Analytics. Include FortiCare Premium support, IOC, Security Automation Service and FortiGuard Outbreak Detection Service.'},
 };
+const VMS_ADDONS = [
+  {id:'ot',   label:'OT Security Service',               fn:b=>`F${b}-10-AZVMS-159-01-DD`, desc:b=>`FortiAnalyzer-VMS OT Security Service 1 Year for ${VMS_BANDS[b.toLowerCase()].gbday} GB/Day subscription`},
+  {id:'surf', label:'Attack Surface Rating & Compliance', fn:b=>`F${b}-10-AZVMS-175-01-DD`, desc:b=>`FortiAnalyzer-VMS Attack Surface Rating 1 Year for ${VMS_BANDS[b.toLowerCase()].gbday} GB/Day subscription`},
+  {id:'ai',   label:'FortiAI Service',                   fn:b=>`F${b}-10-AZVMS-1118-01-DD`,desc:b=>`FortiAnalyzer-VMS FortiAI Subscription 1 Year Generative AI powered security service (${VMS_BANDS[b.toLowerCase()].gbday} GB/Day)`},
+  {id:'elite',label:'FortiCare Elite Upgrade Bundle',     fn:b=>`F${b}-10-AZVMS-1137-01-DD`,desc:b=>`FortiAnalyzer-VMS Elite Bundle 1 Year for ${VMS_BANDS[b.toLowerCase()].gbday} GB/Day. Includes FortiCare Elite, IOC, Security Automation, Outbreak Detection.`},
+  {id:'topup',label:'FortiAI Token Top-up (×500K tokens)',fn:_=>'FC1-10-AITAZ-1089-02-DD',  desc:_=>'FortiAnalyzer AI Top Up License 1 Year FortiAI Assistant upgrade license for adding 500,000 AI tokens'},
+  {id:'bkp',  label:'Backup to Public Cloud (10TB)',      fn:_=>'FC-10-FAZ00-286-02-12',    desc:_=>'FAZ Backup to Cloud Service 1 Year Subscription to FortiAnalyzer storage connector service for 10TB data transfer to public cloud.'},
+];
+const VMP_TIERS = [
+  {gb:2000,sku:'FAZ-VM-GB2000',desc:'FortiAnalyzer-VM Upgrade license for adding 2 TB/Day of Logs.'},
+  {gb:500, sku:'FAZ-VM-GB500', desc:'FortiAnalyzer-VM Upgrade license for adding 500 GB/Day of Logs.'},
+  {gb:100, sku:'FAZ-VM-GB100', desc:'FortiAnalyzer-VM Upgrade license for adding 100 GB/Day of Logs.'},
+  {gb:25,  sku:'FAZ-VM-GB25',  desc:'FortiAnalyzer-VM Upgrade license for adding 25 GB/Day of Logs.'},
+  {gb:5,   sku:'FAZ-VM-GB5',   desc:'FortiAnalyzer-VM Upgrade license for adding 5 GB/Day of Logs.'},
+  {gb:1,   sku:'FAZ-VM-GB1',   desc:'FortiAnalyzer-VM Upgrade license for adding 1 GB/Day of Logs.'},
+];
+const VMP_BAND_RANGES=[
+  {max:6,band:'FC1',label:'1-6 GB/Day'},{max:11,band:'FC2',label:'1-11 GB/Day'},
+  {max:26,band:'FC3',label:'1-26 GB/Day'},{max:101,band:'FC5',label:'1-101 GB/Day'},
+  {max:501,band:'FC6',label:'1-501 GB/Day'},{max:2001,band:'FC7',label:'1-2001 GB/Day'},
+  {max:Infinity,band:'FC4',label:'Unlimited'},
+];
+const VMP_ADDONS=[
+  {id:'premium',label:'FortiCare Premium (required)',fn:b=>`${b}-10-LV0VM-248-02-DD`,  desc:b=>`FortiAnalyzer-VM FortiCare Premium Support (${getVMPBandLabel(b)})`},
+  {id:'secauto',label:'Security Automation Service', fn:b=>`${b}-10-LV0VM-335-02-DD`,  desc:b=>`FortiAnalyzer-VM Security Automation Service — premium reports, event handlers, SIEM rules, SOAR playbooks (${getVMPBandLabel(b)})`},
+  {id:'ioc',    label:'IOC and Outbreak Service',    fn:b=>`${b}-10-LV0VM-661-02-DD`,  desc:b=>`FortiAnalyzer-VM IOC and Outbreak Detection Service (${getVMPBandLabel(b)})`},
+  {id:'ot',     label:'OT Security Service',         fn:b=>`${b}-10-LV0VM-159-02-DD`,  desc:b=>`FortiAnalyzer-VM OT Security Service (${getVMPBandLabel(b)})`},
+  {id:'surf',   label:'Attack Surface & Compliance', fn:b=>`${b}-10-LV0VM-175-02-DD`,  desc:b=>`FortiAnalyzer-VM Attack Surface Security Rating and Compliance (${getVMPBandLabel(b)})`},
+  {id:'ai',     label:'FortiAI Service',             fn:b=>`${b}-10-LV0VM-1118-02-DD`, desc:b=>`FortiAnalyzer-VM FortiAI Subscription — GenAI powered SOC assistance (${getVMPBandLabel(b)})`},
+  {id:'topup',  label:'FortiAI Token Top-up',        fn:_=>'FC1-10-AITAZ-1089-02-DD',  desc:_=>'FortiAnalyzer AI Top Up License 1 Year FortiAI Assistant upgrade license for adding 500,000 AI tokens'},
+  {id:'bkp',    label:'Backup to Public Cloud (10TB)',fn:_=>'FC-10-FAZ00-286-02-12',    desc:_=>'FAZ Backup to Cloud Service 1 Year Subscription to FortiAnalyzer storage connector service for 10TB data transfer to public cloud.'},
+];
+const CLD_BANDS={
+  fc1:{band:'FC1',gbday:5,  sku:'FC1-10-AZCLD-463-01-DD',desc:'FortiAnalyzer Cloud Storage Add-On: 5 GB/Day for Central Logging & Analytics. FortiCare Premium Support included.'},
+  fc2:{band:'FC2',gbday:50, sku:'FC2-10-AZCLD-463-01-DD',desc:'FortiAnalyzer Cloud Storage Add-On: 50 GB/Day for Central Logging & Analytics. FortiCare Premium Support included.'},
+  fc3:{band:'FC3',gbday:500,sku:'FC3-10-AZCLD-463-01-DD',desc:'FortiAnalyzer Cloud Storage Add-On: 500 GB/Day for Central Logging & Analytics. FortiCare Premium Support included.'},
+};
+const CLD_ADDONS=[
+  {id:'ot',   label:'OT Security Service',               fn:b=>`F${b}-10-AZCLD-159-01-DD`,  desc:b=>`FortiAnalyzer Cloud OT Security Service (${CLD_BANDS[b.toLowerCase()]?.gbday??''} GB/Day tier)`},
+  {id:'surf', label:'Attack Surface Rating & Compliance', fn:b=>`F${b}-10-AZCLD-175-01-DD`,  desc:b=>`FortiAnalyzer Cloud Attack Surface Rating and Compliance (${CLD_BANDS[b.toLowerCase()]?.gbday??''} GB/Day tier)`},
+  {id:'ai',   label:'FortiAI Service',                   fn:b=>`F${b}-10-AZCLD-1118-01-DD`, desc:b=>`FortiAnalyzer Cloud FortiAI Subscription — GenAI powered SOC assistance (${CLD_BANDS[b.toLowerCase()]?.gbday??''} GB/Day tier)`},
+  {id:'topup',label:'FortiAI Token Top-up (×500K tokens)',fn:_=>'FC1-10-AITAZ-1089-02-DD',   desc:_=>'FortiAnalyzer AI Top Up License 1 Year FortiAI Assistant upgrade license for adding 500,000 AI tokens'},
+  {id:'bkp',  label:'Backup to Public Cloud (10TB)',      fn:_=>'FC-10-FAZ00-286-02-12',     desc:_=>'FAZ Backup to Cloud Service 1 Year Subscription to FortiAnalyzer storage connector service for 10TB data transfer to public cloud.'},
+];
 
-// VM Perpetual tiers: 1,5,25,100,500,2000 GB/day
-const VM_PERP_SKU = { '1':'FAZ-VM-GB1','5':'FAZ-VM-GB5','25':'FAZ-VM-GB25','100':'FAZ-VM-GB100','500':'FAZ-VM-GB500','2000':'FAZ-VM-GB2000' };
+// ===== STATE =====
+let _deploy='appliance',_selectedModel='150G',_vmsBand='fc1',_cldBand='fc1',_cldMode='device';
+let _lastRows=[],_lastLabel='',_lastMeta={};
+let _vmsAccumRows=[],_vmsNodeCount=0;
 
-// VM Perpetual band prefix by total GB/day
-function vmPerpBand(gbday) {
-  if (gbday <= 6)    return 'FC1';
-  if (gbday <= 11)   return 'FC2';
-  if (gbday <= 26)   return 'FC3';
-  if (gbday <= 101)  return 'FC5';
-  if (gbday <= 501)  return 'FC6';
-  if (gbday <= 2001) return 'FC7';
-  return 'FC4'; // unlimited
+// ===== HELPERS =====
+function getVMPBandLabel(b){const r=VMP_BAND_RANGES.find(x=>x.band===b);return r?r.label:b;}
+function getVMPBand(gb){for(const r of VMP_BAND_RANGES){if(gb<=r.max)return r.band;}return 'FC4';}
+function packVMP(total){let rem=total;const res=[];for(const t of VMP_TIERS){const q=Math.floor(rem/t.gb);if(q>0){res.push({...t,qty:q});rem-=q*t.gb;}}if(rem>0){const s=VMP_TIERS[VMP_TIERS.length-1];res.push({...s,qty:1});}return res;}
+function cartRowsFrom(rows){return rows.filter(r=>{if(r.section)return false;if(!r.sku||typeof r.sku!=='string')return false;const s=r.sku.trim();if(!s)return false;if(/^[⚠!—\-?]+$/.test(s))return false;return true;});}
+function $id(id){return document.getElementById(id);}
+function showErr(id,show){const e=$id(id);if(e)e.style.display=show?'block':'none';}
+function setInvalid(id,inv){const e=$id(id);if(e)e.classList.toggle('invalid',inv);}
+
+// ===== INIT =====
+function init(){
+  buildModelGrid();buildHwAddons();buildVMSAddons();buildVMPAddons();buildCldAddons();
+  onVMPerpChange();calcLPS();calcStorage();
+  addCloudDevRow(); // seed first row
+  const QA=new URLSearchParams(location.search).get('qa')==='1';
+  if(QA)$id('tab-buildreport').style.display='inline-block';
 }
-function vmPerpBandDesc(gbday) {
-  if (gbday <= 6)    return '1–6 GB/Day';
-  if (gbday <= 11)   return '1–11 GB/Day';
-  if (gbday <= 26)   return '1–26 GB/Day';
-  if (gbday <= 101)  return '1–101 GB/Day';
-  if (gbday <= 501)  return '1–501 GB/Day';
-  if (gbday <= 2001) return '1–2001 GB/Day';
-  return 'Unlimited';
+
+function buildModelGrid(){
+  $id('hw-model-grid').innerHTML=HW_MODELS.map(m=>`
+    <div class="model-card${m.id===_selectedModel?' selected':''}" id="mc-${m.id}" onclick="selectModel('${m.id}')">
+      <div class="mc-sku">${m.sku}</div>
+      <div class="mc-sub">${m.storage} · ≤${m.gbday>=1000?m.gbday/1000+'TB':m.gbday+'GB'}/Day</div>
+      <div class="mc-cap">${m.ports}</div>
+      <div class="mc-cap" style="margin-top:3px;color:var(--forti-red);font-weight:600;">${m.tag}</div>
+    </div>`).join('');
 }
-
-// Cloud GB/Day tiers
-const CLD_GB_TIERS = {
-  '5':   { sku:'FC1-10-AZCLD-463-01-DD', ot:'FC1-10-AZCLD-159-01-DD', asr:'FC1-10-AZCLD-175-01-DD', ai:'FC1-10-AZCLD-1118-01-DD' },
-  '50':  { sku:'FC2-10-AZCLD-463-01-DD', ot:'FC2-10-AZCLD-159-01-DD', asr:'FC2-10-AZCLD-175-01-DD', ai:'FC2-10-AZCLD-1118-01-DD' },
-  '500': { sku:'FC3-10-AZCLD-463-01-DD', ot:'FC3-10-AZCLD-159-01-DD', asr:'FC3-10-AZCLD-175-01-DD', ai:'FC3-10-AZCLD-1118-01-DD' },
-};
-
-/* =====================================================================
-   STATE
-   ===================================================================== */
-let _activeTab = 'hw';
-let _selectedHW = null;
-let _lastRows = [];
-let _lastLabel = '';
-let _lastMeta = {};
-
-/* =====================================================================
-   TAB SWITCHING
-   ===================================================================== */
-function switchTab(tab) {
-  _activeTab = tab;
-  ['hw','vm','cloud'].forEach(t => {
-    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
-    document.getElementById('panel-'+t).classList.toggle('active', t===tab);
+function buildHwAddons(){
+  $id('hw-addons').innerHTML=HW_ADDONS.map(a=>`
+    <label class="addon-item" id="hwa-${a.id}">
+      <input type="checkbox" id="hwc-${a.id}" onchange="resetPreview()">
+      <div><div class="ai-label">${a.label}</div><div class="ai-sku" id="hwa-sku-${a.id}"></div></div>
+    </label>`).join('');
+  updateHwAddonSkus();
+}
+function updateHwAddonSkus(){
+  const m=HW_MODELS.find(x=>x.id===_selectedModel);if(!m)return;
+  HW_ADDONS.forEach(a=>{
+    const el=$id(`hwa-sku-${a.id}`);if(!el)return;
+    let sku=a.code==='topup'?'FC1-10-AITAZ-1089-02-DD':a.code==='bkp'?'FC-10-FAZ00-286-02-12':`FC-10-${m.svcCode}-${a.code}-02-DD`;
+    el.textContent=sku;
   });
-  updateAddonVisibility();
-  clearStatus();
+  const psu=$id('hw-psu-note');
+  if(m.psu){$id('psu-sku-text').textContent=m.psu.sku;$id('psu-desc-text').textContent=m.psu.desc;psu.style.display='block';}
+  else psu.style.display='none';
+}
+function buildVMSAddons(){
+  $id('vms-addons').innerHTML=VMS_ADDONS.map(a=>`
+    <label class="addon-item"><input type="checkbox" id="vmsc-${a.id}" onchange="resetPreview()">
+    <div><div class="ai-label">${a.label}</div><div class="ai-sku" id="vmsa-sku-${a.id}"></div></div></label>`).join('');
+  updateVMSAddonSkus();
+}
+function updateVMSAddonSkus(){const b=_vmsBand.replace('fc','');VMS_ADDONS.forEach(a=>{const el=$id(`vmsa-sku-${a.id}`);if(el)el.textContent=a.fn(b);});}
+function buildVMPAddons(){
+  $id('vmp-addons').innerHTML=VMP_ADDONS.map(a=>`
+    <label class="addon-item"><input type="checkbox" id="vmpc-${a.id}" ${a.id==='premium'?'checked disabled':''} onchange="resetPreview()">
+    <div><div class="ai-label">${a.label}${a.id==='premium'?' ✓':''}</div><div class="ai-sku" id="vmpa-sku-${a.id}"></div></div></label>`).join('');
+  updateVMPAddonSkus();
+}
+function updateVMPAddonSkus(){const total=parseInt($id('vmp-gbday')?.value)||1;const band=getVMPBand(total);VMP_ADDONS.forEach(a=>{const el=$id(`vmpa-sku-${a.id}`);if(el)el.textContent=a.fn(band);});}
+function buildCldAddons(){
+  $id('cld-addons').innerHTML=CLD_ADDONS.map(a=>`
+    <label class="addon-item"><input type="checkbox" id="cldc-${a.id}" onchange="resetPreview()">
+    <div><div class="ai-label">${a.label}</div><div class="ai-sku" id="clda-sku-${a.id}"></div></div></label>`).join('');
+  updateCldAddonSkus();
+}
+function updateCldAddonSkus(){const b=_cldBand.replace('fc','');CLD_ADDONS.forEach(a=>{const el=$id(`clda-sku-${a.id}`);if(el)el.textContent=a.fn(b);});}
+
+// ===== CONTROLS =====
+function switchTab(p){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.panel===p));document.querySelectorAll('.tab-panel').forEach(x=>x.classList.toggle('active',x.id==='panel-'+p));}
+function setDeploy(type){_deploy=type;document.querySelectorAll('.dtype-btn').forEach((b,i)=>b.classList.toggle('active',['appliance','vmsub','vmperp','cloud'][i]===type));document.querySelectorAll('.deploy-section').forEach(s=>s.classList.remove('active'));$id('ds-'+type).classList.add('active');resetPreview();}
+function selectModel(id){_selectedModel=id;document.querySelectorAll('.model-card').forEach(c=>c.classList.remove('selected'));$id('mc-'+id)?.classList.add('selected');updateHwAddonSkus();resetPreview();}
+function selectVMSBand(b){_vmsBand=b;['fc1','fc2','fc3'].forEach(x=>$id('vms-'+x)?.classList.toggle('selected',x===b));updateVMSAddonSkus();resetPreview();}
+function selectCldBand(b){_cldBand=b;['fc1','fc2','fc3'].forEach(x=>$id('cld-'+x)?.classList.toggle('selected',x===b));updateCldAddonSkus();resetPreview();}
+function setCldMode(mode){_cldMode=mode;$id('cld-mode-dev').classList.toggle('active',mode==='device');$id('cld-mode-gbday').classList.toggle('active',mode==='gbday');$id('cld-dev-section').style.display=mode==='device'?'block':'none';$id('cld-gbday-section').style.display=mode==='gbday'?'block':'none';resetPreview();}
+function onHwPurchaseChange(){resetPreview();}
+function onVMPerpChange(){const total=parseInt($id('vmp-gbday')?.value)||1;const band=getVMPBand(total);const range=VMP_BAND_RANGES.find(r=>r.band===band);const info=$id('vmp-band-info');if(info){info.style.display='block';info.textContent=`Band: ${band} (${range?.label}) — service SKUs will use ${band} prefix`;}updateVMPAddonSkus();resetPreview();}
+
+// ===== CLOUD PER-DEVICE DROPDOWN =====
+function addCloudDevRow(defaultSku) {
+  const container = $id('cld-dev-rows');
+  const rowId = 'cdr' + Date.now().toString(36) + Math.random().toString(36).slice(2,5);
+  const rowDiv = document.createElement('div');
+  rowDiv.className = 'cld-dev-row';
+  rowDiv.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+      <div style="flex:1;min-width:220px;">
+        <label>Search &amp; Select Model</label>
+        <input type="text" class="cld-model-search cld-model-search-${rowId}"
+          placeholder="Type to filter — e.g. 70G, 100F, VM02, Rugge…"
+          oninput="filterModelSelect('${rowId}',this.value)" autocomplete="off">
+        <select class="cld-model-select" id="sel-${rowId}"
+          style="width:100%;margin-top:4px;font-size:12px;"
+          onchange="onModelSelect('${rowId}')">
+          <option value="">— Select a model —</option>
+        </select>
+      </div>
+      <div style="flex:0 0 90px;">
+        <label>Qty</label>
+        <input type="number" class="cld-dev-qty" min="1" value="1" oninput="resetPreview()">
+      </div>
+      <div style="padding-bottom:8px;">
+        <button class="btn btn-ghost" style="padding:5px 9px;font-size:13px;color:var(--forti-text-muted);"
+          onclick="this.closest('.cld-dev-row').remove();resetPreview();" title="Remove row">✕</button>
+      </div>
+    </div>
+    <div class="cld-sku-pill" id="pill-${rowId}">
+      SKU: <span class="sku-cell" style="color:#1A4E82;font-size:12px;"></span>
+    </div>`;
+  container.appendChild(rowDiv);
+  populateModelSelect(rowId, defaultSku||'');
 }
 
-/* =====================================================================
-   HW MODEL SELECTION
-   ===================================================================== */
-function selectHW(model) {
-  _selectedHW = model;
-  document.querySelectorAll('#hw-model-grid .mc').forEach(el => el.classList.remove('sel'));
-  event.currentTarget.classList.add('sel');
-  document.getElementById('err-hw-model').style.display = 'none';
-  // FortiTIP only on hardware
-  updateAddonVisibility();
-}
-function onHwQtyChange(){}
-function onHwBundleChange(){}
-function onHwHaChange() {
-  const ha = document.getElementById('hw-ha').checked;
-  document.getElementById('hw-ha-info').style.display = ha ? 'flex' : 'none';
-}
-
-/* =====================================================================
-   VM CONTROLS
-   ===================================================================== */
-function onVmTypeChange() {
-  const t = document.getElementById('vm-type').value;
-  document.getElementById('vm-perp-services').style.display = t==='perp' ? 'block' : 'none';
-  // Rebuild tier options for type
-  const tierSel = document.getElementById('vm-tier');
-  tierSel.innerHTML = '<option value="">— Select tier —</option>';
-  if (t==='sub') {
-    [['5','5 GB/Day'],['50','50 GB/Day'],['500','500 GB/Day']].forEach(([v,l]) => {
-      const o = new Option(l,v); tierSel.appendChild(o);
-    });
-  } else {
-    [['1','1 GB/Day'],['5','5 GB/Day'],['25','25 GB/Day'],['100','100 GB/Day'],['500','500 GB/Day'],['2000','2000 GB/Day']].forEach(([v,l]) => {
-      const o = new Option(l,v); tierSel.appendChild(o);
-    });
+const _modelSelectCache = {};
+function populateModelSelect(rowId, selectedSku) {
+  const sel = $id('sel-'+rowId);
+  if (!sel) return;
+  const cats = ['FortiGate Desktop','FortiGate Mid-Range','FortiGate High-End','FortiGate Chassis','FortiGate VM','FortiWiFi'];
+  if (!_modelSelectCache._built) {
+    _modelSelectCache._built = true;
+    _modelSelectCache.groups = {};
+    cats.forEach(c => _modelSelectCache.groups[c] = []);
+    FG_CLOUD_MODELS.forEach(m => { (_modelSelectCache.groups[m.cat]||(_modelSelectCache.groups['FortiGate'])).push(m); });
   }
-  onVmTierChange();
-  updateAddonVisibility();
-}
-function onVmTierChange() {
-  const gbday = parseInt(document.getElementById('vm-tier').value)||0;
-  const ind = document.getElementById('vm-band-ind');
-  const t = document.getElementById('vm-type').value;
-  if (gbday && t==='perp') {
-    const band = vmPerpBand(gbday);
-    document.getElementById('vm-band-text').textContent = band;
-    document.getElementById('vm-band-desc').textContent = vmPerpBandDesc(gbday);
-    ind.style.display = 'block';
-  } else {
-    ind.style.display = 'none';
-  }
-  updateAddonVisibility();
-}
-
-/* =====================================================================
-   CLOUD CONTROLS
-   ===================================================================== */
-function onCldModelChange() {
-  const m = document.getElementById('cld-model').value;
-  document.getElementById('cld-perdev-section').style.display = m==='perdev' ? 'block' : 'none';
-  document.getElementById('cld-gbday-section').style.display = m==='gbday' ? 'block' : 'none';
-  updateAddonVisibility();
-}
-function onCldModelCodeInput() {
-  const v = document.getElementById('cld-model-code').value.trim().toUpperCase();
-  document.getElementById('cld-model-code').value = v;
-}
-document.getElementById('cld-extra-gb').addEventListener('change', function(){
-  document.getElementById('cld-extra-gb-section').style.display = this.checked ? 'block' : 'none';
-});
-
-/* =====================================================================
-   ADD-ON VISIBILITY
-   ===================================================================== */
-function updateAddonVisibility() {
-  const tab = _activeTab;
-  // Elite upgrade shown for hw & vm only
-  document.getElementById('ao-elite').style.display = (tab==='hw'||tab==='vm') ? 'flex' : 'none';
-  // Cloud: no managed service for cloud
-  document.getElementById('ao-managed').classList.toggle('disabled', tab==='cloud');
-  // FortiTIP — hw only (shown as note in hw panel, not in addons since it's in bundle)
+  sel.innerHTML = '<option value="">— Select a model —</option>';
+  cats.forEach(cat => {
+    const items = _modelSelectCache.groups[cat];
+    if (!items?.length) return;
+    const og = document.createElement('optgroup');
+    og.label = cat + ' (' + items.length + ')';
+    items.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.sku; opt.textContent = m.model;
+      if (m.sku === selectedSku) opt.selected = true;
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  });
+  onModelSelect(rowId);
 }
 
-function onFortiAiChange() {
-  const cb = document.getElementById('ao-fortiai-cb').checked;
-  document.getElementById('ao-fortiai-topup').style.display = cb ? 'flex' : 'none';
-  if (!cb) document.getElementById('ao-fortiai-topup-cb').checked = false;
+function filterModelSelect(rowId, query) {
+  const sel = $id('sel-'+rowId);
+  if (!sel) return;
+  const q = query.toLowerCase().trim();
+  const cats = ['FortiGate Desktop','FortiGate Mid-Range','FortiGate High-End','FortiGate Chassis','FortiGate VM','FortiWiFi'];
+  const prevVal = sel.value;
+  sel.innerHTML = q ? '' : '<option value="">— Select a model —</option>';
+  cats.forEach(cat => {
+    const items = (_modelSelectCache.groups||{})[cat]||[];
+    const filtered = q ? items.filter(m=>m.model.toLowerCase().includes(q)||m.sku.toLowerCase().includes(q)) : items;
+    if (!filtered.length) return;
+    const og = document.createElement('optgroup');
+    og.label = cat + ' (' + filtered.length + ')';
+    filtered.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.sku; opt.textContent = m.model;
+      if (m.sku === prevVal) opt.selected = true;
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  });
+  // Auto-select if only one result
+  const allOpts = sel.querySelectorAll('option[value]');
+  if (allOpts.length === 1) { allOpts[0].selected = true; }
+  onModelSelect(rowId);
 }
 
-/* =====================================================================
-   HELPERS
-   ===================================================================== */
-function v(id){ return document.getElementById(id); }
-function setErr(id, show) {
-  const el = document.getElementById(id);
-  if (el) el.style.display = show ? 'block' : 'none';
-}
-function clearStatus() {
-  const s = v('smsg'); s.textContent=''; s.className='';
+function onModelSelect(rowId) {
+  const sel = $id('sel-'+rowId);
+  const pill = $id('pill-'+rowId);
+  if (!sel || !pill) return;
+  const sku = sel.value;
+  if (sku) { pill.style.display='block'; pill.querySelector('.sku-cell').textContent=sku; }
+  else { pill.style.display='none'; }
+  resetPreview();
 }
 
-/* =====================================================================
-   GENERATE BOM
-   ===================================================================== */
-function generateBOM() {
-  clearStatus();
-  const rows = [];
-  let label = '';
-  let meta = {};
-  let valid = true;
+// ===== BOM GENERATION =====
+function generateBOM(){
+  _lastRows=[];_lastLabel='';_lastMeta={};$id('smsg').textContent='';
+  const rows=[];let valid=true;
 
-  if (_activeTab === 'hw') {
-    // Validate
-    if (!_selectedHW) { setErr('err-hw-model',true); valid=false; }
-    const qtyEl = v('hw-qty'); const qty = parseInt(qtyEl.value)||0;
-    if (qty < 1) { setErr('err-hw-qty',true); valid=false; }
-    if (!valid) { showStatus('Please fix errors above.','err'); return false; }
-    setErr('err-hw-model',false); setErr('err-hw-qty',false);
+  if(_deploy==='appliance'){
+    const m=HW_MODELS.find(x=>x.id===_selectedModel);if(!m){alert('Select a model.');return false;}
+    const qty=parseInt($id('hw-qty').value)||0;
+    if(qty<1){showErr('err-hw-qty',true);setInvalid('hw-qty',true);valid=false;}else{showErr('err-hw-qty',false);setInvalid('hw-qty',false);}
+    if(!valid)return false;
+    const ptype=$id('hw-purchase-type').value;const isNew=ptype.startsWith('new');const isBdl=ptype.includes('bundle');
+    if(isNew){rows.push({section:'Hardware Appliance'});rows.push({sku:m.sku,desc:m.hwDesc,qty,kind:'req',note:''});}
+    if(isBdl&&isNew){rows.push({section:'Support & Services Bundle'});rows.push({sku:m.bdlSku,desc:m.bdlDesc,qty,kind:'req',note:'Includes FortiCare Premium, IOC, Security Automation, Outbreak Detection, FortiTIP'});}
+    else if(!isBdl&&isNew){rows.push({section:'Support'});rows.push({sku:m.careSku,desc:m.careDesc,qty,kind:'req',note:''});}
+    else if(isBdl&&!isNew){rows.push({section:'Bundle Renewal'});rows.push({sku:m.renewSku,desc:m.renewDesc,qty,kind:'req',note:''});}
+    else{rows.push({section:'Support Renewal'});rows.push({sku:m.careSku,desc:m.careDesc,qty,kind:'req',note:''});}
+    if(m.psu&&$id('hw-add-psu')?.checked){rows.push({section:'Accessories'});rows.push({sku:m.psu.sku,desc:m.psu.desc,qty,kind:'opt',note:'Replacement PSU'});}
+    const ar=[];HW_ADDONS.forEach(a=>{
+      if($id(`hwc-${a.id}`)?.checked){
+        let sku,desc;
+        if(a.code==='topup'){sku='FC1-10-AITAZ-1089-02-DD';desc=HW_ADDON_DESC.topup();}
+        else if(a.code==='bkp'){sku='FC-10-FAZ00-286-02-12';desc=HW_ADDON_DESC.bkp();}
+        else{sku=`FC-10-${m.svcCode}-${a.code}-02-DD`;desc=HW_ADDON_DESC[a.id]?.(m.id)||'';}
+        ar.push({sku,desc,qty,kind:'opt',note:''});
+      }
+    });
+    if(ar.length){rows.push({section:'Service Add-Ons'});rows.push(...ar);}
+    _lastLabel=`${m.sku} ×${qty} (${isBdl?'Bundle':'Care'} ${isNew?'New':'Renewal'})`;
+    _lastMeta={model:m.sku,qty,purchaseType:ptype,gbdayMax:m.gbday};
 
-    const m = HW_MODELS[_selectedHW];
-    const bundle = v('hw-bundle').value === 'bundle';
-    const ha = v('hw-ha').checked;
-    const totalQty = ha ? qty*2 : qty;
-    label = `FAZ-${_selectedHW} ×${totalQty}${ha?' (HA)':''}`;
-    meta = { model:`FAZ-${_selectedHW}`, qty:totalQty, ha, bundle };
-
-    rows.push({ section: 'Hardware' });
-    if (bundle) {
-      rows.push({ sku:m.bun, desc:`FortiAnalyzer ${_selectedHW} Hardware Bundle (FortiCare Premium + IOC + Outbreak + Security Automation + FortiTIP)`, qty:totalQty, kind:'req', note:'Hardware Bundle — best value' });
-    } else {
-      rows.push({ sku:m.hw, desc:`FortiAnalyzer ${_selectedHW} Appliance`, qty:totalQty, kind:'req', note:'Hardware only' });
-      rows.push({ sku:'⚠', desc:'No support/services selected. Add FortiCare and service SKUs via renewal bundle.', qty:null, kind:'note', note:'' });
+  }else if(_deploy==='vmsub'){
+    if(_vmsAccumRows.length===0){
+      $id('vms-node-count-msg').textContent='Add at least one node first.';
+      $id('vms-node-count-msg').style.color='#C0392B';
+      return false;
     }
-    if (ha) {
-      rows.push({ sku:'⚠', desc:`HA requires 2× identical FAZ-${_selectedHW} at same firmware version and operation mode.`, qty:null, kind:'note', note:'' });
-    }
+    rows.push(..._vmsAccumRows);
+    const totalGB=_vmsAccumRows.filter(r=>!r.section&&r.sku&&!r.sku.startsWith('⚠')).reduce((s,r)=>{
+      const m=VMS_TIERS.find(t=>t.sku===r.sku);return s+(m?m.gb*r.qty:0);
+    },0);
+    _lastLabel=`FortiAnalyzer VM Subscription — ${_vmsNodeCount} node(s), ${totalGB} GB/Day total`;
+    _lastMeta={nodes:_vmsNodeCount,totalGBDay:totalGB};
 
-    // Add-ons (hardware)
-    buildAddonRows(rows, m, totalQty, 'hw');
+  }else if(_deploy==='vmperp'){
+    const totalGB=parseInt($id('vmp-gbday').value)||0;
+    if(totalGB<1){showErr('err-vmp-gbday',true);setInvalid('vmp-gbday',true);valid=false;}else{showErr('err-vmp-gbday',false);setInvalid('vmp-gbday',false);}
+    if(!valid)return false;
+    const packed=packVMP(totalGB);const band=getVMPBand(totalGB);const support=$id('vmp-support').value;
+    rows.push({section:'VM Perpetual Licenses'});
+    packed.forEach(p=>rows.push({sku:p.sku,desc:p.desc,qty:p.qty,kind:'req',note:`${p.gb} GB/Day × ${p.qty}`}));
+    rows.push({sku:'⚠',desc:'Co-term service SKUs to align all contract expiration dates.',qty:null,kind:'note'});
+    rows.push({section:`Support & Services (Band ${band} — ${getVMPBandLabel(band)})`});
+    if(support==='elite')rows.push({sku:`${band}-10-LV0VM-285-02-DD`,desc:`FortiAnalyzer-VM FortiCare Elite Support (${getVMPBandLabel(band)})`,qty:1,kind:'req',note:'Replaces Premium'});
+    else rows.push({sku:`${band}-10-LV0VM-248-02-DD`,desc:`FortiAnalyzer-VM FortiCare Premium Support (${getVMPBandLabel(band)})`,qty:1,kind:'req',note:''});
+    const ar=[];VMP_ADDONS.forEach(a=>{if(a.id==='premium'||a.id==='elite')return;if($id(`vmpc-${a.id}`)?.checked)ar.push({sku:a.fn(band),desc:a.desc(band),qty:1,kind:'opt',note:''});});
+    if(ar.length){rows.push({section:'Optional Add-Ons'});rows.push(...ar);}
+    _lastLabel=`FortiAnalyzer VM Perpetual — ${totalGB} GB/Day (Band ${band})`;
+    _lastMeta={totalGBDay:totalGB,band,support,packedLicenses:packed.map(p=>`${p.qty}×${p.sku}`).join(', ')};
 
-  } else if (_activeTab === 'vm') {
-    const vmType = v('vm-type').value;
-    const tier = v('vm-tier').value;
-    const qty = parseInt(v('vm-qty').value)||0;
-    if (!tier) { setErr('err-vm-tier',true); valid=false; }
-    if (qty < 1) { setErr('err-vm-qty',true); valid=false; }
-    if (!valid) { showStatus('Please fix errors above.','err'); return false; }
-    setErr('err-vm-tier',false); setErr('err-vm-qty',false);
-
-    const ha = v('vm-ha').checked;
-    const totalQty = ha ? qty*2 : qty;
-    const gbPerStack = parseInt(tier);
-    const totalGB = gbPerStack * (ha ? qty : qty); // per stack
-    label = `FAZ VM ${vmType==='sub'?'Subscription':'Perpetual'} ${tier}GB/Day ×${qty}${ha?' (HA)':''}`;
-    meta = { type:vmType, tier, qty:totalQty, ha };
-
-    if (vmType === 'sub') {
-      const t = VM_SUB_TIERS[tier];
-      if (!t) { showStatus('Selected tier not available for VM Subscription. Choose 5, 50, or 500 GB/Day.','err'); return false; }
-      rows.push({ section: 'VM Subscription Bundle' });
-      rows.push({ sku:t.bun, desc:`FortiAnalyzer VM Subscription Bundle — ${tier} GB/Day (FortiCare Premium + IOC + Outbreak + Security Automation)`, qty:totalQty, kind:'req', note:'Fully stackable' });
-      buildVmSubAddonRows(rows, t, totalQty);
-    } else {
-      // Perpetual — pack tiers
-      rows.push({ section: 'VM Perpetual License' });
-      const perpPacks = packVMPerp(gbPerStack);
-      perpPacks.forEach(p => {
-        rows.push({ sku:VM_PERP_SKU[p.tier], desc:`FortiAnalyzer VM Perpetual License — ${p.tier} GB/Day`, qty:p.qty * (ha?2:qty), kind:'req', note:'Stackable; multiple stacks' });
+  }else if(_deploy==='cloud'){
+    if(_cldMode==='device'){
+      const devRows=document.querySelectorAll('.cld-dev-row');
+      let hasContent=false;
+      rows.push({section:'FortiAnalyzer Cloud — Per-Device Subscription'});
+      devRows.forEach(row=>{
+        const sel=row.querySelector('.cld-model-select');
+        const qty=parseInt(row.querySelector('.cld-dev-qty')?.value)||0;
+        const sku=sel?.value||'';
+        if(!sku||qty<1)return;
+        const modelObj=FG_CLOUD_MODELS.find(m=>m.sku===sku);
+        const desc=modelObj?.desc||(modelObj?.model||sku)+' 1 Year FortiAnalyzer Cloud: cloud-Based central logging & analytics';
+        rows.push({sku,desc,qty,kind:'req',note:''});
+        hasContent=true;
       });
+      if(!hasContent)rows.push({sku:'⚠',desc:'No devices selected — use the dropdowns above to add at least one device.',qty:null,kind:'note'});
+      rows.push({sku:'⚠',desc:'Default per-device entitlement varies by model. Add a GB/Day subscription below if the daily volume exceeds the device entitlement.',qty:null,kind:'note'});
+      const devBand=$id('cld-dev-gbday-band')?.value;
+      if(devBand){const gbQty=parseInt($id('cld-dev-gbday-qty')?.value)||1;const cb=CLD_BANDS[devBand];if(cb){rows.push({section:'Optional GB/Day Add-On'});rows.push({sku:cb.sku,desc:cb.desc,qty:gbQty,kind:'opt',note:'Shared across all devices in FortiCloud account'});}}
+      _lastLabel='FortiAnalyzer Cloud — Per-Device';_lastMeta={mode:'per-device'};
 
-      // À-la-carte services
-      const band = vmPerpBand(totalGB);
-      rows.push({ section: 'VM Perpetual À-la-carte Services' });
-      if (v('vp-forticare').checked && !v('vp-elite').checked) {
-        rows.push({ sku:`${band}-10-LV0VM-248-02-DD`, desc:'FortiCare Premium Support — VM Perpetual', qty:totalQty, kind:'req', note:`Band ${band} · ${vmPerpBandDesc(totalGB)}` });
-      }
-      if (v('vp-ioc').checked) {
-        rows.push({ sku:`${band}-10-LV0VM-661-02-DD`, desc:'IOC & Outbreak Detection Service — VM Perpetual', qty:totalQty, kind:'req', note:`Band ${band}` });
-      }
-      if (v('vp-soc').checked) {
-        rows.push({ sku:`${band}-10-LV0VM-335-02-DD`, desc:'Security Automation Service — VM Perpetual', qty:totalQty, kind:'req', note:`Band ${band}` });
-      }
-      if (v('vp-elite').checked) {
-        rows.push({ sku:`${band}-10-LV0VM-285-02-DD`, desc:'FortiCare Elite Support — VM Perpetual', qty:totalQty, kind:'req', note:`Band ${band} · replaces Premium` });
-      }
-      buildVmPerpAddonRows(rows, band, totalQty, totalGB);
-    }
-
-  } else if (_activeTab === 'cloud') {
-    const cldModel = v('cld-model').value;
-    if (cldModel === 'perdev') {
-      const devType = v('cld-dev-type').value;
-      const modelCode = v('cld-model-code').value.trim().toUpperCase();
-      const devQty = parseInt(v('cld-dev-qty').value)||0;
-      const haP = v('cld-ha-pair').checked;
-      const totalDev = haP ? devQty*2 : devQty;
-      if (!modelCode) { setErr('err-cld-model-code',true); valid=false; }
-      if (devQty < 1) { setErr('err-cld-dev-qty',true); valid=false; }
-      if (!valid) { showStatus('Please fix errors above.','err'); return false; }
-      setErr('err-cld-model-code',false); setErr('err-cld-dev-qty',false);
-
-      const prefix = devType==='fg' ? 'FG' : 'FWB';
-      const perDevSku = `FC-10-${modelCode}-585-02-DD`;
-      label = `FortiAnalyzer Cloud — ${totalDev}× ${modelCode}`;
-      meta = { model:modelCode, qty:totalDev, ha:haP };
-
-      rows.push({ section: 'FortiAnalyzer Cloud — Per-Device Subscription' });
-      rows.push({ sku:perDevSku, desc:`FortiAnalyzer Cloud Device License — ${devType==='fg'?'FortiGate':'FortiWeb'} ${modelCode} (Central Logging + Analytics + IOC + Outbreak + Security Automation)`, qty:totalDev, kind:'req', note:'200 MB/Day default per device' });
-      if (haP) {
-        rows.push({ sku:'⚠', desc:'HA pairs: each FortiGate in an HA pair requires its own FAZ Cloud subscription.', qty:null, kind:'note', note:'' });
-      }
-
-      // Optional GB/day expansion
-      if (v('cld-extra-gb').checked) {
-        const gbTier = v('cld-extra-gb-tier').value;
-        const t = CLD_GB_TIERS[gbTier];
-        rows.push({ section: 'Optional GB/Day Expansion' });
-        rows.push({ sku:t.sku, desc:`FortiAnalyzer Cloud GB/Day Expansion — ${gbTier} GB/Day (shared pool)`, qty:1, kind:'opt', note:'Supplements per-device entitlement' });
-        buildCldAddonRows(rows, t, 1, gbTier);
-      } else {
-        buildCldAddonRows(rows, null, 0, '5');
-      }
-
-    } else {
-      const gbTier = v('cld-gb-tier').value;
-      const gbQty = parseInt(v('cld-gb-qty').value)||0;
-      if (gbQty < 1) { setErr('err-cld-gb-qty',true); valid=false; }
-      if (!valid) { showStatus('Please fix errors above.','err'); return false; }
-      setErr('err-cld-gb-qty',false);
-
-      const t = CLD_GB_TIERS[gbTier];
-      label = `FortiAnalyzer Cloud GB/Day ${gbTier} GB ×${gbQty}`;
-      meta = { tier:gbTier, qty:gbQty };
-
-      rows.push({ section: 'FortiAnalyzer Cloud — GB/Day Subscription' });
-      rows.push({ sku:t.sku, desc:`FortiAnalyzer Cloud Base Subscription — ${gbTier} GB/Day (Central Logging + Analytics + IOC + Outbreak + Security Automation + FortiCare Premium)`, qty:gbQty, kind:'req', note:'Shared across FortiCloud account' });
-      buildCldAddonRows(rows, t, gbQty, gbTier);
+    }else{
+      const qty=parseInt($id('cld-gbday-qty').value)||0;
+      if(qty<1){showErr('err-cld-gbday-qty',true);setInvalid('cld-gbday-qty',true);valid=false;}else{showErr('err-cld-gbday-qty',false);setInvalid('cld-gbday-qty',false);}
+      if(!valid)return false;
+      const b=CLD_BANDS[_cldBand];const bn=_cldBand.replace('fc','');
+      rows.push({section:'FortiAnalyzer Cloud — GB/Day Subscription'});
+      rows.push({sku:b.sku,desc:b.desc,qty,kind:'req',note:`${b.gbday} GB/Day × ${qty} = ${b.gbday*qty} GB/Day total`});
+      const ar=[];CLD_ADDONS.forEach(a=>{if($id(`cldc-${a.id}`)?.checked)ar.push({sku:a.fn(bn),desc:a.desc(bn),qty,kind:'opt',note:`Must match ${b.gbday}GB/Day tier`});});
+      if(ar.length){rows.push({section:'Service Add-Ons'});rows.push(...ar);}
+      _lastLabel=`FortiAnalyzer Cloud GB/Day ${b.band} (${b.gbday}GB/Day) ×${qty}`;_lastMeta={band:b.band,gbdayPerUnit:b.gbday,qty,totalGBDay:b.gbday*qty};
     }
   }
-
-  // Backup to cloud (universal)
-  if (v('ao-backup-cb').checked) {
-    rows.push({ section: 'Cloud Backup' });
-    rows.push({ sku:'FC-10-FAZ00-286-02-DD', desc:'FortiAnalyzer Backup to Public Cloud Service — 10TB', qty:1, kind:'opt', note:'Universal SKU' });
-  }
-
-  _lastRows = rows;
-  _lastLabel = label;
-  _lastMeta = meta;
-  renderBOM(rows);
-  showStatus('BOM generated.','ok');
-  return true;
+  _lastRows=rows;renderBOM(rows);return true;
 }
 
-/* ===== ADD-ON HELPERS ===== */
-function buildAddonRows(rows, m, qty, tab) {
-  const addons = [];
-  if (v('ao-ot-cb').checked)      addons.push({ sku:m.ot,    desc:'OT Security Service', note:'Advanced OT analytics' });
-  if (v('ao-asr-cb').checked)     addons.push({ sku:m.asr,   desc:'Attack Surface Rating & Compliance', note:'PCI/CIS compliance, Shadow-IT' });
-  if (v('ao-fortiai-cb').checked) addons.push({ sku:m.ai,    desc:'FortiAI Service', note:'GenAI SOC analysis' });
-  if (v('ao-managed-cb').checked) addons.push({ sku:m.mng,   desc:'Managed FortiAnalyzer Service', note:'SOCaaS health monitoring' });
-  if (v('ao-elite-cb') && v('ao-elite-cb').checked) addons.push({ sku:m.elite, desc:'FortiCare Elite Upgrade', note:'Premium → Elite' });
-  if (v('ao-fortiai-topup-cb').checked) addons.push({ sku:'FC1-10-AITAZ-1089-02-DD', desc:'FortiAI Token Top-Up', note:'Base subscription required' });
-  if (addons.length) {
-    rows.push({ section: 'Service Add-Ons' });
-    addons.forEach(a => rows.push({ sku:a.sku, desc:a.desc, qty, kind:'opt', note:a.note }));
-  }
+function renderBOM(rows){
+  const tbody=$id('bom-tbody');
+  tbody.innerHTML=rows.map(r=>{
+    if(r.section)return`<tr class="section-row"><td colspan="5">${r.section}</td></tr>`;
+    const bm={req:'badge-req',mand:'badge-mand',opt:'badge-opt',inc:'badge-inc',note:''};
+    const lm={req:'REQUIRED',mand:'MANDATORY',opt:'OPTIONAL',inc:'INCLUDED',note:''};
+    const badge=r.kind&&r.kind!=='note'?`<span class="badge ${bm[r.kind]}">${lm[r.kind]}</span>`:'';
+    const skuD=r.sku&&r.sku!=='⚠'?`<span class="sku-cell">${r.sku}</span>`:`<span style="color:orange;font-size:14px;">⚠</span>`;
+    return`<tr><td>${skuD}</td><td>${r.desc||''}</td><td style="text-align:center;">${r.qty!==null&&r.qty!==undefined?r.qty:''}</td><td>${badge}</td><td class="nc" style="font-size:11px;">${r.note||''}</td></tr>`;
+  }).join('');
+  $id('bom-preview').style.display='block';
+  $id('bom-preview').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function buildVmSubAddonRows(rows, t, qty) {
-  const addons = [];
-  if (v('ao-ot-cb').checked)      addons.push({ sku:t.ot,    desc:'OT Security Service — VM Subscription' });
-  if (v('ao-asr-cb').checked)     addons.push({ sku:t.asr,   desc:'Attack Surface Rating & Compliance — VM Subscription' });
-  if (v('ao-fortiai-cb').checked) addons.push({ sku:t.ai,    desc:'FortiAI Service — VM Subscription' });
-  if (v('ao-elite-cb') && v('ao-elite-cb').checked) addons.push({ sku:t.elite, desc:'FortiCare Elite Upgrade — VM Subscription', note:'Tier must match' });
-  if (v('ao-fortiai-topup-cb').checked) addons.push({ sku:'FC1-10-AITAZ-1089-02-DD', desc:'FortiAI Token Top-Up' });
-  if (addons.length) {
-    rows.push({ section: 'Service Add-Ons' });
-    addons.forEach(a => rows.push({ sku:a.sku, desc:a.desc, qty, kind:'opt', note: a.note||'Tier must match ingestion tier' }));
-  }
+function addToProjectBOM(){
+  if(!generateBOM())return;
+  if(window.parent&&window.parent!==window){
+    window.parent.postMessage({type:'FABRICBOM_ADD',product:'FortiAnalyzer',label:_lastLabel,rows:cartRowsFrom(_lastRows),meta:_lastMeta},'*');
+    $id('smsg').textContent='✓ Added to Project BOM.';$id('smsg').style.color='#2E7D32';
+  }else{$id('smsg').textContent='✓ (standalone mode)';$id('smsg').style.color='#6B7589';}
 }
 
-function buildVmPerpAddonRows(rows, band, qty, gbday) {
-  const addons = [];
-  if (v('ao-ot-cb').checked)      addons.push({ sku:`${band}-10-LV0VM-159-02-DD`, desc:'OT Security Service — VM Perpetual' });
-  if (v('ao-asr-cb').checked)     addons.push({ sku:`${band}-10-LV0VM-175-02-DD`, desc:'Attack Surface Rating & Compliance — VM Perpetual' });
-  if (v('ao-fortiai-cb').checked) addons.push({ sku:`${band}-10-LV0VM-1118-02-DD`, desc:'FortiAI Service — VM Perpetual' });
-  if (v('ao-fortiai-topup-cb').checked) addons.push({ sku:'FC1-10-AITAZ-1089-02-DD', desc:'FortiAI Token Top-Up' });
-  if (addons.length) {
-    rows.push({ section: 'Service Add-Ons' });
-    addons.forEach(a => rows.push({ sku:a.sku, desc:a.desc, qty, kind:'opt', note:`Band ${band} · ${vmPerpBandDesc(gbday)}` }));
-  }
+function resetForm(){
+  _selectedModel='150G';buildModelGrid();
+  $id('hw-qty').value=1;$id('hw-purchase-type').value='new-bundle';
+  document.querySelectorAll('input[type=checkbox]').forEach(c=>{if(!c.disabled)c.checked=false;});
+  vmsClearAll();$id('vms-gbday').value=5;$id('vms-node-label').value='';$id('vms-node-count-msg').textContent='';onVMSGbDayChange();
+  $id('vmp-gbday').value=10;$id('vmp-support').value='premium';onVMPerpChange();
+  selectCldBand('fc1');setCldMode('device');
+  $id('cld-dev-rows').innerHTML='';addCloudDevRow();
+  $id('bom-preview').style.display='none';$id('smsg').textContent='';
+  document.querySelectorAll('.err').forEach(e=>e.style.display='none');
+  document.querySelectorAll('.invalid').forEach(e=>e.classList.remove('invalid'));
+  updateHwAddonSkus();
+}
+function resetPreview(){$id('bom-preview').style.display='none';$id('smsg').textContent='';}
+function copyTSV(){
+  const rows=cartRowsFrom(_lastRows);
+  const tsv=['Part Number\tDescription\tQty\tType',...rows.map(r=>[r.sku,r.desc,r.qty,r.kind].join('\t'))].join('\n');
+  navigator.clipboard.writeText(tsv).then(()=>{const b=document.querySelector('[onclick="copyTSV()"]');if(b){b.textContent='Copied!';setTimeout(()=>b.textContent='Copy TSV',2000);}});
 }
 
-function buildCldAddonRows(rows, t, qty, gbTier) {
-  if (!t) return;
-  const addons = [];
-  if (v('ao-ot-cb').checked)      addons.push({ sku:t.ot,  desc:'OT Security Service — FAZ Cloud' });
-  if (v('ao-asr-cb').checked)     addons.push({ sku:t.asr, desc:'Attack Surface Rating & Compliance — FAZ Cloud' });
-  if (v('ao-fortiai-cb').checked) addons.push({ sku:t.ai,  desc:'FortiAI Service — FAZ Cloud' });
-  if (v('ao-fortiai-topup-cb').checked) addons.push({ sku:'FC1-10-AITAZ-1089-02-DD', desc:'FortiAI Token Top-Up' });
-  if (addons.length) {
-    rows.push({ section: 'Service Add-Ons' });
-    addons.forEach(a => rows.push({ sku:a.sku, desc:a.desc, qty:qty||1, kind:'opt', note:`${gbTier} GB/Day tier` }));
-  }
+// ===== EXAMPLES =====
+const _examples={
+  'cloud-device':{title:'FAZ Cloud — FortiGate Per-Device',defaultRows:[
+    {sku:'FC-10-GT70G-585-02-DD',desc:'FortiGate-70G 1 Year FortiAnalyzer Cloud: cloud-Based central logging & analytics, IOC, Outbreak Detection and Security Automation Service',qty:3,kind:'req'},
+    {sku:'FC1-10-AZCLD-463-01-DD',desc:'FortiAnalyzer Cloud Storage Add-On: 5 GB/Day for Central Logging & Analytics. FortiCare Premium Support included.',qty:0,kind:'opt'},
+  ]},
+  'cloud-gbday':{title:'FAZ Cloud — GB/Day for FortiClient & FortiMail',defaultRows:[
+    {sku:'FC1-10-AZCLD-463-01-DD',desc:'FortiAnalyzer Cloud Storage Add-On: 5 GB/Day for Central Logging & Analytics. FortiCare Premium Support included.',qty:1,kind:'req'},
+    {sku:'FC1-10-AZCLD-159-01-DD',desc:'FortiAnalyzer Cloud OT Security Service — OT analytics, compliance reports, event handlers (5 GB/Day tier)',qty:0,kind:'opt'},
+    {sku:'FC1-10-AZCLD-1118-01-DD',desc:'FortiAnalyzer Cloud FortiAI Subscription — GenAI powered SOC assistance (5 GB/Day tier)',qty:0,kind:'opt'},
+  ]},
+};
+function readExampleRows(exId){
+  const ex=_examples[exId];const card=document.querySelector(`[data-example-id="${exId}"]`);
+  const inputs=card.querySelectorAll('.example-table tbody input[type=number]');
+  return ex.defaultRows.map((r,i)=>({...r,qty:parseInt(inputs[i]?.value)||0}));
+}
+function addExampleToProjectBOM(exId){
+  const ex=_examples[exId];const rows=readExampleRows(exId);
+  const hasContent=rows.some(r=>r.sku&&r.qty>0);const msgEl=$id('emsg-'+exId);
+  if(!hasContent){msgEl.textContent='Set at least one quantity above zero.';msgEl.style.color='#C0392B';return;}
+  if(window.parent&&window.parent!==window)window.parent.postMessage({type:'FABRICBOM_ADD',product:'FortiAnalyzer',label:'FortiAnalyzer — Example: '+ex.title,rows:cartRowsFrom(rows),meta:{source:'example',exampleId:exId}},'*');
+  msgEl.textContent='✓ Added to Project BOM.';msgEl.style.color='#2E7D32';
+}
+function resetExample(exId){
+  const ex=_examples[exId];const card=document.querySelector(`[data-example-id="${exId}"]`);
+  const inputs=card.querySelectorAll('.example-table tbody input[type=number]');
+  ex.defaultRows.forEach((r,i)=>{if(inputs[i])inputs[i].value=r.qty;});
+  const el=$id('emsg-'+exId);if(el)el.textContent='';
 }
 
-/* ===== VM PERPETUAL TIER PACKING ===== */
-function packVMPerp(gbday) {
-  const tiers = [2000,500,100,25,5,1];
-  let rem = gbday;
+// ===== SIZING =====
+function setLpsMode(mode){$id('lps-mode-sess').classList.toggle('active',mode==='sessions');$id('lps-mode-users').classList.toggle('active',mode==='users');$id('lps-sessions-form').style.display=mode==='sessions'?'block':'none';$id('lps-users-form').style.display=mode==='users'?'block':'none';calcLPS();}
+function calcLPS(){
+  const isSess=$id('lps-sessions-form').style.display!=='none';
+  const pcts=[0.05,0.05,0.20,0.20,0.05,0.075];
+  const form=isSess?$id('lps-sessions-form'):$id('lps-users-form');
+  let add=0;form.querySelectorAll('input[type=checkbox]').forEach((b,i)=>{if(b.checked)add+=pcts[i]||0;});
+  let lps=0;
+  if(isSess){lps=(parseFloat($id('lps-sess').value)||0)*(1+add);}
+  else{const u=parseFloat($id('lps-users').value)||0;const p=(parseFloat($id('lps-active-pct').value)||50)/100;lps=u*p*0.66*(1+add);}
+  const gbday=lps*80*86400/(1024**3);
+  const rec=HW_MODELS.find(m=>m.gbday>=gbday)||HW_MODELS[HW_MODELS.length-1];
+  $id('lps-val').textContent=Math.round(lps).toLocaleString();
+  $id('gbday-val').textContent=gbday.toFixed(1);
+  $id('model-rec-val').textContent=gbday>8300?'FAZ BigData':rec.sku;
+  $id('stor-lps').value=Math.round(lps)||1000;calcStorage();
+}
+function calcStorage(){
+  const lps=parseFloat($id('stor-lps').value)||1000;
+  const archDays=parseFloat($id('stor-arch').value)||365;
+  const analDays=parseFloat($id('stor-anal').value)||90;
+  const GiB=1024**3,TiB=1024**4;
+  const archTotal=lps*80*86400*archDays/GiB/1024;
+  const analUnc=lps*600*86400*Math.min(7,analDays)/GiB/1024;
+  const analCmp=lps*150*86400*Math.max(0,analDays-7)/GiB/1024;
+  $id('stor-archive-val').textContent=archTotal.toFixed(2);
+  $id('stor-analytic-val').textContent=(analUnc+analCmp).toFixed(2);
+  $id('stor-total-val').textContent=(archTotal+analUnc+analCmp).toFixed(2);
+}
+
+// ===== CACHE BUST =====
+(function checkVersion(){
+  const baked=document.querySelector('meta[name="build-timestamp"]')?.content;
+  if(!baked||location.protocol==='file:')return;
+  fetch(location.pathname+'?_cb='+Date.now(),{cache:'no-store'})
+    .then(r=>r.ok?r.text():null).then(html=>{
+      if(!html)return;
+      const m=html.match(/<meta name="build-timestamp" content="([^"]+)"/);
+      if(m&&m[1]!==baked){
+        $id('stale-banner').style.display='block';
+        if(window.parent&&window.parent!==window)window.parent.postMessage({type:'FABRICBOM_STALE',buildId:document.querySelector('meta[name="build-id"]')?.content,bakedTimestamp:baked,liveTimestamp:m[1]},'*');
+      }
+    }).catch(()=>{});
+})();
+
+window.addEventListener('load',init);
+
+// ===== VM SUBSCRIPTION ACCUMULATION =====
+function packVMS(total) {
+  let rem = total;
   const result = [];
-  for (const t of tiers) {
-    const q = Math.floor(rem / t);
-    if (q > 0) { result.push({ tier:String(t), qty:q }); rem -= q*t; }
+  for (const t of VMS_TIERS) {
+    const qty = Math.floor(rem / t.gb);
+    if (qty > 0) { result.push({...t, qty}); rem -= qty * t.gb; }
   }
-  if (rem > 0) result.push({ tier:'1', qty:1 });
+  if (rem > 0) {
+    const smallest = VMS_TIERS[VMS_TIERS.length - 1];
+    result.push({...smallest, qty: 1});
+  }
   return result;
 }
 
-/* ===== RENDER BOM ===== */
-function renderBOM(rows) {
-  const tbody = v('bom-tbody');
-  tbody.innerHTML = '';
-  rows.forEach(r => {
-    const tr = document.createElement('tr');
-    if (r.section !== undefined) {
-      tr.className = 'section-row';
-      tr.innerHTML = `<td colspan="5">${r.section}</td>`;
-    } else {
-      const badge = r.kind === 'req' ? '<span class="badge badge-req">Required</span>'
-                  : r.kind === 'opt' ? '<span class="badge badge-opt">Optional</span>'
-                  : r.kind === 'mand' ? '<span class="badge badge-mand">Mandatory</span>'
-                  : r.kind === 'inc' ? '<span class="badge badge-inc">Included</span>'
-                  : '';
-      const skuCell = r.sku === '⚠' ? `<span style="color:var(--forti-warn-text)">⚠ Note</span>`
-                    : `<span class="sku">${r.sku}</span>`;
-      tr.innerHTML = `
-        <td>${skuCell}</td>
-        <td class="nc">${r.desc}</td>
-        <td style="text-align:center;">${r.qty !== null ? r.qty : ''}</td>
-        <td>${badge}</td>
-        <td class="nc">${r.note||''}</td>`;
+function onVMSGbDayChange() {
+  const total = parseInt($id('vms-gbday').value) || 0;
+  const wrap = $id('vms-pack-preview');
+  const tbody = $id('vms-pack-tbody');
+  const totEl = $id('vms-pack-total');
+  if (total < 1) { wrap.style.display = 'none'; return; }
+  const packed = packVMS(total);
+  const actualTotal = packed.reduce((s, t) => s + t.gb * t.qty, 0);
+  tbody.innerHTML = packed.map(t => `
+    <tr>
+      <td class="sku-cell">${t.sku}</td>
+      <td class="nc" style="font-size:11px;">${t.desc.substring(0, 80)}…</td>
+      <td style="text-align:center;">${t.qty}</td>
+      <td style="text-align:center;">${t.gb * t.qty} GB/Day</td>
+    </tr>`).join('');
+  const over = actualTotal - total;
+  totEl.textContent = `Total capacity: ${actualTotal} GB/Day${over > 0 ? ` (rounds up by ${over} GB/Day — smallest tier is 5 GB/Day)` : ''}`;
+  wrap.style.display = 'block';
+}
+
+function vmsGetAddonRows(packed) {
+  // Determine the dominant band for add-on SKUs (highest GB/Day tier present)
+  const topTier = packed[0]; // VMS_TIERS sorted largest-first
+  const bn = topTier.band.replace('fc', '');
+  const addonRows = [];
+  VMS_ADDONS.forEach(a => {
+    if ($id(`vmsc-${a.id}`)?.checked) {
+      // qty=1 per node for add-ons; band matches the top tier
+      addonRows.push({sku: a.fn(bn), desc: a.desc(bn), qty: 1, kind: 'opt',
+        note: `Add-on for ${topTier.gb} GB/Day band (FC${bn})`});
     }
-    tbody.appendChild(tr);
   });
-  v('bom-section').style.display = 'block';
-  v('bom-section').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  return addonRows;
 }
 
-/* ===== STATUS ===== */
-function showStatus(msg, type) {
-  const s = v('smsg');
-  s.textContent = msg;
-  s.className = type;
+function vmsAddNode() {
+  const total = parseInt($id('vms-gbday').value) || 0;
+  const errEl = $id('err-vms-gbday');
+  if (total < 1) {
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  const label = $id('vms-node-label').value.trim() || `Node ${_vmsNodeCount + 1}`;
+  _vmsNodeCount++;
+  const packed = packVMS(total);
+  const addonRows = vmsGetAddonRows(packed);
+  const actualTotal = packed.reduce((s, t) => s + t.gb * t.qty, 0);
+
+  _vmsAccumRows.push({section: `${label} — ${actualTotal} GB/Day`});
+  packed.forEach(t => _vmsAccumRows.push({sku: t.sku, desc: t.desc, qty: t.qty, kind: 'req',
+    note: `${t.gb} GB/Day × ${t.qty}`}));
+  if (addonRows.length) _vmsAccumRows.push(...addonRows);
+
+  vmsRenderAccum();
+
+  // Reset for next node
+  $id('vms-node-label').value = '';
+  $id('vms-gbday').value = 5;
+  onVMSGbDayChange();
+  // Uncheck add-ons
+  VMS_ADDONS.forEach(a => { const cb = $id(`vmsc-${a.id}`); if(cb) cb.checked = false; });
+
+  const msg = $id('vms-node-count-msg');
+  msg.textContent = `${_vmsNodeCount} node(s) accumulated — click "Preview BOM" or "Add to Project BOM" when done.`;
+  msg.style.color = '#2E7D32';
+  resetPreview();
 }
 
-/* ===== ADD TO PROJECT BOM ===== */
-function addToProjectBOM() {
-  if (!generateBOM()) return;
-  window.parent.postMessage({
-    type: 'FORTIBOM_ADD',
-    product: 'FortiAnalyzer',
-    label: _lastLabel,
-    rows: _lastRows,
-    meta: _lastMeta
-  }, '*');
-  showStatus('✓ Added to Project BOM!', 'ok');
+function vmsRenderAccum() {
+  const tbody = $id('vms-accum-tbody');
+  const wrap  = $id('vms-accumulated');
+  const sumEl = $id('vms-accum-summary');
+  if (!_vmsAccumRows.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+
+  let currentSection = '';
+  tbody.innerHTML = _vmsAccumRows.map((r, i) => {
+    if (r.section) {
+      currentSection = r.section;
+      return `<tr class="section-row"><td colspan="6">${r.section}</td></tr>`;
+    }
+    const badge = r.kind === 'req'
+      ? '<span class="badge badge-req">REQUIRED</span>'
+      : '<span class="badge badge-opt">OPTIONAL</span>';
+    return `<tr>
+      <td class="nc" style="font-size:11px;">${currentSection}</td>
+      <td class="sku-cell">${r.sku}</td>
+      <td class="nc" style="font-size:11px;">${r.desc.substring(0,70)}…</td>
+      <td style="text-align:center;">${r.qty}</td>
+      <td>${badge}</td>
+      <td><button onclick="vmsRemoveNode(${i})" style="background:none;border:none;cursor:pointer;color:var(--forti-text-muted);font-size:13px;" title="Remove this row">✕</button></td>
+    </tr>`;
+  }).join('');
+
+  // Summary line
+  const totalGB = _vmsAccumRows.filter(r => !r.section && r.sku && !r.sku.startsWith('⚠'))
+    .reduce((s,r) => { const t = VMS_TIERS.find(t=>t.sku===r.sku); return s+(t?t.gb*r.qty:0); }, 0);
+  sumEl.textContent = `${_vmsNodeCount} node(s) · ${totalGB} GB/Day total capacity`;
 }
 
-/* ===== COPY TSV ===== */
-function copyTSV() {
-  const lines = [['Part Number','Description','Qty','Type','Notes'].join('\t')];
-  _lastRows.forEach(r => {
-    if (r.section) { lines.push([`### ${r.section}`,'','','',''].join('\t')); }
-    else { lines.push([r.sku||'', r.desc||'', r.qty!=null?r.qty:'', r.kind||'', r.note||''].join('\t')); }
-  });
-  navigator.clipboard.writeText(lines.join('\n')).then(() => showStatus('Copied to clipboard.','ok'));
+function vmsRemoveNode(rowIdx) {
+  // Find the section this row belongs to and remove the whole node group
+  let sectionStart = rowIdx;
+  while (sectionStart > 0 && !_vmsAccumRows[sectionStart].section) sectionStart--;
+  let sectionEnd = sectionStart + 1;
+  while (sectionEnd < _vmsAccumRows.length && !_vmsAccumRows[sectionEnd].section) sectionEnd++;
+  _vmsAccumRows.splice(sectionStart, sectionEnd - sectionStart);
+  _vmsNodeCount = Math.max(0, _vmsNodeCount - 1);
+  vmsRenderAccum();
+  const msg = $id('vms-node-count-msg');
+  if (_vmsNodeCount === 0) { msg.textContent = ''; }
+  else { msg.textContent = `${_vmsNodeCount} node(s) accumulated.`; msg.style.color='#2E7D32'; }
+  resetPreview();
 }
 
-/* ===== RESET ===== */
-function resetForm() {
-  _selectedHW = null;
-  _lastRows = []; _lastLabel = ''; _lastMeta = {};
-  document.querySelectorAll('#hw-model-grid .mc').forEach(el => el.classList.remove('sel'));
-  v('hw-qty').value = 1;
-  v('hw-bundle').value = 'bundle';
-  v('hw-ha').checked = false;
-  v('hw-ha-info').style.display = 'none';
-  v('hw-fortitip').checked = false;
-  v('vm-type').value = 'sub';
-  v('vm-perp-services').style.display = 'none';
-  v('vm-tier').value = '';
-  v('vm-band-ind').style.display = 'none';
-  v('vm-qty').value = 1;
-  v('vm-ha').checked = false;
-  v('vp-forticare').checked = true;
-  v('vp-ioc').checked = true;
-  v('vp-soc').checked = true;
-  v('vp-elite').checked = false;
-  v('cld-model').value = 'perdev';
-  v('cld-perdev-section').style.display = 'block';
-  v('cld-gbday-section').style.display = 'none';
-  v('cld-dev-type').value = 'fg';
-  v('cld-model-code').value = '';
-  v('cld-dev-qty').value = 1;
-  v('cld-ha-pair').checked = false;
-  v('cld-extra-gb').checked = false;
-  v('cld-extra-gb-section').style.display = 'none';
-  v('cld-gb-tier').value = '5';
-  v('cld-gb-qty').value = 1;
-  ['ao-ot-cb','ao-asr-cb','ao-fortiai-cb','ao-fortiai-topup-cb','ao-managed-cb','ao-backup-cb','ao-elite-cb'].forEach(id => {
-    if (v(id)) v(id).checked = false;
-  });
-  v('ao-fortiai-topup').style.display = 'none';
-  v('ao-elite').style.display = 'none';
-  ['err-hw-model','err-hw-qty','err-vm-tier','err-vm-qty','err-cld-model-code','err-cld-dev-qty','err-cld-gb-qty'].forEach(id => setErr(id,false));
-  v('bom-section').style.display = 'none';
-  v('bom-tbody').innerHTML = '';
-  clearStatus();
-  switchTab('hw');
+function vmsClearAll() {
+  _vmsAccumRows = []; _vmsNodeCount = 0;
+  vmsRenderAccum();
+  $id('vms-node-count-msg').textContent = '';
+  resetPreview();
 }
-
-/* =====================================================================
-   INIT
-   ===================================================================== */
-updateAddonVisibility();
-onVmTypeChange();
 </script>
 </body>
 </html>
