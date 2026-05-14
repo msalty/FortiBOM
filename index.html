@@ -2367,6 +2367,8 @@ function toggleCopyMenu(e) {
   e.stopPropagation();
   const menu = document.getElementById('copy-menu');
   if (menu.classList.contains('on')) { menu.classList.remove('on'); return; }
+  closeProjectMenu();
+  closeAddMenu();
   const rect = e.currentTarget.getBoundingClientRect();
   menu.style.top  = (rect.bottom + 4) + 'px';
   menu.style.left = rect.left + 'px';
@@ -2377,6 +2379,8 @@ function toggleAddMenu(e) {
   e.stopPropagation();
   const menu = document.getElementById('add-menu');
   if (menu.classList.contains('on')) { menu.classList.remove('on'); return; }
+  closeCopyMenu();
+  closeProjectMenu();
   const rect = e.currentTarget.getBoundingClientRect();
   menu.style.top  = (rect.bottom + 4) + 'px';
   menu.style.left = rect.left + 'px';
@@ -2420,6 +2424,8 @@ async function toggleProjectMenu(e) {
   e.stopPropagation();
   const menu = document.getElementById('project-menu');
   if (menu.classList.contains('on')) { menu.classList.remove('on'); return; }
+  closeCopyMenu();
+  closeAddMenu();
   const btn = e.currentTarget;
   try {
     const pricing = await getPricingIDB();
