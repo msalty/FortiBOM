@@ -1871,7 +1871,7 @@ let _skuInsertGroupId = null;
 window.addEventListener('message', e => {
   if (!e.data) return;
   if (e.data.type === 'FORTIBOM_CLOSE') { closeSkuModal(); return; }
-  if (e.data.type !== 'FORTIBOM_ADD') return;
+  if (e.data.type !== 'FORTIBOM_ADD' && e.data.type !== 'FABRICBOM_ADD') return;
   const { product, label, rows, meta } = e.data;
   if (_skuEditId !== null) {
     const idx = cart.findIndex(c => c.id === _skuEditId);
