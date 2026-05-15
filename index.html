@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 <title>FabricBOM</title>
+<meta name="description" content="FabricBOM — client-side, offline Bill of Materials generator for Fortinet Security Fabric deployments. Configure 30+ products, save projects, export to CSV/XLSX/.fbom.">
+<link rel="alternate" type="text/markdown" href="llms.txt" title="LLM-friendly site overview">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192x192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512x512.png">
@@ -534,7 +536,7 @@
 </head>
 <body>
 
-<div id="top-bar">
+<header id="top-bar" role="banner">
   <button id="menu-btn" onclick="toggleSidebar()" title="Toggle navigation" aria-label="Toggle navigation">
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 5h12M3 9h12M3 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
   </button>
@@ -548,13 +550,13 @@
   <button id="cart-btn" onclick="showPBV()" title="Project BOM">
     <svg viewBox="0 0 15 15" fill="none"><path d="M1 1h2l2 7h7l1-5H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="13" r="1" fill="currentColor"/><circle cx="12" cy="13" r="1" fill="currentColor"/></svg>
     <span id="bom-save-dot" class="save-dot"></span>
-    <span id="cbadge">0</span>
+    <span id="cbadge" aria-label="Items in BOM">0</span>
   </button>
-</div>
+</header>
 
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
-<div id="main">
-  <nav id="sidebar">
+<div id="main" role="presentation">
+  <nav id="sidebar" aria-label="Product navigation">
     <div class="nsl" style="padding-bottom:4px;">Project</div>
     <div class="ni proj" id="nav-proj" onclick="showPBV()">
       <svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2" stroke="#E8EAF0" stroke-width="1.2"/><path d="M5 6h8M5 9h8M5 12h5" stroke="#E8EAF0" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -571,7 +573,7 @@
     <div class="nsl">Products</div>
     <div class="nav-search-wrap">
       <input id="nav-search-input" type="text" placeholder="Filter products &amp; plugins…" oninput="filterNav(this.value)" autocomplete="off" spellcheck="false">
-      <button id="nav-search-clear" onclick="clearNavSearch()" title="Clear">&times;</button>
+      <button id="nav-search-clear" onclick="clearNavSearch()" title="Clear" aria-label="Clear product filter">&times;</button>
     </div>
     <div id="nav-items"><div class="n-load">Scanning products…</div></div>
     <div id="plugin-nav-items"></div>
@@ -593,7 +595,7 @@
     </a>
   </nav>
 
-  <div id="content">
+  <main id="content" role="main" aria-label="Product configurator and project BOM">
     <div id="ch">
       <span class="bci">FabricBOM</span>
       <span class="bcs">›</span>
@@ -639,14 +641,14 @@
             <svg viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Details
           </button>
-          <button class="pi-clear-btn" id="pi-clear-btn" onclick="clearPiFields()" title="Clear all project information fields">
+          <button class="pi-clear-btn" id="pi-clear-btn" onclick="clearPiFields()" title="Clear all project information fields" aria-label="Clear project information fields">
             <svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
           </button>
           <label id="pi-readonly-wrap" title="Lock the BOM and project info against edits">
             <input type="checkbox" id="pi-readonly" onchange="handleReadOnlyChange(this)">
             <span>RO</span>
           </label>
-          <button id="pw-lock-btn" onclick="openPwViewModal()" title="Password protected — click to manage">
+          <button id="pw-lock-btn" onclick="openPwViewModal()" title="Password protected — click to manage" aria-label="Manage BOM password protection">
             <svg viewBox="0 0 11 13" fill="none"><rect x="1.5" y="5.5" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 5.5V3.5a2 2 0 0 1 4 0v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><circle cx="5.5" cy="9" r="1" fill="currentColor"/></svg>
           </button>
           <button id="pw-unlock-btn" onclick="openPwUnlockModal()" title="This BOM is password-protected — click to unlock">
@@ -660,12 +662,12 @@
         </div>
         <div class="lcb">
           <div class="pfg">
-            <div class="pg full pi-cust-wrap"><label class="pl">Customer / Opportunity <span class="r">*</span></label><input type="text" class="pi" id="pi-cust" placeholder="e.g. Acme Corp – Network Refresh 2025"></div>
-            <div class="pg pi-opp-wrap"><label class="pl">Opportunity ID</label><input type="text" class="pi" id="pi-opp" placeholder="e.g. OPP-2025-01234"></div>
-            <div class="pg"><label class="pl">SE / Engineer</label><input type="text" class="pi" id="pi-eng" placeholder="Your name"></div>
-            <div class="pg"><label class="pl">Date</label><input type="text" class="pi" id="pi-date"></div>
+            <div class="pg full pi-cust-wrap"><label class="pl" for="pi-cust">Customer / Opportunity <span class="r">*</span></label><input type="text" class="pi" id="pi-cust" placeholder="e.g. Acme Corp – Network Refresh 2025"></div>
+            <div class="pg pi-opp-wrap"><label class="pl" for="pi-opp">Opportunity ID</label><input type="text" class="pi" id="pi-opp" placeholder="e.g. OPP-2025-01234"></div>
+            <div class="pg"><label class="pl" for="pi-eng">SE / Engineer</label><input type="text" class="pi" id="pi-eng" placeholder="Your name"></div>
+            <div class="pg"><label class="pl" for="pi-date">Date</label><input type="text" class="pi" id="pi-date"></div>
             <div class="pg">
-              <label class="pl">Support / License Term</label>
+              <label class="pl" for="pi-term">Support / License Term</label>
               <select class="pi" id="pi-term" onchange="applyTerm()">
                 <option value="DD">Co-term / Date-driven (-DD) — default</option>
                 <option value="12">1 Year (-12)</option>
@@ -674,7 +676,7 @@
               </select>
               <div style="font-size:10px;color:var(--c-textm);margin-top:3px;">Replaces <code>-DD</code> suffix on all SKUs in this project BOM</div>
             </div>
-            <div class="pg full pi-notes-wrap"><label class="pl">Project Scope / Notes</label><textarea class="pi" id="pi-notes" placeholder="Optional: overall project scope, deployment context, or assumptions…"></textarea></div>
+            <div class="pg full pi-notes-wrap"><label class="pl" for="pi-notes">Project Scope / Notes</label><textarea class="pi" id="pi-notes" placeholder="Optional: overall project scope, deployment context, or assumptions…"></textarea></div>
           </div>
           <div id="pi-summary"></div>
           <div id="pi-view"></div>
@@ -688,8 +690,8 @@
           <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
             <button class="btn bs" id="project-btn" onclick="toggleProjectMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>File<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <button class="btn bs" id="copy-export-btn" onclick="toggleCopyMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/></svg>Share<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <button id="clear-btn" class="btn bd" onclick="clearCart()" title="Clear All"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
-            <button id="pin-btn" onclick="togglePin()" title="Pin toolbar"><svg viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="8.5" height="8.5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M9 4H11A1.5 1.5 0 0 1 12.5 5.5V11A1.5 1.5 0 0 1 11 12.5H5.5A1.5 1.5 0 0 1 4 11V9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button>
+            <button id="clear-btn" class="btn bd" onclick="clearCart()" title="Clear All" aria-label="Clear all BOM items"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button id="pin-btn" onclick="togglePin()" title="Pin toolbar" aria-label="Pin toolbar to top"><svg viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="8.5" height="8.5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M9 4H11A1.5 1.5 0 0 1 12.5 5.5V11A1.5 1.5 0 0 1 11 12.5H5.5A1.5 1.5 0 0 1 4 11V9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button>
           </div>
         </div>
       </div>
@@ -952,12 +954,12 @@
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </div>
 
 <input type="file" id="pricing-file" accept=".csv,.xlsx" style="display:none" onchange="pricingFileChosen(this)">
 <input type="file" id="plugin-file-input" accept=".html,.json" style="display:none" onchange="handlePluginFile(this)">
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <!-- Copy/Export dropdown menu (position:fixed so it escapes overflow-y:auto parents) -->
 <div id="copy-menu">
@@ -1785,6 +1787,7 @@ function loadProduct(path, label, navEl) {
   document.getElementById('ws').style.display = 'none';
   const f = document.getElementById('pf');
   f.style.display = 'block';
+  f.title = `${label} configurator`;
   f.src = path;
 }
 function showPBV() {
