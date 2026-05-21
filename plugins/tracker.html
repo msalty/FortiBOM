@@ -452,21 +452,74 @@ table.btree td.bc-empty{background:var(--c-sh);color:var(--c-textm);font-style:i
 <script>
 'use strict';
 
-const STORE_KEY = 'fabricbom_tracker';
+const STORE_KEY    = 'plugin_data_tracker';
+const LEGACY_LS_KEY = 'fabricbom_tracker';
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
-function loadData() {
-  try {
-    const d = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
-    d.tac       = d.tac       || [];
-    d.mantis    = d.mantis    || [];
-    d.companies = d.companies || [];
-    return d;
-  } catch { return { tac:[], mantis:[], companies:[] }; }
+// Plugin data lives in the host app's shared IndexedDB (`toolbox_shared` /
+// `datasets`) so the Settings page Backup All / Restore captures it. We keep
+// loadData()/saveData() synchronous against an in-memory cache and persist
+// writes asynchronously to IDB.
+let _state = { tac:[], mantis:[], companies:[] };
+
+function _openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('toolbox_shared', 2);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
 }
+function _idbGet() {
+  return _openDB().then(db => new Promise((res, rej) => {
+    const tx  = db.transaction('datasets','readonly');
+    const req = tx.objectStore('datasets').get(STORE_KEY);
+    req.onsuccess = () => res(req.result || null);
+    req.onerror   = e => rej(e.target.error);
+  }));
+}
+function _idbPut(data) {
+  return _openDB().then(db => new Promise((res, rej) => {
+    const tx = db.transaction('datasets','readwrite');
+    tx.objectStore('datasets').put({ key: STORE_KEY, data, updatedAt: Date.now() });
+    tx.oncomplete = res;
+    tx.onerror = e => rej(e.target.error);
+  }));
+}
+function _normalize(d) {
+  d = d || {};
+  d.tac       = d.tac       || [];
+  d.mantis    = d.mantis    || [];
+  d.companies = d.companies || [];
+  return d;
+}
+
+function loadData() { return _state; }
 function saveData(d) {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
-  catch(e) { alert('Storage error: ' + e.message); }
+  _state = _normalize(d);
+  _idbPut(_state).catch(e => alert('Storage error: ' + e.message));
+}
+
+async function _initData() {
+  try {
+    const rec = await _idbGet();
+    if (rec && rec.data) {
+      _state = _normalize(rec.data);
+      return;
+    }
+    // One-time migration from the legacy localStorage location.
+    const legacy = localStorage.getItem(LEGACY_LS_KEY);
+    if (legacy) {
+      try {
+        _state = _normalize(JSON.parse(legacy));
+        await _idbPut(_state);
+        localStorage.removeItem(LEGACY_LS_KEY);
+        return;
+      } catch {}
+    }
+    _state = _normalize(null);
+  } catch(e) {
+    _state = _normalize(null);
+  }
 }
 
 // ── URLS / NORMALISE ──────────────────────────────────────────────────────────
@@ -981,7 +1034,7 @@ document.addEventListener('keydown',e=>{
   if (e.key==='Escape') ['tac-modal','mantis-modal','del-modal','imp-confirm'].forEach(id=>document.getElementById(id).classList.remove('on'));
 });
 
-render();
+_initData().then(render);
 </script>
 </body>
 </html>

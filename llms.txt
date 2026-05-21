@@ -1,0 +1,47 @@
+# FabricBOM
+
+> Client-side, fully-offline Bill of Materials generator for Fortinet Security Fabric deployments. Plain HTML/CSS/JS — no backend, no build step, no network calls. All state lives in the browser's IndexedDB.
+
+FabricBOM is a single-page hub (`index.html`) that loads per-product configurator pages from `products/*.html` into an iframe. Each configurator collects user input, then `postMessage`s a structured line-item payload back to the parent hub, which appends it to the in-memory Project BOM. The Project BOM can be saved, exported (CSV / XLSX / `.fbom`), shared via compressed URL, or printed.
+
+## Site map
+
+- [/](index.html): main hub — sidebar navigation, project metadata form, BOM cart, exports, settings
+- [/docs/help-faq.html](docs/help-faq.html): user-facing help and FAQ with workflow walkthroughs
+- [/products/](products/): 30+ standalone per-product configurator pages, each loaded as an iframe child of the hub
+- [/README.md](README.md): full project README — features, supported products, architecture
+- [/manifest.json](manifest.json): PWA manifest
+
+## Workflow an agent should follow
+
+1. From the hub, click a product in the left sidebar (`<nav id="sidebar">`) to load its configurator iframe (`<iframe id="pf">`)
+2. Inside the configurator, choose a hardware model, quantity, FortiCare support tier, and any add-on licenses
+3. Click "Add to Project BOM" at the bottom of the configurator — this `postMessage`s the payload to the parent
+4. Repeat for every product the customer needs
+5. Open the Project BOM view (`#nav-proj` in the sidebar, or the cart button in the top bar)
+6. Fill the project metadata fields — `#pi-cust` (customer/opportunity, required), `#pi-opp`, `#pi-eng`, `#pi-date`, `#pi-term`, `#pi-notes`
+7. Choose the global license term in `#pi-term` (`-DD` co-term default, or `-12` / `-36` / `-60` for 1/3/5 years)
+8. Use the "File" menu (`#project-btn`) to Save, Export FabricBOM (CSV/XLSX/.fbom), or Print; use "Share" (`#copy-export-btn`) for URL/TSV/Markdown copy
+
+## Key DOM landmarks
+
+- `<header id="top-bar">` — logo, product name, cart button (`#cart-btn`)
+- `<nav id="sidebar" aria-label="Product navigation">` — product list, search input (`#nav-search-input`), Settings, About, Help links
+- `<main id="content">` — current view container; one of three sibling panels is visible at a time:
+  - `#pfw` — product configurator iframe area (`<iframe id="pf">`)
+  - `#pbv` — Project BOM view (metadata card + line items + totals)
+  - `#stv` — Settings view
+- `#toast` — `aria-live="polite"` status announcements (save success, errors, etc.)
+
+## Conventions
+
+- All SKUs use a `-DD` placeholder for the term suffix; the hub substitutes `-12` / `-36` / `-60` at export time based on `#pi-term`
+- Item classification kinds: `req` (Required), `mand` (Mandatory), `opt` (Optional), `inc` (Included), `excl` (Excluded), `attn` (Attention — auto-flagged when a SKU has no price match)
+- Saved projects, version history, and uploaded price lists live in IndexedDB; nothing is ever sent to a server
+- The `.fbom` export format is the canonical save/share file — round-trips a full project including metadata, groups, line items, and notes
+
+## What this app is not
+
+- Not a real-time pricing source — prices come from a user-uploaded Fortinet CSV/XLSX price list
+- Not officially endorsed by Fortinet — always validate against official ordering guides
+- Not a multi-user system — there is no backend, no accounts, no sync; sharing happens via `.fbom` files or URL

@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 <title>FabricBOM</title>
+<meta name="description" content="FabricBOM — client-side, offline Bill of Materials generator for Fortinet Security Fabric deployments. Configure 30+ products, save projects, export to CSV/XLSX/.fbom.">
+<link rel="alternate" type="text/markdown" href="llms.txt" title="LLM-friendly site overview">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192x192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512x512.png">
@@ -50,9 +52,10 @@
   #main{display:flex;flex:1;overflow:hidden;}
 
   /* SIDEBAR */
-  #sidebar{width:240px;background:var(--forti-sidebar);border-right:1px solid var(--forti-border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden;transition:width .25s ease,border .25s ease;}
+  #sidebar{width:240px;background:var(--forti-sidebar);border-right:1px solid var(--forti-border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden;overflow-anchor:none;transition:width .25s ease,border .25s ease;}
   #sidebar::-webkit-scrollbar{width:4px;}
   #sidebar::-webkit-scrollbar-thumb{background:var(--forti-border);border-radius:2px;}
+  #sidebar > .nsl,#sidebar > .ni,#sidebar > .n-sep,#sidebar > .nav-search-wrap,#sidebar > #nav-items,#sidebar > #plugin-nav-items{flex-shrink:0;}
   .nsl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--forti-text-muted);padding:20px 16px 8px;white-space:nowrap;overflow:hidden;}
   .ni{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:background .12s;border-left:2px solid transparent;color:inherit;}
   .ni:hover{background:var(--forti-sidebar-hover);}
@@ -94,10 +97,10 @@
   #ws .hint{margin-top:8px;font-size:11px;color:#9BA5BA;border:1px dashed #C8CDD9;border-radius:4px;padding:8px 16px;}
 
   /* PROJECT BOM VIEW */
-  #pbv{flex:1;overflow-y:auto;display:none;flex-direction:column;background:var(--forti-content-bg);padding:20px;gap:14px;}
-  #pbv > *{flex-shrink:0;}
-  #pbv::-webkit-scrollbar{width:6px;}
-  #pbv::-webkit-scrollbar-thumb{background:#C8CDD9;border-radius:3px;}
+  #pbv,#stv{flex:1;overflow-y:auto;display:none;flex-direction:column;background:var(--forti-content-bg);padding:20px;gap:14px;}
+  #pbv > *,#stv > *{flex-shrink:0;}
+  #pbv::-webkit-scrollbar,#stv::-webkit-scrollbar{width:6px;}
+  #pbv::-webkit-scrollbar-thumb,#stv::-webkit-scrollbar-thumb{background:#C8CDD9;border-radius:3px;}
 
   /* Light cards */
   .lc{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;overflow:hidden;}
@@ -115,6 +118,15 @@
 
   /* Summary bar */
   .sbar{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;padding:8px 14px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;}
+  #sbar{position:sticky;top:0;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.12);background:var(--forti-content-bg);border-color:#B8BECC;border-left:3px solid var(--forti-red);}
+  #sbar.unpinned{position:static;box-shadow:none;border-color:transparent;}
+  #pin-btn{background:none;border:none;cursor:pointer;padding:3px;border-radius:3px;color:var(--c-textm);display:inline-flex;align-items:center;flex-shrink:0;transition:color .12s,background .12s;line-height:1;}
+  #pin-btn:hover{background:var(--c-sh);color:var(--c-text);}
+  #pin-btn.pinned{color:var(--forti-red);}
+  #pin-btn svg{width:13px;height:13px;}
+  #sbar .btn{padding:5px 8px;font-size:11px;gap:5px;}
+  #sbar .btn svg{width:12px;height:12px;}
+  #sbar .act-row{gap:6px;}
   .si .sl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--c-textm);}
   .si .sv{font-size:13px;font-weight:600;color:var(--c-text);}
   .si.hi .sv{color:var(--forti-red);}
@@ -132,8 +144,10 @@
 
   /* BOM groups */
   .bg{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;overflow:hidden;}
-  .bgh{background:var(--c-th);border-bottom:1px solid var(--c-border);padding:8px 14px;display:flex;align-items:center;gap:10px;}
+  .bgh{background:var(--c-th);border-bottom:1px solid var(--c-border);padding:8px 14px 8px 4px;display:flex;align-items:center;gap:10px;}
+  .bgh .drag-handle{padding:0 4px;}
   .bgp{font-size:12px;font-weight:700;color:var(--c-text);flex:1;}
+  input.bgp.label-input{padding-left:0;padding-right:0;}
   .bgm{font-size:11px;color:var(--c-text2);}
   .bg-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;border-radius:2px;padding:1px 6px;}
   .bg-del{background:#FEF0EE;border:1px solid #F5C6C2;color:#C0392B;font-size:11px;font-weight:600;padding:3px 8px;border-radius:2px;cursor:pointer;font-family:inherit;margin-left:auto;}
@@ -210,18 +224,23 @@
   .label-input{font-family:inherit;border:1px solid transparent;border-radius:3px;background:transparent;padding:1px 4px;box-sizing:border-box;}
   .label-input:hover{border-color:var(--c-border);}
   .label-input:focus{border-color:#4A90D9;outline:none;background:#fff;}
-  .bgr-label.label-input{font-size:13px;font-weight:700;color:var(--c-text);flex:1;width:auto;min-width:40px;}
+  .bgr-label.label-input{font-size:13px;font-weight:700;color:var(--c-text);display:block;width:100%;}
   input.bgp.label-input{font-size:12px;font-weight:700;color:var(--c-text);width:100%;display:block;}
   .sr .label-input{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--c-text2);width:100%;display:block;}
 
   /* BOM Group header rows (user-created section dividers) */
-  .bom-group-row{background:#D8DCE6;border:1px solid #B4BAC8;border-radius:4px;display:flex;align-items:stretch;gap:0;overflow:hidden;cursor:default;}
+  .bom-group-row{background:#D8DCE6;border:1px solid #B4BAC8;border-radius:4px;display:flex;align-items:stretch;gap:0;cursor:default;}
   .bom-group-row.dragging{opacity:.45;box-shadow:0 4px 18px rgba(0,0,0,.18);}
   .bom-group-row.drag-over{outline:2px dashed var(--forti-red);outline-offset:2px;}
-  .bgr-accent{width:4px;background:var(--forti-red);flex-shrink:0;}
-  .bgr-body{flex:1;padding:9px 14px;display:flex;align-items:center;gap:12px;}
+  .bom-drop-sentinel{min-height:32px;border-radius:4px;transition:outline .1s;}
+  .bom-drop-sentinel.drag-over{outline:2px dashed var(--forti-red);outline-offset:2px;}
+  .bg.group-dragging{opacity:.45;}
+  .bgr-accent{width:4px;background:var(--forti-red);flex-shrink:0;border-radius:3px 0 0 3px;}
+  .bgr-body{flex:1;min-width:0;padding:9px 0;display:flex;align-items:center;gap:8px;}
+  .bom-group-row .drag-handle{padding:0 4px 0 4px;}
   .bgr-icon{color:var(--forti-red);flex-shrink:0;}
   .bgr-label{font-size:13px;font-weight:700;color:var(--c-text);flex:1;}
+  .bom-group-row .bgr-label.label-input{padding-left:0;}
   .bgr-note{font-size:11px;color:var(--c-text2);font-style:italic;}
   .bgr-actions{display:flex;gap:5px;align-items:center;padding:0 10px;}
   .bgr-btn{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);font-size:11px;font-weight:600;padding:3px 8px;cursor:pointer;font-family:inherit;transition:background .12s;display:inline-flex;align-items:center;}
@@ -229,12 +248,27 @@
   .bgr-btn:hover{background:var(--c-sh);color:var(--c-text);}
   .bgr-btn.del{border-color:#F5C6C2;color:#C0392B;background:#FEF0EE;}
   .bgr-btn.del:hover{background:#F5C6C2;}
-  .bgr-price{font-size:12px;font-weight:700;color:var(--forti-red);background:#fff;border:1px solid var(--c-border);border-radius:3px;padding:2px 8px;white-space:nowrap;margin-left:4px;}
+  .bgr-btn.add{color:var(--forti-red);}
+  .bgr-btn.add:hover{background:#FEF0EE;border-color:#F5C6C2;color:var(--forti-red);}
+  .bgr-price{font-size:11px;font-weight:700;color:var(--forti-red);background:#fff;border:1px solid var(--c-border);border-radius:3px;padding:2px 8px;white-space:nowrap;margin-left:4px;position:relative;cursor:default;}
+  .bgr-price .bgr-price-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);right:0;white-space:nowrap;background:#333;color:#fff;font-size:11px;font-weight:500;letter-spacing:.02em;padding:5px 9px;border-radius:4px;pointer-events:none;z-index:10;}
+  .bgr-price .bgr-price-tooltip::after{content:'';position:absolute;top:100%;right:10px;border:5px solid transparent;border-top-color:#333;}
+  .bgr-price:hover .bgr-price-tooltip{display:block;}
+  .bgr-toggle{background:none;border:none;cursor:pointer;color:var(--forti-red);width:24px;height:24px;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .15s;flex:0 0 auto;}
+  .bgr-toggle:hover{color:#B8231A;}
+  .bgr-toggle svg{width:16px;height:16px;display:block;}
+  .bgr-toggle.collapsed{transform:rotate(-90deg);}
+  .bgr-text{flex:1;min-width:0;}
+  .bgr-meta{font-size:11px;color:var(--c-text2);margin-top:1px;}
+  .bgr-count{font-weight:500;}
 
   /* Project Total */
   #project-total{background:var(--c-white);border:1px solid var(--c-border);border-radius:4px;padding:14px 20px;display:flex;justify-content:flex-end;align-items:center;gap:20px;}
-  #project-total .pt-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--c-text2);}
+  #project-total .pt-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--c-text2);position:relative;cursor:default;}
   #project-total .pt-value{font-size:22px;font-weight:700;color:var(--forti-red);}
+  #project-total .pt-label .pt-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);right:0;white-space:nowrap;background:#333;color:#fff;font-size:11px;font-weight:500;letter-spacing:.02em;text-transform:none;padding:5px 9px;border-radius:4px;pointer-events:none;z-index:10;}
+  #project-total .pt-label .pt-tooltip::after{content:'';position:absolute;top:100%;right:10px;border:5px solid transparent;border-top-color:#333;}
+  #project-total .pt-label:hover .pt-tooltip{display:block;}
 
   /* Import modal */
   #imp-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.55);align-items:center;justify-content:center;}
@@ -502,7 +536,7 @@
 </head>
 <body>
 
-<div id="top-bar">
+<header id="top-bar" role="banner">
   <button id="menu-btn" onclick="toggleSidebar()" title="Toggle navigation" aria-label="Toggle navigation">
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 5h12M3 9h12M3 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
   </button>
@@ -516,13 +550,13 @@
   <button id="cart-btn" onclick="showPBV()" title="Project BOM">
     <svg viewBox="0 0 15 15" fill="none"><path d="M1 1h2l2 7h7l1-5H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="13" r="1" fill="currentColor"/><circle cx="12" cy="13" r="1" fill="currentColor"/></svg>
     <span id="bom-save-dot" class="save-dot"></span>
-    <span id="cbadge">0</span>
+    <span id="cbadge" aria-label="Items in BOM">0</span>
   </button>
-</div>
+</header>
 
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
-<div id="main">
-  <nav id="sidebar">
+<div id="main" role="presentation">
+  <nav id="sidebar" aria-label="Product navigation">
     <div class="nsl" style="padding-bottom:4px;">Project</div>
     <div class="ni proj" id="nav-proj" onclick="showPBV()">
       <svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2" stroke="#E8EAF0" stroke-width="1.2"/><path d="M5 6h8M5 9h8M5 12h5" stroke="#E8EAF0" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -539,10 +573,16 @@
     <div class="nsl">Products</div>
     <div class="nav-search-wrap">
       <input id="nav-search-input" type="text" placeholder="Filter products &amp; plugins…" oninput="filterNav(this.value)" autocomplete="off" spellcheck="false">
-      <button id="nav-search-clear" onclick="clearNavSearch()" title="Clear">&times;</button>
+      <button id="nav-search-clear" onclick="clearNavSearch()" title="Clear" aria-label="Clear product filter">&times;</button>
     </div>
     <div id="nav-items"><div class="n-load">Scanning products…</div></div>
     <div id="plugin-nav-items"></div>
+    <div class="n-sep"></div>
+    <div class="nsl">Configuration</div>
+    <div class="ni" id="nav-settings" onclick="showSettings()">
+      <svg class="ni-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.2" stroke="currentColor" stroke-width="1.2"/><path d="M9 1.8v1.8M9 14.4v1.8M3.92 3.92l1.27 1.27M12.81 12.81l1.27 1.27M1.8 9h1.8M14.4 9h1.8M3.92 14.08l1.27-1.27M12.81 5.19l1.27-1.27" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span class="ni-label">Settings</span>
+    </div>
     <div class="n-sep"></div>
     <div class="nsl">Info</div>
     <div class="ni" onclick="showAbout()">
@@ -555,7 +595,7 @@
     </a>
   </nav>
 
-  <div id="content">
+  <main id="content" role="main" aria-label="Product configurator and project BOM">
     <div id="ch">
       <span class="bci">FabricBOM</span>
       <span class="bcs">›</span>
@@ -583,7 +623,7 @@
         <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
           <button class="btn bs" onclick="openImport()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>Import FBOM</button>
           <button class="btn bp" onclick="openSkuModal()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="3" width="11" height="7" rx="1" stroke="#fff" stroke-width="1.1"/><path d="M3.5 6.5h6M6.5 5v3" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></svg>Add SKU</button>
-          <a class="demo-bom-link btn bs" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;gap:6px;"><svg viewBox="0 0 13 13" fill="none" style="width:13px;height:13px;"><path d="M7.5 1.5h4v4M11 2L6 7M5.5 2.5H2a1 1 0 0 0-1 1V11a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V7.5" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="demo-bom-label">Try a demo BOM</span></a>
+          <a class="demo-bom-link btn bs" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;gap:6px;"><svg viewBox="0 0 13 13" fill="none" style="width:13px;height:13px;"><path d="M7.5 1.5h4v4M11 2L6 7M5.5 2.5H2a1 1 0 0 0-1 1V11a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V7.5" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="demo-bom-label">Demo BOM</span></a>
         </div>
       </div>
       <iframe id="pf" style="display:none;" title="Product BOM Generator"></iframe>
@@ -601,14 +641,14 @@
             <svg viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Details
           </button>
-          <button class="pi-clear-btn" id="pi-clear-btn" onclick="clearPiFields()" title="Clear all project information fields">
+          <button class="pi-clear-btn" id="pi-clear-btn" onclick="clearPiFields()" title="Clear all project information fields" aria-label="Clear project information fields">
             <svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
           </button>
           <label id="pi-readonly-wrap" title="Lock the BOM and project info against edits">
             <input type="checkbox" id="pi-readonly" onchange="handleReadOnlyChange(this)">
             <span>RO</span>
           </label>
-          <button id="pw-lock-btn" onclick="openPwViewModal()" title="Password protected — click to manage">
+          <button id="pw-lock-btn" onclick="openPwViewModal()" title="Password protected — click to manage" aria-label="Manage BOM password protection">
             <svg viewBox="0 0 11 13" fill="none"><rect x="1.5" y="5.5" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 5.5V3.5a2 2 0 0 1 4 0v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><circle cx="5.5" cy="9" r="1" fill="currentColor"/></svg>
           </button>
           <button id="pw-unlock-btn" onclick="openPwUnlockModal()" title="This BOM is password-protected — click to unlock">
@@ -622,12 +662,12 @@
         </div>
         <div class="lcb">
           <div class="pfg">
-            <div class="pg full pi-cust-wrap"><label class="pl">Customer / Opportunity <span class="r">*</span></label><input type="text" class="pi" id="pi-cust" placeholder="e.g. Acme Corp – Network Refresh 2025"></div>
-            <div class="pg pi-opp-wrap"><label class="pl">Opportunity ID</label><input type="text" class="pi" id="pi-opp" placeholder="e.g. OPP-2025-01234"></div>
-            <div class="pg"><label class="pl">SE / Engineer</label><input type="text" class="pi" id="pi-eng" placeholder="Your name"></div>
-            <div class="pg"><label class="pl">Date</label><input type="text" class="pi" id="pi-date"></div>
+            <div class="pg full pi-cust-wrap"><label class="pl" for="pi-cust">Customer / Opportunity <span class="r">*</span></label><input type="text" class="pi" id="pi-cust" placeholder="e.g. Acme Corp – Network Refresh 2025"></div>
+            <div class="pg pi-opp-wrap"><label class="pl" for="pi-opp">Opportunity ID</label><input type="text" class="pi" id="pi-opp" placeholder="e.g. OPP-2025-01234"></div>
+            <div class="pg"><label class="pl" for="pi-eng">SE / Engineer</label><input type="text" class="pi" id="pi-eng" placeholder="Your name"></div>
+            <div class="pg"><label class="pl" for="pi-date">Date</label><input type="text" class="pi" id="pi-date"></div>
             <div class="pg">
-              <label class="pl">Support / License Term</label>
+              <label class="pl" for="pi-term">Support / License Term</label>
               <select class="pi" id="pi-term" onchange="applyTerm()">
                 <option value="DD">Co-term / Date-driven (-DD) — default</option>
                 <option value="12">1 Year (-12)</option>
@@ -636,7 +676,7 @@
               </select>
               <div style="font-size:10px;color:var(--c-textm);margin-top:3px;">Replaces <code>-DD</code> suffix on all SKUs in this project BOM</div>
             </div>
-            <div class="pg full pi-notes-wrap"><label class="pl">Project Scope / Notes</label><textarea class="pi" id="pi-notes" placeholder="Optional: overall project scope, deployment context, or assumptions…"></textarea></div>
+            <div class="pg full pi-notes-wrap"><label class="pl" for="pi-notes">Project Scope / Notes</label><textarea class="pi" id="pi-notes" placeholder="Optional: overall project scope, deployment context, or assumptions…"></textarea></div>
           </div>
           <div id="pi-summary"></div>
           <div id="pi-view"></div>
@@ -650,7 +690,8 @@
           <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
             <button class="btn bs" id="project-btn" onclick="toggleProjectMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>File<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <button class="btn bs" id="copy-export-btn" onclick="toggleCopyMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/></svg>Share<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <button id="clear-btn" class="btn bd" onclick="clearCart()" title="Clear All"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button id="clear-btn" class="btn bd" onclick="clearCart()" title="Clear All" aria-label="Clear all BOM items"><svg viewBox="0 0 13 13" fill="none"><path d="M2 3.5h9M5 3.5V2h3v1.5M5.5 6v4M7.5 6v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M3 3.5l.5 7a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+            <button id="pin-btn" onclick="togglePin()" title="Pin toolbar" aria-label="Pin toolbar to top"><svg viewBox="0 0 13 13" fill="none"><rect x="0.5" y="0.5" width="8.5" height="8.5" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M9 4H11A1.5 1.5 0 0 1 12.5 5.5V11A1.5 1.5 0 0 1 11 12.5H5.5A1.5 1.5 0 0 1 4 11V9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button>
           </div>
         </div>
       </div>
@@ -663,7 +704,7 @@
         <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
           <button class="btn bs" onclick="openImport()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>Import FBOM</button>
           <button class="btn bp" onclick="openSkuModal()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="3" width="11" height="7" rx="1" stroke="#fff" stroke-width="1.1"/><path d="M3.5 6.5h6M6.5 5v3" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></svg>Add SKU</button>
-          <a class="demo-bom-link btn bs" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;gap:6px;"><svg viewBox="0 0 13 13" fill="none" style="width:13px;height:13px;"><path d="M7.5 1.5h4v4M11 2L6 7M5.5 2.5H2a1 1 0 0 0-1 1V11a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V7.5" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="demo-bom-label">Try a demo BOM</span></a>
+          <a class="demo-bom-link btn bs" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none;align-items:center;gap:6px;"><svg viewBox="0 0 13 13" fill="none" style="width:13px;height:13px;"><path d="M7.5 1.5h4v4M11 2L6 7M5.5 2.5H2a1 1 0 0 0-1 1V11a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V7.5" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="demo-bom-label">Demo BOM</span></a>
         </div>
       </div>
 
@@ -680,7 +721,7 @@
 
       <!-- Project Total (only shown when pricing data is loaded) -->
       <div id="project-total" style="display:none;">
-        <span class="pt-label">Project Total</span>
+        <span class="pt-label">Project Total<span class="pt-tooltip" id="pt-tooltip"></span></span>
         <span class="pt-value" id="pt-value"></span>
       </div>
 
@@ -708,20 +749,42 @@
         </div>
         <div id="spv-content" class="lcb"></div>
       </div>
+
+      <div class="pbv-watermark">
+        Powered by
+        <a href="https://msalty.github.io/FabricBOM/" target="_blank" rel="noopener noreferrer">
+          <svg class="pbv-wm-logo" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect width="28" height="28" rx="4" fill="#EE3124"/><path d="M6 8h16v3H6zM6 12.5h10v3H6zM6 17h16v3H6z" fill="white"/></svg>
+          <span>FabricBOM</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Settings view -->
+    <div id="stv">
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="1.6" stroke="#6B7589" stroke-width="1.1"/><path d="M6.5 1.3v1.3M6.5 10.4v1.3M2.8 2.8l.9.9M9.3 9.3l.9.9M1.3 6.5h1.3M10.4 6.5h1.3M2.8 10.2l.9-.9M9.3 3.7l.9-.9" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <h2>Settings</h2>
+        </div>
+        <div class="lcb" style="font-size:12px;color:var(--c-text2);line-height:1.6;">
+          Configure pricelists, discount rate tables, plugins, and preferences. These settings persist across projects.
+        </div>
+      </div>
+
+      <!-- Pricing config -->
       <div class="lc">
         <div class="lch">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 1h5l6 6-5 5-6-6V1z" stroke="#6B7589" stroke-width="1.1" stroke-linejoin="round"/><circle cx="4" cy="4" r="1" fill="#6B7589"/></svg>
-          <h2>Saved Pricing</h2>
+          <h2>Pricing</h2>
         </div>
         <div id="pricing-content" class="lcb"></div>
       </div>
-      <!-- Plugin Manager -->
+
+      <!-- Plugins -->
       <div class="lc">
         <div class="lch">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-            <path d="M5 1.5h3v2.5h2.5v2H9v5H4v-5H2.5v-2H5V1.5z" stroke="#6B7589" stroke-width="1.1" stroke-linejoin="round"/>
-          </svg>
-          <h2>Installed Plugins</h2>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M5 1.5h3v2.5h2.5v2H9v5H4v-5H2.5v-2H5V1.5z" stroke="#6B7589" stroke-width="1.1" stroke-linejoin="round"/></svg>
+          <h2>Plugins</h2>
         </div>
         <div id="plugin-list"></div>
         <div class="plugin-dz" id="plugin-drop-zone">
@@ -739,20 +802,164 @@
         </div>
       </div>
 
-      <div class="pbv-watermark">
-        Powered by
-        <a href="https://msalty.github.io/FabricBOM/" target="_blank" rel="noopener noreferrer">
-          <svg class="pbv-wm-logo" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect width="28" height="28" rx="4" fill="#EE3124"/><path d="M6 8h16v3H6zM6 12.5h10v3H6zM6 17h16v3H6z" fill="white"/></svg>
-          <span>FabricBOM</span>
-        </a>
+      <!-- Currency & Pricing -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="#6B7589" stroke-width="1.1"/><path d="M8 4.5c-.4-.6-1-.9-1.7-.9-1 0-1.7.5-1.7 1.3 0 .8.7 1.1 1.7 1.3 1 .2 1.7.5 1.7 1.3 0 .8-.7 1.3-1.7 1.3-.7 0-1.3-.3-1.7-.9M6.3 3v.5M6.3 9v.5" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <h2>Currency &amp; Pricing</h2>
+        </div>
+        <div class="lcb">
+          <div class="pfg">
+            <div class="pg">
+              <label class="pl" for="set-default-term">Default License Term</label>
+              <select class="pi" id="set-default-term" onchange="onSettingChange('defaultTerm', this.value)">
+                <option value="DD">Co-term / Date-driven (-DD)</option>
+                <option value="12">1 Year (-12)</option>
+                <option value="36">3 Years (-36)</option>
+                <option value="60">5 Years (-60)</option>
+              </select>
+              <div style="font-size:10px;color:var(--c-textm);margin-top:3px;">Pre-selected for new projects.</div>
+            </div>
+            <div class="pg">
+              <label class="pl">Price Display</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:6px 0;">
+                <input type="checkbox" id="set-round-prices" style="width:auto;cursor:pointer;accent-color:var(--forti-red);" onchange="onSettingChange('roundPrices', this.checked)">
+                <span>Round prices to nearest dollar (hide cents)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOM Defaults -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1.5" width="10" height="10" rx="1" stroke="#6B7589" stroke-width="1.1"/><path d="M3.5 4.5h6M3.5 6.5h6M3.5 8.5h4" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <h2>BOM Defaults</h2>
+        </div>
+        <div class="lcb">
+          <div class="pfg">
+            <div class="pg">
+              <label class="pl" for="set-default-se">Default SE / Engineer Name</label>
+              <input type="text" class="pi" id="set-default-se" placeholder="Your name" oninput="onSettingChange('defaultSeName', this.value)">
+              <div style="font-size:10px;color:var(--c-textm);margin-top:3px;">Pre-filled in new projects.</div>
+            </div>
+            <div class="pg">
+              <label class="pl">Group Subtotals</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:6px 0;">
+                <input type="checkbox" id="set-default-subtotals" style="width:auto;cursor:pointer;accent-color:var(--forti-red);" onchange="onSettingChange('defaultGroupSubtotals', this.checked)">
+                <span>Show group subtotals on by default</span>
+              </label>
+            </div>
+            <div class="pg full">
+              <label class="pl" for="set-default-scope">Default Project Scope / Notes</label>
+              <textarea class="pi" id="set-default-scope" placeholder="Boilerplate text inserted into the Project Scope / Notes field of new projects…" oninput="onSettingChange('defaultScopeBoilerplate', this.value)" style="min-height:70px;"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Editor Behavior -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M7.5 1.5l3 3L4 11H1V8L7.5 1.5z" stroke="#6B7589" stroke-width="1.1" stroke-linejoin="round"/></svg>
+          <h2>Editor Behavior</h2>
+        </div>
+        <div class="lcb">
+          <div class="pfg">
+            <div class="pg">
+              <label class="pl">Confirm Before Delete</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:6px 0;">
+                <input type="checkbox" id="set-confirm-delete" style="width:auto;cursor:pointer;accent-color:var(--forti-red);" onchange="onSettingChange('confirmDelete', this.checked)">
+                <span>Confirm before deleting line items / groups</span>
+              </label>
+            </div>
+            <div class="pg">
+              <label class="pl" for="set-undo-depth">Undo History Depth</label>
+              <select class="pi" id="set-undo-depth" onchange="onSettingChange('undoDepth', this.value === 'unlimited' ? 'unlimited' : parseInt(this.value, 10))">
+                <option value="1">1 step</option>
+                <option value="5">5 steps</option>
+                <option value="10">10 steps</option>
+                <option value="25">25 steps</option>
+                <option value="unlimited">Unlimited</option>
+              </select>
+              <div style="font-size:10px;color:var(--c-textm);margin-top:3px;">Undo with <kbd style="font-family:inherit;font-size:10px;background:#EEF1F6;border:1px solid var(--c-ib);border-radius:2px;padding:0 4px;">Ctrl/⌘+Z</kbd>. Reducing the depth trims older entries.</div>
+            </div>
+            <div class="pg">
+              <label class="pl">Read-Only on Open</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:6px 0;">
+                <input type="checkbox" id="set-readonly-on-open" style="width:auto;cursor:pointer;accent-color:var(--forti-red);" onchange="onSettingChange('readOnlyOnOpen', this.checked)">
+                <span>Open saved / imported / shared projects in Read-Only mode</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data -->
+      <div class="lc">
+        <div class="lch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><ellipse cx="6.5" cy="3" rx="4.5" ry="1.5" stroke="#6B7589" stroke-width="1.1"/><path d="M2 3v7c0 .8 2 1.5 4.5 1.5S11 10.8 11 10V3" stroke="#6B7589" stroke-width="1.1"/></svg>
+          <h2>Data</h2>
+        </div>
+        <div class="lcb">
+          <div style="font-size:12px;color:var(--c-text2);margin-bottom:14px;">
+            Back up everything (settings, saved projects, pricelist, plugins, and plugin data stored in the shared database) to a single JSON file, or restore from one.
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
+            <button class="btn bs" onclick="exportBackup()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Export Backup</button>
+            <button class="btn bs" onclick="triggerImportBackup('merge')"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Import &amp; Merge</button>
+            <button class="btn bd" onclick="triggerImportBackup('replace')"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Import &amp; Replace</button>
+            <input type="file" id="backup-file-input" accept=".json,application/json" style="display:none" onchange="backupFileChosen(this)">
+          </div>
+          <div style="font-size:11px;color:var(--c-textm);margin:-8px 0 18px;line-height:1.5;">
+            <strong>Merge</strong> adds backup contents alongside what's already here (saved projects and plugins union by ID; current settings and active BOM kept). <strong>Replace</strong> wipes existing data first, then restores the backup exactly.
+          </div>
+
+          <div style="border-top:1px solid var(--c-border);padding-top:14px;margin-bottom:14px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-text2);margin-bottom:8px;">Clear Cache</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <button class="btn bd" onclick="clearScope('pricing')">Clear Pricelist</button>
+              <button class="btn bd" onclick="clearScope('history')">Clear Version History</button>
+              <button class="btn bd" onclick="clearScope('saved')">Clear Saved Projects</button>
+              <button class="btn bd" onclick="clearScope('all')">Clear Everything</button>
+            </div>
+            <div style="font-size:11px;color:var(--c-textm);margin-top:6px;line-height:1.5;">
+              <strong>Version History</strong> keeps the most recent save of each project and removes prior revisions. <strong>Everything</strong> erases all FabricBOM data including settings, the active BOM, saved projects, pricelist, and installed plugins.
+            </div>
+          </div>
+
+          <div style="border-top:1px solid var(--c-border);padding-top:14px;margin-bottom:14px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-text2);margin-bottom:8px;">Storage Usage</div>
+            <div id="storage-meter"></div>
+            <div style="font-size:11px;color:var(--c-textm);margin-top:6px;">Browser-reported usage across localStorage and IndexedDB for this origin.</div>
+          </div>
+
+          <div style="border-top:1px solid var(--c-border);padding-top:14px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-text2);margin-bottom:8px;">Reset Settings</div>
+            <button class="btn bd" onclick="resetSettingsToDefaults()">Reset Settings to Defaults</button>
+            <div style="font-size:11px;color:var(--c-textm);margin-top:6px;line-height:1.5;">
+              Restores only the options on this Settings page (license term, price rounding, BOM defaults, editor behavior) to their factory values. <strong>Your saved projects, active BOM, pricelist, and plugins are not touched.</strong> Use <em>Clear Everything</em> above for a full wipe.
+            </div>
+          </div>
+
+          <div style="border-top:1px solid var(--c-border);padding-top:14px;margin-top:14px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-text2);margin-bottom:8px;">Service Worker &amp; Cache</div>
+            <button class="btn bd" onclick="clearServiceWorkerAndReload()">Clear Cache &amp; Hard Reload</button>
+            <div style="font-size:11px;color:var(--c-textm);margin-top:6px;line-height:1.5;">
+              Unregisters the service worker, deletes all cached assets, and reloads the page from the network. Use this if you're seeing stale content after an update. <strong>Your saved data is not affected.</strong>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </main>
 </div>
 
 <input type="file" id="pricing-file" accept=".csv,.xlsx" style="display:none" onchange="pricingFileChosen(this)">
 <input type="file" id="plugin-file-input" accept=".html,.json" style="display:none" onchange="handlePluginFile(this)">
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <!-- Copy/Export dropdown menu (position:fixed so it escapes overflow-y:auto parents) -->
 <div id="copy-menu">
@@ -789,13 +996,6 @@
   <div class="dm-section">File</div>
   <button class="dm-item" onclick="exportCSV();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Export FabricBOM</button>
   <button class="dm-item" onclick="openImport();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 9V1M9.5 6l-3 3-3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Import FabricBOM</button>
-  <div id="project-sfdc-section" style="display:none">
-    <div class="dm-sep"></div>
-    <div class="dm-section">SFDC Export (Download CSV)</div>
-    <button class="dm-item" onclick="exportSFDC('AMER');closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Export SFDC-AMER</button>
-    <button class="dm-item" onclick="exportSFDC('EMEA');closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Export SFDC-EMEA</button>
-    <button class="dm-item" onclick="exportSFDC('APAC');closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Export SFDC-APAC</button>
-  </div>
   <div class="dm-sep"></div>
   <button class="dm-item" onclick="window.print();closeProjectMenu()"><svg viewBox="0 0 13 13" fill="none"><rect x="1.5" y="4" width="10" height="6" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 4V2h6v2M3.5 10h6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Print</button>
 </div>
@@ -963,6 +1163,7 @@ const CATALOG = [
   { file:'fortiappsec-bomgen.html', label:'FortiAppSec Cloud', cat:'Cloud Security' },
   { file:'forticnapp-bomgen.html', label:'FortiCNAPP', cat:'Cloud Security' },
   { file:'fortisase-bomgen.html',    label:'FortiSASE',      cat:'Cloud Security' },
+  { file:'fortisase-sovereign-bomgen.html',    label:'FortiSASE Sovereign',      cat:'Cloud Security' },
   { file:'fortimail-bomgen.html', label:'FortiMail (FML)', cat:'Email Security' },
   { file:'fortimail-workspace-bomgen.html', label:'FortiMail Workspace', cat:'Email Security' },
   { file:'fortiap-bomgen.html',      label:'FortiAP (FAP)',        cat:'Network Access' },
@@ -993,6 +1194,7 @@ let savedProjects = [];
 let bomDirty = false;
 let spvFilter = '';
 let spRevExpanded = {}; // projectKey -> boolean, tracks which revision lists are expanded
+let collapsedGroups = new Set(); // ids of group-header entries currently collapsed in the BOM view
 // cart entries are either product-entries {id, product, label, rows, meta}
 // or group-header entries {id, _type:'group', label, note}
 
@@ -1023,7 +1225,13 @@ async function savePiData() {
 async function loadPiData() {
   try {
     const raw = localStorage.getItem('fortibom_pi');
-    if (!raw) return;
+    if (!raw) {
+      const s = loadSettings();
+      if (s.defaultSeName) document.getElementById('pi-eng').value = s.defaultSeName;
+      if (s.defaultScopeBoilerplate) document.getElementById('pi-notes').value = s.defaultScopeBoilerplate;
+      if (s.defaultTerm) document.getElementById('pi-term').value = s.defaultTerm;
+      return;
+    }
     const d = JSON.parse(raw);
     if (d.eng   !== undefined) document.getElementById('pi-eng').value   = d.eng;
     if (d.date  !== undefined) document.getElementById('pi-date').value  = d.date;
@@ -1063,7 +1271,17 @@ async function loadPiData() {
 }
 function saveCart() {
   try {
-    localStorage.setItem('fortibom_cart', JSON.stringify({ cart, seq }));
+    const groupIds = new Set(cart.filter(e => e._type === 'group').map(e => e.id));
+    const collapsed = [...collapsedGroups].filter(id => groupIds.has(id));
+    collapsedGroups = new Set(collapsed);
+    const cur = _undoSnap();
+    if (_undoBaseline !== null && cur !== _undoBaseline) {
+      _undoStack.push(_undoBaseline);
+      const cap = _undoCap();
+      while (_undoStack.length > cap) _undoStack.shift();
+    }
+    _undoBaseline = cur;
+    localStorage.setItem('fortibom_cart', JSON.stringify({ cart, seq, collapsed }));
   } catch(e) {
     toast('Could not save cart — browser storage may be full.');
   }
@@ -1075,6 +1293,7 @@ function loadCart() {
     const saved = JSON.parse(raw);
     cart = saved.cart || [];
     seq  = saved.seq  || 0;
+    collapsedGroups = new Set(Array.isArray(saved.collapsed) ? saved.collapsed : []);
   } catch(e) { /* corrupt data — start fresh */ }
 }
 function saveSaved() {
@@ -1137,6 +1356,7 @@ const FORTI_ICON_NAMES = {
   'fortiappsec-bomgen.html':         'FortiAppSec',
   'forticnapp-bomgen.html':          'FortiCNAPP',
   'fortisase-bomgen.html':           'FortiSASE',
+  'fortisase-sovereign-bomgen.html': 'FortiSASE',
   'fortimail-bomgen.html':           'FortiMail',
   'fortimail-workspace-bomgen.html': 'FortiMail',
   'fortiap-bomgen.html':             'FortiAP',
@@ -1172,29 +1392,146 @@ document.addEventListener('error', e => {
 // ── NAV BUILD ────────────────────────────────────────────────────────────────
 async function buildNav() {
   const c = document.getElementById('nav-items');
-  c.innerHTML = '';
   const groups = {};
   for (const p of CATALOG) { if (!groups[p.cat]) groups[p.cat]=[]; groups[p.cat].push(p); }
+  const [fileChecks, pricingData] = await Promise.all([
+    Promise.all(CATALOG.map(p => exists(`products/${p.file}`))),
+    getPricingIDB()
+  ]);
+  const existsMap = new Map(CATALOG.map((p, i) => [p.file, fileChecks[i]]));
+  const frag = document.createDocumentFragment();
   let any = false;
   for (const [cat, prods] of Object.entries(groups)) {
-    const items = [];
-    for (const p of prods) {
-      if (!await exists(`products/${p.file}`)) continue;
-      if (p.pricingOnly) { const pd = await getPricingIDB(); if (!pd?.data?.rows?.length) continue; }
-      items.push(p); any=true;
-    }
+    const items = prods.filter(p => {
+      if (!existsMap.get(p.file)) return false;
+      if (p.pricingOnly && !pricingData?.data?.rows?.length) return false;
+      return true;
+    });
     if (!items.length) continue;
-    const lbl = document.createElement('div'); lbl.className='nsl'; lbl.textContent=cat; lbl.style.paddingTop='14px'; c.appendChild(lbl);
+    any = true;
+    const lbl = document.createElement('div'); lbl.className='nsl'; lbl.textContent=cat; lbl.style.paddingTop='14px'; frag.appendChild(lbl);
     for (const p of items) {
       const el = document.createElement('div'); el.className='ni';
+      el.dataset.productPath = `products/${p.file}`;
       el.innerHTML = `${icon(p.file)}<span class="ni-label">${p.label}</span>`;
       el.onclick = () => loadProduct(`products/${p.file}`, p.label, el);
-      c.appendChild(el);
+      frag.appendChild(el);
     }
   }
-  if (!any) c.innerHTML = `<div class="n-load">No product files found in products/</div>`;
+  if (!any) { const msg = document.createElement('div'); msg.className='n-load'; msg.textContent='No product files found in products/'; frag.appendChild(msg); }
+  c.replaceChildren(frag);
 }
 async function exists(path) { try { return (await fetch(path,{method:'HEAD'})).ok; } catch { return false; } }
+
+// ── NAV STATE PERSISTENCE ─────────────────────────────────────────────────────
+const NAV_STATE_KEY = 'fabricbom_nav_state';
+let _navReady = false;
+
+function _saveNavState(state) {
+  if (!_navReady) return;
+  try { sessionStorage.setItem(NAV_STATE_KEY, JSON.stringify(state)); } catch {}
+}
+
+async function _restoreNavState() {
+  let state;
+  try { state = JSON.parse(sessionStorage.getItem(NAV_STATE_KEY) || 'null'); } catch {}
+  if (!state) return false;
+  switch (state.type) {
+    case 'pbv': showPBV(); return true;
+    case 'spv': showSavedProjects(); return true;
+    case 'stv': showSettings(); return true;
+    case 'about': showAbout(); return true;
+    case 'product':
+      if (state.path && state.label) {
+        const navEl = document.querySelector(`#nav-items .ni[data-product-path="${CSS.escape(state.path)}"]`);
+        loadProduct(state.path, state.label, navEl);
+        return true;
+      }
+      break;
+    case 'plugin':
+      if (state.pluginId) {
+        const p = loadPlugins().find(x => x.id === state.pluginId);
+        if (p) {
+          const el = document.getElementById(`nav-plugin-${p.id}`);
+          const url = await _resolvePluginURL(p);
+          if (url) { loadProduct(url, p.name, el); return true; }
+        }
+      }
+      break;
+  }
+  return false;
+}
+
+// ── GLOBAL SETTINGS ───────────────────────────────────────────────────────────
+const SETTINGS_KEY = 'fortibom_settings';
+const SETTINGS_DEFAULTS = {
+  defaultTerm: 'DD',                  // 'DD' | '12' | '36' | '60'
+  roundPrices: false,                 // false = show cents, true = round to whole dollars
+  defaultSeName: '',
+  defaultScopeBoilerplate: '',
+  defaultGroupSubtotals: false,
+  confirmDelete: true,                // confirm before deleting line items / groups
+  undoDepth: 10,                      // 1 | 5 | 10 | 25 | 'unlimited'
+  readOnlyOnOpen: false               // force Read-Only when opening a saved/imported/shared project
+};
+function loadSettings() {
+  try { return { ...SETTINGS_DEFAULTS, ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') }; }
+  catch { return { ...SETTINGS_DEFAULTS }; }
+}
+function saveSettings(s) {
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
+  catch(e) { toast('⚠ Could not save settings: ' + e.message); }
+}
+function getSetting(k) { return loadSettings()[k]; }
+function setSetting(k, v) { const s = loadSettings(); s[k] = v; saveSettings(s); }
+function fmtMoney(n) {
+  const opts = getSetting('roundPrices')
+    ? { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+    : { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+  return '$' + Number(n).toLocaleString('en-US', opts);
+}
+
+// ── UNDO ──────────────────────────────────────────────────────────────────────
+let _undoStack = [];
+let _undoBaseline = null;
+function _undoSnap() {
+  return JSON.stringify({ cart, seq, collapsed: [...collapsedGroups] });
+}
+function _undoRestore(s) {
+  const d = JSON.parse(s);
+  cart = d.cart;
+  seq = d.seq;
+  collapsedGroups = new Set(Array.isArray(d.collapsed) ? d.collapsed : []);
+}
+function _undoCap() {
+  const v = getSetting('undoDepth');
+  if (v === 'unlimited') return Infinity;
+  const n = parseInt(v, 10);
+  return n > 0 ? n : 10;
+}
+function initUndoBaseline() { _undoBaseline = _undoSnap(); }
+function undoCart() {
+  if (!_undoStack.length) { toast('Nothing to undo'); return; }
+  const prev = _undoStack.pop();
+  _undoRestore(prev);
+  _undoBaseline = prev;
+  try {
+    localStorage.setItem('fortibom_cart', JSON.stringify({ cart, seq, collapsed: [...collapsedGroups] }));
+  } catch(e) {}
+  updateBadges();
+  renderGroups();
+  markDirty();
+  toast('↶ Undone');
+}
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'z' || e.key === 'Z')) {
+    const t = e.target;
+    const tag = t && t.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || (t && t.isContentEditable)) return;
+    e.preventDefault();
+    undoCart();
+  }
+});
 
 // ── PLUGIN SYSTEM ─────────────────────────────────────────────────────────────
 const PLUGIN_STORE_KEY = 'fortibom_plugins';
@@ -1274,6 +1611,7 @@ async function renderPluginNav() {
       el.onclick = async () => {
         const url = await _resolvePluginURL(p);
         if (!url) { toast('⚠ Plugin files not found — try reinstalling.'); return; }
+        _saveNavState({ type: 'plugin', pluginId: p.id });
         loadProduct(url, p.name, el);
       };
       container.appendChild(el);
@@ -1377,6 +1715,7 @@ function initPluginDropZone() {
   });
 }
 
+
 function filterNav(q) {
   document.getElementById('nav-search-clear').style.display = q ? 'block' : 'none';
   const term = q.toLowerCase();
@@ -1423,6 +1762,14 @@ function closeSidebar() {
     document.getElementById('sidebar-overlay').classList.remove('on');
   }
 }
+function togglePin() {
+  const sbar = document.getElementById('sbar');
+  const btn = document.getElementById('pin-btn');
+  const nowPinned = !sbar.classList.toggle('unpinned');
+  btn.classList.toggle('pinned', nowPinned);
+  btn.title = nowPinned ? 'Unpin toolbar' : 'Pin toolbar';
+  localStorage.setItem('sbar-pinned', nowPinned ? 'true' : 'false');
+}
 
 // ── NAVIGATION ───────────────────────────────────────────────────────────────
 function setActiveNav(el) {
@@ -1432,28 +1779,77 @@ function setActiveNav(el) {
   closeSidebar();
 }
 function loadProduct(path, label, navEl) {
+  if (!path.startsWith('blob:')) _saveNavState({ type: 'product', path, label });
   setActiveNav(navEl);
   document.getElementById('bc').textContent = label;
   document.getElementById('pbv').style.display = 'none';
   document.getElementById('spv').style.display = 'none';
+  const stv = document.getElementById('stv'); if (stv) stv.style.display = 'none';
   document.getElementById('pfw').style.display = 'flex';
   document.getElementById('ws').style.display = 'none';
   const f = document.getElementById('pf');
   f.style.display = 'block';
+  f.title = `${label} configurator`;
   f.src = path;
 }
 function showPBV() {
+  _saveNavState({ type: 'pbv' });
   setActiveNav(document.getElementById('nav-proj'));
   document.getElementById('bc').textContent = 'Project BOM';
   document.getElementById('pfw').style.display = 'none';
   document.getElementById('spv').style.display = 'none';
+  const stv = document.getElementById('stv'); if (stv) stv.style.display = 'none';
   document.getElementById('pbv').style.display = 'flex';
 }
+function showSettings() {
+  _saveNavState({ type: 'stv' });
+  setActiveNav(document.getElementById('nav-settings'));
+  document.getElementById('bc').textContent = 'Settings';
+  document.getElementById('pfw').style.display = 'none';
+  document.getElementById('pbv').style.display = 'none';
+  document.getElementById('spv').style.display = 'none';
+  document.getElementById('stv').style.display = 'flex';
+  renderPricingSection();
+  renderPluginList();
+  renderSettingsForm();
+  renderStorageMeter();
+}
+
+function renderSettingsForm() {
+  const s = loadSettings();
+  const term = document.getElementById('set-default-term');
+  const round = document.getElementById('set-round-prices');
+  const se = document.getElementById('set-default-se');
+  const subs = document.getElementById('set-default-subtotals');
+  const scope = document.getElementById('set-default-scope');
+  const cfd = document.getElementById('set-confirm-delete');
+  const ud  = document.getElementById('set-undo-depth');
+  const roo = document.getElementById('set-readonly-on-open');
+  if (term)  term.value     = s.defaultTerm;
+  if (round) round.checked  = !!s.roundPrices;
+  if (se)    se.value       = s.defaultSeName || '';
+  if (subs)  subs.checked   = !!s.defaultGroupSubtotals;
+  if (scope) scope.value    = s.defaultScopeBoilerplate || '';
+  if (cfd)   cfd.checked    = !!s.confirmDelete;
+  if (ud)    ud.value       = String(s.undoDepth);
+  if (roo)   roo.checked    = !!s.readOnlyOnOpen;
+}
+
+function onSettingChange(key, value) {
+  setSetting(key, value);
+  if (key === 'roundPrices') renderGroups();
+  if (key === 'undoDepth') {
+    const cap = _undoCap();
+    while (_undoStack.length > cap) _undoStack.shift();
+  }
+}
 function showAbout() {
+  _saveNavState({ type: 'about' });
   setActiveNav(null);
   document.getElementById('bc').textContent = 'About';
   document.getElementById('pbv').style.display = 'none';
   document.getElementById('spv').style.display = 'none';
+  const stv = document.getElementById('stv'); if (stv) stv.style.display = 'none';
   document.getElementById('pfw').style.display = 'flex';
   document.getElementById('pf').style.display = 'none';
   const ws = document.getElementById('ws');
@@ -1475,11 +1871,12 @@ function showAbout() {
 
 // ── postMessage RECEIVER ─────────────────────────────────────────────────────
 let _skuEditId = null;
+let _skuInsertGroupId = null;
 
 window.addEventListener('message', e => {
   if (!e.data) return;
   if (e.data.type === 'FORTIBOM_CLOSE') { closeSkuModal(); return; }
-  if (e.data.type !== 'FORTIBOM_ADD') return;
+  if (e.data.type !== 'FORTIBOM_ADD' && e.data.type !== 'FABRICBOM_ADD') return;
   const { product, label, rows, meta } = e.data;
   if (_skuEditId !== null) {
     const idx = cart.findIndex(c => c.id === _skuEditId);
@@ -1491,7 +1888,20 @@ window.addEventListener('message', e => {
     markDirty();
     toast(`✓ Updated: ${label || 'Custom SKU group'}`);
   } else {
-    cart.push({ id:++seq, product, label, rows, meta });
+    const newEntry = { id:++seq, product, label, rows, meta };
+    if (_skuInsertGroupId !== null) {
+      const gIdx = cart.findIndex(c => c.id === _skuInsertGroupId && c._type === 'group');
+      if (gIdx !== -1) {
+        let insertAt = gIdx + 1;
+        while (insertAt < cart.length && cart[insertAt]._type !== 'group') insertAt++;
+        cart.splice(insertAt, 0, newEntry);
+      } else {
+        cart.push(newEntry);
+      }
+      _skuInsertGroupId = null;
+    } else {
+      cart.push(newEntry);
+    }
     updateBadges();
     renderGroups();
     saveCart();
@@ -1527,7 +1937,19 @@ function updateSaveIndicator() {
 function markDirty() { bomDirty = true; updateSaveIndicator(); }
 function markSaved() { bomDirty = false; updateSaveIndicator(); }
 
-function removeFromCart(id) { cart = cart.filter(c=>c.id!==id); updateBadges(); renderGroups(); saveCart(); markDirty(); }
+function removeFromCart(id) {
+  if (getSetting('confirmDelete')) {
+    const entry = cart.find(c => c.id === id);
+    let label = 'this entry';
+    if (entry) {
+      if (entry._type === 'group') label = `group header "${entry.label || 'Untitled'}"`;
+      else label = `${entry.product || 'product'} group${entry.label ? ` "${entry.label}"` : ''}`;
+    }
+    if (!confirm(`Delete ${label}?`)) return;
+  }
+  cart = cart.filter(c=>c.id!==id);
+  updateBadges(); renderGroups(); saveCart(); markDirty();
+}
 
 function toggleDetail(btn) {
   const row = btn.closest('tr');
@@ -1537,6 +1959,25 @@ function toggleDetail(btn) {
   detail.style.display = open ? '' : 'table-row';
   btn.classList.toggle('open', !open);
   btn.textContent = open ? '+' : '−';
+}
+function toggleGroupCollapse(ev, groupId) {
+  ev.stopPropagation();
+  const row = document.querySelector(`.bom-group-row[data-id="${groupId}"]`);
+  if (!row) return;
+  const willCollapse = !collapsedGroups.has(groupId);
+  if (willCollapse) collapsedGroups.add(groupId); else collapsedGroups.delete(groupId);
+  let n = row.nextElementSibling;
+  while (n && !n.classList.contains('bom-group-row') && !n.classList.contains('bom-drop-sentinel')) {
+    n.style.display = willCollapse ? 'none' : '';
+    n = n.nextElementSibling;
+  }
+  const btn = row.querySelector('.bgr-toggle');
+  if (btn) {
+    btn.classList.toggle('collapsed', willCollapse);
+    btn.setAttribute('aria-expanded', String(!willCollapse));
+    btn.setAttribute('title', willCollapse ? 'Expand section' : 'Collapse section');
+  }
+  saveCart();
 }
 function updateQty(entryId, rowIdx, rawVal) {
   const entry = cart.find(e => e.id === entryId);
@@ -1576,12 +2017,13 @@ function newProject() {
   if (cart.length && !confirm('Start a new project? The current BOM and project info will be cleared.')) return;
   cart=[]; seq=0;
   if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname);
+  const _settings = loadSettings();
   document.getElementById('pi-cust').value  = '';
   document.getElementById('pi-opp').value   = '';
-  document.getElementById('pi-eng').value   = '';
+  document.getElementById('pi-eng').value   = _settings.defaultSeName || '';
   document.getElementById('pi-date').value  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('pi-term').value  = 'DD';
-  document.getElementById('pi-notes').value = '';
+  document.getElementById('pi-term').value  = _settings.defaultTerm || 'DD';
+  document.getElementById('pi-notes').value = _settings.defaultScopeBoilerplate || '';
   document.getElementById('pi-readonly').checked = false;
   toggleReadOnly(false);
   bomPasswordHash = ''; bomUnlocked = false; _sessionUnlockPlain = '';
@@ -1666,16 +2108,29 @@ async function renderGroups() {
   ec.style.display = 'none';
   document.getElementById('bom-stats').style.display = '';
   let totL=0, totQ=0;
-  let grandTotal=0, grandTotalValid=false;
+  let grandTotal=0, grandTotalValid=false, grandTotalExclOpt=0, hasOptional=false;
 
-  // Pre-compute per-group pricing totals (items between each group header and the next)
+  // Pre-compute per-group pricing totals and item counts (items between each group header and the next)
   const groupTotals = {};
-  if (hasPricing) {
-    let curGrpId = null, curTotal = 0, curValid = false;
+  const groupItemCounts = {};
+  {
+    let curId = null, curCount = 0;
     for (const entry of cart) {
       if (entry._type === 'group') {
-        if (curGrpId !== null) groupTotals[curGrpId] = { total: curTotal, valid: curValid };
-        curGrpId = entry.id; curTotal = 0; curValid = false;
+        if (curId !== null) groupItemCounts[curId] = curCount;
+        curId = entry.id; curCount = 0;
+      } else if (curId !== null) {
+        curCount++;
+      }
+    }
+    if (curId !== null) groupItemCounts[curId] = curCount;
+  }
+  if (hasPricing) {
+    let curGrpId = null, curTotal = 0, curValid = false, curExclOpt = 0, curHasOpt = false;
+    for (const entry of cart) {
+      if (entry._type === 'group') {
+        if (curGrpId !== null) groupTotals[curGrpId] = { total: curTotal, valid: curValid, exclOpt: curExclOpt, hasOpt: curHasOpt };
+        curGrpId = entry.id; curTotal = 0; curValid = false; curExclOpt = 0; curHasOpt = false;
       } else {
         for (const r of rowsWithTerm(entry.rows)) {
           if (r.section !== undefined) continue;
@@ -1685,10 +2140,12 @@ async function renderGroups() {
           const lpn = lp ? parseFloat(String(lp).replace(/[^0-9.]/g, '')) : NaN;
           const tot = (!isNaN(lpn) && typeof r.qty === 'number') ? lpn * r.qty : NaN;
           if (!isNaN(tot)) { curTotal += tot; curValid = true; }
+          if (!isNaN(tot) && ek !== 'opt') { curExclOpt += tot; }
+          if (!isNaN(tot) && ek === 'opt') { curHasOpt = true; }
         }
       }
     }
-    if (curGrpId !== null) groupTotals[curGrpId] = { total: curTotal, valid: curValid };
+    if (curGrpId !== null) groupTotals[curGrpId] = { total: curTotal, valid: curValid, exclOpt: curExclOpt, hasOpt: curHasOpt };
   }
 
   c.innerHTML = '';
@@ -1696,23 +2153,29 @@ async function renderGroups() {
     if (entry._type === 'group') {
       const gt = hasPricing && entry.showPricing ? groupTotals[entry.id] : null;
       const groupPriceHtml = (gt && gt.valid)
-        ? `<span class="bgr-price">$${gt.total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>`
+        ? `<span class="bgr-price">${fmtMoney(gt.total)}${gt.hasOpt ? `<span class="bgr-price-tooltip">Excluding Optional — ${fmtMoney(gt.exclOpt)}</span>` : ''}</span>`
         : '';
+      const isCollapsed = collapsedGroups.has(entry.id);
+      const itemN = groupItemCounts[entry.id] || 0;
       const el = document.createElement('div');
       el.className = 'bom-group-row';
       el.dataset.id = entry.id;
+      el.id = `bgr-section-${entry.id}`;
       el.innerHTML = `
         <div class="bgr-accent"></div>
         <div class="drag-handle" title="Drag to reorder">
           <svg width="12" height="18" viewBox="0 0 12 18" fill="none"><circle cx="4" cy="4" r="1.3" fill="currentColor"/><circle cx="8" cy="4" r="1.3" fill="currentColor"/><circle cx="4" cy="9" r="1.3" fill="currentColor"/><circle cx="8" cy="9" r="1.3" fill="currentColor"/><circle cx="4" cy="14" r="1.3" fill="currentColor"/><circle cx="8" cy="14" r="1.3" fill="currentColor"/></svg>
         </div>
         <div class="bgr-body">
-          <svg class="bgr-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="4" width="12" height="6" rx="1" stroke="#EE3124" stroke-width="1.3"/><path d="M4 7h6" stroke="#EE3124" stroke-width="1.3" stroke-linecap="round"/></svg>
-          <input type="text" class="label-input bgr-label" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)">
-          ${entry.note ? `<span class="bgr-note">${h(entry.note)}</span>` : ''}
+          <button class="bgr-toggle${isCollapsed?' collapsed':''}" aria-expanded="${!isCollapsed}" aria-controls="bgr-section-${entry.id}" title="${isCollapsed?'Expand section':'Collapse section'}" onclick="toggleGroupCollapse(event,${entry.id})"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="bgr-text">
+            <input type="text" class="label-input bgr-label" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)">
+            <div class="bgr-meta"><span class="bgr-count">${itemN} group${itemN!==1?'s':''}</span>${entry.note ? ` · <span class="bgr-note">${h(entry.note)}</span>` : ''}</div>
+          </div>
           ${groupPriceHtml}
         </div>
         <div class="bgr-actions">
+          <button class="bgr-btn add" onclick="openSkuModalForGroup(${entry.id})" title="Add SKU to this group" aria-label="Add SKU to this group"><svg viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M5.5 1.5v8M1.5 5.5h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
           <button class="bgr-btn" onclick="openEditGroup(${entry.id})" title="Edit group header"><svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg></button>
           <button class="bgr-btn del" onclick="removeFromCart(${entry.id})">✕</button>
         </div>`;
@@ -1739,8 +2202,10 @@ async function renderGroups() {
         if (hasPricing) {
           const totalNum = (!isNaN(listPriceNum) && typeof r.qty === 'number') ? listPriceNum * r.qty : NaN;
           if (!isExcluded && !isNaN(totalNum)) { grandTotal += totalNum; grandTotalValid = true; }
-          const totalDisplay = isExcluded ? '$0.00' : (!isNaN(totalNum) ? '$'+totalNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '');
-          const listPriceDisplay = !isNaN(listPriceNum) ? '$'+listPriceNum.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : (listPrice ? h(listPrice) : '');
+          if (!isExcluded && !isNaN(totalNum) && effectiveKind !== 'opt') { grandTotalExclOpt += totalNum; }
+          if (!isExcluded && !isNaN(totalNum) && effectiveKind === 'opt') { hasOptional = true; }
+          const totalDisplay = isExcluded ? fmtMoney(0) : (!isNaN(totalNum) ? fmtMoney(totalNum) : '');
+          const listPriceDisplay = !isNaN(listPriceNum) ? fmtMoney(listPriceNum) : (listPrice ? h(listPrice) : '');
           priceCells = `<td class="nc" style="text-align:right;white-space:nowrap;">${listPriceDisplay}</td><td class="nc" style="text-align:right;white-space:nowrap;">${totalDisplay}</td>`;
         }
         const detailRows = [];
@@ -1775,6 +2240,26 @@ async function renderGroups() {
       c.appendChild(el);
     }
   }
+  // Sentinel must be in the DOM before the collapsed-state loop so the loop can use it as a stop marker.
+  if (!isReadOnly()) {
+    const sentinel = document.createElement('div');
+    sentinel.className = 'bom-drop-sentinel';
+    sentinel.dataset.id = SENTINEL_ID;
+    addDragListeners(sentinel);
+    c.appendChild(sentinel);
+  }
+  // Apply collapsed state: hide siblings under each collapsed group row up to the next group row.
+  // Stop at the sentinel too so it is never hidden by a collapsed last group.
+  for (const row of c.children) {
+    if (!row.classList.contains('bom-group-row')) continue;
+    const gid = Number(row.dataset.id);
+    if (!collapsedGroups.has(gid)) continue;
+    let n = row.nextElementSibling;
+    while (n && !n.classList.contains('bom-group-row') && !n.classList.contains('bom-drop-sentinel')) {
+      n.style.display = 'none';
+      n = n.nextElementSibling;
+    }
+  }
   const prodCount = cart.filter(e=>!e._type).length;
   document.getElementById('sum-g').textContent = prodCount;
   document.getElementById('sum-l').textContent = totL;
@@ -1786,7 +2271,13 @@ async function renderGroups() {
   sumTermEl.classList.toggle('term-warn', term === 'DD');
   const ptEl = document.getElementById('project-total');
   if (hasPricing && grandTotalValid) {
-    document.getElementById('pt-value').textContent = '$' + grandTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    document.getElementById('pt-value').textContent = fmtMoney(grandTotal);
+    const tooltipEl = document.getElementById('pt-tooltip');
+    if (hasOptional) {
+      tooltipEl.textContent = 'Excluding Optional — ' + fmtMoney(grandTotalExclOpt);
+    } else {
+      tooltipEl.textContent = '';
+    }
     ptEl.style.display = 'flex';
   } else {
     ptEl.style.display = 'none';
@@ -1796,14 +2287,82 @@ async function renderGroups() {
 
 // ── DRAG-TO-REORDER ──────────────────────────────────────────────────────────
 let dragSrcId = null;
+const SENTINEL_ID = 0; // drop-zone at end of list; no real cart entry ever has id 0
+
+// Returns [startIdx, endIdxExclusive] of a group's block in `cart`:
+// the header itself plus the contiguous run of non-group entries after it.
+function _groupBlockRange(headerIdx) {
+  let end = headerIdx + 1;
+  while (end < cart.length && cart[end]._type !== 'group') end++;
+  return [headerIdx, end];
+}
 
 function _doDrop(targetId) {
   if (dragSrcId === null || dragSrcId === targetId) return;
   const srcIdx = cart.findIndex(c => c.id === dragSrcId);
+  if (srcIdx === -1) return;
+
+  const src = cart[srcIdx];
+
+  if (targetId === SENTINEL_ID) {
+    // Append dragged item/group to the very end of the list.
+    if (src._type === 'group') {
+      const [s, e] = _groupBlockRange(srcIdx);
+      const block = cart.splice(s, e - s);
+      cart.push(...block);
+    } else {
+      const [moved] = cart.splice(srcIdx, 1);
+      cart.push(moved);
+    }
+    dragSrcId = null;
+    renderGroups();
+    saveCart();
+    markDirty();
+    return;
+  }
+
   const tgtIdx = cart.findIndex(c => c.id === targetId);
-  if (srcIdx === -1 || tgtIdx === -1) return;
-  const [moved] = cart.splice(srcIdx, 1);
-  cart.splice(tgtIdx, 0, moved);
+  if (tgtIdx === -1) return;
+
+  if (src._type === 'group') {
+    const [s, e] = _groupBlockRange(srcIdx);
+
+    // Find the target group's block start: walk backward from tgtIdx to its header (or 0).
+    let tgtBlockStart = tgtIdx;
+    if (cart[tgtIdx]._type !== 'group') {
+      tgtBlockStart = 0;
+      for (let i = tgtIdx - 1; i >= 0; i--) {
+        if (cart[i]._type === 'group') { tgtBlockStart = i; break; }
+      }
+    }
+
+    // No-op: dropping onto itself or onto an item inside its own block.
+    if (tgtBlockStart === s) return;
+
+    if (s < tgtBlockStart) {
+      // Dragging down: land after the target group's block.
+      const [, tgt_e] = _groupBlockRange(tgtBlockStart);
+      const block = cart.splice(s, e - s);
+      cart.splice(tgt_e - (e - s), 0, ...block);
+    } else {
+      // Dragging up: land before the target group's block.
+      const block = cart.splice(s, e - s);
+      cart.splice(tgtBlockStart, 0, ...block);
+    }
+  } else {
+    const [moved] = cart.splice(srcIdx, 1);
+    cart.splice(tgtIdx, 0, moved);
+    // If a product was dropped into a collapsed section, auto-expand so it's visible.
+    if (!moved._type) {
+      const newIdx = cart.indexOf(moved);
+      for (let i = newIdx - 1; i >= 0; i--) {
+        if (cart[i]._type === 'group') {
+          if (collapsedGroups.has(cart[i].id)) collapsedGroups.delete(cart[i].id);
+          break;
+        }
+      }
+    }
+  }
   dragSrcId = null;
   renderGroups();
   saveCart();
@@ -1816,6 +2375,20 @@ function _topItem(node) {
   return (node && node.dataset.id) ? node : null;
 }
 
+// Fades the item rows belonging to a group header in/out while the header is being dragged.
+function _applyGroupBlockClass(headerId, add) {
+  const bgc = document.getElementById('bgc');
+  let inBlock = false;
+  for (const child of bgc.children) {
+    if (!inBlock) {
+      if (Number(child.dataset.id) === headerId) inBlock = true;
+      continue;
+    }
+    if (child.classList.contains('bom-group-row') || child.classList.contains('bom-drop-sentinel')) break;
+    child.classList.toggle('group-dragging', add);
+  }
+}
+
 function addDragListeners(el) {
   // ── Mouse / HTML5 drag ──
   el.addEventListener('mousedown', e => {
@@ -1826,17 +2399,21 @@ function addDragListeners(el) {
     if (!el.draggable || isReadOnly()) { e.preventDefault(); return; }
     dragSrcId = Number(el.dataset.id);
     el.classList.add('dragging');
+    if (el.classList.contains('bom-group-row')) _applyGroupBlockClass(dragSrcId, true);
     e.dataTransfer.effectAllowed = 'move';
   });
   el.addEventListener('dragend', () => {
     el.classList.remove('dragging');
-    document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
+    document.querySelectorAll('#bgc > *').forEach(n => {
+      n.classList.remove('drag-over');
+      n.classList.remove('group-dragging');
+    });
   });
   el.addEventListener('dragover', e => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
-    if (Number(el.dataset.id) !== dragSrcId) el.classList.add('drag-over');
+    if (Number(el.dataset.id) !== dragSrcId && !el.classList.contains('group-dragging')) el.classList.add('drag-over');
   });
   el.addEventListener('drop', e => {
     e.preventDefault();
@@ -1849,6 +2426,7 @@ function addDragListeners(el) {
     e.preventDefault();
     dragSrcId = Number(el.dataset.id);
     el.classList.add('dragging');
+    if (el.classList.contains('bom-group-row')) _applyGroupBlockClass(dragSrcId, true);
   }, { passive: false });
 
   el.addEventListener('touchmove', e => {
@@ -1860,7 +2438,7 @@ function addDragListeners(el) {
     el.style.pointerEvents = '';
     const targetEl = under && _topItem(under);
     document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
-    if (targetEl && Number(targetEl.dataset.id) !== dragSrcId) targetEl.classList.add('drag-over');
+    if (targetEl && Number(targetEl.dataset.id) !== dragSrcId && !targetEl.classList.contains('group-dragging')) targetEl.classList.add('drag-over');
   }, { passive: false });
 
   el.addEventListener('touchend', e => {
@@ -1871,7 +2449,10 @@ function addDragListeners(el) {
     el.style.pointerEvents = 'none';
     const under = document.elementFromPoint(t.clientX, t.clientY);
     el.style.pointerEvents = '';
-    document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
+    document.querySelectorAll('#bgc > *').forEach(n => {
+      n.classList.remove('drag-over');
+      n.classList.remove('group-dragging');
+    });
     const targetEl = under && _topItem(under);
     if (targetEl) _doDrop(Number(targetEl.dataset.id));
     else dragSrcId = null;
@@ -1879,7 +2460,10 @@ function addDragListeners(el) {
 
   el.addEventListener('touchcancel', () => {
     el.classList.remove('dragging');
-    document.querySelectorAll('#bgc > *').forEach(n => n.classList.remove('drag-over'));
+    document.querySelectorAll('#bgc > *').forEach(n => {
+      n.classList.remove('drag-over');
+      n.classList.remove('group-dragging');
+    });
     dragSrcId = null;
   });
 }
@@ -1893,7 +2477,7 @@ function openAddGroup() {
   document.getElementById('grp-ok').textContent = 'Add Group';
   document.getElementById('grp-label').value = '';
   document.getElementById('grp-note').value = '';
-  document.getElementById('grp-show-pricing').checked = false;
+  document.getElementById('grp-show-pricing').checked = !!getSetting('defaultGroupSubtotals');
   document.getElementById('grp-modal').classList.add('on');
   setTimeout(() => document.getElementById('grp-label').focus(), 60);
 }
@@ -1985,7 +2569,8 @@ function saveProject() {
     savedAt: new Date().toISOString(),
     meta,
     cart: JSON.parse(JSON.stringify(cart)),
-    seq
+    seq,
+    collapsed: [...collapsedGroups]
   };
   savedProjects.unshift(snapshot);
   saveSaved();
@@ -1995,17 +2580,17 @@ function saveProject() {
 }
 
 function showSavedProjects() {
+  _saveNavState({ type: 'spv' });
   setActiveNav(document.getElementById('nav-saved'));
   document.getElementById('bc').textContent = 'Saved Projects';
   document.getElementById('pfw').style.display = 'none';
   document.getElementById('pbv').style.display = 'none';
+  const stv = document.getElementById('stv'); if (stv) stv.style.display = 'none';
   document.getElementById('spv').style.display = 'flex';
   spvFilter = '';
   document.getElementById('spv-filter').value = '';
   document.getElementById('spv-filter-clear').style.display = 'none';
   renderSavedProjects();
-  renderPricingSection();
-  renderPluginList();
 }
 
 function filterSavedProjects(q) {
@@ -2117,6 +2702,7 @@ function loadSavedProject(id) {
   if (cart.length && !confirm(`Load "${snap.meta.cust || 'this project'}"? Your current Project BOM will be replaced.`)) return;
   cart = JSON.parse(JSON.stringify(snap.cart));
   seq  = snap.seq;
+  collapsedGroups = new Set(Array.isArray(snap.collapsed) ? snap.collapsed : []);
   // skip cust/opp/notes when encrypted — applyPasswordHashFromMeta handles decryption
   if (!snap.meta.cust_enc) document.getElementById('pi-cust').value  = snap.meta.cust  || '';
   if (!snap.meta.cust_enc) document.getElementById('pi-opp').value   = snap.meta.opp   || '';
@@ -2367,6 +2953,8 @@ function toggleCopyMenu(e) {
   e.stopPropagation();
   const menu = document.getElementById('copy-menu');
   if (menu.classList.contains('on')) { menu.classList.remove('on'); return; }
+  closeProjectMenu();
+  closeAddMenu();
   const rect = e.currentTarget.getBoundingClientRect();
   menu.style.top  = (rect.bottom + 4) + 'px';
   menu.style.left = rect.left + 'px';
@@ -2377,6 +2965,8 @@ function toggleAddMenu(e) {
   e.stopPropagation();
   const menu = document.getElementById('add-menu');
   if (menu.classList.contains('on')) { menu.classList.remove('on'); return; }
+  closeCopyMenu();
+  closeProjectMenu();
   const rect = e.currentTarget.getBoundingClientRect();
   menu.style.top  = (rect.bottom + 4) + 'px';
   menu.style.left = rect.left + 'px';
@@ -2385,6 +2975,18 @@ function toggleAddMenu(e) {
 function closeAddMenu() { document.getElementById('add-menu').classList.remove('on'); }
 function openSkuModal() {
   _skuEditId = null;
+  _skuInsertGroupId = null;
+  const frame = document.getElementById('sku-frame');
+  if (!frame.src.includes('custom-sku-bomgen-mobile.html')) {
+    frame.src = 'products/custom-sku-bomgen-mobile.html';
+  } else {
+    try { frame.contentWindow.resetForm(); } catch(_) {}
+  }
+  document.getElementById('sku-modal').classList.add('on');
+}
+function openSkuModalForGroup(groupId) {
+  _skuEditId = null;
+  _skuInsertGroupId = groupId;
   const frame = document.getElementById('sku-frame');
   if (!frame.src.includes('custom-sku-bomgen-mobile.html')) {
     frame.src = 'products/custom-sku-bomgen-mobile.html';
@@ -2411,6 +3013,7 @@ function openSkuModalForEdit(entryId) {
 }
 function closeSkuModal() {
   _skuEditId = null;
+  _skuInsertGroupId = null;
   document.getElementById('sku-modal').classList.remove('on');
 }
 document.getElementById('sku-modal').addEventListener('click', function(e) {
@@ -2420,11 +3023,12 @@ async function toggleProjectMenu(e) {
   e.stopPropagation();
   const menu = document.getElementById('project-menu');
   if (menu.classList.contains('on')) { menu.classList.remove('on'); return; }
+  closeCopyMenu();
+  closeAddMenu();
   const btn = e.currentTarget;
   try {
     const pricing = await getPricingIDB();
-    const sfdc = document.getElementById('project-sfdc-section');
-    if (sfdc) sfdc.style.display = (pricing && pricing.data && pricing.data.rows && pricing.data.rows.length) ? '' : 'none';
+
   } catch(_) {}
   const rect = btn.getBoundingClientRect();
   menu.style.top  = (rect.bottom + 4) + 'px';
@@ -2493,20 +3097,6 @@ function copyMD() {
     lines.push('| ' + cells.map(c => c.replace(/\|/g,'\\|')).join(' | ') + ' |');
   }
   clipboardWrite(lines.join('\n'), '✓ Markdown copied to clipboard');
-}
-function exportSFDC(region) {
-  closeCopyMenu();
-  const rows = [['UID','Quantity','Disti Discount','Quote Line Item Notes']];
-  for (const r of bomDataRows()) {
-    if (!r.sku) continue;
-    rows.push([`${r.sku}${region}`, r.qty??'', 28, r.note||'']);
-  }
-  const csv = rows.map(r => r.map(c => String(c).replace(/,/g,'')).join(',')).join('\r\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
-  a.download = `SFDC_${region}_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  toast(`✓ SFDC-${region} CSV exported`);
 }
 
 // ── IMPORT CSV ───────────────────────────────────────────────────────────────
@@ -2634,7 +3224,7 @@ function parseCSV(text) {
 }
 
 function _restoreReadOnly(meta) {
-  const ro = !!meta.readOnly;
+  const ro = !!meta.readOnly || !!getSetting('readOnlyOnOpen');
   document.getElementById('pi-readonly').checked = ro;
   toggleReadOnly(ro);
 }
@@ -2655,6 +3245,7 @@ function doImport() {
   // Rebuild cart preserving order
   cart = [];
   seq = 0;
+  collapsedGroups = new Set();
   for (const item of items) {
     if (item._type === 'group') {
       cart.push({ id:++seq, _type:'group', label:item.label, note:item.note||'' });
@@ -2693,6 +3284,7 @@ function applySharedBOM(parsed) {
   _restoreReadOnly(meta);
   applyPasswordHashFromMeta(meta);
   cart = []; seq = 0;
+  collapsedGroups = new Set();
   for (const item of items) {
     if (item._type === 'group') {
       cart.push({ id: ++seq, _type: 'group', label: item.label, note: item.note || '', showPricing: !!item.showPricing });
@@ -2816,6 +3408,257 @@ async function deletePricingIDB() {
     tx.oncomplete = resolve;
     tx.onerror = e => reject(e.target.error);
   });
+}
+
+// ── DATA: BACKUP / RESTORE / CLEAR / METER ────────────────────────────────────
+const BACKUP_LS_PREFIXES = ['fortibom_'];
+const BACKUP_LS_EXTRA = ['sbar-pinned'];
+const BACKUP_LS_EXCLUDE = new Set(['fortibom_pw_plain']); // session-only password cache
+
+function _collectBackupLocalStorage() {
+  const out = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || BACKUP_LS_EXCLUDE.has(k)) continue;
+    if (BACKUP_LS_EXTRA.includes(k) || BACKUP_LS_PREFIXES.some(p => k.startsWith(p))) {
+      out[k] = localStorage.getItem(k);
+    }
+  }
+  return out;
+}
+function _clearBackupLocalStorage() {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k) continue;
+    if (BACKUP_LS_EXTRA.includes(k) || BACKUP_LS_PREFIXES.some(p => k.startsWith(p))) keys.push(k);
+  }
+  keys.forEach(k => localStorage.removeItem(k));
+}
+async function _idbGetAllRecords() {
+  const db = await openSharedDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('datasets', 'readonly');
+    const req = tx.objectStore('datasets').getAll();
+    req.onsuccess = () => res(req.result || []);
+    req.onerror = e => rej(e.target.error);
+  });
+}
+async function _idbClearAll() {
+  const db = await openSharedDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('datasets', 'readwrite');
+    tx.objectStore('datasets').clear();
+    tx.oncomplete = res;
+    tx.onerror = e => rej(e.target.error);
+  });
+}
+async function _idbPutRecord(record) {
+  const db = await openSharedDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('datasets', 'readwrite');
+    tx.objectStore('datasets').put(record);
+    tx.oncomplete = res;
+    tx.onerror = e => rej(e.target.error);
+  });
+}
+
+async function exportBackup() {
+  try {
+    const ls = _collectBackupLocalStorage();
+    const idbRecords = await _idbGetAllRecords();
+    const backup = {
+      kind: 'fabricbom-backup',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      counts: {
+        localStorageKeys: Object.keys(ls).length,
+        idbRecords: idbRecords.length
+      },
+      localStorage: ls,
+      idb: { 'toolbox_shared/datasets': idbRecords }
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `FabricBOM-backup-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 0);
+    toast('✓ Backup downloaded');
+  } catch(e) {
+    toast('⚠ Could not create backup: ' + e.message);
+  }
+}
+
+let _pendingBackupMode = null;
+function triggerImportBackup(mode) {
+  _pendingBackupMode = mode;
+  const inp = document.getElementById('backup-file-input');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+function backupFileChosen(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file || !_pendingBackupMode) return;
+  const mode = _pendingBackupMode;
+  _pendingBackupMode = null;
+  const warn = mode === 'replace'
+    ? 'REPLACE: Erase all existing FabricBOM data and restore from this backup file. The page will reload. Continue?'
+    : 'MERGE: Add saved projects and plugins from this backup alongside your current data. The page will reload. Continue?';
+  if (!confirm(warn)) return;
+  importBackupFile(file, mode);
+}
+
+async function importBackupFile(file, mode) {
+  try {
+    const txt = await file.text();
+    const data = JSON.parse(txt);
+    if (!data || data.kind !== 'fabricbom-backup') throw new Error('Not a FabricBOM backup file.');
+    const incLS = data.localStorage || {};
+    const incRecs = (data.idb && data.idb['toolbox_shared/datasets']) || [];
+
+    if (mode === 'replace') {
+      _clearBackupLocalStorage();
+      await _idbClearAll();
+      for (const [k, v] of Object.entries(incLS)) localStorage.setItem(k, v);
+      for (const r of incRecs) await _idbPutRecord(r);
+    } else {
+      // MERGE: union saved projects and plugins by id; keep current settings/active BOM.
+      try {
+        const cur = JSON.parse(localStorage.getItem('fortibom_saved') || '[]');
+        const inc = JSON.parse(incLS.fortibom_saved || '[]');
+        const byId = new Map(cur.map(p => [p.id, p]));
+        for (const p of inc) byId.set(p.id, p);
+        const merged = [...byId.values()].sort((a,b) => new Date(b.savedAt) - new Date(a.savedAt));
+        localStorage.setItem('fortibom_saved', JSON.stringify(merged));
+      } catch {}
+      try {
+        const cur = JSON.parse(localStorage.getItem('fortibom_plugins') || '[]');
+        const inc = JSON.parse(incLS.fortibom_plugins || '[]');
+        const byId = new Map(cur.map(p => [p.id, p]));
+        for (const p of inc) byId.set(p.id, p);
+        localStorage.setItem('fortibom_plugins', JSON.stringify([...byId.values()]));
+      } catch {}
+      // Settings: only seed if absent.
+      if (!localStorage.getItem('fortibom_settings') && incLS.fortibom_settings) {
+        localStorage.setItem('fortibom_settings', incLS.fortibom_settings);
+      }
+      // IDB: keep existing pricing if any; always restore plugin html records.
+      const havePricing = !!(await getPricingIDB());
+      for (const r of incRecs) {
+        if (r.key === 'pricing' && havePricing) continue;
+        await _idbPutRecord(r);
+      }
+    }
+    toast('✓ Backup imported — reloading…');
+    setTimeout(() => location.reload(), 700);
+  } catch(e) {
+    toast('⚠ Import failed: ' + e.message);
+  }
+}
+
+async function clearScope(scope) {
+  try {
+    if (scope === 'pricing') {
+      if (!confirm('Delete the saved pricelist? Saved projects will not be affected.')) return;
+      await deletePricingIDB();
+      renderPricingSection();
+      toast('✓ Pricelist cleared');
+    } else if (scope === 'saved') {
+      if (!confirm('Delete ALL saved projects (including version history)?\n\nThis cannot be undone.')) return;
+      localStorage.removeItem('fortibom_saved');
+      savedProjects = [];
+      updateSavedBadge();
+      toast('✓ Saved projects cleared');
+    } else if (scope === 'history') {
+      if (!confirm('Delete prior versions of saved projects?\n\nOnly the most recent save of each project will be kept.')) return;
+      const seen = new Set();
+      const trimmed = [];
+      for (const p of savedProjects) { // newest-first
+        const k = p.projectKey || p.id;
+        if (seen.has(k)) continue;
+        seen.add(k);
+        trimmed.push(p);
+      }
+      const removed = savedProjects.length - trimmed.length;
+      savedProjects = trimmed;
+      localStorage.setItem('fortibom_saved', JSON.stringify(savedProjects));
+      updateSavedBadge();
+      toast(`✓ Removed ${removed} prior version${removed === 1 ? '' : 's'}`);
+    } else if (scope === 'all') {
+      if (!confirm('Erase ALL FabricBOM data?\n\nActive BOM, saved projects, pricelist, plugins, and settings will all be deleted. The page will reload.\n\nThis cannot be undone.')) return;
+      _clearBackupLocalStorage();
+      await _idbClearAll();
+      toast('✓ All data cleared — reloading…');
+      setTimeout(() => location.reload(), 700);
+      return;
+    }
+    renderStorageMeter();
+  } catch(e) {
+    toast('⚠ ' + e.message);
+  }
+}
+
+async function clearServiceWorkerAndReload() {
+  if (!confirm('Clear cache and hard reload?\n\nThis will unregister the service worker and delete all cached assets, then reload the page from the network. Your saved projects, settings, pricelist, and plugins are NOT affected.')) return;
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister()));
+    }
+    if (window.caches && caches.keys) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+    toast('✓ Cache cleared — reloading…');
+  } catch(e) {
+    toast('⚠ ' + e.message);
+  }
+  setTimeout(() => {
+    const u = new URL(location.href);
+    u.searchParams.set('_cb', Date.now());
+    location.replace(u.toString());
+  }, 500);
+}
+
+function resetSettingsToDefaults() {
+  if (!confirm('Reset all settings to defaults?\n\nOnly the options on this Settings page (license term, price rounding, BOM defaults, editor behavior) are reset. Your saved projects, active BOM, pricelist, and plugins are not affected.')) return;
+  localStorage.removeItem(SETTINGS_KEY);
+  renderSettingsForm();
+  renderGroups();
+  toast('✓ Settings reset to defaults');
+}
+
+function _fmtBytes(b) {
+  if (!b && b !== 0) return '—';
+  if (b < 1024) return b + ' B';
+  if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
+  if (b < 1024*1024*1024) return (b/1024/1024).toFixed(1) + ' MB';
+  return (b/1024/1024/1024).toFixed(2) + ' GB';
+}
+async function renderStorageMeter() {
+  const el = document.getElementById('storage-meter');
+  if (!el) return;
+  if (!navigator.storage || !navigator.storage.estimate) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--c-textm);">Storage stats not available in this browser.</div>';
+    return;
+  }
+  try {
+    const est = await navigator.storage.estimate();
+    const usage = est.usage || 0;
+    const quota = est.quota || 0;
+    const pct = quota ? Math.min(100, (usage/quota)*100) : 0;
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--c-text2);margin-bottom:6px;">
+        <span><strong>${_fmtBytes(usage)}</strong> used${quota ? ` of ${_fmtBytes(quota)}` : ''}</span>
+        <span style="color:var(--c-textm);">${pct.toFixed(2)}%</span>
+      </div>
+      <div style="height:8px;background:var(--c-sh);border:1px solid var(--c-border);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#5BA84A,#EE3124);transition:width .3s;"></div>
+      </div>`;
+  } catch(e) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--c-textm);">Could not read storage estimate.</div>';
+  }
 }
 
 function parsePricingLine(line) {
@@ -3185,12 +4028,13 @@ function togglePiEdit() {
 
 function clearPiFields() {
   if (!confirm('Clear all Project Information fields?')) return;
+  const _settings = loadSettings();
   document.getElementById('pi-cust').value  = '';
   document.getElementById('pi-opp').value   = '';
-  document.getElementById('pi-eng').value   = '';
+  document.getElementById('pi-eng').value   = _settings.defaultSeName || '';
   document.getElementById('pi-date').value  = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('pi-term').value  = 'DD';
-  document.getElementById('pi-notes').value = '';
+  document.getElementById('pi-term').value  = _settings.defaultTerm || 'DD';
+  document.getElementById('pi-notes').value = _settings.defaultScopeBoilerplate || '';
   document.getElementById('pi-readonly').checked = false;
   toggleReadOnly(false);
   bomPasswordHash = ''; bomUnlocked = false; _sessionUnlockPlain = '';
@@ -3624,18 +4468,28 @@ function initDemoLink() {
     document.getElementById('pi-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   }
   loadCart();
+  initUndoBaseline();
   loadSaved();
   updateBadges();
   updateSavedBadge();
   renderGroups();
   updateSaveIndicator();
-  if (cart.length) showPBV();
   buildNav();
+  (function(){
+    const pinned = localStorage.getItem('sbar-pinned') !== 'false';
+    const sbar = document.getElementById('sbar');
+    const btn = document.getElementById('pin-btn');
+    if (!pinned) { sbar.classList.add('unpinned'); btn.title = 'Pin toolbar'; }
+    else { btn.classList.add('pinned'); btn.title = 'Unpin toolbar'; }
+  })();
   await renderPluginNav();
   renderPluginList();
   initPluginDropZone();
   checkBOMFragment();
   initPiMode();
+  const _navRestored = await _restoreNavState();
+  if (!_navRestored && cart.length) showPBV();
+  _navReady = true;
   ['pi-cust','pi-opp','pi-eng','pi-date','pi-notes'].forEach(id => {
     document.getElementById(id).addEventListener('input', () => { savePiData(); if (cart.length) markDirty(); });
   });

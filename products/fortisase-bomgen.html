@@ -1,786 +1,1348 @@
+<!--
+  FabricBOM Build Report
+  Product: FortiSASE
+  Source ordering guide: FSS-OG-R39-20260320  (uploaded 2026-05-13)
+  Price list verified against: SKU verification 050426
+  Generated: 2026-05-13
+
+  SKU Reconciliation:
+  ===========================================================================
+  Remote User Subscriptions (12 SKUs)
+  -------------------------------------------------------------------------
+  ✓ exact  FC2-10-EMS05-547-02-DD   Standard,      50-499 users        (multi-term: -12/-36/-60)
+  ✓ exact  FC2-10-EMS05-676-02-DD   Advanced,      50-499 users        (multi-term)
+  ✓ exact  FC2-10-EMS05-759-02-DD   Comprehensive, 50-499 users        (multi-term)
+  ✓ exact  FC3-10-EMS05-547-02-DD   Standard,      500-1,999 users     (multi-term)
+  ✓ exact  FC3-10-EMS05-676-02-DD   Advanced,      500-1,999 users     (multi-term)
+  ✓ exact  FC3-10-EMS05-759-02-DD   Comprehensive, 500-1,999 users     (multi-term)
+  ✓ exact  FC4-10-EMS05-547-02-DD   Standard,      2,000-9,999 users   (multi-term)
+  ✓ exact  FC4-10-EMS05-676-02-DD   Advanced,      2,000-9,999 users   (multi-term)
+  ✓ exact  FC4-10-EMS05-759-02-DD   Comprehensive, 2,000-9,999 users   (multi-term)
+  ✓ exact  FC5-10-EMS05-547-02-DD   Standard,      10,000+ users       (multi-term)
+  ✓ exact  FC5-10-EMS05-676-02-DD   Advanced,      10,000+ users       (multi-term)
+  ✓ exact  FC5-10-EMS05-759-02-DD   Comprehensive, 10,000+ users       (multi-term)
+
+  Branch On-Ramp (2 SKUs)
+  -------------------------------------------------------------------------
+  ✓ exact  FC1-10-EMS05-769-02-DD   1Gbps node, Fortinet Cloud PoP     (multi-term)
+  ✓ exact  FC1-10-EMS05-770-02-DD   1Gbps node, Public Cloud PoP       (multi-term)
+
+  Branch Thin Edge Subscriptions (7 SKUs)
+  -------------------------------------------------------------------------
+  ✓ exact  FC-10-X200F-595-02-DD    FortiExtender-200F cloud mgmt      (multi-term)
+  ✓ exact  FC-10-BS10F-595-02-DD    FortiBranchSASE-10F-WiFi mgmt      (multi-term)
+  ✓ exact  FC-10-BS10F-1070-02-DD   FortiBranchSASE-10F-WiFi bundle    (multi-term)
+  ✓ exact  FC-10-BS20G-595-02-DD    FortiBranchSASE-20G mgmt           (multi-term)
+  ✓ exact  FC-10-BS20G-1070-02-DD   FortiBranchSASE-20G bundle         (multi-term)
+  ✓ exact  FC-10-BS20W-595-02-DD    FortiBranchSASE-20G-WiFi mgmt      (multi-term)
+  ✓ exact  FC-10-BS20W-1070-02-DD   FortiBranchSASE-20G-WiFi bundle    (multi-term)
+
+  FortiAP Thin Edge Subscriptions (3 example SKUs; OG notes others supported)
+  -------------------------------------------------------------------------
+  ✓ exact  FC-10-P831F-595-02-DD    FAP-831F cloud-managed SASE        (multi-term)
+  ✓ exact  FC-10-P432G-595-02-DD    FAP-432G cloud-managed SASE        (multi-term)
+  ✓ exact  FC-10-FP43K-595-02-DD    FAP-443K cloud-managed SASE        (multi-term)
+
+  Network Add-ons (4 SKUs)
+  -------------------------------------------------------------------------
+  ✓ exact  FC1-10-EMS05-658-02-DD   Dedicated Public IP (4 IPs/sku)    (multi-term; min 500 users)
+  ✓ exact  FC1-10-EMS05-752-02-DD   Fortinet Location Add-on           (multi-term; 1-16 PoPs)
+  ✓ exact  FC1-10-EMS05-766-02-DD   Public Cloud Location Add-on       (multi-term; 1-16 PoPs)
+  ✓ exact  FC-10-EMS05-1136-02-DD   FortiSASE Global Add-On            (multi-term)
+
+  SD-WAN Service Bundle / SPA Connector (per-FortiGate)
+  -------------------------------------------------------------------------
+  OG SKU template "FC-10-XXXXX-1329-02-DD" (with starter kit, 100F+)
+  OG SKU template "FC-10=XXXXX-1337-02-DD" (SPA only, 30G-90G tier)
+  OG SKU template "FC-10=XXXXX-662-02-DD"  (SPA only, VMs and legacy hw)
+  Note: the OG's "=" notation is a template placeholder; actual price list SKUs use "-".
+  All 1329/1337/662 codes confirmed multi-term across curated FortiGate model list.
+  Curated models (each pre-verified in price list):
+    1329 (with starter kit) — 100F (F100F), 101F (F101F), 200F (F200F), 200G (FG2HG),
+      201F (F201F), 201G (F2H1G), 400F (0400F), 400G (FG4H0), 600F (0600F),
+      601F (0601F), 700G (G7H0G), 701G (G7H1G), 900G (FG9H0), 1000F (F1K0F),
+      1800F (F18HF), 3000F (F3K0F), 3500F (F3K5F), 4200F (F42HF), 4400F (F44HF),
+      4800F (F48HF)
+    1337 (SPA only, 30G+) — 30G (FG30G), 31G (GT31G), 40F (0040F), 50G (GT50G),
+      70F (0070F)
+    662  (SPA VMs) — FGT-VM01 (FVM01), VM02 (FVM02), VM04 (FVM04), VM08 (FVM08),
+      VM16 (FVM16), VM32 (FVM32), VMUL (FVMUL)
+
+  FortiIdentity Cloud (4 SKUs)
+  -------------------------------------------------------------------------
+  ✓ exact  FC1-10-IDCLD-445-02-DD   IDaaS, 25-499 users (OG says 100-499, price list says 25-499; using
+                                    price-list canonical desc)
+  ✓ exact  FC2-10-IDCLD-445-02-DD   IDaaS, 500-1,999 users             (multi-term)
+  ✓ exact  FC3-10-IDCLD-445-02-DD   IDaaS, 2,000-9,999 users           (multi-term)
+  ✓ exact  FC4-10-IDCLD-445-02-DD   IDaaS, 10,000+ users               (multi-term)
+
+  Training (2 SKUs, no term)
+  -------------------------------------------------------------------------
+  ✓ exact  FT-ILT-D02               Instructor-led training, 2 days    (termless)
+  ✓ exact  NSE-EX-FTE2              FTE2 Certification exam voucher    (termless)
+
+  Single-term SKUs flagged: NONE (all SASE subscription SKUs have all three -12/-36/-60 variants)
+  EOL / discontinued SKUs flagged: NONE
+  Description-fallback matches: NONE (all OG SKUs resolved by exact match)
+
+  Open questions resolved during build:
+  - None. All OG SKUs resolved by exact match against price list.
+
+  Examples tab status: HIDDEN. The OG (FSS-OG-R39-20260320) contains no
+  example BOM scenarios. Per spec, the Examples tab is shown only when the
+  ordering guide includes example BOMs, so the tab is suppressed.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FortiSASE – BOM Generator</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="build-timestamp" content="2026-05-13T17:00:00Z" />
+<meta name="build-id" content="fortisase-bomgen-20260513-170000" />
+<title>FabricBOM · FortiSASE</title>
 <style>
   :root {
-    --red:#EE3124; --border:#DDE1E9; --bg:#F2F4F7; --white:#FFFFFF;
-    --text:#2A2F3A; --text2:#6B7589; --textm:#9BA5BA;
-    --sh:#F7F9FC; --ib:#C8CDD9; --th:#EEF1F6; --ts:#F7F9FC;
-    --info-bg:#EEF3FF; --info-b:#B8CBF5; --info-t:#3557A5;
-    --warn-bg:#FFF8EE; --warn-b:#F5D9A0; --warn-t:#8A5800;
-    --ok-bg:#F0FAF0; --ok-b:#9FD8A0; --ok-t:#1E6B20;
-    /* Tier colors */
-    --std-bg:#F0F7FF; --std-b:#9EC8F5; --std-t:#1A4E82;
-    --adv-bg:#EEF3FF; --adv-b:#B8CBF5; --adv-t:#3557A5;
-    --cmp-bg:#F5F0FF; --cmp-b:#C8B8F5; --cmp-t:#4A2A8A;
+    --forti-red:    #EE3124;
+    --forti-border: #DDE1E9;
+    --forti-bg:     #F2F4F7;
+    --forti-white:  #FFFFFF;
+    --forti-text:   #2A2F3A;
+    --forti-text-secondary: #6B7589;
+    --forti-text-muted:     #9BA5BA;
+    --forti-section-header: #F7F9FC;
+    --forti-input-border:   #C8CDD9;
+    --forti-table-head:     #EEF1F6;
+    --forti-table-stripe:   #F7F9FC;
+    --forti-info-bg:    #EEF3FF;
+    --forti-info-border:#B8CBF5;
+    --forti-info-text:  #3557A5;
+    --forti-warn-bg:    #FFF8EE;
+    --forti-warn-border:#F5D9A0;
+    --forti-warn-text:  #8A5800;
   }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;padding:20px;min-height:100vh;}
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--forti-text);
+    background: var(--forti-bg);
+    padding: 20px;
+  }
+  h1, h2, h3, h4 { margin: 0; }
+  p { margin: 0 0 8px 0; }
+  a { color: var(--forti-info-text); }
 
-  /* PAGE HEADER */
-  .ph{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:14px 20px;margin-bottom:14px;display:flex;align-items:center;gap:14px;}
-  .ph-icon{width:36px;height:36px;background:var(--red);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .ph-icon svg{width:20px;height:20px;}
-  .ph h1{font-size:16px;font-weight:600;}
-  .ph .sub{font-size:11px;color:var(--text2);margin-top:2px;}
+  /* ---------- Header ---------- */
+  .page-header { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+  .icon-box {
+    width:48px; height:48px;
+    background-color: var(--forti-red);
+    background-image: url('../forti-icons/FortiSASE-white.svg');
+    background-size: 70%;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .page-title { font-size:20px; font-weight:600; }
+  .page-subtitle { font-size:12px; color:var(--forti-text-secondary); margin-top:1px; }
 
-  /* CARD */
-  .card{background:var(--white);border:1px solid var(--border);border-radius:4px;margin-bottom:14px;overflow:hidden;}
-  .ch{background:var(--sh);border-bottom:1px solid var(--border);padding:9px 18px;display:flex;align-items:center;gap:8px;}
-  .ch h2{font-size:11px;font-weight:700;color:var(--text);letter-spacing:.04em;text-transform:uppercase;}
-  .ch .badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;background:var(--red);color:#fff;border-radius:2px;padding:1px 6px;margin-left:auto;}
-  .cb{padding:18px;}
+  /* ---------- Tabs ---------- */
+  .tabs { display:flex; gap:0; border-bottom:1px solid var(--forti-border); margin-bottom:14px; }
+  .tab  { padding:9px 18px; cursor:pointer; background:transparent; border:none; font-size:13px; color:var(--forti-text-secondary); border-bottom:2px solid transparent; margin-bottom:-1px; font-family:inherit; }
+  .tab:hover { color:var(--forti-text); }
+  .tab.active { color:var(--forti-text); border-bottom-color:var(--forti-red); font-weight:600; }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
 
-  /* FORM */
-  .fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;}
-  .fg.wide{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));}
-  .grp{display:flex;flex-direction:column;gap:4px;}
-  .grp.full{grid-column:1/-1;}
-  label.lbl{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;}
-  label.lbl .r{color:var(--red);margin-left:2px;}
-  input[type=text],input[type=number],select,textarea{background:var(--white);border:1px solid var(--ib);border-radius:3px;padding:6px 9px;font-size:13px;color:var(--text);font-family:inherit;outline:none;transition:border-color .15s;width:100%;}
-  input:focus,select:focus,textarea:focus{border-color:var(--red);box-shadow:0 0 0 2px rgba(238,49,36,.1);}
-  .invalid{border-color:var(--red)!important;}
-  .err{display:none;font-size:11px;color:#C0392B;margin-top:2px;}
-  select{cursor:pointer;}
+  /* ---------- Card ---------- */
+  .card {
+    background:var(--forti-white);
+    border:1px solid var(--forti-border);
+    border-radius:4px;
+    margin-bottom:14px;
+    overflow:hidden;
+  }
+  .card-header {
+    background:var(--forti-section-header);
+    border-bottom:1px solid var(--forti-border);
+    padding:9px 18px;
+    font-size:13px;
+    font-weight:600;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .card-header .ch-right { font-size:11px; color:var(--forti-text-secondary); font-weight:normal; }
+  .card-body { padding:14px 18px; }
+  .card.collapsed .card-body { display:none; }
+  .toggle-chip { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--forti-text-secondary); font-weight:normal; cursor:pointer; user-select:none; }
+  .toggle-chip input[type=checkbox] { margin:0; cursor:pointer; }
 
-  /* TOGGLES */
-  .trow{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:5px 8px;border-radius:3px;margin-bottom:2px;transition:background .1s;}
-  .trow:hover{background:var(--sh);}
-  .trow input[type=checkbox]{accent-color:var(--red);width:14px;height:14px;margin-top:1px;flex-shrink:0;}
-  .tl{font-size:13px;color:var(--text);}
-  .tn{font-size:11px;color:var(--textm);}
+  /* ---------- Form ---------- */
+  label.field-label { display:block; font-size:11px; font-weight:600; color:var(--forti-text-secondary); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em; }
+  label.field-label .req { color:var(--forti-red); margin-left:2px; }
+  input[type=text], input[type=number], select, textarea {
+    background: white;
+    border: 1px solid var(--forti-input-border);
+    border-radius: 3px;
+    padding: 6px 9px;
+    font-size: 13px;
+    width: 100%;
+    font-family: inherit;
+    color: var(--forti-text);
+  }
+  input[type=text]:focus, input[type=number]:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--forti-red);
+    box-shadow: 0 0 0 2px rgba(238,49,36,.1);
+  }
+  input.invalid, select.invalid { border-color: var(--forti-red); background:#FEF8F8; }
+  .err-msg { display:none; color:var(--forti-red); font-size:11px; margin-top:3px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(min(210px, 100%), 1fr)); gap:14px; }
+  .field { display:flex; flex-direction:column; }
+  .field-note { font-size:11px; color:var(--forti-text-muted); margin-top:3px; }
 
-  /* CALLOUTS */
-  .callout{border-radius:3px;padding:9px 12px;font-size:12px;line-height:1.6;display:flex;gap:8px;align-items:flex-start;margin-bottom:14px;}
-  .callout svg{flex-shrink:0;margin-top:1px;}
-  .callout.info{background:var(--info-bg);border:1px solid var(--info-b);color:var(--info-t);}
-  .callout.warn{background:var(--warn-bg);border:1px solid var(--warn-b);color:var(--warn-t);}
-  .callout.ok{background:var(--ok-bg);border:1px solid var(--ok-b);color:var(--ok-t);}
+  /* ---------- Radio / Checkbox groups ---------- */
+  .radio-group, .check-group { display:flex; flex-wrap:wrap; gap:14px; align-items:center; }
+  .radio-group label, .check-group label { display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; }
+  .radio-group input, .check-group input { margin:0; cursor:pointer; }
 
-  /* DIVIDER / SECTION LABEL */
-  .divider{height:1px;background:var(--border);margin:14px 0;}
-  .sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--textm);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  /* ---------- Callouts ---------- */
+  .callout { border-radius:3px; padding:9px 12px; font-size:12px; line-height:1.6; display:flex; gap:8px; margin:8px 0; }
+  .info { background:var(--forti-info-bg); border:1px solid var(--forti-info-border); color:var(--forti-info-text); }
+  .warn { background:var(--forti-warn-bg); border:1px solid var(--forti-warn-border); color:var(--forti-warn-text); }
+  .callout .ico { font-weight:700; flex-shrink:0; }
 
-  /* TIER COMPARISON TABLE */
-  .tier-panel{border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px;}
-  .tp-head{display:grid;grid-template-columns:1fr 110px 110px 110px;background:var(--sh);border-bottom:1px solid var(--border);}
-  .tph{padding:8px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:center;color:var(--text2);border-left:1px solid var(--border);}
-  .tph:first-child{text-align:left;border-left:none;}
-  .tph.std{background:var(--std-bg);color:var(--std-t);}
-  .tph.adv{background:var(--adv-bg);color:var(--adv-t);}
-  .tph.cmp{background:var(--cmp-bg);color:var(--cmp-t);}
-  .tp-row{display:grid;grid-template-columns:1fr 110px 110px 110px;border-top:1px solid var(--border);}
-  .tp-row:nth-child(even) .tp-cell{background:#FAFBFC;}
-  .tp-cat{background:#EAECF3;padding:5px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text2);grid-column:1/-1;border-top:2px solid #C5CAD9;}
-  .tp-cell{padding:6px 10px;font-size:11.5px;color:var(--text);border-left:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
-  .tp-cell:first-child{justify-content:flex-start;border-left:none;color:var(--text2);}
-  .chk{color:#2E7D32;font-size:13px;font-weight:700;}
-  .dash{color:var(--textm);}
-  .add-on{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#F0FAF0;color:#1E6B20;border:1px solid #9FD8A0;border-radius:2px;padding:1px 5px;}
-  .note-tag{font-size:10px;color:var(--warn-t);margin-left:4px;}
+  /* ---------- Live band indicator ---------- */
+  .band-indicator {
+    display:none;
+    background:#EEF3FF;
+    border:1px solid #B8CBF5;
+    border-radius:3px;
+    padding:4px 10px;
+    font-size:12px;
+    color:#3557A5;
+    margin-top:4px;
+  }
+  .band-indicator code { background:rgba(0,0,0,0.05); padding:0 4px; border-radius:2px; }
 
-  /* USER BAND INDICATOR */
-  .band-indicator{display:inline-flex;align-items:center;gap:6px;background:var(--info-bg);border:1px solid var(--info-b);border-radius:3px;padding:4px 10px;font-size:12px;color:var(--info-t);font-weight:500;margin-top:4px;}
-  .band-indicator .band-prefix{font-family:'Courier New',monospace;font-weight:700;}
+  /* ---------- Buttons ---------- */
+  button {
+    background:#EEF1F6; border:1px solid var(--forti-input-border); border-radius:3px;
+    padding:7px 14px; font-size:13px; cursor:pointer; font-family:inherit; color:var(--forti-text);
+  }
+  button:hover { background:#E4E8EE; }
+  button.primary { background:var(--forti-red); border-color:var(--forti-red); color:white; }
+  button.primary:hover { background:#D62B1F; }
+  button.green   { background:#2E7D32; border-color:#2E7D32; color:white; }
+  button.green:hover { background:#256328; }
+  .button-row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding-top:6px; }
+  .button-row .smsg { font-size:12px; }
 
-  /* ACTIONS */
-  .actions{display:flex;gap:10px;align-items:center;padding:12px 18px;background:var(--sh);border-top:1px solid var(--border);}
-  .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:3px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:inherit;transition:background .12s;}
-  .btn svg{width:13px;height:13px;flex-shrink:0;}
-  .btn-p{background:var(--red);color:#fff;border-color:var(--red);}
-  .btn-p:hover{background:#d42a1e;}
-  .btn-s{background:var(--white);color:var(--text);border-color:var(--ib);}
-  .btn-s:hover{background:var(--sh);}
-  #smsg{font-size:11px;margin-left:6px;}
+  /* ---------- BOM Table ---------- */
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  thead th { background:var(--forti-table-head); border:1px solid var(--forti-border); padding:7px 11px; font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--forti-text-secondary); text-align:left; }
+  tbody td { border:1px solid var(--forti-border); padding:7px 11px; vertical-align:top; }
+  tbody tr:nth-child(even) td { background:var(--forti-table-stripe); }
+  .section-row td { background:#EAECF3!important; font-weight:700; font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--forti-text-secondary); padding:5px 11px; border-top:2px solid #C5CAD9; }
+  .sku { font-family:'Courier New', monospace; font-size:12px; color:#1A4E82; white-space:nowrap; }
+  .nc  { color:var(--forti-text-muted); }
+  .qty-cell { text-align:right; width:50px; }
 
-  /* BOM TABLE */
-  #bom-section{display:none;}
-  .bom-meta{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;}
-  .bom-meta-item .ml{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--textm);}
-  .bom-meta-item .mv{font-size:13px;font-weight:500;color:var(--text);}
-  .bt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  table.bt{width:100%;border-collapse:collapse;font-size:12px;min-width:580px;}
-  table.bt thead th{background:var(--th);border:1px solid var(--border);padding:7px 11px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);white-space:nowrap;}
-  table.bt tbody td{border:1px solid var(--border);padding:7px 11px;vertical-align:top;}
-  table.bt tbody tr:nth-child(even) td{background:var(--ts);}
-  table.bt tbody tr:hover td{background:#EEF1F6;}
-  .rs td{background:#EAECF3!important;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);padding:5px 11px;border-top:2px solid #C5CAD9;}
-  .sk{font-family:'Courier New',monospace;font-size:11.5px;color:#1A4E82;font-weight:700;white-space:nowrap;}
-  .qc{text-align:center;font-weight:700;}
-  .nc{color:var(--textm);font-size:11px;}
-  .br{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:2px;padding:1px 5px;}
-  .br-r{background:#FEF0EE;color:#C0392B;border:1px solid #F5C6C2;}
-  .br-o{background:var(--info-bg);color:var(--info-t);border:1px solid var(--info-b);}
-  .br-m{background:var(--warn-bg);color:var(--warn-t);border:1px solid var(--warn-b);}
+  /* ---------- Badges ---------- */
+  .badge { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; border-radius:2px; padding:1px 4px; display:inline-block; }
+  .badge-req  { background:#FEF0EE; color:#C0392B; border:1px solid #F5C6C2; }
+  .badge-opt  { background:#EEF3FF; color:#3557A5; border:1px solid #B8CBF5; }
+  .badge-mand { background:#FFF8EE; color:#8A5800; border:1px solid #F5D9A0; }
+  .badge-inc  { background:#EEF3FF; color:#3557A5; border:1px solid #B8CBF5; }
 
-  /* TOTALS */
-  .bom-totals{margin-top:12px;display:flex;gap:12px;flex-wrap:wrap;}
-  .tc{background:var(--sh);border:1px solid var(--border);border-radius:3px;padding:9px 14px;min-width:120px;}
-  .tc .tl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--textm);margin-bottom:3px;}
-  .tc .tv{font-size:18px;font-weight:600;color:var(--text);}
-  .tc.hi .tv{color:var(--red);}
+  /* ---------- Feature matrix table ---------- */
+  .matrix-table { font-size:11px; }
+  .matrix-table th, .matrix-table td { padding:5px 9px; }
+  .matrix-table tbody td:first-child { font-weight:600; color:var(--forti-text-secondary); width:18%; }
+  .matrix-table tbody td:nth-child(2) { width:32%; }
+  .matrix-table .yes { color:#2E7D32; font-weight:700; }
+  .matrix-table .no  { color:var(--forti-text-muted); }
+  .matrix-table .addon  { color:var(--forti-info-text); font-style:italic; font-size:10px; }
 
-  @media print{body{background:#fff;padding:0;}#config-section,.actions{display:none!important;}#bom-section{display:block!important;}}
+  /* ---------- BOM section ---------- */
+  #bom-section { display:none; margin-top:14px; }
+  .bom-meta { font-size:11px; color:var(--forti-text-secondary); padding:6px 0; }
+
+  /* ---------- Tier-grouped option chips ---------- */
+  .tier-group { margin-top:8px; }
+  .tier-group-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--forti-text-secondary); margin-bottom:6px; }
+
+  /* ---------- Build Report tab ---------- */
+  .br-table { font-family:'Courier New', monospace; font-size:11px; }
+  .br-status-ok { color:#2E7D32; font-weight:700; }
+  .br-status-warn { color:#8A5800; font-weight:700; }
+  .br-status-bad { color:#C0392B; font-weight:700; }
+
 </style>
 </head>
 <body>
 
-<!-- PAGE HEADER -->
-<div class="ph">
-  <div class="ph-icon">
-    <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" stroke="white" stroke-width="1.4"/><circle cx="10" cy="3" r="1.5" stroke="white" stroke-width="1.2"/><circle cx="10" cy="17" r="1.5" stroke="white" stroke-width="1.2"/><circle cx="3" cy="10" r="1.5" stroke="white" stroke-width="1.2"/><circle cx="17" cy="10" r="1.5" stroke="white" stroke-width="1.2"/><path d="M10 5v2M10 13v2M5 10H7M13 10h2" stroke="white" stroke-width="1.2"/></svg>
-  </div>
+<div id="stale-banner" style="display:none; background:#FEF0EE; color:#C0392B; border:1px solid #F5C6C2; border-radius:3px; padding:9px 12px; margin-bottom:14px; font-size:12px;">
+  ⚠ A newer version of this page is available on disk.
+  <button onclick="location.reload(true)" style="margin-left:8px; background:var(--forti-red); color:white; border:none; padding:3px 10px; border-radius:3px; cursor:pointer;">Reload</button>
+</div>
+
+<div class="page-header">
+  <div class="icon-box" aria-label="FortiSASE"></div>
   <div>
-    <h1>FortiSASE – BOM Generator</h1>
-    <div class="sub">Secure Access Service Edge · Remote Users · Branch On-Ramp · Thin Edge · Based on FSS-OG-R39-20260320</div>
+    <div class="page-title">FortiSASE</div>
+    <div class="page-subtitle">Sourced from ordering guide <code>FSS-OG-R39-20260320</code> · SKU verification <code>050426</code></div>
   </div>
 </div>
 
-<div id="config-section">
-
-<!-- ══ IMPORTANT NOTES ════════════════════════════════════════════════════ -->
-<div class="callout info">
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#3557A5" stroke-width="1.2"/><path d="M7 6.5v3.5M7 4.5v.5" stroke="#3557A5" stroke-width="1.4" stroke-linecap="round"/></svg>
-  <div><strong>FortiSASE SKUs use co-term date-driven pricing (suffix "-DD").</strong> Unlike appliance bundles, the term is set when the license is registered in FortiCare and aligned to your account's co-term date — not a fixed month count. All SKUs shown end in <code>-DD</code>. Start with a <strong>Remote User subscription</strong> — all other components (Branch, Thin Edge, add-ons) are registered on top of it.</div>
+<div class="tabs">
+  <button class="tab active" data-panel="builder" onclick="switchTab('builder')">Builder</button>
+  <button class="tab" data-panel="examples" id="tab-examples" onclick="switchTab('examples')" style="display:none;">Example BOMs</button>
+  <button class="tab" data-panel="buildreport" id="tab-buildreport" onclick="switchTab('buildreport')" style="display:none;">Build Report</button>
 </div>
 
-<!-- ══ SUBSCRIPTION TIER COMPARISON ══════════════════════════════════════ -->
-<div class="card">
-  <div class="ch">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1.5" stroke="#6B7589" stroke-width="1.2"/><path d="M3.5 4.5h6M3.5 6.5h4" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round"/></svg>
-    <h2>Subscription Tier Comparison</h2>
+<!-- ============================================================ -->
+<!-- BUILDER PANEL -->
+<!-- ============================================================ -->
+<div class="tab-panel active" id="panel-builder">
+
+  <!-- Subscription tier comparison -->
+  <div class="card">
+    <div class="card-header">Subscription Tier Comparison <span class="ch-right">From OG Remote User feature table</span></div>
+    <div class="card-body">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Capability</th>
+            <th>Standard</th>
+            <th>Advanced</th>
+            <th>Comprehensive</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="5">Secure Internet Access (SIA)</td><td>SSL Inspection</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Inline Anti-virus (AV)</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Intrusion Prevention</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Web and DNS Filtering</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Botnet C&amp;C Filtering</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td rowspan="3">Secure SaaS Access (SSA)</td><td>Inline CASB</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Inline DLP</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Cloud API CASB &amp; DLP</td><td>Included</td><td>Included</td><td>Included</td></tr>
+          <tr><td rowspan="3">Secure Private Access (SPA)</td><td>FortiGate Private Access *</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Zero Trust Network Access (ZTNA)</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Agentless ZTNA</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td rowspan="3">Endpoint Security</td><td>Sandbox</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Vulnerability Management</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Endpoint Protection Platform</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td rowspan="3">NOC / SOC Integration</td><td>Digital Experience Monitoring</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>SOC-as-a-Service Integration</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>FortiGuard Forensics (Response)</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Data Center</td><td>PoP Coverage</td><td>Fortinet Cloud Locations</td><td>Fortinet &amp; Public Cloud</td><td>Fortinet &amp; Public Cloud<br><span class="addon">+ Global Add-on available</span></td></tr>
+          <tr><td>Support</td><td>24×7 Premium &amp; Onboarding</td><td>24×7 Premium</td><td>+ Assisted Onboarding</td><td>+ Assisted Onboarding</td></tr>
+        </tbody>
+      </table>
+      <p class="field-note" style="margin-top:8px;">* FortiGate Private Access requires the SD-WAN Service Bundle (add via the SD-WAN section below).</p>
+    </div>
   </div>
-  <div class="cb" style="padding:0;">
-    <div class="tier-panel" style="border:none;border-radius:0;margin-bottom:0;">
-      <div class="tp-head">
-        <div class="tph">Feature</div>
-        <div class="tph std">Standard<br><span style="font-size:9px;font-weight:400;opacity:.8;">-547-</span></div>
-        <div class="tph adv">Advanced<br><span style="font-size:9px;font-weight:400;opacity:.8;">-676-</span></div>
-        <div class="tph cmp">Comprehensive<br><span style="font-size:9px;font-weight:400;opacity:.8;">-759-</span></div>
+
+  <!-- Remote User Subscription -->
+  <div class="card" id="card-users">
+    <div class="card-header">
+      Remote User Subscription
+      <label class="toggle-chip"><input type="checkbox" id="en-users" checked onchange="toggleCard('users')"> Enabled</label>
+    </div>
+    <div class="card-body">
+      <div class="grid">
+        <div class="field">
+          <label class="field-label" for="f-users">User Count <span class="req">*</span></label>
+          <input type="number" id="f-users" min="0" value="100" oninput="updateUserBand()">
+          <div class="err-msg" id="err-users">Enter at least 50 users for a Remote User Subscription. For smaller deployments use the SD-WAN Starter Kit below.</div>
+          <div class="band-indicator" id="band-users">
+            Band: <code id="band-users-code">FC2</code> · <span id="band-users-range">50–499 users</span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-user-tier">Subscription Tier <span class="req">*</span></label>
+          <select id="f-user-tier" onchange="updateUserBand()">
+            <option value="Standard">Standard</option>
+            <option value="Advanced" selected>Advanced</option>
+            <option value="Comprehensive">Comprehensive</option>
+          </select>
+          <div class="field-note">All tiers include 24×7 Premium Support. Advanced/Comprehensive add Assisted Onboarding.</div>
+        </div>
       </div>
-      <!-- Secure Internet Access -->
-      <div class="tp-row"><div class="tp-cat">Secure Internet Access (SIA)</div></div>
-      <div class="tp-row">
-        <div class="tp-cell">SSL Inspection, Inline AV, IPS, Web &amp; DNS Filtering, Botnet C&amp;C</div>
-        <div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
+      <p class="field-note" style="margin-top:8px;">One license per user. The band (FC2–FC5) is auto-selected from the user count and determines the per-user price bracket; the BOM quantity equals the user count.</p>
+      <div class="callout info" id="info-comp-small" style="display:none;">
+        <span class="ico">ℹ</span><span>Comprehensive subscriptions with fewer than 200 users have limited PoP availability. Add the Global Add-on or extra Region Add-ons if broader coverage is required.</span>
       </div>
-      <!-- Secure SaaS Access -->
-      <div class="tp-row"><div class="tp-cat">Secure SaaS Access (SSA)</div></div>
-      <div class="tp-row">
-        <div class="tp-cell">Inline CASB, Inline DLP, Cloud API CASB &amp; DLP (license included)</div>
-        <div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
-      </div>
-      <!-- Secure Private Access -->
-      <div class="tp-row"><div class="tp-cat">Secure Private Access (SPA)</div></div>
-      <div class="tp-row">
-        <div class="tp-cell">FortiGate Private Access <span class="note-tag">† requires SD-WAN bundle</span></div>
-        <div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
-      </div>
-      <div class="tp-row">
-        <div class="tp-cell">Zero Trust Network Access (ZTNA)</div>
-        <div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
-      </div>
-      <div class="tp-row">
-        <div class="tp-cell">Agentless ZTNA</div>
-        <div class="tp-cell"><span class="dash">–</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
-      </div>
-      <!-- License -->
-      <div class="tp-row"><div class="tp-cat">License Includes</div></div>
-      <div class="tp-row">
-        <div class="tp-cell">Devices per User (up to 3), Dedicated Public IPs</div>
-        <div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
-      </div>
-      <div class="tp-row">
-        <div class="tp-cell">Sandbox, Vulnerability Mgmt, Endpoint Protection Platform <span class="note-tag">† agent-based</span></div>
-        <div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
-      </div>
-      <!-- NOC/SOC -->
-      <div class="tp-row"><div class="tp-cat">NOC / SOC Integration</div></div>
-      <div class="tp-row">
-        <div class="tp-cell">SASE Cloud Logging, Reporting &amp; Log Forwarding</div>
-        <div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
-      </div>
-      <div class="tp-row">
-        <div class="tp-cell">Digital Experience Monitoring (DEM) <span class="note-tag">† agent-based</span></div>
-        <div class="tp-cell"><span class="dash">–</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
-      </div>
-      <div class="tp-row">
-        <div class="tp-cell">SOC-as-a-Service Integration, FortiGuard Forensics</div>
-        <div class="tp-cell"><span class="dash">–</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
-      </div>
-      <!-- Data Center -->
-      <div class="tp-row"><div class="tp-cat">Data Center / Locations</div></div>
-      <div class="tp-row">
-        <div class="tp-cell">Locations (Standard &amp; Advanced include up to 4; Comprehensive &lt;200 users = 1–2)</div>
-        <div class="tp-cell" style="font-size:10px;text-align:center;">Fortinet Cloud</div>
-        <div class="tp-cell" style="font-size:10px;text-align:center;">Fortinet &amp; Public Cloud</div>
-        <div class="tp-cell" style="font-size:10px;text-align:center;">Fortinet &amp; Public Cloud</div>
-      </div>
-      <div class="tp-row">
-        <div class="tp-cell">Global Security PoP Coverage</div>
-        <div class="tp-cell"><span class="dash">–</span></div><div class="tp-cell"><span class="dash">–</span></div><div class="tp-cell"><span class="add-on">Add-on</span></div>
-      </div>
-      <!-- Support -->
-      <div class="tp-row"><div class="tp-cat">Customer Support</div></div>
-      <div class="tp-row">
-        <div class="tp-cell">24×7 Premium Support (included)</div>
-        <div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
-      </div>
-      <div class="tp-row">
-        <div class="tp-cell">Assisted On-boarding (included)</div>
-        <div class="tp-cell"><span class="dash">–</span></div><div class="tp-cell"><span class="chk">✓</span></div><div class="tp-cell"><span class="chk">✓</span></div>
+      <div class="callout warn" id="warn-users-tiny" style="display:none;">
+        <span class="ico">⚠</span><span>The Remote User Subscription requires <strong>50+ users</strong>. To start with fewer users, disable this card and use the SD-WAN Service Bundle Starter Kit (10/50/100 seats).</span>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ══ REMOTE USERS ═══════════════════════════════════════════════════════ -->
-<div class="card">
-  <div class="ch">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="4" r="2.5" stroke="#6B7589" stroke-width="1.2"/><path d="M1 11.5C1 9 3.5 7 6.5 7s5.5 2 5.5 4.5" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round"/></svg>
-    <h2>Remote User Subscription</h2>
-    <span class="badge">Required — Start Here</span>
-  </div>
-  <div class="cb">
-
-    <div class="callout ok" style="margin-bottom:14px;">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#1E6B20" stroke-width="1.2"/><path d="M4 7l2 2 4-4" stroke="#1E6B20" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <div>All new FortiSASE deployments begin with a <strong>Remote User license</strong>. All other components (branch, thin edge, add-ons) are registered on top of this base subscription. Each user can register up to 3 devices (agent-based and/or proxy-based).</div>
+  <!-- SD-WAN Service Bundle / SPA -->
+  <div class="card collapsed" id="card-sdwan">
+    <div class="card-header">
+      SD-WAN Service Bundle / FortiGate SPA <span class="ch-right">FortiGate Private Access requires this</span>
+      <label class="toggle-chip"><input type="checkbox" id="en-sdwan" onchange="toggleCard('sdwan')"> Enabled</label>
     </div>
-
-    <div class="fg" style="margin-bottom:14px;">
-      <div class="grp">
-        <label class="lbl">Subscription Tier <span class="r">*</span></label>
-        <select id="f-tier">
-          <option value="">— Select tier —</option>
-          <option value="547">Standard — SIA + SSA + ZTNA + Fortinet Cloud PoPs</option>
-          <option value="676">Advanced — All Standard + Agentless ZTNA + DEM + SOCaaS + Public Cloud PoPs</option>
-          <option value="759">Comprehensive — All Advanced + FortiGuard Forensics + Assisted On-boarding</option>
-        </select>
-        <span class="err" id="err-tier">Please select a tier</span>
-      </div>
-      <div class="grp">
-        <label class="lbl">Number of Remote Users <span class="r">*</span></label>
-        <input type="number" id="f-users" min="50" max="999999" placeholder="e.g. 250" oninput="updateBandIndicator()">
-        <span class="err" id="err-users">Minimum 50 users</span>
-        <div id="band-indicator" style="display:none;" class="band-indicator">
-          Band prefix: <span class="band-prefix" id="band-prefix-text">FC2</span> &nbsp;·&nbsp; <span id="band-range-text">50–499 users</span>
+    <div class="card-body">
+      <div class="grid">
+        <div class="field">
+          <label class="field-label" for="f-sdwan-mode">Bundle Type</label>
+          <select id="f-sdwan-mode" onchange="updateSdwanModels()">
+            <option value="1329">SD-WAN Service Bundle — FGT-100F+ (with SASE Standard starter seats)</option>
+            <option value="1337">SD-WAN SPA only — FGT-30G to FGT-90G class</option>
+            <option value="662">FortiGate SPA — VM models (FGT-VMxx)</option>
+          </select>
+          <div class="field-note" id="sdwan-mode-note">100F+: 10 seats included · 700G+: 50 seats · 1800F+: 100 seats. Seats are part of the bundle and count toward FortiSASE Standard usage.</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-sdwan-model">FortiGate Model</label>
+          <select id="f-sdwan-model"></select>
+          <div class="field-note">Curated set of pre-verified models. For models outside this list, see the FortiGate ordering guide and add manually.</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-sdwan-qty">FortiGate Quantity</label>
+          <input type="number" id="f-sdwan-qty" min="1" value="1">
+          <div class="field-note">One license per FortiGate (per HA member if clustered).</div>
         </div>
       </div>
     </div>
-
-    <!-- SD-WAN Starter Kit note -->
-    <div class="callout warn" style="margin-bottom:14px;" id="sdwan-note" style="display:none;">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2L13 12H1L7 2Z" stroke="#8A5800" stroke-width="1.2" stroke-linejoin="round"/><path d="M7 6v3M7 10.5v.5" stroke="#8A5800" stroke-width="1.4" stroke-linecap="round"/></svg>
-      <div><strong>SD-WAN Service Bundle — SASE Starter Kit:</strong> If the customer already has FortiGate SD-WAN, the SD-WAN service bundle (<code>-1329-</code>) includes a starter kit of FortiSASE Standard users (10 users on 100F+, 50 on 700G+, 100 on 1800F+) plus Secure Private Access (SPA) connectivity. Add the SD-WAN starter kit below in add-ons if applicable.</div>
-    </div>
-
   </div>
-</div>
 
-<!-- ══ BRANCH LOCATIONS ════════════════════════════════════════════════════ -->
-<div class="card">
-  <div class="ch">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="4" width="11" height="7" rx="1" stroke="#6B7589" stroke-width="1.2"/><path d="M4 4V3a2 2 0 0 1 4 0v1" stroke="#6B7589" stroke-width="1.2"/></svg>
-    <h2>Branch Locations (Optional)</h2>
-  </div>
-  <div class="cb">
-
-    <div class="sec-label">Branch On-Ramp — connect FortiGate / 3rd-party via IPsec</div>
-    <div class="callout info" style="margin-bottom:10px;">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#3557A5" stroke-width="1.2"/><path d="M7 6.5v3.5M7 4.5v.5" stroke="#3557A5" stroke-width="1.4" stroke-linecap="round"/></svg>
-      <div>Each Branch On-Ramp Location provides <strong>1 Gbps shared bandwidth, up to 2,000 connections</strong>. Max 20 locations per account (minimum 2 for redundancy). Standard license → Fortinet Cloud PoPs only. Advanced/Comprehensive → Fortinet + Public Cloud PoPs. <strong>Note: a user seat license is still required with branch deployments.</strong></div>
+  <!-- Branch On-Ramp -->
+  <div class="card collapsed" id="card-onramp">
+    <div class="card-header">
+      Branch On-Ramp Locations <span class="ch-right">For FortiGate / 3rd-party IPsec connections</span>
+      <label class="toggle-chip"><input type="checkbox" id="en-onramp" onchange="toggleCard('onramp')"> Enabled</label>
     </div>
-    <div class="fg" style="margin-bottom:14px;">
-      <div class="grp">
-        <label class="lbl">Fortinet Cloud PoP Locations</label>
-        <input type="number" id="f-br-fortinet" min="0" max="20" value="0" placeholder="0">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">SKU: FC1-10-EMS05-769-02-DD per location</div>
-      </div>
-      <div class="grp">
-        <label class="lbl">Public Cloud PoP Locations <span style="font-size:9px;color:var(--warn-t);">(Adv/Comp only)</span></label>
-        <input type="number" id="f-br-public" min="0" max="20" value="0" placeholder="0">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">SKU: FC1-10-EMS05-770-02-DD per location</div>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-    <div class="sec-label">FortiSASE Branch Thin Edge — managed in FortiSASE portal</div>
-    <div class="callout info" style="margin-bottom:10px;">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#3557A5" stroke-width="1.2"/><path d="M7 6.5v3.5M7 4.5v.5" stroke="#3557A5" stroke-width="1.4" stroke-linecap="round"/></svg>
-      <div>Thin Edge devices are managed directly in the FortiSASE portal. Two ordering options: <strong>FortiSASE Cloud Management only</strong> (security subscription + FortiCare), or <strong>Bundle</strong> (includes additional features). Max 1,024 FortiBranchSASE/FortiExtender per account, max 240 FortiAP.</div>
-    </div>
-    <div class="fg wide" style="margin-bottom:8px;">
-
-      <div class="grp">
-        <label class="lbl">FortiExtender-200F units</label>
-        <input type="number" id="f-ext200f" min="0" value="0">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">FC-10-X200F-595-02-DD (cloud mgmt only)</div>
-      </div>
-      <div class="grp">
-        <label class="lbl">FortiBranchSASE-10F-WiFi</label>
-        <input type="number" id="f-bs10fw" min="0" value="0">
-        <div style="margin-top:3px;display:flex;gap:8px;">
-          <label class="trow" style="padding:3px 0;"><input type="radio" name="bs10fw-opt" value="mgmt" checked style="accent-color:var(--red);"> <span class="tn">Mgmt only (-595-)</span></label>
-          <label class="trow" style="padding:3px 0;"><input type="radio" name="bs10fw-opt" value="bundle"> <span class="tn">Bundle (-1070-)</span></label>
+    <div class="card-body">
+      <p class="field-note" style="margin-bottom:10px;">Each Branch On-Ramp Location supports 1 Gbps shared bandwidth for up to 2,000 connections. <strong>Minimum 2 locations</strong> for redundancy; maximum 20 per account.</p>
+      <div class="grid">
+        <div class="field">
+          <label class="field-label" for="f-onramp-fortinet">Fortinet Cloud PoP Locations</label>
+          <input type="number" id="f-onramp-fortinet" min="0" value="2">
+          <div class="field-note">Standard tier supports Fortinet Cloud PoPs only.</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-onramp-public">Public Cloud PoP Locations</label>
+          <input type="number" id="f-onramp-public" min="0" value="0">
+          <div class="field-note">Available with Advanced and Comprehensive tiers.</div>
         </div>
       </div>
-      <div class="grp">
-        <label class="lbl">FortiBranchSASE-20G</label>
-        <input type="number" id="f-bs20g" min="0" value="0">
-        <div style="margin-top:3px;display:flex;gap:8px;">
-          <label class="trow" style="padding:3px 0;"><input type="radio" name="bs20g-opt" value="mgmt" checked style="accent-color:var(--red);"> <span class="tn">Mgmt only (-595-)</span></label>
-          <label class="trow" style="padding:3px 0;"><input type="radio" name="bs20g-opt" value="bundle"> <span class="tn">Bundle (-1070-)</span></label>
+      <div class="callout warn" id="warn-onramp-min" style="display:none;">
+        <span class="ico">⚠</span><span>A minimum of <strong>2 Branch On-Ramp locations</strong> is recommended for redundancy.</span>
+      </div>
+      <div class="callout warn" id="warn-onramp-max" style="display:none;">
+        <span class="ico">⚠</span><span>Maximum is 20 Branch On-Ramp locations per account.</span>
+      </div>
+      <div class="callout warn" id="warn-onramp-public-tier" style="display:none;">
+        <span class="ico">⚠</span><span>Public Cloud PoP On-Ramp requires Advanced or Comprehensive user tier.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Branch Thin Edge (FortiBranchSASE / FortiExtender) -->
+  <div class="card collapsed" id="card-edge">
+    <div class="card-header">
+      Branch Thin Edge — FortiBranchSASE &amp; FortiExtender
+      <label class="toggle-chip"><input type="checkbox" id="en-edge" onchange="toggleCard('edge')"> Enabled</label>
+    </div>
+    <div class="card-body">
+      <p class="field-note" style="margin-bottom:10px;">Thin Edge devices are managed directly in the FortiSASE portal. A user-seat license is still required.</p>
+      <div class="grid">
+        <div class="field">
+          <label class="field-label" for="f-edge-type">Subscription Type</label>
+          <select id="f-edge-type">
+            <option value="sub">FortiSASE Cloud Management (subscription only)</option>
+            <option value="bun" selected>SASE Protection Bundle (mgmt + security + FortiCare Premium)</option>
+          </select>
+          <div class="field-note">FortiExtender-200F has cloud-management subscription only (no bundle SKU).</div>
         </div>
       </div>
-      <div class="grp">
-        <label class="lbl">FortiBranchSASE-20G-WiFi</label>
-        <input type="number" id="f-bs20gw" min="0" value="0">
-        <div style="margin-top:3px;display:flex;gap:8px;">
-          <label class="trow" style="padding:3px 0;"><input type="radio" name="bs20gw-opt" value="mgmt" checked style="accent-color:var(--red);"> <span class="tn">Mgmt only (-595-)</span></label>
-          <label class="trow" style="padding:3px 0;"><input type="radio" name="bs20gw-opt" value="bundle"> <span class="tn">Bundle (-1070-)</span></label>
-        </div>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-    <div class="sec-label">FortiAP Thin Edge</div>
-    <div class="fg">
-      <div class="grp">
-        <label class="lbl">FAP-831F units</label>
-        <input type="number" id="f-fap831f" min="0" value="0">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">FC-10-P831F-595-02-DD</div>
-      </div>
-      <div class="grp">
-        <label class="lbl">FAP-432G units</label>
-        <input type="number" id="f-fap432g" min="0" value="0">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">FC-10-P432G-595-02-DD</div>
-      </div>
-      <div class="grp">
-        <label class="lbl">FAP-443K units</label>
-        <input type="number" id="f-fap443k" min="0" value="0">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">FC-10-FP43K-595-02-DD</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ══ ACCOUNT ADD-ONS ═════════════════════════════════════════════════════ -->
-<div class="card">
-  <div class="ch">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>
-    <h2>Account Add-Ons (Optional)</h2>
-  </div>
-  <div class="cb">
-
-    <div class="sec-label">Network Add-Ons</div>
-    <div class="fg" style="margin-bottom:14px;">
-      <div class="grp">
-        <label class="lbl">Dedicated Public IPs <span style="font-size:9px;color:var(--warn-t);">(500+ users req.)</span></label>
-        <input type="number" id="f-dips" min="0" value="0" placeholder="0">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">FC1-10-EMS05-658-02-DD · 4 public IPs per unit</div>
-      </div>
-      <div class="grp">
-        <label class="lbl">Fortinet Location Add-on (1–16 PoPs)</label>
-        <input type="number" id="f-loc-fortinet" min="0" max="16" value="0" placeholder="0">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">FC1-10-EMS05-752-02-DD per unit (each = 1–16 PoPs)</div>
-      </div>
-      <div class="grp">
-        <label class="lbl">Public Cloud Location Add-on (1–16 PoPs)</label>
-        <input type="number" id="f-loc-public" min="0" max="16" value="0" placeholder="0">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">FC1-10-EMS05-766-02-DD per unit</div>
-      </div>
-      <div class="grp">
-        <label class="lbl">FortiSASE Global Add-On</label>
-        <select id="f-global">
-          <option value="0">None</option>
-          <option value="1">Yes — all existing + future PoPs</option>
-        </select>
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">FC-10-EMS05-1136-02-DD</div>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-    <div class="sec-label">SD-WAN Service Bundle — SASE Starter Kit (for existing FortiGate SD-WAN customers)</div>
-    <div class="callout info" style="margin-bottom:10px;">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#3557A5" stroke-width="1.2"/><path d="M7 6.5v3.5M7 4.5v.5" stroke="#3557A5" stroke-width="1.4" stroke-linecap="round"/></svg>
-      <div>If the customer has existing FortiGate SD-WAN hardware, the <strong>SD-WAN Service Bundle</strong> adds Secure Private Access (SPA) connectivity. On 100F+ it also includes a FortiSASE Standard user starter kit (10/50/100 users depending on model tier). One SKU per FortiGate: <code>FC-10-XXXXX-1329-02-DD</code> where XXXXX = model code.</div>
-    </div>
-    <div class="fg" style="margin-bottom:4px;">
-      <div class="grp">
-        <label class="lbl">Number of FortiGate units needing SD-WAN bundle</label>
-        <input type="number" id="f-sdwan-units" min="0" value="0" placeholder="0">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">SKU requires the FortiGate model code — enter model below</div>
-      </div>
-      <div class="grp">
-        <label class="lbl">FortiGate model code <span style="font-size:9px;color:var(--textm);">(e.g. F200G, 0400F)</span></label>
-        <input type="text" id="f-sdwan-model" placeholder="e.g. F200G" style="text-transform:uppercase;">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">Used to build FC-10-{model}-1329-02-DD</div>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-    <div class="sec-label">FortiIdentity Cloud — Identity &amp; Access Management as a Service (IDaaS)</div>
-    <div class="fg" style="margin-bottom:4px;">
-      <div class="grp">
-        <label class="lbl">FortiIdentity Cloud Users</label>
-        <input type="number" id="f-fid-users" min="0" value="0" placeholder="0" oninput="updateFIDIndicator()">
-        <div style="font-size:10px;color:var(--textm);margin-top:3px;">FC1–FC4-10-IDCLD-445-02-DD (band auto-selected)</div>
-        <div id="fid-indicator" style="display:none;" class="band-indicator" style="margin-top:4px;">
-          <span class="band-prefix" id="fid-prefix-text">FC1</span> · <span id="fid-range-text">100–499 users</span>
+      <div class="tier-group">
+        <div class="tier-group-label">Quantities</div>
+        <div class="grid">
+          <div class="field">
+            <label class="field-label" for="f-edge-fex200f">FortiExtender-200F</label>
+            <input type="number" id="f-edge-fex200f" min="0" value="0">
+            <div class="field-note">5× GbE WAN/LAN ports. Cloud mgmt only (no bundle).</div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="f-edge-bs10f">FortiBranchSASE-10F-WiFi</label>
+            <input type="number" id="f-edge-bs10f" min="0" value="0">
+            <div class="field-note">Integrated 2×2 WiFi6, 2× GbE. 900 Mbps IPsec.</div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="f-edge-bs20g">FortiBranchSASE-20G</label>
+            <input type="number" id="f-edge-bs20g" min="0" value="0">
+            <div class="field-note">5× GbE WAN/LAN. 900 Mbps IPsec.</div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="f-edge-bs20w">FortiBranchSASE-20G-WiFi</label>
+            <input type="number" id="f-edge-bs20w" min="0" value="0">
+            <div class="field-note">5× GbE + integrated WiFi.</div>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
-</div>
 
-<!-- ══ ACTIONS ════════════════════════════════════════════════════════════ -->
-<div class="card">
-  <div class="actions">
-    <button class="btn btn-p" onclick="generateBOM()">
-      <svg viewBox="0 0 13 13" fill="none"><path d="M1.5 6.5h10M7 2l4.5 4.5L7 11" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Preview BOM
-    </button>
-    <button class="btn btn-p" onclick="addToProjectBOM()" style="background:#2E7D32;border-color:#2E7D32;">
-      <svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
-      Add to Project BOM
-    </button>
-    <button class="btn btn-s" onclick="resetForm()">
-      <svg viewBox="0 0 13 13" fill="none"><path d="M1.5 6.5a5 5 0 1 0 1.2-3.2L1.5 2v3h3" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Reset
-    </button>
-    <span id="smsg" style="color:#C0392B;"></span>
-  </div>
-</div>
-
-</div><!-- end config-section -->
-
-<!-- ══ BOM OUTPUT ════════════════════════════════════════════════════════ -->
-<div class="card" id="bom-section">
-  <div class="ch">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1.5" width="11" height="10" rx="1.5" stroke="#6B7589" stroke-width="1.2"/><path d="M3.5 5h6M3.5 7h6M3.5 9h3.5" stroke="#6B7589" stroke-width="1.2" stroke-linecap="round"/></svg>
-    <h2>Bill of Materials — FortiSASE</h2>
-    <div style="margin-left:auto;display:flex;gap:8px;">
-      <button class="btn btn-s" onclick="copyTSV()" style="padding:4px 10px;font-size:11px;">
-        <svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/></svg>
-        Copy TSV
-      </button>
-      <button class="btn btn-s" onclick="window.print()" style="padding:4px 10px;font-size:11px;">
-        <svg viewBox="0 0 13 13" fill="none"><rect x="1.5" y="4" width="10" height="6" rx="1" stroke="#6B7589" stroke-width="1.1"/><path d="M3.5 4V2h6v2M3.5 10h6" stroke="#6B7589" stroke-width="1.1" stroke-linecap="round"/></svg>
-        Print
-      </button>
+  <!-- FortiAP Thin Edge -->
+  <div class="card collapsed" id="card-fap">
+    <div class="card-header">
+      FortiAP Thin Edge <span class="ch-right">Max 240 FortiAPs per FortiSASE account</span>
+      <label class="toggle-chip"><input type="checkbox" id="en-fap" onchange="toggleCard('fap')"> Enabled</label>
+    </div>
+    <div class="card-body">
+      <p class="field-note" style="margin-bottom:10px;">The OG lists three example FortiAP models. Other models are supported — see the <a href="https://links.fortinet.com/docs/fortisase/product-integration" target="_blank" rel="noopener">FortiSASE product-integration page</a> for the complete list.</p>
+      <div class="grid">
+        <div class="field">
+          <label class="field-label" for="f-fap-831f">FAP-831F (Indoor WiFi-6 4×4)</label>
+          <input type="number" id="f-fap-831f" min="0" value="0">
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-fap-432g">FAP-432G (Outdoor WiFi-6E)</label>
+          <input type="number" id="f-fap-432g" min="0" value="0">
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-fap-443k">FAP-443K (Indoor WiFi-7)</label>
+          <input type="number" id="f-fap-443k" min="0" value="0">
+        </div>
+      </div>
     </div>
   </div>
-  <div class="cb">
-    <div class="bom-meta" id="bom-meta"></div>
-    <div class="bt-wrap"><table class="bt" id="bom-table">
-      <thead><tr>
-        <th style="width:215px;">Part Number</th>
-        <th>Description</th>
-        <th style="width:55px;text-align:center;">Qty</th>
-        <th style="width:82px;">Type</th>
-        <th>Notes</th>
-      </tr></thead>
-      <tbody id="bom-tbody"></tbody>
-    </table></div>
-    <div class="bom-totals" id="bom-totals"></div>
+
+  <!-- Network Add-ons -->
+  <div class="card collapsed" id="card-addons">
+    <div class="card-header">
+      Network Add-ons
+      <label class="toggle-chip"><input type="checkbox" id="en-addons" onchange="toggleCard('addons')"> Enabled</label>
+    </div>
+    <div class="card-body">
+      <div class="grid">
+        <div class="field">
+          <label class="field-label" for="f-add-dedip">Dedicated Public IP (4 IPs / SKU)</label>
+          <input type="number" id="f-add-dedip" min="0" value="0">
+          <div class="field-note">Requires a subscription with <strong>500+ users</strong>. Up to 5 dedicated egress IPs per PoP (4 usable for source-IP anchoring).</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-add-loc-fortinet">Fortinet Location Add-on</label>
+          <input type="number" id="f-add-loc-fortinet" min="0" value="0">
+          <div class="field-note">1–16 additional Fortinet Cloud PoPs (max 20 total).</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-add-loc-public">Public Cloud Location Add-on</label>
+          <input type="number" id="f-add-loc-public" min="0" value="0">
+          <div class="field-note">1–16 additional Public Cloud PoPs (Advanced/Comprehensive only).</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-add-global">FortiSASE Global Add-on</label>
+          <input type="number" id="f-add-global" min="0" value="0">
+          <div class="field-note">Access to all existing and future Fortinet + Public Cloud PoPs.</div>
+        </div>
+      </div>
+      <div class="callout warn" id="warn-dedip-users" style="display:none;">
+        <span class="ico">⚠</span><span>Dedicated Public IP add-on requires a Remote User Subscription of <strong>500+ users</strong> (FC3 or higher).</span>
+      </div>
+      <div class="callout warn" id="warn-locpublic-tier" style="display:none;">
+        <span class="ico">⚠</span><span>Public Cloud Location Add-on requires an Advanced or Comprehensive user tier.</span>
+      </div>
+    </div>
   </div>
+
+  <!-- FortiIdentity Cloud (IDaaS) -->
+  <div class="card collapsed" id="card-idcld">
+    <div class="card-header">
+      FortiIdentity Cloud (IDaaS)
+      <label class="toggle-chip"><input type="checkbox" id="en-idcld" onchange="toggleCard('idcld')"> Enabled</label>
+    </div>
+    <div class="card-body">
+      <p class="field-note" style="margin-bottom:10px;">Cloud-managed identity service. One license per user; the band (FC1–FC4) is auto-selected from the user count and determines the per-user price bracket.</p>
+      <div class="grid">
+        <div class="field">
+          <label class="field-label" for="f-idcld-users">IDaaS User Count <span class="req">*</span></label>
+          <input type="number" id="f-idcld-users" min="0" value="100" oninput="updateIdcldBand()">
+          <div class="band-indicator" id="band-idcld">
+            Band: <code id="band-idcld-code">FC1</code> · <span id="band-idcld-range">25–499 users</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Training -->
+  <div class="card collapsed" id="card-train">
+    <div class="card-header">
+      Training &amp; Certification
+      <label class="toggle-chip"><input type="checkbox" id="en-train" onchange="toggleCard('train')"> Enabled</label>
+    </div>
+    <div class="card-body">
+      <div class="grid">
+        <div class="field">
+          <label class="field-label" for="f-train-ilt">FT-ILT-D02 (Instructor-led 2-day)</label>
+          <input type="number" id="f-train-ilt" min="0" value="0">
+          <div class="field-note">One enrollment per student.</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-train-exam">NSE-EX-FTE2 (Certification Exam)</label>
+          <input type="number" id="f-train-exam" min="0" value="0">
+          <div class="field-note">FTE2 exam voucher (one per student).</div>
+        </div>
+      </div>
+      <p class="field-note" style="margin-top:8px;">Training items are one-time SKUs (no term). The Project BOM term selector does not affect them.</p>
+    </div>
+  </div>
+
+  <!-- Action row -->
+  <div class="card">
+    <div class="card-body">
+      <div class="button-row">
+        <button onclick="generateBOM()">Preview BOM</button>
+        <button onclick="addToProjectBOM()" class="green">Add to Project BOM</button>
+        <button onclick="resetForm()">Reset</button>
+        <span class="smsg" id="smsg"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOM section -->
+  <div id="bom-section" class="card">
+    <div class="card-header">
+      BOM Preview
+      <span class="ch-right" id="bom-meta-line"></span>
+    </div>
+    <div class="card-body">
+      <div class="button-row" style="padding-top:0; padding-bottom:10px;">
+        <button onclick="copyTSV()">Copy TSV</button>
+        <button onclick="window.print()">Print</button>
+        <span class="smsg" id="copymsg"></span>
+      </div>
+      <table id="bom-table">
+        <thead>
+          <tr>
+            <th style="width:22%">Part Number</th>
+            <th>Description</th>
+            <th class="qty-cell">Qty</th>
+            <th style="width:10%">Type</th>
+            <th style="width:22%">Notes</th>
+          </tr>
+        </thead>
+        <tbody id="bom-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- BUILD REPORT PANEL (?qa=1 only) -->
+<!-- ============================================================ -->
+<div class="tab-panel" id="panel-buildreport">
+  <div class="card">
+    <div class="card-header">Build Report <span class="ch-right">Hidden from production users (toggle with <code>?qa=1</code>)</span></div>
+    <div class="card-body">
+      <p>Source ordering guide: <code>FSS-OG-R39-20260320</code></p>
+      <p>SKU verification: <code>050426</code></p>
+      <p>Generated: <code>2026-05-13</code></p>
+      <p>Reconciliation summary: <strong>All OG SKUs resolved by exact match.</strong> No single-term, EOL, or description-fallback substitutions were required.</p>
+      <h4 style="margin-top:12px; margin-bottom:6px;">SKU Reconciliation Table</h4>
+      <table class="br-table">
+        <thead>
+          <tr><th>Status</th><th>Match Kind</th><th>SKU</th><th>Description</th></tr>
+        </thead>
+        <tbody id="br-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="build-stamp" style="margin-top:18px; padding-top:10px; border-top:1px solid var(--forti-border); font-size:11px; color:var(--forti-text-muted); text-align:right;">
+  Build <code>fortisase-bomgen-20260513-170000</code> · Generated 2026-05-13 17:00 UTC
 </div>
 
 <script>
-// ── SKU HELPERS ───────────────────────────────────────────────────────────────
-// All FortiSASE SKUs use literal -DD (co-term date-driven), not a month suffix.
-// User band prefix is driven by count ranges:
-//   50–499   → FC2
-//   500–1999 → FC3
-//   2000–9999 → FC4
-//   10000+   → FC5
-function userBandPrefix(users) {
-  if (users >= 10000) return 'FC5';
-  if (users >= 2000)  return 'FC4';
-  if (users >= 500)   return 'FC3';
-  return 'FC2';
-}
-function userBandLabel(users) {
-  if (users >= 10000) return '10,000+ users';
-  if (users >= 2000)  return '2,000–9,999 users';
-  if (users >= 500)   return '500–1,999 users';
-  return '50–499 users';
+'use strict';
+
+/* =============================================================
+   Catalog — every SKU pre-verified against the Null Price List.
+   Descriptions are sourced from price list "Description #1".
+   ============================================================= */
+const CATALOG = {
+  // Remote User Subscriptions
+  'user_FC2_Standard':      {sku:'FC2-10-EMS05-547-02-DD', desc:'FortiSASE Standard Subscription 1 Year FortiSASE Standard Subscription for 50-499 Users: FortiSASE Standard includes Cloud Firewall, Secure Web Gateway, Universal ZTNA, Inline CASB, Inline DLP, FortiClient Endpoint Protection. Includes 100GB of Logs/User'},
+  'user_FC2_Advanced':      {sku:'FC2-10-EMS05-676-02-DD', desc:'FortiSASE Advanced Subscription 1 Year FortiSASE Advanced Subscription for 50-499 Users: FortiSASE Advanced includes Standard features plus SOC-as-a-Service, Digital Experience Monitoring, FortiGuard Forensics (Response). Includes 100GB of Logs/User'},
+  'user_FC2_Comprehensive': {sku:'FC2-10-EMS05-759-02-DD', desc:'FortiSASE Comprehensive Subscription 1 Year FortiSASE Comprehensive Subscription for 50-499 Users: FortiSASE Comprehensive includes Advanced features plus access to Public Cloud Security PoPs. Includes 100GB of Logs/User'},
+  'user_FC3_Standard':      {sku:'FC3-10-EMS05-547-02-DD', desc:'FortiSASE Standard Subscription 1 Year FortiSASE Standard Subscription for 500-1,999 Users'},
+  'user_FC3_Advanced':      {sku:'FC3-10-EMS05-676-02-DD', desc:'FortiSASE Advanced Subscription 1 Year FortiSASE Advanced Subscription for 500-1,999 Users'},
+  'user_FC3_Comprehensive': {sku:'FC3-10-EMS05-759-02-DD', desc:'FortiSASE Comprehensive Subscription 1 Year FortiSASE Comprehensive Subscription for 500-1,999 Users'},
+  'user_FC4_Standard':      {sku:'FC4-10-EMS05-547-02-DD', desc:'FortiSASE Standard Subscription 1 Year FortiSASE Standard Subscription for 2,000-9,999 Users'},
+  'user_FC4_Advanced':      {sku:'FC4-10-EMS05-676-02-DD', desc:'FortiSASE Advanced Subscription 1 Year FortiSASE Advanced Subscription for 2,000-9,999 Users'},
+  'user_FC4_Comprehensive': {sku:'FC4-10-EMS05-759-02-DD', desc:'FortiSASE Comprehensive Subscription 1 Year FortiSASE Comprehensive Subscription for 2,000-9,999 Users'},
+  'user_FC5_Standard':      {sku:'FC5-10-EMS05-547-02-DD', desc:'FortiSASE Standard Subscription 1 Year FortiSASE Standard Subscription for 10,000+ Users'},
+  'user_FC5_Advanced':      {sku:'FC5-10-EMS05-676-02-DD', desc:'FortiSASE Advanced Subscription 1 Year FortiSASE Advanced Subscription for 10,000+ Users'},
+  'user_FC5_Comprehensive': {sku:'FC5-10-EMS05-759-02-DD', desc:'FortiSASE Comprehensive Subscription 1 Year FortiSASE Comprehensive Subscription for 10,000+ Users'},
+
+  // Branch On-Ramp
+  'onramp_fortinet':        {sku:'FC1-10-EMS05-769-02-DD', desc:'FortiSASE Branch On-Ramp 1 Year FortiSASE Branch On-Ramp Location supporting 1 Gbps of shared bandwidth for up to 2000 FortiGate or 3rd Party IPsec connections for Fortinet Cloud locations (2-20 Locations)'},
+  'onramp_public':          {sku:'FC1-10-EMS05-770-02-DD', desc:'FortiSASE Branch On-Ramp 1 Year FortiSASE Branch On-Ramp Location supporting 1 Gbps of shared bandwidth for up to 2000 FortiGate or 3rd Party IPsec connections for Public Cloud locations (2-20 Locations)'},
+
+  // Thin Edge subscriptions
+  'fex200f_sub': {sku:'FC-10-X200F-595-02-DD',  desc:'FortiExtender-200F 1 Year FortiSASE subscription including cloud management and bandwidth license'},
+  'bs10f_sub':   {sku:'FC-10-BS10F-595-02-DD',  desc:'FortiBranchSASE-10F-WiFi 1 Year FortiSASE subscription including cloud management and bandwidth license'},
+  'bs10f_bun':   {sku:'FC-10-BS10F-1070-02-DD', desc:'FortiBranchSASE-10F-WiFi 1 Year SASE Protection Bundle (SASE cloud management, security subscription and FortiCare premium support)'},
+  'bs20g_sub':   {sku:'FC-10-BS20G-595-02-DD',  desc:'FortiBranchSASE-20G 1 Year FortiSASE subscription including cloud management and bandwidth license'},
+  'bs20g_bun':   {sku:'FC-10-BS20G-1070-02-DD', desc:'FortiBranchSASE-20G 1 Year SASE Protection Bundle (SASE cloud management, security subscription and FortiCare premium support)'},
+  'bs20w_sub':   {sku:'FC-10-BS20W-595-02-DD',  desc:'FortiBranchSASE-20G-WiFi 1 Year FortiSASE subscription including cloud management and bandwidth license'},
+  'bs20w_bun':   {sku:'FC-10-BS20W-1070-02-DD', desc:'FortiBranchSASE-20G-WiFi 1 Year SASE Protection Bundle (SASE cloud management, security subscription and FortiCare premium support)'},
+
+  // FortiAP subscriptions
+  'fap831f_sub': {sku:'FC-10-P831F-595-02-DD', desc:'FortiAP-831F 1 Year FortiSASE subscription for cloud managed FortiAP with bandwidth included.'},
+  'fap432g_sub': {sku:'FC-10-P432G-595-02-DD', desc:'FortiAP-432G 1 Year FortiSASE subscription for cloud managed FortiAP with bandwidth included.'},
+  'fap443k_sub': {sku:'FC-10-FP43K-595-02-DD', desc:'FortiAP-443K 1 Year FortiSASE subscription for cloud managed FortiAP with bandwidth included.'},
+
+  // Network add-ons
+  'dedip':        {sku:'FC1-10-EMS05-658-02-DD', desc:'FortiSASE Dedicated Public IP 1 Year FortiSASE yearly subscription for 4 dedicated public IPs'},
+  'loc_fortinet': {sku:'FC1-10-EMS05-752-02-DD', desc:'FortiSASE Region Add-On 1 Year FortiSASE Compute Region Add-on Subscription for Fortinet Security PoP'},
+  'loc_public':   {sku:'FC1-10-EMS05-766-02-DD', desc:'FortiSASE Region Add-On 1 Year FortiSASE Compute Region Add-on Subscription for Public Cloud Security PoP'},
+  'global_addon': {sku:'FC-10-EMS05-1136-02-DD', desc:'FortiSASE Global Add-On 1 Year FortiSASE Global Compute Region Add-on Subscription for access to all Fortinet and Public Cloud Locations'},
+
+  // FortiIdentity Cloud
+  'idcld_FC1': {sku:'FC1-10-IDCLD-445-02-DD', desc:'FortiIdentity Cloud 1 Year Annual, per-user, cloud-managed FortiIdentity subscription for 25-499 users (includes 125 SMS credits per user and FortiCare Premium Support per year).'},
+  'idcld_FC2': {sku:'FC2-10-IDCLD-445-02-DD', desc:'FortiIdentity Cloud 1 Year Annual, per-user, cloud-managed FortiIdentity subscription for 500-1999 users (includes 125 SMS credits per user and FortiCare Premium Support per year)'},
+  'idcld_FC3': {sku:'FC3-10-IDCLD-445-02-DD', desc:'FortiIdentity Cloud 1 Year Annual, per-user, cloud-managed FortiIdentity subscription for 2000-9999 users (includes 125 SMS credits per user and FortiCare Premium Support per year)'},
+  'idcld_FC4': {sku:'FC4-10-IDCLD-445-02-DD', desc:'FortiIdentity Cloud 1 Year Annual, per-user, cloud-managed FortiIdentity subscription 10,000 or more users (includes 125 SMS credits per user and FortiCare Premium Support per year)'},
+
+  // Training (termless)
+  'train_ilt':  {sku:'FT-ILT-D02',  desc:'2-day virtual instructor-led training. Standard NSE training content. One enrollment per student in a 2-day virtual instructor-led training session.'},
+  'train_exam': {sku:'NSE-EX-FTE2', desc:'FTE2 Exam Voucher. One Pearson VUE exam voucher for one exam of Fortinet certifications requiring two proctored exams.'},
+};
+
+/* SD-WAN bundle / SPA — curated FortiGate model catalog.
+   Every (mode, modelCode) maps to a real price-list SKU. */
+const SDWAN_MODELS = {
+  '1329': [
+    // 100F+ tier (10 starter seats)
+    {label:'FortiGate-100F  · 10 starter seats',  code:'F100F'},
+    {label:'FortiGate-101F  · 10 starter seats',  code:'F101F'},
+    {label:'FortiGate-200F  · 10 starter seats',  code:'F200F'},
+    {label:'FortiGate-200G  · 10 starter seats',  code:'FG2HG'},
+    {label:'FortiGate-201F  · 10 starter seats',  code:'F201F'},
+    {label:'FortiGate-201G  · 10 starter seats',  code:'F2H1G'},
+    {label:'FortiGate-400F  · 10 starter seats',  code:'0400F'},
+    {label:'FortiGate-400G  · 10 starter seats',  code:'FG4H0'},
+    {label:'FortiGate-401F  · 10 starter seats',  code:'0401F'},
+    {label:'FortiGate-401G  · 10 starter seats',  code:'FG4H1'},
+    {label:'FortiGate-600F  · 10 starter seats',  code:'0600F'},
+    {label:'FortiGate-601F  · 10 starter seats',  code:'0601F'},
+    // 700G+ tier (50 starter seats)
+    {label:'FortiGate-700G  · 50 starter seats',  code:'G7H0G'},
+    {label:'FortiGate-701G  · 50 starter seats',  code:'G7H1G'},
+    {label:'FortiGate-900G  · 50 starter seats',  code:'FG9H0'},
+    {label:'FortiGate-1000F · 50 starter seats',  code:'F1K0F'},
+    // 1800F+ tier (100 starter seats)
+    {label:'FortiGate-1800F · 100 starter seats', code:'F18HF'},
+    {label:'FortiGate-3000F · 100 starter seats', code:'F3K0F'},
+    {label:'FortiGate-3500F · 100 starter seats', code:'F3K5F'},
+    {label:'FortiGate-4200F · 100 starter seats', code:'F42HF'},
+    {label:'FortiGate-4400F · 100 starter seats', code:'F44HF'},
+    {label:'FortiGate-4800F · 100 starter seats', code:'F48HF'},
+  ],
+  '1337': [
+    {label:'FortiGate-30G',       code:'FG30G'},
+    {label:'FortiGate-31G',       code:'GT31G'},
+    {label:'FortiGate-40F',       code:'0040F'},
+    {label:'FortiGate-40F-3G4G',  code:'F40FG'},
+    {label:'FortiGate-50G',       code:'GT50G'},
+    {label:'FortiGate-50G-5G',    code:'F50G5'},
+    {label:'FortiGate-70F',       code:'0070F'},
+  ],
+  '662': [
+    {label:'FortiGate-VM01',  code:'FVM01'},
+    {label:'FortiGate-VM02',  code:'FVM02'},
+    {label:'FortiGate-VM04',  code:'FVM04'},
+    {label:'FortiGate-VM08',  code:'FVM08'},
+    {label:'FortiGate-VM16',  code:'FVM16'},
+    {label:'FortiGate-VM32',  code:'FVM32'},
+    {label:'FortiGate-VMUL',  code:'FVMUL'},
+  ],
+};
+
+const SDWAN_DESC = {
+  '1329': (model) => `FortiGate-${model} 1 Year SD-WAN Service Bundle (SDWAN Underlay & Application Monitoring, Compliance, Overlay-as-a-Service, FortiSASE Standard starter seats and SPA connector for Universal Zero Trust)`,
+  '1337': (model) => `FortiGate-${model} 1 Year SD-WAN Service Bundle (SDWAN Underlay & Application Monitoring, Compliance, Overlay-as-a-Service, FortiSASE SPA connector for Universal Zero Trust)`,
+  '662':  (model) => `FortiGate-${model} 1 Year FortiSASE Secure Private Access connector license for SD-WAN`,
+};
+
+const SDWAN_MODE_NOTES = {
+  '1329': '100F+: 10 seats included · 700G+: 50 seats · 1800F+: 100 seats. Seats are part of the bundle and count toward FortiSASE Standard usage.',
+  '1337': 'SD-WAN SPA connectivity only (no starter seats included). FortiSASE Standard/Advanced/Comprehensive user license still required.',
+  '662':  'FortiSASE Secure Private Access connector for FortiGate VM. One license per VM (per HA member if clustered).',
+};
+
+/* =============================================================
+   State
+   ============================================================= */
+let _lastRows  = [];
+let _lastLabel = '';
+let _lastMeta  = {};
+
+const QA_MODE = new URLSearchParams(location.search).get('qa') === '1';
+if (QA_MODE) document.getElementById('tab-buildreport').style.display = 'inline-block';
+
+/* =============================================================
+   Tab switching
+   ============================================================= */
+function switchTab(panelId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.panel === panelId));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + panelId));
 }
 
-// FortiIdentity Cloud band (different ranges: 100-499, 500-1999, 2000-9999, 10000+)
-function fidBandPrefix(users) {
-  if (users >= 10000) return 'FC4';
-  if (users >= 2000)  return 'FC3';
-  if (users >= 500)   return 'FC2';
-  return 'FC1';
-}
-function fidBandLabel(users) {
-  if (users >= 10000) return '10,000+ users';
-  if (users >= 2000)  return '2,000–9,999 users';
-  if (users >= 500)   return '500–1,999 users';
-  return '100–499 users';
+/* =============================================================
+   Card enable/disable
+   ============================================================= */
+function toggleCard(name) {
+  const card = document.getElementById('card-' + name);
+  const en = document.getElementById('en-' + name).checked;
+  card.classList.toggle('collapsed', !en);
 }
 
-// ── UI HELPERS ────────────────────────────────────────────────────────────────
-function updateBandIndicator() {
-  const users = parseInt(document.getElementById('f-users').value, 10);
-  const ind = document.getElementById('band-indicator');
-  if (!users || users < 50) { ind.style.display = 'none'; return; }
-  document.getElementById('band-prefix-text').textContent = userBandPrefix(users);
-  document.getElementById('band-range-text').textContent = userBandLabel(users);
-  ind.style.display = 'inline-flex';
+/* =============================================================
+   Live indicators
+   ============================================================= */
+function userBandOf(count) {
+  if (count >= 10000) return {code:'FC5', range:'10,000+ users'};
+  if (count >= 2000)  return {code:'FC4', range:'2,000–9,999 users'};
+  if (count >= 500)   return {code:'FC3', range:'500–1,999 users'};
+  if (count >= 50)    return {code:'FC2', range:'50–499 users'};
+  return null;
 }
 
-function updateFIDIndicator() {
-  const users = parseInt(document.getElementById('f-fid-users').value, 10);
-  const ind = document.getElementById('fid-indicator');
-  if (!users || users < 100) { ind.style.display = 'none'; return; }
-  document.getElementById('fid-prefix-text').textContent = fidBandPrefix(users);
-  document.getElementById('fid-range-text').textContent = fidBandLabel(users);
-  ind.style.display = 'inline-flex';
+function idcldBandOf(count) {
+  if (count >= 10000) return {code:'FC4', range:'10,000+ users'};
+  if (count >= 2000)  return {code:'FC3', range:'2,000–9,999 users'};
+  if (count >= 500)   return {code:'FC2', range:'500–1,999 users'};
+  if (count >= 25)    return {code:'FC1', range:'25–499 users'};
+  return null;
 }
 
-// ── TIER LABELS ───────────────────────────────────────────────────────────────
-const TIER_CODE = { '547':'Standard', '676':'Advanced', '759':'Comprehensive' };
+function updateUserBand() {
+  const n = parseInt(document.getElementById('f-users').value || '0', 10);
+  const tier = document.getElementById('f-user-tier').value;
+  const band = userBandOf(n);
+  const ind  = document.getElementById('band-users');
+  const warn = document.getElementById('warn-users-tiny');
+  const infoComp = document.getElementById('info-comp-small');
 
-// ── SHARED STATE ──────────────────────────────────────────────────────────────
-let _lastRows = [], _lastLabel = '', _lastMeta = {};
+  if (band) {
+    ind.style.display = 'block';
+    document.getElementById('band-users-code').textContent = band.code;
+    document.getElementById('band-users-range').textContent = band.range;
+    warn.style.display = 'none';
+  } else {
+    ind.style.display = 'none';
+    warn.style.display = n > 0 ? 'flex' : 'none';
+  }
 
-function addToProjectBOM() {
-  if (!generateBOM()) return;
-  if (window.parent && window.parent !== window) {
-    window.parent.postMessage({ type:'FORTIBOM_ADD', product:'FortiSASE', label:_lastLabel, rows:_lastRows, meta:_lastMeta }, '*');
-    document.getElementById('smsg').textContent = '✓ Added to Project BOM.';
-    document.getElementById('smsg').style.color = '#2E7D32';
+  infoComp.style.display = (tier === 'Comprehensive' && n > 0 && n < 200) ? 'flex' : 'none';
+}
+
+function updateIdcldBand() {
+  const n = parseInt(document.getElementById('f-idcld-users').value || '0', 10);
+  const band = idcldBandOf(n);
+  const ind = document.getElementById('band-idcld');
+  if (band) {
+    ind.style.display = 'block';
+    document.getElementById('band-idcld-code').textContent = band.code;
+    document.getElementById('band-idcld-range').textContent = band.range;
+  } else {
+    ind.style.display = 'none';
   }
 }
 
-// ── MAIN GENERATE ─────────────────────────────────────────────────────────────
-function generateBOM() {
-  // Read all fields
-  const tier       = document.getElementById('f-tier').value;
-  const users      = parseInt(document.getElementById('f-users').value, 10) || 0;
-  const brFortinet = parseInt(document.getElementById('f-br-fortinet').value, 10) || 0;
-  const brPublic   = parseInt(document.getElementById('f-br-public').value, 10) || 0;
-  const ext200f    = parseInt(document.getElementById('f-ext200f').value, 10) || 0;
-  const bs10fw     = parseInt(document.getElementById('f-bs10fw').value, 10) || 0;
-  const bs10fw_opt = document.querySelector('input[name="bs10fw-opt"]:checked').value;
-  const bs20g      = parseInt(document.getElementById('f-bs20g').value, 10) || 0;
-  const bs20g_opt  = document.querySelector('input[name="bs20g-opt"]:checked').value;
-  const bs20gw     = parseInt(document.getElementById('f-bs20gw').value, 10) || 0;
-  const bs20gw_opt = document.querySelector('input[name="bs20gw-opt"]:checked').value;
-  const fap831f    = parseInt(document.getElementById('f-fap831f').value, 10) || 0;
-  const fap432g    = parseInt(document.getElementById('f-fap432g').value, 10) || 0;
-  const fap443k    = parseInt(document.getElementById('f-fap443k').value, 10) || 0;
-  const dips       = parseInt(document.getElementById('f-dips').value, 10) || 0;
-  const locFortinet= parseInt(document.getElementById('f-loc-fortinet').value, 10) || 0;
-  const locPublic  = parseInt(document.getElementById('f-loc-public').value, 10) || 0;
-  const globalAddon= parseInt(document.getElementById('f-global').value, 10) || 0;
-  const sdwanUnits = parseInt(document.getElementById('f-sdwan-units').value, 10) || 0;
-  const sdwanModel = document.getElementById('f-sdwan-model').value.trim().toUpperCase();
-  const fidUsers   = parseInt(document.getElementById('f-fid-users').value, 10) || 0;
+function updateSdwanModels() {
+  const mode  = document.getElementById('f-sdwan-mode').value;
+  const sel   = document.getElementById('f-sdwan-model');
+  sel.innerHTML = '';
+  for (const m of SDWAN_MODELS[mode]) {
+    const o = document.createElement('option');
+    o.value = m.code;
+    o.textContent = m.label;
+    sel.appendChild(o);
+  }
+  document.getElementById('sdwan-mode-note').textContent = SDWAN_MODE_NOTES[mode];
+}
 
-  // Validate
-  let valid = true;
-  if (!tier) { document.getElementById('f-tier').classList.add('invalid'); document.getElementById('err-tier').style.display='block'; valid=false; }
-  else { document.getElementById('f-tier').classList.remove('invalid'); document.getElementById('err-tier').style.display='none'; }
-  if (users < 50) { document.getElementById('f-users').classList.add('invalid'); document.getElementById('err-users').style.display='block'; valid=false; }
-  else { document.getElementById('f-users').classList.remove('invalid'); document.getElementById('err-users').style.display='none'; }
-  if (!valid) { document.getElementById('smsg').textContent='⚠ Please complete all required fields.'; document.getElementById('smsg').style.color='#C0392B'; return false; }
-  document.getElementById('smsg').textContent='';
-
-  const band = userBandPrefix(users);
-  const tierName = TIER_CODE[tier];
-  const rows = [];
-
-  // ═══ SECTION: Remote User Subscription ═══════════════════════════════════
-  rows.push({ section: `Remote User Subscription — ${tierName}` });
-  rows.push({
-    sku:  `${band}-10-EMS05-${tier}-02-DD`,
-    desc: `FortiSASE ${tierName} Remote User Subscription — ${users.toLocaleString()} users. Includes SIA (SSL Inspection, AV, IPS, Web/DNS Filtering, Botnet C&C), SSA (Inline CASB, DLP, Cloud API CASB), SPA (ZTNA), 24×7 Premium Support, SASE Cloud Management & Logging.${tier === '676' ? ' + Agentless ZTNA, DEM, SOCaaS, Assisted On-boarding.' : tier === '759' ? ' + Agentless ZTNA, DEM, SOCaaS, FortiGuard Forensics, Assisted On-boarding.' : ''}`,
-    qty:  1,
-    kind: 'req',
-    note: `${band} band · ${userBandLabel(users)} · co-term -DD suffix`,
+/* =============================================================
+   Cart filtering: strip preview-only rows before postMessage
+   ============================================================= */
+function cartRowsFrom(rows) {
+  return rows.filter(r => {
+    if (r.section) return false;
+    if (!r.sku || typeof r.sku !== 'string') return false;
+    const s = r.sku.trim();
+    if (!s) return false;
+    if (/^[⚠!—\-?]+$/.test(s)) return false;
+    return true;
   });
+}
 
-  // Comprehensive <200 user warning note
-  if (tier === '759' && users < 200) {
-    rows.push({
-      sku:  '⚠',
-      desc: 'NOTE: Comprehensive subscriptions of fewer than 200 users have limited PoP availability (1–2 locations). Refer to Fortinet FAQ before ordering.',
-      qty:  null,
-      kind: 'note',
-      note: 'Limited PoP availability',
-    });
+/* =============================================================
+   Main BOM generation
+   ============================================================= */
+function getInt(id, def) {
+  const v = parseInt(document.getElementById(id).value || '0', 10);
+  return isNaN(v) ? def : v;
+}
+
+function rowReq(sku, desc, qty, note)  { return {sku, desc, qty, kind:'req',  note}; }
+function rowMand(sku, desc, qty, note) { return {sku, desc, qty, kind:'mand', note}; }
+function rowOpt(sku, desc, qty, note)  { return {sku, desc, qty, kind:'opt',  note}; }
+function rowInc(sku, desc, qty, note)  { return {sku, desc, qty, kind:'inc',  note}; }
+function rowNote(text)                 { return {sku:'⚠', desc:text, qty:null, kind:'note'}; }
+function rowSection(title)             { return {section:title}; }
+
+function generateBOM() {
+  // Reset error states
+  document.querySelectorAll('input,select').forEach(el => el.classList.remove('invalid'));
+  document.querySelectorAll('.err-msg').forEach(el => el.style.display='none');
+  document.getElementById('smsg').textContent = '';
+
+  const rows = [];
+  const labelBits = [];
+  const meta = {};
+  let ok = true;
+
+  // --- Validate at least one section enabled ---
+  const enabled = {
+    users:  document.getElementById('en-users').checked,
+    sdwan:  document.getElementById('en-sdwan').checked,
+    onramp: document.getElementById('en-onramp').checked,
+    edge:   document.getElementById('en-edge').checked,
+    fap:    document.getElementById('en-fap').checked,
+    addons: document.getElementById('en-addons').checked,
+    idcld:  document.getElementById('en-idcld').checked,
+    train:  document.getElementById('en-train').checked,
+  };
+  if (!Object.values(enabled).some(v => v)) {
+    document.getElementById('smsg').textContent = '⚠ Enable at least one section before previewing.';
+    document.getElementById('smsg').style.color = '#C0392B';
+    return false;
   }
 
-  // ═══ SECTION: Branch On-Ramp ═════════════════════════════════════════════
-  if (brFortinet > 0 || brPublic > 0) {
-    rows.push({ section: 'Branch On-Ramp Locations (1 Gbps / 2,000 connections each)' });
-    if (brFortinet > 0) {
-      rows.push({
-        sku:  'FC1-10-EMS05-769-02-DD',
-        desc: 'FortiSASE Branch On-Ramp Location — Fortinet Cloud PoP (1 Gbps shared bandwidth, up to 2,000 connections). Available with Standard, Advanced, and Comprehensive licenses.',
-        qty:  brFortinet,
-        kind: 'opt',
-        note: `Fortinet Cloud PoP · max 20 locations/account · min 2 for redundancy`,
-      });
-    }
-    if (brPublic > 0) {
-      rows.push({
-        sku:  'FC1-10-EMS05-770-02-DD',
-        desc: 'FortiSASE Branch On-Ramp Location — Public Cloud PoP (1 Gbps shared bandwidth, up to 2,000 connections). Requires Advanced or Comprehensive license.',
-        qty:  brPublic,
-        kind: 'opt',
-        note: `Public Cloud PoP · requires Advanced or Comprehensive tier`,
-      });
-    }
-    const totalBranch = brFortinet + brPublic;
-    if (totalBranch > 20) {
-      rows.push({ sku:'⚠', desc:`WARNING: Total branch locations (${totalBranch}) exceeds maximum of 20 per account.`, qty:null, kind:'note', note:'Reduce to 20 or fewer' });
-    }
-    if (totalBranch === 1) {
-      rows.push({ sku:'⚠', desc:'NOTE: Minimum 2 Branch On-Ramp Locations required for redundancy.', qty:null, kind:'note', note:'Add at least one more location' });
+  // --- User tier (used for cross-section validation) ---
+  let userTier = null;
+  let userCount = 0;
+  if (enabled.users) {
+    userCount = getInt('f-users', 0);
+    userTier  = document.getElementById('f-user-tier').value;
+    if (userCount < 50) {
+      document.getElementById('f-users').classList.add('invalid');
+      document.getElementById('err-users').style.display = 'block';
+      ok = false;
     }
   }
 
-  // ═══ SECTION: Branch Thin Edge ═══════════════════════════════════════════
-  const hasThinEdge = ext200f > 0 || bs10fw > 0 || bs20g > 0 || bs20gw > 0 || fap831f > 0 || fap432g > 0 || fap443k > 0;
-  if (hasThinEdge) {
-    rows.push({ section: 'FortiSASE Branch Thin Edge' });
-    if (ext200f > 0) rows.push({ sku:'FC-10-X200F-595-02-DD', desc:'FortiExtender-200F — FortiSASE Cloud Management (includes security subscription and FortiCare Premium)', qty:ext200f, kind:'opt', note:'Cloud mgmt only option' });
-    if (bs10fw > 0) {
-      const skuCode = bs10fw_opt === 'bundle' ? 'FC-10-BS10F-1070-02-DD' : 'FC-10-BS10F-595-02-DD';
-      rows.push({ sku:skuCode, desc:`FortiBranchSASE-10F-WiFi — FortiSASE ${bs10fw_opt === 'bundle' ? 'Bundle (incl. additional features)' : 'Cloud Management'}`, qty:bs10fw, kind:'opt', note:bs10fw_opt === 'bundle' ? 'Bundle option' : 'Cloud mgmt only' });
-    }
-    if (bs20g > 0) {
-      const skuCode = bs20g_opt === 'bundle' ? 'FC-10-BS20G-1070-02-DD' : 'FC-10-BS20G-595-02-DD';
-      rows.push({ sku:skuCode, desc:`FortiBranchSASE-20G — FortiSASE ${bs20g_opt === 'bundle' ? 'Bundle' : 'Cloud Management'}`, qty:bs20g, kind:'opt', note:bs20g_opt === 'bundle' ? 'Bundle option' : 'Cloud mgmt only' });
-    }
-    if (bs20gw > 0) {
-      const skuCode = bs20gw_opt === 'bundle' ? 'FC-10-BS20W-1070-02-DD' : 'FC-10-BS20W-595-02-DD';
-      rows.push({ sku:skuCode, desc:`FortiBranchSASE-20G-WiFi — FortiSASE ${bs20gw_opt === 'bundle' ? 'Bundle' : 'Cloud Management'}`, qty:bs20gw, kind:'opt', note:bs20gw_opt === 'bundle' ? 'Bundle option' : 'Cloud mgmt only' });
-    }
-    if (fap831f > 0) rows.push({ sku:'FC-10-P831F-595-02-DD', desc:'FAP-831F FortiAP Thin Edge — FortiSASE Cloud Management (includes security subscription and FortiCare Premium)', qty:fap831f, kind:'opt', note:'FortiAP thin edge; max 240 FortiAP/account' });
-    if (fap432g > 0) rows.push({ sku:'FC-10-P432G-595-02-DD', desc:'FAP-432G FortiAP Thin Edge — FortiSASE Cloud Management', qty:fap432g, kind:'opt', note:'FortiAP thin edge' });
-    if (fap443k > 0) rows.push({ sku:'FC-10-FP43K-595-02-DD', desc:'FAP-443K FortiAP Thin Edge — FortiSASE Cloud Management', qty:fap443k, kind:'opt', note:'FortiAP thin edge' });
+  if (!ok) {
+    document.getElementById('smsg').textContent = '⚠ Fix the highlighted fields.';
+    document.getElementById('smsg').style.color = '#C0392B';
+    return false;
   }
 
-  // ═══ SECTION: Account Add-Ons ════════════════════════════════════════════
-  const hasAddons = dips > 0 || locFortinet > 0 || locPublic > 0 || globalAddon > 0 || (sdwanUnits > 0 && sdwanModel) || fidUsers >= 100;
-  if (hasAddons) {
-    rows.push({ section: 'Account Add-Ons' });
+  /* ---------- Remote User Subscription ---------- */
+  if (enabled.users) {
+    const band = userBandOf(userCount);
+    const key  = `user_${band.code}_${userTier}`;
+    const c    = CATALOG[key];
+    rows.push(rowSection(`Remote User Subscription · ${userTier} · ${band.code} (${band.range})`));
+    rows.push(rowReq(c.sku, c.desc, userCount, `One license per user · ${band.code} price band · 24×7 Premium Support`));
+    if (userTier === 'Comprehensive' && userCount < 200) {
+      rows.push(rowNote('Comprehensive with <200 users has limited PoP availability — consider Global Add-on'));
+    }
+    labelBits.push(`${userTier} ×${userCount}u`);
+    meta.userTier = userTier;
+    meta.userCount = userCount;
+    meta.userBand = band.code;
+  }
 
-    if (dips > 0) {
-      if (users < 500) {
-        rows.push({ sku:'⚠', desc:'WARNING: Dedicated Public IPs require a minimum of 500 users. Current user count does not meet this requirement.', qty:null, kind:'note', note:'500+ users required' });
+  /* ---------- SD-WAN Service Bundle / SPA ---------- */
+  if (enabled.sdwan) {
+    const mode    = document.getElementById('f-sdwan-mode').value;
+    const code    = document.getElementById('f-sdwan-model').value;
+    const qty     = getInt('f-sdwan-qty', 1);
+    const modelLabel = SDWAN_MODELS[mode].find(m => m.code === code).label.split(' · ')[0];
+    const modelName  = modelLabel.replace('FortiGate-', '');
+    const sku  = `FC-10-${code}-${mode}-02-DD`;
+    const desc = SDWAN_DESC[mode](modelName);
+    const sectionTitle = mode === '1329'
+      ? `SD-WAN Service Bundle (with starter seats) · ${modelLabel}`
+      : mode === '1337'
+        ? `SD-WAN SPA Connector (no starter seats) · ${modelLabel}`
+        : `FortiGate SPA (VM) · ${modelLabel}`;
+    rows.push(rowSection(sectionTitle));
+    rows.push(rowReq(sku, desc, qty, mode === '1329' ? `Includes starter SASE Standard seats` : `One license per FortiGate (per HA member)`));
+    labelBits.push(`SD-WAN ${modelName}×${qty}`);
+    meta.sdwanModel = modelName;
+  }
+
+  /* ---------- Branch On-Ramp ---------- */
+  if (enabled.onramp) {
+    const fnt = getInt('f-onramp-fortinet', 0);
+    const pub = getInt('f-onramp-public', 0);
+    const total = fnt + pub;
+    document.getElementById('warn-onramp-min').style.display = (total > 0 && total < 2) ? 'flex' : 'none';
+    document.getElementById('warn-onramp-max').style.display = (total > 20) ? 'flex' : 'none';
+    document.getElementById('warn-onramp-public-tier').style.display = (pub > 0 && userTier === 'Standard') ? 'flex' : 'none';
+
+    if (total > 0) {
+      rows.push(rowSection('Branch On-Ramp Locations'));
+      if (fnt > 0) {
+        const c = CATALOG.onramp_fortinet;
+        rows.push(rowReq(c.sku, c.desc, fnt, `1 Gbps shared · up to 2000 connections each`));
       }
-      rows.push({ sku:'FC1-10-EMS05-658-02-DD', desc:'Dedicated Public IP Address Add-on — 4 x Public IP addresses per unit (up to 5 DEIPs per Security PoP, 4 usable for source IP anchoring)', qty:dips, kind:'opt', note:`${dips * 4} public IPs total · 500+ users required` });
-    }
-    if (locFortinet > 0) rows.push({ sku:'FC1-10-EMS05-752-02-DD', desc:'Fortinet Location Add-on — 1–16 additional Fortinet Security PoPs (max 20 total locations per account)', qty:locFortinet, kind:'opt', note:'Each unit adds 1–16 PoPs' });
-    if (locPublic > 0)   rows.push({ sku:'FC1-10-EMS05-766-02-DD', desc:'Public Cloud Location Add-on — 1–16 additional Public Cloud Security PoPs', qty:locPublic, kind:'opt', note:'Each unit adds 1–16 PoPs' });
-    if (globalAddon > 0) rows.push({ sku:'FC-10-EMS05-1136-02-DD', desc:'FortiSASE Global Add-On — all existing Security PoPs plus all future PoPs as they become available', qty:1, kind:'opt', note:'All current + future PoPs included' });
-
-    if (sdwanUnits > 0) {
-      const modelCode = sdwanModel || 'XXXXX';
-      rows.push({ sku:`FC-10-${modelCode}-1329-02-DD`, desc:`FortiGate SD-WAN Service Bundle — SASE Starter Kit. Adds Secure Private Access (SPA) connectivity. On 100F+ includes FortiSASE Standard user starter kit (10/50/100 users depending on model tier). One license per FortiGate.`, qty:sdwanUnits, kind:'opt', note:`Model code: ${modelCode} · Replace XXXXX with actual model code if shown` });
-    }
-
-    if (fidUsers >= 100) {
-      const fidBand = fidBandPrefix(fidUsers);
-      rows.push({ sku:`${fidBand}-10-IDCLD-445-02-DD`, desc:`FortiIdentity Cloud — Identity & Access Management as a Service (IDaaS). ${fidUsers.toLocaleString()} users.`, qty:1, kind:'opt', note:`${fidBand} band · ${fidBandLabel(fidUsers)}` });
+      if (pub > 0) {
+        const c = CATALOG.onramp_public;
+        rows.push(rowReq(c.sku, c.desc, pub, `1 Gbps shared · Advanced/Comprehensive tier only`));
+      }
+      if (total < 2) rows.push(rowNote('Recommend minimum 2 On-Ramp locations for redundancy'));
+      if (total > 20) rows.push(rowNote('Account maximum is 20 On-Ramp locations'));
+      if (pub > 0 && userTier === 'Standard') rows.push(rowNote('Public Cloud On-Ramp requires Advanced or Comprehensive tier'));
+      labelBits.push(`OnRamp ${total}`);
     }
   }
 
-  // ── Store & render ──────────────────────────────────────────────────────────
-  _lastLabel = `FortiSASE ${tierName} — ${users.toLocaleString()} users${brFortinet + brPublic > 0 ? ` + ${brFortinet + brPublic} branch` : ''}`;
+  /* ---------- Branch Thin Edge ---------- */
+  if (enabled.edge) {
+    const type   = document.getElementById('f-edge-type').value;  // sub | bun
+    const qFex   = getInt('f-edge-fex200f', 0);
+    const qBs10f = getInt('f-edge-bs10f', 0);
+    const qBs20g = getInt('f-edge-bs20g', 0);
+    const qBs20w = getInt('f-edge-bs20w', 0);
+    const total  = qFex + qBs10f + qBs20g + qBs20w;
+    if (total > 0) {
+      rows.push(rowSection(`Branch Thin Edge — ${type === 'bun' ? 'SASE Protection Bundle' : 'Cloud Mgmt Subscription'}`));
+      // FortiExtender-200F only has the "sub" SKU (no bundle SKU in OG); fall back if user picked bun
+      if (qFex > 0) {
+        const c = CATALOG.fex200f_sub;
+        rows.push(rowReq(c.sku, c.desc, qFex, `Cloud mgmt only · no bundle SKU available`));
+      }
+      const variantKey = type === 'bun' ? 'bun' : 'sub';
+      if (qBs10f > 0) {
+        const c = CATALOG[`bs10f_${variantKey}`];
+        rows.push(rowReq(c.sku, c.desc, qBs10f, type === 'bun' ? 'Mgmt + security + FortiCare Premium' : 'Cloud mgmt + bandwidth'));
+      }
+      if (qBs20g > 0) {
+        const c = CATALOG[`bs20g_${variantKey}`];
+        rows.push(rowReq(c.sku, c.desc, qBs20g, type === 'bun' ? 'Mgmt + security + FortiCare Premium' : 'Cloud mgmt + bandwidth'));
+      }
+      if (qBs20w > 0) {
+        const c = CATALOG[`bs20w_${variantKey}`];
+        rows.push(rowReq(c.sku, c.desc, qBs20w, type === 'bun' ? 'Mgmt + security + FortiCare Premium' : 'Cloud mgmt + bandwidth'));
+      }
+      rows.push(rowNote('Thin Edge requires a user-seat license (Remote User Subscription) on top of the device subscription'));
+      labelBits.push(`Edge ${total}`);
+    }
+  }
+
+  /* ---------- FortiAP Thin Edge ---------- */
+  if (enabled.fap) {
+    const q831 = getInt('f-fap-831f', 0);
+    const q432 = getInt('f-fap-432g', 0);
+    const q443 = getInt('f-fap-443k', 0);
+    const total = q831 + q432 + q443;
+    if (total > 0) {
+      if (total > 240) rows.push(rowNote('Maximum 240 FortiAPs per FortiSASE account'));
+      rows.push(rowSection('FortiAP Thin Edge'));
+      if (q831 > 0) { const c = CATALOG.fap831f_sub; rows.push(rowReq(c.sku, c.desc, q831, `Indoor WiFi-6 4×4`)); }
+      if (q432 > 0) { const c = CATALOG.fap432g_sub; rows.push(rowReq(c.sku, c.desc, q432, `Outdoor WiFi-6E`)); }
+      if (q443 > 0) { const c = CATALOG.fap443k_sub; rows.push(rowReq(c.sku, c.desc, q443, `Indoor WiFi-7`)); }
+      labelBits.push(`FAP ${total}`);
+    }
+  }
+
+  /* ---------- Network Add-ons ---------- */
+  if (enabled.addons) {
+    const qDip = getInt('f-add-dedip', 0);
+    const qLfn = getInt('f-add-loc-fortinet', 0);
+    const qLpu = getInt('f-add-loc-public', 0);
+    const qGbl = getInt('f-add-global', 0);
+    const total = qDip + qLfn + qLpu + qGbl;
+
+    document.getElementById('warn-dedip-users').style.display = (qDip > 0 && (userCount < 500 || !enabled.users)) ? 'flex' : 'none';
+    document.getElementById('warn-locpublic-tier').style.display = (qLpu > 0 && userTier === 'Standard') ? 'flex' : 'none';
+
+    if (total > 0) {
+      rows.push(rowSection('Network Add-ons'));
+      if (qDip > 0) {
+        const c = CATALOG.dedip;
+        rows.push(rowOpt(c.sku, c.desc, qDip, `4 dedicated public IPs per SKU · requires 500+ users`));
+        if (userCount < 500 || !enabled.users) rows.push(rowNote('Dedicated Public IP requires 500+ user subscription (FC3 tier or higher)'));
+      }
+      if (qLfn > 0) { const c = CATALOG.loc_fortinet; rows.push(rowOpt(c.sku, c.desc, qLfn, `1–16 PoPs · 20 max total`)); }
+      if (qLpu > 0) {
+        const c = CATALOG.loc_public;
+        rows.push(rowOpt(c.sku, c.desc, qLpu, `1–16 PoPs · Advanced/Comprehensive tier`));
+        if (userTier === 'Standard') rows.push(rowNote('Public Cloud Location Add-on requires Advanced or Comprehensive tier'));
+      }
+      if (qGbl > 0) { const c = CATALOG.global_addon; rows.push(rowOpt(c.sku, c.desc, qGbl, `All existing + future PoPs`)); }
+      labelBits.push(`+${total} addons`);
+    }
+  }
+
+  /* ---------- FortiIdentity Cloud ---------- */
+  if (enabled.idcld) {
+    const n = getInt('f-idcld-users', 0);
+    const band = idcldBandOf(n);
+    if (band) {
+      const c = CATALOG[`idcld_${band.code}`];
+      rows.push(rowSection(`FortiIdentity Cloud · ${band.code} (${band.range})`));
+      rows.push(rowOpt(c.sku, c.desc, n, `One license per user · ${band.code} price band · 125 SMS credits/user · FortiCare Premium`));
+      labelBits.push(`IDaaS ${n}u`);
+    } else if (n > 0) {
+      rows.push(rowNote('FortiIdentity Cloud requires 25+ users — band cannot be determined'));
+    }
+  }
+
+  /* ---------- Training ---------- */
+  if (enabled.train) {
+    const qIlt  = getInt('f-train-ilt', 0);
+    const qExam = getInt('f-train-exam', 0);
+    if (qIlt + qExam > 0) {
+      rows.push(rowSection('Training & Certification'));
+      if (qIlt  > 0) { const c = CATALOG.train_ilt;  rows.push(rowOpt(c.sku, c.desc, qIlt,  `One-time SKU · no term`)); }
+      if (qExam > 0) { const c = CATALOG.train_exam; rows.push(rowOpt(c.sku, c.desc, qExam, `Pearson VUE voucher · no term`)); }
+    }
+  }
+
+  // Need at least one real-SKU row
+  const real = cartRowsFrom(rows);
+  if (real.length === 0) {
+    document.getElementById('smsg').textContent = '⚠ Enter quantities for at least one item.';
+    document.getElementById('smsg').style.color = '#C0392B';
+    return false;
+  }
+
   _lastRows  = rows;
-  _lastMeta  = { tier: tierName, users, band };
-  renderBOM(rows, _lastMeta);
+  _lastLabel = `FortiSASE — ${labelBits.join(' · ')}`;
+  _lastMeta  = meta;
+
+  renderBOM(rows);
+  document.getElementById('bom-section').style.display = 'block';
+  document.getElementById('bom-section').scrollIntoView({behavior:'smooth', block:'start'});
+  document.getElementById('bom-meta-line').textContent = _lastLabel;
   return true;
 }
 
-// ── RENDER ────────────────────────────────────────────────────────────────────
-function renderBOM(rows, meta) {
-  document.getElementById('bom-meta').innerHTML = [
-    { label:'Tier',    value:meta.tier },
-    { label:'Users',   value:meta.users.toLocaleString() },
-    { label:'Band',    value:`${meta.band} (${userBandLabel(meta.users)})` },
-    { label:'SKU Suffix', value:'-DD (co-term date-driven)' },
-  ].map(m=>`<div class="bom-meta-item"><div class="ml">${m.label}</div><div class="mv">${m.value}</div></div>`).join('');
+/* =============================================================
+   Render preview
+   ============================================================= */
+function badgeFor(kind) {
+  const map = {
+    req:  '<span class="badge badge-req">Required</span>',
+    mand: '<span class="badge badge-mand">Mandatory</span>',
+    opt:  '<span class="badge badge-opt">Optional</span>',
+    inc:  '<span class="badge badge-inc">Included</span>',
+    note: ''
+  };
+  return map[kind] || '';
+}
 
-  const tbody = document.getElementById('bom-tbody');
-  tbody.innerHTML = '';
-  let lines=0, totalQty=0;
+function esc(s) {
+  return (s == null ? '' : String(s))
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
-  for (const row of rows) {
+function renderBOM(rows) {
+  const tb = document.getElementById('bom-tbody');
+  tb.innerHTML = '';
+  for (const r of rows) {
     const tr = document.createElement('tr');
-    if (row.section !== undefined) {
-      tr.className = 'rs';
-      tr.innerHTML = `<td colspan="5">${row.section}</td>`;
+    if (r.section) {
+      tr.className = 'section-row';
+      tr.innerHTML = `<td colspan="5">${esc(r.section)}</td>`;
     } else {
-      lines++;
-      if (typeof row.qty === 'number') totalQty += row.qty;
-      const bm={req:'<span class="br br-r">Required</span>',opt:'<span class="br br-o">Optional</span>',note:''};
-      tr.innerHTML = `<td><span class="sk">${row.sku}</span></td><td>${row.desc}</td><td class="qc">${row.qty??''}</td><td>${bm[row.kind]||''}</td><td class="nc">${row.note||''}</td>`;
+      tr.innerHTML = `
+        <td><span class="sku">${esc(r.sku)}</span></td>
+        <td><span class="nc">${esc(r.desc)}</span></td>
+        <td class="qty-cell">${r.qty == null ? '' : r.qty}</td>
+        <td>${badgeFor(r.kind)}</td>
+        <td><span class="nc">${esc(r.note || '')}</span></td>
+      `;
     }
-    tbody.appendChild(tr);
+    tb.appendChild(tr);
   }
-
-  document.getElementById('bom-totals').innerHTML = `
-    <div class="tc"><div class="tl">Line Items</div><div class="tv">${lines}</div></div>
-    <div class="tc hi"><div class="tl">Total Qty</div><div class="tv">${totalQty}</div></div>
-  `;
-
-  document.getElementById('bom-section').style.display='block';
-  document.getElementById('bom-section').scrollIntoView({behavior:'smooth',block:'start'});
-  document.getElementById('smsg').textContent='✓ BOM generated.';
-  document.getElementById('smsg').style.color='#2E7D32';
 }
 
-// ── RESET ─────────────────────────────────────────────────────────────────────
-function resetForm() {
-  document.getElementById('f-tier').value='';
-  document.getElementById('f-users').value='';
-  ['f-br-fortinet','f-br-public','f-ext200f','f-bs10fw','f-bs20g','f-bs20gw',
-   'f-fap831f','f-fap432g','f-fap443k','f-dips','f-loc-fortinet','f-loc-public',
-   'f-sdwan-units','f-fid-users'].forEach(id=>{ document.getElementById(id).value='0'; });
-  document.getElementById('f-global').value='0';
-  document.getElementById('f-sdwan-model').value='';
-  document.querySelectorAll('input[name="bs10fw-opt"]')[0].checked=true;
-  document.querySelectorAll('input[name="bs20g-opt"]')[0].checked=true;
-  document.querySelectorAll('input[name="bs20gw-opt"]')[0].checked=true;
-  document.getElementById('band-indicator').style.display='none';
-  document.getElementById('fid-indicator').style.display='none';
-  document.getElementById('bom-section').style.display='none';
-  document.getElementById('smsg').textContent='';
-  document.querySelectorAll('.invalid').forEach(e=>e.classList.remove('invalid'));
-  document.querySelectorAll('.err').forEach(e=>e.style.display='none');
+/* =============================================================
+   Add to Project BOM
+   ============================================================= */
+function addToProjectBOM() {
+  if (!generateBOM()) return;
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({
+      type: 'FABRICBOM_ADD',
+      product: 'FortiSASE',
+      label:  _lastLabel,
+      rows:   cartRowsFrom(_lastRows),
+      meta:   _lastMeta
+    }, '*');
+    const m = document.getElementById('smsg');
+    m.textContent = '✓ Added to Project BOM.';
+    m.style.color = '#2E7D32';
+  } else {
+    const m = document.getElementById('smsg');
+    m.textContent = '(Standalone preview — open inside FabricBOM to add to a Project BOM.)';
+    m.style.color = '#8A5800';
+  }
 }
 
-// ── COPY TSV ──────────────────────────────────────────────────────────────────
+/* =============================================================
+   Utilities
+   ============================================================= */
 function copyTSV() {
-  const rows = document.querySelectorAll('#bom-table tbody tr');
-  const lines = ['Part Number\tDescription\tQty\tType\tNotes'];
-  rows.forEach(r=>{
-    if(r.classList.contains('rs')){lines.push(`\t${r.querySelector('td').textContent.trim()}\t\t\t`);}
-    else{
-      const c=r.querySelectorAll('td');
-      if(c.length>=5) lines.push([c[0].textContent.trim(),c[1].textContent.trim(),c[2].textContent.trim(),c[3].textContent.trim(),c[4].textContent.trim()].join('\t'));
-    }
-  });
-  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
-    document.getElementById('smsg').textContent='✓ Copied.';
-    document.getElementById('smsg').style.color='#2E7D32';
+  const cart = cartRowsFrom(_lastRows);
+  const header = ['Part Number','Description','Qty','Type','Notes'].join('\t');
+  const lines = [header];
+  for (const r of cart) {
+    lines.push([r.sku, r.desc, r.qty, r.kind, r.note || ''].join('\t'));
+  }
+  const tsv = lines.join('\n');
+  navigator.clipboard.writeText(tsv).then(() => {
+    const m = document.getElementById('copymsg');
+    m.textContent = '✓ Copied TSV';
+    m.style.color = '#2E7D32';
+    setTimeout(() => { m.textContent = ''; }, 2500);
+  }).catch(() => {
+    const m = document.getElementById('copymsg');
+    m.textContent = '⚠ Clipboard unavailable';
+    m.style.color = '#C0392B';
   });
 }
+
+function resetForm() {
+  // Reset all numeric inputs and selects to defaults
+  document.getElementById('f-users').value = 100;
+  document.getElementById('f-user-tier').value = 'Advanced';
+
+  document.getElementById('f-sdwan-mode').value = '1329';
+  document.getElementById('f-sdwan-qty').value = 1;
+  updateSdwanModels();
+
+  document.getElementById('f-onramp-fortinet').value = 2;
+  document.getElementById('f-onramp-public').value = 0;
+
+  document.getElementById('f-edge-type').value = 'bun';
+  ['f-edge-fex200f','f-edge-bs10f','f-edge-bs20g','f-edge-bs20w'].forEach(id => document.getElementById(id).value = 0);
+
+  ['f-fap-831f','f-fap-432g','f-fap-443k'].forEach(id => document.getElementById(id).value = 0);
+
+  ['f-add-dedip','f-add-loc-fortinet','f-add-loc-public','f-add-global'].forEach(id => document.getElementById(id).value = 0);
+
+  document.getElementById('f-idcld-users').value = 100;
+
+  ['f-train-ilt','f-train-exam'].forEach(id => document.getElementById(id).value = 0);
+
+  // Reset enable checkboxes — users only
+  document.getElementById('en-users').checked = true;
+  ['sdwan','onramp','edge','fap','addons','idcld','train'].forEach(n => {
+    document.getElementById('en-' + n).checked = false;
+    document.getElementById('card-' + n).classList.add('collapsed');
+  });
+  document.getElementById('card-users').classList.remove('collapsed');
+
+  // Clear validation
+  document.querySelectorAll('input,select').forEach(el => el.classList.remove('invalid'));
+  document.querySelectorAll('.err-msg').forEach(el => el.style.display='none');
+  document.querySelectorAll('.callout[id^="warn-"],.callout[id^="info-"]').forEach(el => el.style.display='none');
+
+  // Hide BOM
+  document.getElementById('bom-section').style.display = 'none';
+  _lastRows = []; _lastLabel = ''; _lastMeta = {};
+  document.getElementById('smsg').textContent = '';
+  updateUserBand();
+  updateIdcldBand();
+}
+
+/* =============================================================
+   Build Report tab content (only rendered when ?qa=1)
+   ============================================================= */
+function renderBuildReport() {
+  if (!QA_MODE) return;
+  const entries = [];
+  // Add all CATALOG entries
+  for (const [key, v] of Object.entries(CATALOG)) {
+    const kind = (v.sku.endsWith('-DD')) ? 'multi-term (-DD)' : 'termless';
+    entries.push({status:'✓', kind:'exact · ' + kind, sku:v.sku, desc:v.desc});
+  }
+  // Add SD-WAN models
+  for (const [mode, list] of Object.entries(SDWAN_MODELS)) {
+    for (const m of list) {
+      const sku = `FC-10-${m.code}-${mode}-02-DD`;
+      const modelName = m.label.split(' · ')[0].replace('FortiGate-','');
+      entries.push({status:'✓', kind:`exact · SD-WAN code ${mode}`, sku, desc:SDWAN_DESC[mode](modelName)});
+    }
+  }
+  const tb = document.getElementById('br-tbody');
+  tb.innerHTML = '';
+  for (const e of entries) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="br-status-ok">${esc(e.status)}</td><td>${esc(e.kind)}</td><td>${esc(e.sku)}</td><td>${esc(e.desc)}</td>`;
+    tb.appendChild(tr);
+  }
+}
+
+/* =============================================================
+   Init
+   ============================================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  updateSdwanModels();
+  updateUserBand();
+  updateIdcldBand();
+  renderBuildReport();
+});
+
+// Run init immediately (script is at end of body so DOM exists)
+updateSdwanModels();
+updateUserBand();
+updateIdcldBand();
+renderBuildReport();
+
+/* =============================================================
+   Cache-busting Layer 3 — self-detection of stale page
+   ============================================================= */
+(function checkVersion() {
+  const baked = document.querySelector('meta[name="build-timestamp"]')?.content;
+  if (!baked) return;
+  // Skip when loaded from a file:// URL — fetch will fail and there's no server to refresh from
+  if (location.protocol === 'file:') return;
+
+  fetch(location.pathname + '?_cb=' + Date.now(), { cache: 'no-store' })
+    .then(r => r.ok ? r.text() : null)
+    .then(html => {
+      if (!html) return;
+      const m = html.match(/<meta name="build-timestamp" content="([^"]+)"/);
+      if (m && m[1] !== baked) {
+        document.getElementById('stale-banner').style.display = 'block';
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'FABRICBOM_STALE',
+            buildId: document.querySelector('meta[name="build-id"]')?.content,
+            bakedTimestamp: baked,
+            liveTimestamp: m[1]
+          }, '*');
+        }
+      }
+    })
+    .catch(() => {/* offline or CORS — silently skip */});
+})();
+
 </script>
 </body>
 </html>
