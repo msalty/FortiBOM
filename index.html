@@ -209,6 +209,17 @@
   .br-ex{background:#F0F0F2;color:#6B7280;border:1px solid #D1D5DB;}
   .br-attn{background:#FFF3CD;color:#7A4F00;border:1px solid #FECB2E;}
 
+  /* Line-item reordering (drag handle in the first table column) */
+  .col-grip{width:24px;max-width:24px;padding:2px 0 2px 3px!important;text-align:center;}
+  .row-grip{background:none;border:none;padding:2px 1px;margin:0;cursor:grab;color:var(--c-ib);line-height:0;border-radius:2px;font-family:inherit;touch-action:none;transition:color .12s,background .12s;}
+  .row-grip:hover{color:var(--c-text2);background:rgba(0,0,0,.05);}
+  .row-grip:active{cursor:grabbing;}
+  .row-grip:focus-visible{outline:2px solid #4A90D9;outline-offset:1px;color:var(--c-text2);}
+  .row-grip svg{width:9px;height:14px;display:block;pointer-events:none;}
+  table.bt tbody tr.row-dragging td{opacity:.4;}
+  table.bt tbody tr.row-drag-over td{background:#FEF0EE!important;}
+  table.bt tbody tr.row-drag-over td:first-child{box-shadow:inset 3px 0 0 var(--forti-red);}
+
   /* Responsive column hiding for BOM table */
   .col-exp{visibility:hidden;width:0;max-width:0;overflow:hidden;padding:0!important;border-width:0!important;}
   .col-desc{min-width:125px;flex: 1 1 auto;word-wrap: break-word;}
@@ -505,6 +516,8 @@
   #pbv.bom-readonly .label-input{pointer-events:none;background:transparent!important;}
   #pbv.bom-readonly .type-btn{pointer-events:none;cursor:default;}
   #pbv.bom-readonly .drag-handle{pointer-events:none;cursor:default;opacity:.25;}
+  #pbv.bom-readonly .row-grip{display:none;}
+  #pbv.bom-readonly .col-grip{width:0!important;max-width:0!important;padding:0!important;border-width:0!important;}
 
   /* Project Info Read Only state — lock fields but keep checkbox interactive */
   #proj-info-card.pi-readonly .pfg input,
@@ -537,7 +550,8 @@
     #top-bar,#sidebar,#ch,.act-row,#toast,#pfw,#copy-menu,#project-menu,#add-menu{display:none!important;}
     #main{display:block;}
     #pbv{display:flex!important;overflow:visible;padding:20px;}
-    .bg-del,.bg-edit,.bg-copy,.bgr-actions{display:none!important;}
+    .bg-del,.bg-edit,.bg-copy,.bgr-actions,.row-grip{display:none!important;}
+    .col-grip{width:0!important;max-width:0!important;padding:0!important;border-width:0!important;}
     .lc,.bg{break-inside:avoid;}
     .pi-edit-btn,.pi-clear-btn,.pi-expand-btn{display:none!important;}
     #proj-info-card .pfg{display:none!important;}
@@ -2284,7 +2298,7 @@ async function renderGroups() {
     }
   } catch(e) { /* pricing unavailable */ }
   const hasPricing = priceMap !== null;
-  const colSpan = hasPricing ? 8 : 6;
+  const colSpan = hasPricing ? 9 : 7;   // grip + exp + sku + desc + qty + type + notes [+ list + total]
   const c = document.getElementById('bgc');
   const ec = document.getElementById('ec');
   if (!cart.length) {
@@ -2376,7 +2390,7 @@ async function renderGroups() {
       let lines=0, qty=0;
       const displayRows = rowsWithTerm(entry.rows);
       const rows = displayRows.map((r, i) => {
-        if (r.section!==undefined) return `<tr class="sr"><td colspan="${colSpan}"><input type="text" class="label-input" value="${h(r.section)}" onchange="updateSectionLabel(${entry.id},${i},this.value)"></td></tr>`;
+        if (r.section!==undefined) return `<tr class="sr" data-ridx="${i}"><td class="col-grip">${gripBtn(entry.id, i, r.section || 'section')}</td><td colspan="${colSpan-1}"><input type="text" class="label-input" value="${h(r.section)}" onchange="updateSectionLabel(${entry.id},${i},this.value)"></td></tr>`;
         lines++; if (typeof r.qty==='number') qty+=r.qty;
         const bm={req:'<span class="br br-r">Required</span>',mand:'<span class="br br-m">Mandatory</span>',opt:'<span class="br br-o">Optional</span>',inc:'<span class="br br-o">Included</span>',excl:'<span class="br br-ex">Excluded</span>',attn:'<span class="br br-attn">Attention</span>',note:''};
         // Compute pricing first so auto-ATTENTION can use it
@@ -2407,7 +2421,7 @@ async function renderGroups() {
         const detailTr = detailRows.length ? `<tr class="bom-detail"><td colspan="100"><table class="det-tbl"><tbody>${detailRows.join('')}</tbody></table></td></tr>` : '';
         const evenCls = lines%2===0 ? ' class="bt-even"' : '';
         const typeCell = `<button class="type-btn" onclick="openKindPopover(event,${entry.id},${i})" title="Click to change type">${bm[effectiveKind]||'<span class=\\"type-empty\\">—</span>'}<span class="type-hint">▾</span></button>`;
-        return `<tr${evenCls}>${expCell}<td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc"><span class="note-clamp" title="${h(r.desc||'')}">${h(r.desc||'')}</span></td><td class="qc"><input type="number" class="qty-input" value="${r.qty??''}" min="0" onchange="updateQty(${entry.id},${i},this.value)"></td><td class="col-type">${typeCell}</td><td class="nc col-notes"><textarea class="note-input" rows="3" placeholder="Add note…" onchange="updateNote(${entry.id},${i},this.value)" title="${h(r.note||'')}">${h(r.note||'')}</textarea></td>${priceCells}</tr>${detailTr}`;
+        return `<tr${evenCls} data-ridx="${i}"><td class="col-grip">${gripBtn(entry.id, i, r.sku || 'line item')}</td>${expCell}<td><span class="sk">${h(r.sku||'')}</span></td><td class="nc col-desc"><span class="note-clamp" title="${h(r.desc||'')}">${h(r.desc||'')}</span></td><td class="qc"><input type="number" class="qty-input" value="${r.qty??''}" min="0" onchange="updateQty(${entry.id},${i},this.value)"></td><td class="col-type">${typeCell}</td><td class="nc col-notes"><textarea class="note-input" rows="3" placeholder="Add note…" onchange="updateNote(${entry.id},${i},this.value)" title="${h(r.note||'')}">${h(r.note||'')}</textarea></td>${priceCells}</tr>${detailTr}`;
       }).join('');
       totL+=lines; totQ+=qty;
       const el = document.createElement('div');
@@ -2425,10 +2439,11 @@ async function renderGroups() {
           <button class="bg-del" onclick="removeFromCart(${entry.id})">✕</button>
         </div>
         <div class="bt-wrap"><table class="bt"><thead><tr>
-          <th class="col-exp"></th><th style="width:200px;">Part Number</th><th class="col-desc">Description</th>
+          <th class="col-grip"></th><th class="col-exp"></th><th style="width:200px;">Part Number</th><th class="col-desc">Description</th>
           <th style="width:64px;text-align:center;">Qty</th><th class="col-type" style="width:100px;">Type</th><th class="col-notes" style="width:125px;">Notes</th>${hasPricing ? '<th style="width:110px;text-align:right;">List Price</th><th style="width:120px;text-align:right;">Total Price</th>' : ''}
         </tr></thead><tbody>${rows}</tbody></table></div>`;
       addDragListeners(el);
+      el.querySelectorAll('tbody tr[data-ridx]').forEach(tr => addRowDragListeners(tr, entry.id));
       c.appendChild(el);
     }
   }
@@ -2475,6 +2490,138 @@ async function renderGroups() {
     ptEl.style.display = 'none';
   }
   if (isReadOnly()) applyReadOnlyToDOM();
+}
+
+// ── LINE-ITEM REORDERING ─────────────────────────────────────────────────────
+// Reorders rows within a single product group. Section rows move too, so a SKU
+// dragged past a section header changes which section it sits under. Moving a
+// row between groups isn't supported — use the group's Edit dialog for that.
+let _rowDrag = null;   // { entryId, idx, tr }
+
+function gripBtn(entryId, idx, label) {
+  return `<button class="row-grip" data-grip="${entryId}:${idx}" title="Drag to reorder — or focus and use ↑ / ↓" aria-label="Reorder ${h(String(label))}"><svg viewBox="0 0 9 14" fill="none" aria-hidden="true"><circle cx="2.5" cy="2.5" r="1.15" fill="currentColor"/><circle cx="6.5" cy="2.5" r="1.15" fill="currentColor"/><circle cx="2.5" cy="7" r="1.15" fill="currentColor"/><circle cx="6.5" cy="7" r="1.15" fill="currentColor"/><circle cx="2.5" cy="11.5" r="1.15" fill="currentColor"/><circle cx="6.5" cy="11.5" r="1.15" fill="currentColor"/></svg></button>`;
+}
+
+// Moves entry.rows[from] to index `to`, then re-renders and (optionally)
+// puts keyboard focus back on the grip that moved.
+function moveRow(entryId, from, to, refocus) {
+  if (isReadOnly()) return;
+  const entry = cart.find(c => c.id === entryId);
+  if (!entry || !Array.isArray(entry.rows)) return;
+  if (from === to || from < 0 || to < 0 || from >= entry.rows.length || to >= entry.rows.length) return;
+  const [moved] = entry.rows.splice(from, 1);
+  entry.rows.splice(to, 0, moved);
+  saveCart();
+  markDirty();
+  const done = renderGroups();
+  if (refocus) {
+    Promise.resolve(done).then(() => {
+      const btn = document.querySelector(`.row-grip[data-grip="${entryId}:${to}"]`);
+      if (btn) btn.focus();
+    });
+  }
+}
+
+function _clearRowDragOver() {
+  document.querySelectorAll('#bgc tr.row-drag-over').forEach(n => n.classList.remove('row-drag-over'));
+}
+function _finishRowDrag() {
+  if (_rowDrag) _rowDrag.tr.classList.remove('row-dragging');
+  _clearRowDragOver();
+  _rowDrag = null;
+}
+
+function addRowDragListeners(tr, entryId) {
+  const grip = tr.querySelector('.row-grip');
+  if (!grip) return;
+
+  // ── Keyboard ──
+  grip.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+    e.preventDefault();
+    const idx = Number(tr.dataset.ridx);
+    moveRow(entryId, idx, idx + (e.key === 'ArrowUp' ? -1 : 1), true);
+  });
+
+  // ── Mouse / HTML5 drag ──
+  // Every handler stops propagation so the group-level drag listeners on the
+  // enclosing .bg never see a row drag (they would cancel it).
+  // The row is only draggable while the grip is held, so text selection
+  // elsewhere in the row keeps working.
+  grip.addEventListener('mousedown', () => {
+    if (isReadOnly()) return;
+    tr.draggable = true;
+    const release = () => { tr.draggable = false; document.removeEventListener('mouseup', release); };
+    document.addEventListener('mouseup', release);
+  });
+  tr.addEventListener('dragstart', e => {
+    if (!tr.draggable || isReadOnly()) { e.preventDefault(); return; }
+    e.stopPropagation();
+    _rowDrag = { entryId, idx: Number(tr.dataset.ridx), tr };
+    tr.classList.add('row-dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    try { e.dataTransfer.setData('text/plain', ''); } catch(_) {}
+  });
+  tr.addEventListener('dragover', e => {
+    if (!_rowDrag || _rowDrag.entryId !== entryId) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'move';
+    _clearRowDragOver();
+    if (Number(tr.dataset.ridx) !== _rowDrag.idx) tr.classList.add('row-drag-over');
+  });
+  tr.addEventListener('drop', e => {
+    if (!_rowDrag || _rowDrag.entryId !== entryId) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const from = _rowDrag.idx, to = Number(tr.dataset.ridx);
+    _finishRowDrag();
+    tr.draggable = false;
+    moveRow(entryId, from, to);
+  });
+  tr.addEventListener('dragend', e => {
+    e.stopPropagation();
+    tr.draggable = false;
+    _finishRowDrag();
+  });
+
+  // ── Touch ──
+  grip.addEventListener('touchstart', e => {
+    if (isReadOnly()) return;
+    e.preventDefault();
+    e.stopPropagation();
+    _rowDrag = { entryId, idx: Number(tr.dataset.ridx), tr };
+    tr.classList.add('row-dragging');
+  }, { passive: false });
+
+  grip.addEventListener('touchmove', e => {
+    if (!_rowDrag) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const t = e.touches[0];
+    const under = document.elementFromPoint(t.clientX, t.clientY);
+    const target = under && under.closest ? under.closest('tr[data-ridx]') : null;
+    _clearRowDragOver();
+    if (target && target.closest('.bg') === tr.closest('.bg') && Number(target.dataset.ridx) !== _rowDrag.idx) {
+      target.classList.add('row-drag-over');
+    }
+  }, { passive: false });
+
+  grip.addEventListener('touchend', e => {
+    if (!_rowDrag) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const t = e.changedTouches[0];
+    const under = document.elementFromPoint(t.clientX, t.clientY);
+    const target = under && under.closest ? under.closest('tr[data-ridx]') : null;
+    const sameGroup = target && target.closest('.bg') === tr.closest('.bg');
+    const from = _rowDrag.idx;
+    const to = sameGroup ? Number(target.dataset.ridx) : null;
+    _finishRowDrag();
+    if (to !== null) moveRow(entryId, from, to);
+  }, { passive: false });
+
+  grip.addEventListener('touchcancel', () => _finishRowDrag());
 }
 
 // ── DRAG-TO-REORDER ──────────────────────────────────────────────────────────

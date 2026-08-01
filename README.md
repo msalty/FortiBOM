@@ -26,7 +26,7 @@ Designed to be run entirely offline. Install it as a web app on most modern brow
 - **Custom section headers** — insert labeled group dividers (e.g., "Core Firewall", "Option A – SD-WAN") with optional notes to organize complex quotes
 - **Item classification** — tag line items as REQUIRED, OPTIONAL, or EXCLUDED; items without pricing auto-flag as ATTENTION
 - **Inline editing** — edit quantities, notes, group labels, and item types directly in the BOM table
-- **Drag-to-reorder** — drag product groups and line items into any order
+- **Drag-to-reorder** — drag product groups, section headers, and individual line items into any order; line items can also be moved with ↑/↓ from the keyboard
 - **Copy & paste** — duplicate a product group, or a section header with everything under it, anywhere in the BOM; the clipboard persists across reloads and other open tabs, so blocks can be moved between projects
 - **Custom SKU entry** — look up any part number via catalog search or enter it manually
 
