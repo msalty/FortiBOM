@@ -36,15 +36,19 @@ body {
   color: var(--forti-text);
   background: var(--forti-bg);
   /* bottom pad ensures content clears the sticky action bar */
-  padding-bottom: 100px;
+  padding-bottom: calc(78px + env(safe-area-inset-bottom));
 }
 
 /* ── Popover mode ── */
 /* When embedded in an iframe, body gets .popover-mode via JS */
 body.popover-mode {
   background: var(--forti-white);
-  padding-bottom: 100px;
+  padding-bottom: calc(78px + env(safe-area-inset-bottom));
 }
+/* In the dialog the optional group name doesn't deserve a whole card — collapse
+   it to a single compact row so the space goes to the SKU rows instead. */
+body.popover-mode #group-card .card-header { display: none; }
+body.popover-mode #group-card .card-body { padding: 10px 14px; }
 body.popover-mode .page-header {
   border-bottom: 1px solid var(--forti-border);
   background: var(--forti-white);
@@ -101,6 +105,9 @@ body.popover-mode .popover-close { display: flex; align-items: center; }
   display: flex;
   flex-direction: column;
   gap: 14px;
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* ── Info callout ── */
@@ -440,11 +447,16 @@ input.sku-input {
   z-index: 100;
   background: white;
   border-top: 1px solid var(--forti-border);
-  padding: 10px var(--page-pad);
+  padding: 10px var(--page-pad) calc(10px + env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 16px rgba(0,0,0,.08);
+}
+.sticky-inner {
   display: flex;
   gap: 8px;
   align-items: center;
-  box-shadow: 0 -4px 16px rgba(0,0,0,.08);
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
 }
 .btn {
   padding: 10px 16px;
@@ -591,6 +603,53 @@ input.sku-input {
   outline: 2px solid var(--forti-red);
   outline-offset: 1px;
 }
+
+/* ── Wide layout ──────────────────────────────────────────────────────────────
+   On anything roomier than a phone, each SKU row lays its fields out across the
+   available width instead of stacking them. A five-row form becomes three or
+   four screen-lines tall, which is what makes a long list navigable without
+   fighting the scroll area inside the dialog. */
+@media (min-width: 700px) {
+  .sku-row-card-body {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) minmax(240px, 1.5fr) 84px;
+    grid-template-areas:
+      "sku  desc  qty"
+      "type notes notes";
+    gap: 12px 14px;
+    align-items: start;
+    padding: 14px;
+  }
+  .f-sku   { grid-area: sku;   }
+  .f-desc  { grid-area: desc;  }
+  .f-qty   { grid-area: qty;   }
+  .f-type  { grid-area: type;  }
+  .f-notes { grid-area: notes; }
+  /* Let Qty and Type escape their mobile wrapper and join the parent grid. */
+  .qty-row { display: contents; }
+  .sku-row-card-body .field + .field { margin-top: 0; }
+  .sku-row-card-body textarea { min-height: 58px; }
+  .add-row-btns { grid-template-columns: repeat(2, minmax(0, 260px)); }
+  body.popover-mode #group-card .field { flex-direction: row; align-items: center; gap: 12px; }
+  body.popover-mode #group-card label { flex-shrink: 0; }
+  .page-header { padding-left: 20px; padding-right: 20px; }
+  .content-wrap { padding: 0 20px; }
+  .sticky-actions { padding-left: 20px; padding-right: 20px; }
+}
+
+/* Roomier still — give Notes its own column so a row is two lines tall. */
+@media (min-width: 1000px) {
+  .sku-row-card-body {
+    grid-template-columns: minmax(210px, 1fr) minmax(240px, 1.4fr) 76px minmax(190px, .9fr);
+    grid-template-areas:
+      "sku  desc  qty   notes"
+      "type desc  qty   notes";
+    align-items: start;
+  }
+  .sku-row-card-body { padding: 12px 14px; }
+  .f-desc, .f-notes { align-self: stretch; }
+  .f-desc textarea, .f-notes textarea { min-height: 68px; flex: 1; }
+}
 </style>
 </head>
 <body>
@@ -621,7 +680,7 @@ input.sku-input {
   </div>
 
   <!-- Group / Bundle Label -->
-  <div class="card">
+  <div class="card" id="group-card">
     <div class="card-header">
       <div class="card-header-title">Group / Bundle Label</div>
     </div>
@@ -649,10 +708,10 @@ input.sku-input {
       <div id="err-no-rows">⚠ Add at least one SKU row before generating a BOM.</div>
 
       <div class="add-row-btns">
-        <button class="add-row-btn" onclick="addSkuRow()">
+        <button class="add-row-btn" onclick="addSkuRow(null, true)">
           <strong>＋</strong> Add SKU Row
         </button>
-        <button class="add-row-btn" onclick="addSectionRow()">
+        <button class="add-row-btn" onclick="addSectionRow(null, true)">
           <strong>≡</strong> Add Section Header
         </button>
       </div>
@@ -689,6 +748,7 @@ input.sku-input {
 
 <!-- Sticky Action Bar -->
 <div class="sticky-actions">
+ <div class="sticky-inner">
   <button class="btn btn-primary" onclick="generateBOM()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px;margin-top:-1px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><span class="btn-preview-label">Preview</span>
   </button>
@@ -698,6 +758,7 @@ input.sku-input {
   <span id="smsg"></span>
   <div class="action-spacer"></div>
   <button class="btn btn-secondary btn-sm" onclick="resetForm()">Reset</button>
+ </div>
 </div>
 
 <script>
@@ -718,6 +779,30 @@ input.sku-input {
 function closePopover() {
   window.parent.postMessage({ type: 'FORTIBOM_CLOSE' }, '*');
 }
+
+// ─────────────────────────────────────────────
+//  Content height reporting
+//  Lets the host dialog size itself to the form, so a short entry needs no
+//  scrolling inside the iframe. Measured from <body>, not the viewport, so the
+//  dialog can shrink again as rows are removed.
+// ─────────────────────────────────────────────
+let _lastReportedH = 0, _rhQueued = false;
+
+function reportHeight() {
+  _rhQueued = false;
+  if (!document.body.classList.contains('popover-mode')) return;
+  const h = Math.ceil(document.body.getBoundingClientRect().height);
+  if (!h || Math.abs(h - _lastReportedH) < 3) return;
+  _lastReportedH = h;
+  try { window.parent.postMessage({ type: 'FABRICBOM_SKU_HEIGHT', height: h }, '*'); } catch(e) {}
+}
+function queueReportHeight() {
+  if (_rhQueued) return;
+  _rhQueued = true;
+  requestAnimationFrame(reportHeight);
+}
+if (window.ResizeObserver) new ResizeObserver(queueReportHeight).observe(document.body);
+window.addEventListener('load', queueReportHeight);
 
 // ─────────────────────────────────────────────
 //  State
@@ -741,7 +826,14 @@ const KIND_OPTIONS = [
 // ─────────────────────────────────────────────
 function newId() { return ++_rowIdCounter; }
 
-function addSkuRow(data) {
+// Pointer-and-width test — used to decide whether focusing a field is helpful
+// (desktop) or would just throw up the on-screen keyboard (touch).
+function _isWide() {
+  try { return window.matchMedia('(min-width: 700px) and (hover: hover)').matches; }
+  catch(e) { return false; }
+}
+
+function addSkuRow(data, reveal) {
   const id = newId();
   data = data || {};
   const container = document.getElementById('sku-rows');
@@ -759,7 +851,7 @@ function addSkuRow(data) {
       <button class="remove-btn" onclick="removeRow(this)" title="Remove row">✕</button>
     </div>
     <div class="sku-row-card-body">
-      <div class="field">
+      <div class="field f-sku">
         <label>Part Number <span class="req">*</span></label>
         <input type="text" class="sku-input" id="sku-${id}"
                placeholder="FG-91G-BDL-809-DD"
@@ -776,7 +868,7 @@ function addSkuRow(data) {
         <div class="field-err" id="err-sku-${id}">Part number required</div>
       </div>
 
-      <div class="field">
+      <div class="field f-desc">
         <label>Description <span class="req">*</span></label>
         <textarea id="desc-${id}" rows="2"
                   placeholder="Full description of the SKU…"
@@ -785,13 +877,13 @@ function addSkuRow(data) {
       </div>
 
       <div class="qty-row">
-        <div class="field">
+        <div class="field f-qty">
           <label>Qty <span class="req">*</span></label>
           <input type="number" id="qty-${id}" min="1" value="${data.qty||1}"
                  style="text-align:center;" oninput="clearRowErr(${id})">
           <div class="field-err" id="err-qty-${id}">≥ 1</div>
         </div>
-        <div class="field">
+        <div class="field f-type">
           <label>Type</label>
           <div class="type-group" id="type-btns-${id}">
             ${KIND_OPTIONS.map(k => `<button type="button"
@@ -802,7 +894,7 @@ function addSkuRow(data) {
         </div>
       </div>
 
-      <div class="field">
+      <div class="field f-notes">
         <label>Notes</label>
         <textarea id="notes-${id}" rows="2"
                   placeholder="e.g. Hardware + FortiCare included">${escHtml(data.note||'')}</textarea>
@@ -816,9 +908,15 @@ function addSkuRow(data) {
   updateRowCountBadge();
   attachSkuAutocomplete(id);
   attachDescAutocomplete(id);
+
+  // A newly added row is what the user wants to look at next.
+  if (reveal) {
+    div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (_isWide()) setTimeout(() => document.getElementById(`sku-${id}`)?.focus(), 120);
+  }
 }
 
-function addSectionRow(data) {
+function addSectionRow(data, reveal) {
   const id = newId();
   data = data || {};
   const container = document.getElementById('sku-rows');
@@ -842,6 +940,11 @@ function addSectionRow(data) {
   container.appendChild(div);
   updateRowNumbers();
   updateRowCountBadge();
+
+  if (reveal) {
+    div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (_isWide()) setTimeout(() => document.getElementById(`sec-${id}`)?.focus(), 120);
+  }
 }
 
 function removeRow(btn) {
@@ -1149,7 +1252,10 @@ function addToProjectBOM() {
 // ─────────────────────────────────────────────
 //  resetForm
 // ─────────────────────────────────────────────
-function resetForm() {
+// `skipSeed` is for loadForEdit(), which supplies its own rows straight after.
+// Everywhere else the form should come back with one empty row ready to type in
+// rather than an empty list with nothing to fill out.
+function resetForm(skipSeed) {
   document.getElementById('f-group-name').value = '';
   document.getElementById('sku-rows').innerHTML = '';
   document.getElementById('bom-section').style.display = 'none';
@@ -1158,16 +1264,19 @@ function resetForm() {
   _rowIdCounter = 0;
   _lastRows = [];
   _isEditing = false;
+  _rowPricingItems.clear();
   const lbl = document.getElementById('add-to-bom-label');
   if (lbl) lbl.textContent = 'Add to BOM';
   updateRowCountBadge();
+  window.scrollTo(0, 0);
+  if (!skipSeed) addSkuRow(null, _isWide());
 }
 
 // ─────────────────────────────────────────────
 //  loadForEdit — called by parent window to pre-populate for editing
 // ─────────────────────────────────────────────
 function loadForEdit(data) {
-  resetForm();
+  resetForm(true);
   const { label, rows } = data;
   document.getElementById('f-group-name').value = label || '';
 
@@ -1470,9 +1579,19 @@ function attachDescAutocomplete(id) {
 }
 
 // ─────────────────────────────────────────────
+//  Escape closes the dialog (unless the autocomplete list is taking it)
+// ─────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (_acDropdown && _acDropdown.style.display !== 'none') return;
+  if (!document.body.classList.contains('popover-mode')) return;
+  closePopover();
+});
+
+// ─────────────────────────────────────────────
 //  Init
 // ─────────────────────────────────────────────
-addSkuRow();
+addSkuRow(null, _isWide());
 </script>
 </body>
 </html>

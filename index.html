@@ -70,12 +70,23 @@
   .ni-badge.on{display:block;}
   .n-sep{height:1px;background:var(--forti-border);margin:8px 0;}
   .n-load{padding:12px 16px;font-size:12px;color:var(--forti-text-muted);font-style:italic;}
-  .nav-search-wrap{padding:0 12px 8px;position:relative;}
-  #nav-search-input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid var(--forti-border);border-radius:3px;color:var(--forti-text-primary);font-size:12px;padding:6px 26px 6px 10px;outline:none;font-family:inherit;}
-  #nav-search-input::placeholder{color:var(--forti-text-muted);}
-  #nav-search-input:focus{border-color:rgba(238,49,36,.5);background:rgba(255,255,255,.08);}
-  #nav-search-clear{position:absolute;right:18px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--forti-text-muted);font-size:16px;padding:0;line-height:1;display:none;}
+  .nav-search-wrap{padding:0 12px 8px;}
+  .nav-search-field{position:relative;display:block;}
+  #nav-search-input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.12);border:1px solid #4C5468;border-radius:4px;color:var(--forti-text-primary);font-size:12px;padding:7px 26px 7px 28px;outline:none;font-family:inherit;transition:background .12s,border-color .12s,box-shadow .12s;}
+  #nav-search-input::placeholder{color:#96A0B5;}
+  #nav-search-input:hover{background:rgba(255,255,255,.16);border-color:#5C6579;}
+  #nav-search-input:focus{border-color:rgba(238,49,36,.65);background:rgba(255,255,255,.18);box-shadow:0 0 0 2px rgba(238,49,36,.12);}
+  #nav-search-input:focus + .nav-search-icon{color:var(--forti-text-secondary);}
+  .nav-search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:12px;height:12px;color:#8A93A8;pointer-events:none;transition:color .12s;}
+  #nav-search-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--forti-text-muted);font-size:16px;padding:0 3px;line-height:1;display:none;}
   #nav-search-clear:hover{color:var(--forti-text-secondary);}
+
+  /* Sidebar primary action (New BOM) */
+  .nav-action-wrap{padding:12px 12px 2px;}
+  .nav-action{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 10px;border-radius:4px;border:1px solid var(--forti-border);background:rgba(255,255,255,.05);color:var(--forti-text-secondary);font-size:12px;font-weight:600;font-family:inherit;letter-spacing:.02em;cursor:pointer;transition:background .12s,border-color .12s,color .12s;}
+  .nav-action:hover{background:rgba(238,49,36,.14);border-color:rgba(238,49,36,.55);color:var(--forti-text-primary);}
+  .nav-action:active{background:rgba(238,49,36,.22);}
+  .nav-action svg{width:13px;height:13px;flex-shrink:0;}
 
   /* CONTENT */
   #content{flex:1;background:var(--forti-content-bg);overflow:hidden;display:flex;flex-direction:column;min-height:0;}
@@ -152,9 +163,25 @@
   .bg-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#EEF3FF;color:#3557A5;border:1px solid #B8CBF5;border-radius:2px;padding:1px 6px;}
   .bg-del{background:#FEF0EE;border:1px solid #F5C6C2;color:#C0392B;font-size:11px;font-weight:600;padding:3px 8px;border-radius:2px;cursor:pointer;font-family:inherit;margin-left:auto;}
   .bg-del:hover{background:#F5C6C2;}
-  .bg-edit{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);padding:4px 6px;cursor:pointer;display:inline-flex;align-items:center;transition:background .12s;}
-  .bg-edit:hover{background:var(--c-sh);color:var(--c-text);}
-  .bg-edit svg{width:11px;height:11px;}
+  .bg-edit,.bg-copy{background:none;border:1px solid var(--c-ib);border-radius:2px;color:var(--c-text2);padding:4px 6px;cursor:pointer;display:inline-flex;align-items:center;transition:background .12s,color .12s,border-color .12s;}
+  .bg-edit:hover,.bg-copy:hover{background:var(--c-sh);color:var(--c-text);}
+  .bg-edit svg,.bg-copy svg{width:11px;height:11px;}
+
+  /* Copy / paste affordances */
+  .bg-copy.copied,.bgr-btn.copied{background:#EEF3FF;border-color:#B8CBF5;color:#3557A5;}
+  .bgr-btn.paste{background:#F4F8FF;border-color:#B8CBF5;color:#3557A5;}
+  .bgr-btn.paste:hover{background:#EEF3FF;color:#24417F;}
+  #paste-btn{display:none;align-items:center;max-width:250px;}
+  #paste-btn.on{display:inline-flex;}
+  #paste-btn .paste-lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px;font-weight:600;color:#3557A5;}
+  #paste-btn .paste-x{margin-left:1px;padding:0 4px;border-radius:2px;color:var(--c-textm);font-size:14px;line-height:1;}
+  #paste-btn .paste-x:hover{background:rgba(0,0,0,.09);color:var(--c-text);}
+  #add-menu-paste .dm-paste-lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px;}
+  /* Comfortable tap targets for the row actions on touch-sized screens */
+  @media (max-width:768px){
+    .bg-edit,.bg-copy,.bg-del,.bgr-btn{min-height:30px;justify-content:center;}
+    .bgr-btn{min-width:30px;}
+  }
 
   /* BOM table */
   .bt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -316,11 +343,17 @@
   #copy-menu.on,#project-menu.on,#add-menu.on{display:block;}
 
   /* Add SKU modal */
-  #sku-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.55);align-items:center;justify-content:center;}
+  #sku-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:16px;}
   #sku-modal.on{display:flex;}
-  #sku-box{background:#fff;border-radius:5px;width:540px;max-width:95vw;height:82vh;max-height:780px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3);display:flex;flex-direction:column;}
+  /* Roomy on desktop: the entry form uses the extra width to lay rows out
+     horizontally instead of forcing a long scroll inside the iframe. */
+  #sku-box{background:#fff;border-radius:6px;width:min(1000px,100%);height:min(88vh,920px);overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.35);display:flex;flex-direction:column;transition:height .18s ease;}
   #sku-box iframe{flex:1;border:none;width:100%;display:block;}
-  @media(max-width:600px){#sku-box{width:100%;max-width:100%;height:90vh;border-radius:5px 5px 0 0;}#sku-modal.on{align-items:flex-end;}}
+  @media(max-width:760px){
+    #sku-modal{padding:0;}
+    #sku-modal.on{align-items:flex-end;}
+    #sku-box{width:100%;height:94vh;height:94dvh;border-radius:12px 12px 0 0;}
+  }
   .dm-section{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--c-textm);padding:6px 12px 2px;}
   .dm-item{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:12px;color:var(--c-text);cursor:pointer;white-space:nowrap;font-family:inherit;background:none;border:none;width:100%;text-align:left;}
   .dm-item:hover{background:var(--c-sh);}
@@ -343,11 +376,14 @@
   .sp-empty svg{opacity:.2;}
   .sp-empty h3{font-size:16px;font-weight:500;color:var(--c-text2);}
   .sp-empty p{font-size:13px;max-width:320px;line-height:1.6;}
-  #spv-filter-wrap{padding:10px 18px;border-bottom:1px solid var(--c-border);position:relative;}
-  #spv-filter{width:100%;box-sizing:border-box;background:var(--c-white);border:1px solid var(--c-border);border-radius:3px;color:var(--c-text);font-size:12px;padding:6px 28px 6px 10px;outline:none;font-family:inherit;}
+  #spv-filter-wrap{padding:10px 18px;border-bottom:1px solid var(--c-border);}
+  .spv-filter-field{position:relative;display:block;}
+  #spv-filter{width:100%;box-sizing:border-box;background:var(--c-white);border:1px solid var(--c-ib);border-radius:4px;color:var(--c-text);font-size:12px;padding:7px 28px 7px 28px;outline:none;font-family:inherit;transition:border-color .12s,box-shadow .12s;}
   #spv-filter::placeholder{color:var(--c-textm);}
-  #spv-filter:focus{border-color:rgba(238,49,36,.5);}
-  #spv-filter-clear{position:absolute;right:24px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--c-textm);font-size:16px;padding:0;line-height:1;display:none;}
+  #spv-filter:hover{border-color:var(--c-text2);}
+  #spv-filter:focus{border-color:rgba(238,49,36,.65);box-shadow:0 0 0 2px rgba(238,49,36,.1);}
+  .spv-filter-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:12px;height:12px;color:var(--c-textm);pointer-events:none;}
+  #spv-filter-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--c-textm);font-size:16px;padding:0 3px;line-height:1;display:none;}
   #spv-filter-clear:hover{color:var(--c-text2);}
   .sp-rev-toggle{display:inline-flex;align-items:center;gap:5px;margin-top:6px;background:none;border:none;padding:2px 0;font-size:11px;color:var(--c-text2);cursor:pointer;font-family:inherit;line-height:1.4;transition:color .12s;}
   .sp-rev-toggle:hover{color:var(--forti-red);}
@@ -462,6 +498,7 @@
   #pbv.bom-readonly .bg-del,
   #pbv.bom-readonly .bgr-actions,
   #pbv.bom-readonly #add-btn,
+  #pbv.bom-readonly #paste-btn,
   #pbv.bom-readonly #clear-btn{display:none!important;}
   #pbv.bom-readonly .qty-input,
   #pbv.bom-readonly .note-input,
@@ -500,7 +537,7 @@
     #top-bar,#sidebar,#ch,.act-row,#toast,#pfw,#copy-menu,#project-menu,#add-menu{display:none!important;}
     #main{display:block;}
     #pbv{display:flex!important;overflow:visible;padding:20px;}
-    .bg-del,.bg-edit,.bgr-actions{display:none!important;}
+    .bg-del,.bg-edit,.bg-copy,.bgr-actions{display:none!important;}
     .lc,.bg{break-inside:avoid;}
     .pi-edit-btn,.pi-clear-btn,.pi-expand-btn{display:none!important;}
     #proj-info-card .pfg{display:none!important;}
@@ -557,6 +594,12 @@
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
 <div id="main" role="presentation">
   <nav id="sidebar" aria-label="Product navigation">
+    <div class="nav-action-wrap">
+      <button class="nav-action" id="new-bom-btn" onclick="newProject()" title="Clear the Project BOM and Project Information and start fresh">
+        <svg viewBox="0 0 13 13" fill="none" aria-hidden="true"><path d="M7 1H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V5L7 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M7 1v4h4" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M6.5 6.2v3.6M4.7 8h3.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        New BOM
+      </button>
+    </div>
     <div class="nsl" style="padding-bottom:4px;">Project</div>
     <div class="ni proj" id="nav-proj" onclick="showPBV()">
       <svg class="ni-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2" stroke="#E8EAF0" stroke-width="1.2"/><path d="M5 6h8M5 9h8M5 12h5" stroke="#E8EAF0" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -572,8 +615,11 @@
     <div class="n-sep" style="margin-top:8px;"></div>
     <div class="nsl">Products</div>
     <div class="nav-search-wrap">
-      <input id="nav-search-input" type="text" placeholder="Filter products &amp; plugins…" oninput="filterNav(this.value)" autocomplete="off" spellcheck="false">
-      <button id="nav-search-clear" onclick="clearNavSearch()" title="Clear" aria-label="Clear product filter">&times;</button>
+      <div class="nav-search-field">
+        <input id="nav-search-input" type="text" placeholder="Filter products &amp; plugins…" aria-label="Filter products and plugins" oninput="filterNav(this.value)" autocomplete="off" spellcheck="false">
+        <svg class="nav-search-icon" viewBox="0 0 12 12" fill="none" aria-hidden="true"><circle cx="5.2" cy="5.2" r="3.4" stroke="currentColor" stroke-width="1.3"/><path d="M7.8 7.8l2.4 2.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <button id="nav-search-clear" onclick="clearNavSearch()" title="Clear" aria-label="Clear product filter">&times;</button>
+      </div>
     </div>
     <div id="nav-items"><div class="n-load">Scanning products…</div></div>
     <div id="plugin-nav-items"></div>
@@ -687,6 +733,10 @@
       <div class="sbar" id="sbar">
         <div class="act-row">
           <button class="btn bp" id="add-btn" onclick="toggleAddMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="4" width="11" height="5" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M4 6.5h5M6.5 5.5v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Add Item<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="btn bs" id="paste-btn" onclick="pasteClip()" title="Paste the copied item at the end of the BOM">
+            <svg viewBox="0 0 13 13" fill="none"><path d="M4.5 2H3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H7.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><rect x="4.5" y="1" width="3" height="2" rx=".6" stroke="currentColor" stroke-width="1.1"/><path d="M4.5 6.5h3.5M4.5 8.8h2.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+            Paste<span class="paste-lbl" id="paste-lbl"></span><span class="paste-x" onclick="event.stopPropagation();clearClip()" title="Clear the copied item">&times;</span>
+          </button>
           <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
             <button class="btn bs" id="project-btn" onclick="toggleProjectMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="4" y="1" width="5" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/><rect x="3" y="7" width="7" height="4" rx=".5" stroke="currentColor" stroke-width="1.1"/></svg>File<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <button class="btn bs" id="copy-export-btn" onclick="toggleCopyMenu(event)"><svg viewBox="0 0 13 13" fill="none"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="#6B7589" stroke-width="1.1"/></svg>Share<svg viewBox="0 0 10 6" fill="none" style="width:9px;height:9px;margin-left:1px;"><path d="M1 1l4 4 4-4" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -744,8 +794,11 @@
           <button class="btn bs" style="margin-left:auto;font-size:11px;padding:4px 10px;" onclick="backupProjects()" title="Download a Markdown backup of all saved projects"><svg viewBox="0 0 13 13" fill="none" style="width:12px;height:12px;"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Backup All</button>
         </div>
         <div id="spv-filter-wrap">
-          <input id="spv-filter" type="text" placeholder="Filter by project name, opportunity ID, or SE…" oninput="filterSavedProjects(this.value)" autocomplete="off" spellcheck="false">
-          <button id="spv-filter-clear" onclick="clearSpvFilter()" title="Clear">&times;</button>
+          <div class="spv-filter-field">
+            <input id="spv-filter" type="text" placeholder="Filter by project name, opportunity ID, or SE…" aria-label="Filter saved projects" oninput="filterSavedProjects(this.value)" autocomplete="off" spellcheck="false">
+            <svg class="spv-filter-icon" viewBox="0 0 12 12" fill="none" aria-hidden="true"><circle cx="5.2" cy="5.2" r="3.4" stroke="currentColor" stroke-width="1.3"/><path d="M7.8 7.8l2.4 2.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <button id="spv-filter-clear" onclick="clearSpvFilter()" title="Clear">&times;</button>
+          </div>
         </div>
         <div id="spv-content" class="lcb"></div>
       </div>
@@ -978,6 +1031,8 @@
   <div class="dm-section">Add to BOM</div>
   <button class="dm-item" onclick="openSkuModal();closeAddMenu()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="3" width="11" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M3.5 6.5h6M6.5 5v3" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Add SKU</button>
   <button class="dm-item" onclick="openAddGroup();closeAddMenu()"><svg viewBox="0 0 13 13" fill="none"><rect x="1" y="4" width="11" height="5" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M4 6.5h5M6.5 5.5v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Add Group</button>
+  <div class="dm-sep" id="add-menu-paste-sep" style="display:none;"></div>
+  <button class="dm-item" id="add-menu-paste" style="display:none;" onclick="pasteClip();closeAddMenu()"><svg viewBox="0 0 13 13" fill="none"><path d="M4.5 2H3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H7.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><rect x="4.5" y="1" width="3" height="2" rx=".6" stroke="currentColor" stroke-width="1.1"/><path d="M4.5 6.5h3.5M4.5 8.8h2.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span class="dm-paste-lbl">Paste</span></button>
 </div>
 
 <!-- Add SKU modal (iframe popover) -->
@@ -1876,6 +1931,7 @@ let _skuInsertGroupId = null;
 window.addEventListener('message', e => {
   if (!e.data) return;
   if (e.data.type === 'FORTIBOM_CLOSE') { closeSkuModal(); return; }
+  if (e.data.type === 'FABRICBOM_SKU_HEIGHT') { sizeSkuBox(e.data.height); return; }
   if (e.data.type !== 'FORTIBOM_ADD' && e.data.type !== 'FABRICBOM_ADD') return;
   const { product, label, rows, meta } = e.data;
   if (_skuEditId !== null) {
@@ -2014,8 +2070,17 @@ function updateSectionLabel(entryId, rowIdx, value) {
 }
 function clearCart() { if (!confirm('Clear all items from the Project BOM?')) return; cart=[]; seq=0; if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname); updateBadges(); renderGroups(); saveCart(); markSaved(); }
 function newProject() {
-  if (cart.length && !confirm('Start a new project? The current BOM and project info will be cleared.')) return;
-  cart=[]; seq=0;
+  // Warn whenever there is anything to lose — BOM items and/or Project Information.
+  const itemN = cart.filter(c => !c._type).length;
+  const hasInfo = hasPiData();
+  if (itemN || cart.length || hasInfo) {
+    const parts = [];
+    if (itemN) parts.push(`${itemN} product group${itemN !== 1 ? 's' : ''}`);
+    if (hasInfo) parts.push('the Project Information fields');
+    const what = parts.join(' and ') || 'the current project';
+    if (!confirm(`Start a new BOM?\n\nThis clears ${what}.\n\nAnything unsaved will be lost — use File ▸ Save Project first if you want to keep it.`)) return;
+  }
+  cart=[]; seq=0; collapsedGroups.clear();
   if (location.hash.startsWith('#bom=')) history.replaceState(null, '', location.pathname);
   const _settings = loadSettings();
   document.getElementById('pi-cust').value  = '';
@@ -2037,7 +2102,130 @@ function newProject() {
   document.getElementById('pi-edit-label').textContent = 'View';
   updateBadges(); renderGroups(); saveCart(); markSaved();
   showPBV();
+  toast('✓ New BOM — project reset');
 }
+
+// ── COPY / PASTE ─────────────────────────────────────────────────────────────
+// A single-slot clipboard for BOM entries. Kept in localStorage so a copy
+// survives a reload and can be pasted into a FabricBOM tab in another window.
+const CLIP_KEY = 'fortibom_clipboard';
+let _bomClip = null;   // { kind:'entry'|'section', label, entries:[…] }
+
+function loadClip() {
+  try { _bomClip = JSON.parse(localStorage.getItem(CLIP_KEY) || 'null'); }
+  catch { _bomClip = null; }
+  if (_bomClip && !Array.isArray(_bomClip.entries)) _bomClip = null;
+}
+function persistClip() {
+  try {
+    if (_bomClip) localStorage.setItem(CLIP_KEY, JSON.stringify(_bomClip));
+    else localStorage.removeItem(CLIP_KEY);
+  } catch(e) { /* storage full — clipboard stays in memory for this session */ }
+}
+function _clipLabel(entry) { return (entry.label || '').trim() || entry.product || 'Untitled'; }
+function _cloneEntries(entries) { return JSON.parse(JSON.stringify(entries)); }
+
+// Copies a product group, or a section header together with every group under it.
+function copyEntry(id) {
+  const idx = cart.findIndex(c => c.id === id);
+  if (idx === -1) return;
+  const entry = cart[idx];
+  let entries, kind;
+  if (entry._type === 'group') {
+    const [s, e] = _groupBlockRange(idx);
+    entries = _cloneEntries(cart.slice(s, e));
+    kind = 'section';
+  } else {
+    entries = _cloneEntries([entry]);
+    kind = 'entry';
+  }
+  _bomClip = { kind, label: _clipLabel(entry), entries, srcId: entry.id };
+  persistClip();
+  renderGroups();
+  const n = entries.filter(x => !x._type).length;
+  toast(kind === 'section'
+    ? `⧉ Copied section “${_bomClip.label}” (${n} group${n !== 1 ? 's' : ''}) — tap Paste to place a copy`
+    : `⧉ Copied “${_bomClip.label}” — tap Paste to place a copy`);
+}
+
+function clearClip() {
+  _bomClip = null;
+  persistClip();
+  renderGroups();
+  toast('Clipboard cleared');
+}
+
+// Pastes a copy. With no argument it lands at the end of the BOM; given a
+// section header id, an item lands inside that section and a copied section
+// lands directly after it.
+function pasteClip(targetGroupId) {
+  if (isReadOnly()) { toast('This BOM is read-only — unlock it to paste'); return; }
+  if (!_bomClip || !_bomClip.entries.length) { toast('Nothing copied yet — use the ⧉ Copy button on a BOM group first'); return; }
+  const fresh = _cloneEntries(_bomClip.entries).map(e => ({ ...e, id: ++seq }));
+
+  let insertAt = cart.length;
+  if (targetGroupId !== undefined && targetGroupId !== null) {
+    const gIdx = cart.findIndex(c => c.id === targetGroupId && c._type === 'group');
+    if (gIdx !== -1) {
+      insertAt = _groupBlockRange(gIdx)[1];
+      collapsedGroups.delete(targetGroupId);   // don't hide what was just pasted
+    }
+  }
+  cart.splice(insertAt, 0, ...fresh);
+  fresh.forEach(e => { if (e._type === 'group') collapsedGroups.delete(e.id); });
+
+  updateBadges(); renderGroups(); saveCart(); markDirty();
+  const n = fresh.filter(e => !e._type).length;
+  toast(`✓ Pasted “${_bomClip.label}”${n > 1 ? ` — ${n} groups` : ''}`);
+}
+
+// Markup for the "paste into this section" button — rendered only when
+// something has been copied, so the row stays clean the rest of the time.
+function pasteIntoBtn(groupId) {
+  if (!_bomClip || isReadOnly()) return '';
+  const what = _bomClip.kind === 'section' ? 'after this section' : 'into this section';
+  return `<button class="bgr-btn paste" onclick="pasteClip(${groupId})" title="Paste “${h(_bomClip.label)}” ${what}" aria-label="Paste copied item ${what}"><svg viewBox="0 0 13 13" fill="none" aria-hidden="true"><path d="M4.5 2H3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H7.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><rect x="4.5" y="1" width="3" height="2" rx=".6" stroke="currentColor" stroke-width="1.1"/><path d="M4.5 6.5h3.5M4.5 8.8h2.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg></button>`;
+}
+
+function updateClipUI() {
+  const btn = document.getElementById('paste-btn');
+  const lbl = document.getElementById('paste-lbl');
+  const mi  = document.getElementById('add-menu-paste');
+  const sep = document.getElementById('add-menu-paste-sep');
+  if (!btn) return;
+  if (_bomClip) {
+    lbl.textContent = _bomClip.label;
+    btn.classList.add('on');
+    btn.title = `Paste a copy of “${_bomClip.label}” at the end of the BOM`;
+    if (mi)  { mi.style.display = ''; mi.querySelector('.dm-paste-lbl').textContent = `Paste “${_bomClip.label}”`; }
+    if (sep) sep.style.display = '';
+  } else {
+    lbl.textContent = '';
+    btn.classList.remove('on');
+    if (mi)  mi.style.display = 'none';
+    if (sep) sep.style.display = 'none';
+  }
+}
+
+// Keep every open tab in sync with the clipboard slot.
+window.addEventListener('storage', e => {
+  if (e.key !== CLIP_KEY) return;
+  loadClip();
+  renderGroups();
+});
+
+// Ctrl/⌘+V pastes at the end of the BOM while the Project BOM view is showing.
+document.addEventListener('keydown', e => {
+  if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey) return;
+  if (e.key !== 'v' && e.key !== 'V') return;
+  const t = e.target, tag = t && t.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || (t && t.isContentEditable)) return;
+  if (!_bomClip) return;
+  const pbv = document.getElementById('pbv');
+  if (!pbv || pbv.style.display !== 'flex') return;
+  e.preventDefault();
+  pasteClip();
+});
 
 // ── KIND (TYPE) OVERRIDE ─────────────────────────────────────────────────────
 let kindPopoverTarget = null;
@@ -2087,6 +2275,7 @@ document.addEventListener('click', e => {
 
 // ── RENDER ───────────────────────────────────────────────────────────────────
 async function renderGroups() {
+  updateClipUI();
   let priceMap = null;
   try {
     const pricingRaw = await getPricingIDB();
@@ -2176,6 +2365,8 @@ async function renderGroups() {
         </div>
         <div class="bgr-actions">
           <button class="bgr-btn add" onclick="openSkuModalForGroup(${entry.id})" title="Add SKU to this group" aria-label="Add SKU to this group"><svg viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M5.5 1.5v8M1.5 5.5h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+          <button class="bgr-btn${_bomClip && _bomClip.srcId === entry.id ? ' copied' : ''}" onclick="copyEntry(${entry.id})" title="Copy this section and everything in it" aria-label="Copy section"><svg viewBox="0 0 13 13" fill="none" aria-hidden="true"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="currentColor" stroke-width="1.1"/></svg></button>
+          ${pasteIntoBtn(entry.id)}
           <button class="bgr-btn" onclick="openEditGroup(${entry.id})" title="Edit group header"><svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg></button>
           <button class="bgr-btn del" onclick="removeFromCart(${entry.id})">✕</button>
         </div>`;
@@ -2229,6 +2420,7 @@ async function renderGroups() {
           </div>
           <div style="flex:1;min-width:0;"><input type="text" class="label-input bgp" value="${h(entry.label)}" onchange="updateEntryLabel(${entry.id},this.value)"><div class="bgm">${lines} line item${lines!==1?'s':''} · ${qty.toLocaleString()} units/licenses</div></div>
           ${entry.product !== 'Custom SKU' ? `<span class="bg-tag">${h(entry.product)}</span>` : ''}
+          <button class="bg-copy${_bomClip && _bomClip.srcId === entry.id ? ' copied' : ''}" onclick="copyEntry(${entry.id})" title="Copy this group — then paste a duplicate anywhere in the BOM" aria-label="Copy group"><svg viewBox="0 0 13 13" fill="none" aria-hidden="true"><rect x="3.5" y="1" width="8" height="9" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="1" y="3" width="8" height="9" rx="1" stroke="currentColor" stroke-width="1.1"/></svg></button>
           <button class="bg-edit" onclick="openSkuModalForEdit(${entry.id})" title="Edit rows"><svg viewBox="0 0 11 11" fill="none"><path d="M7.5 1.5l2 2L3 10H1V8L7.5 1.5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg></button>
           <button class="bg-del" onclick="removeFromCart(${entry.id})">✕</button>
         </div>
@@ -2521,7 +2713,7 @@ function saveGroupRow() {
 
 // Allow Enter key in group modal inputs
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeGroupModal(); closeImport(); closeBOMShareModal(); closeKindPopover(); }
+  if (e.key === 'Escape') { closeGroupModal(); closeImport(); closeBOMShareModal(); closeKindPopover(); closeSkuModal(); }
   if (e.key === 'Enter' && document.getElementById('grp-modal').classList.contains('on')) saveGroupRow();
 });
 
@@ -3016,6 +3208,21 @@ function closeSkuModal() {
   _skuInsertGroupId = null;
   document.getElementById('sku-modal').classList.remove('on');
 }
+// The Add SKU form reports its content height so the dialog can hug the form.
+// A short form then needs no scrolling inside the iframe at all; a long one
+// grows to the height cap and scrolls from there. Mobile keeps the CSS sheet.
+let _skuContentH = 0;
+function sizeSkuBox(h) {
+  const box = document.getElementById('sku-box');
+  if (!box) return;
+  if (typeof h === 'number' && h > 0) _skuContentH = h;
+  if (window.innerWidth <= 760) { box.style.height = ''; return; }
+  const max = Math.min(window.innerHeight * 0.88, 920);
+  box.style.height = Math.round(Math.max(300, Math.min(_skuContentH, max))) + 'px';
+}
+window.addEventListener('resize', () => {
+  if (_skuContentH && document.getElementById('sku-modal').classList.contains('on')) sizeSkuBox();
+});
 document.getElementById('sku-modal').addEventListener('click', function(e) {
   if (e.target === this) closeSkuModal();
 });
@@ -4468,6 +4675,7 @@ function initDemoLink() {
     document.getElementById('pi-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   }
   loadCart();
+  loadClip();
   initUndoBaseline();
   loadSaved();
   updateBadges();

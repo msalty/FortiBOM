@@ -27,9 +27,11 @@ Designed to be run entirely offline. Install it as a web app on most modern brow
 - **Item classification** — tag line items as REQUIRED, OPTIONAL, or EXCLUDED; items without pricing auto-flag as ATTENTION
 - **Inline editing** — edit quantities, notes, group labels, and item types directly in the BOM table
 - **Drag-to-reorder** — drag product groups and line items into any order
+- **Copy & paste** — duplicate a product group, or a section header with everything under it, anywhere in the BOM; the clipboard persists across reloads and other open tabs, so blocks can be moved between projects
 - **Custom SKU entry** — look up any part number via catalog search or enter it manually
 
 ### Project Management
+- **New BOM** — one click in the sidebar clears the BOM and Project Information to start a fresh quote (with a confirmation when there's anything to lose)
 - **Named project saves** — save multiple projects to browser storage by name and reopen them any time
 - **Version history** — each project retains previous saves; restore any prior version with one click
 - **Session persistence** — IndexedDB keeps your active BOM intact across page refreshes
