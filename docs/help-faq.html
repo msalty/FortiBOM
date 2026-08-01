@@ -280,7 +280,8 @@
     line-height: 1.55;
   }
   .qa-body .note strong { color: #5A4000; }
-  .qa-body code {
+  .qa-body code,
+  .qa-body kbd {
     font-family: 'Courier New', monospace;
     font-size: 12px;
     background: var(--c-th);
@@ -495,6 +496,14 @@
         </div>
         <div class="lcb">
 
+          <details class="qa">
+            <summary>How do I start a brand new BOM?</summary>
+            <div class="qa-body">
+              <p>Click <strong>New BOM</strong> at the top of the left sidebar. If the current BOM has anything in it, you'll be asked to confirm first — it clears every product group and resets the Project Information fields (SE name, default term, and any boilerplate scope notes come back from your Settings defaults).</p>
+              <p>This does not touch anything in <strong>Saved Projects</strong>, so save the current build from <strong>File ▸ Save Project</strong> first if you want to come back to it later.</p>
+            </div>
+          </details>
+
           <details class="qa" open>
             <summary>How do I add a new SKU or part number to my Project BOM?</summary>
             <div class="qa-body">
@@ -539,6 +548,28 @@
                 <li><strong>Edit the Item Header:</strong> To rename the title of a product block, click the small <strong>pencil icon</strong> located at the top-right corner of that block.</li>
                 <li><strong>Remove an Item:</strong> To delete a block entirely, click the <strong>✕</strong> button next to the pencil icon.</li>
               </ul>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>How do I reorder the line items inside a product block?</summary>
+            <div class="qa-body">
+              <p>Each row in the table has a <strong>grip handle</strong> in the left-most column. Drag it up or down to move that line item — this works with a mouse and by touch on a phone or tablet. You can also click the handle and use the <kbd>↑</kbd> and <kbd>↓</kbd> arrow keys.</p>
+              <p>Section header rows move the same way, and dragging a SKU past one changes which section it belongs to.</p>
+              <p>Reordering works <em>within</em> a product block. To move a line item into a different block, open that block's <strong>pencil</strong> (Edit) icon and add it there.</p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Can I copy an item and paste it somewhere else in the BOM?</summary>
+            <div class="qa-body">
+              <p>Yes. Every product block has a <strong>copy icon</strong> (two overlapping pages) next to its pencil and ✕ buttons, and every group header has one too — copying a header takes the whole section, including all of the blocks underneath it.</p>
+              <p>Once something is copied, a <strong>Paste</strong> button appears next to <strong>Add Item</strong> showing what's on the clipboard. Use it to:</p>
+              <ul>
+                <li><strong>Paste at the end of the BOM</strong> — click the Paste button in the toolbar, choose <em>Paste</em> from the <strong>Add Item</strong> menu, or press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>V</kbd>.</li>
+                <li><strong>Paste into a specific section</strong> — click the clipboard icon that appears on that group header.</li>
+              </ul>
+              <p>The pasted copy is fully independent, so editing it won't change the original. The clipboard holds one item at a time, survives a page reload, and is shared with other FabricBOM tabs in the same browser — which makes it a quick way to move a product block from one project into another. Click the <strong>×</strong> on the Paste button to clear it.</p>
             </div>
           </details>
 
