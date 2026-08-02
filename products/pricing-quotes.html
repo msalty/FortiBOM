@@ -193,12 +193,22 @@
           <option value="__current__">Current Project BOM</option>
         </select>
       </div>
+      <div class="grp" id="sec-grp" style="display:none">
+        <label class="lbl">Scope</label>
+        <select id="sec-sel" onchange="onSectionChange()" style="min-width:240px;max-width:400px"
+                title="Quote the whole BOM, or just one section header (phase, site, …)">
+          <option value="__all__">Entire BOM</option>
+        </select>
+      </div>
       <button class="btn bp" id="load-btn" onclick="loadBOM()" disabled style="flex-shrink:0;margin-bottom:1px">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1a1 1 0 001 1h9a1 1 0 001-1v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         Load BOM
       </button>
     </div>
     <div id="src-meta" style="margin-top:8px;font-size:11px;color:var(--text2);display:none"></div>
+    <div id="sec-hint" style="margin-top:6px;font-size:11px;color:var(--textm);display:none">
+      This BOM has section headers — pick one to quote that phase / site on its own, or leave it on <strong>Entire BOM</strong>.
+    </div>
   </div>
 </div>
 
@@ -207,6 +217,7 @@
   <div class="ch">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 4h12M1 8h12M1 12h12" stroke="#6B7589" stroke-width="1.3" stroke-linecap="round"/></svg>
     <h2>Quote</h2>
+    <span id="q-scope" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--red);background:#fff5f4;border:1px solid #F5C9C4;border-radius:2px;padding:2px 7px;margin-left:4px;display:none"></span>
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
       <label class="lbl" style="margin:0;white-space:nowrap;text-transform:none;letter-spacing:0;font-size:12px;font-weight:500;color:var(--text2)">Partner type:</label>
       <select id="partner-sel" style="font-size:12px;padding:4px 8px" onchange="onPartnerChange()">
@@ -335,6 +346,14 @@ let selectedPartner = '';
 let priceMap        = new Map();
 let catMap          = new Map();
 
+// BOM currently loaded into the quote — kept so the scope can be re-sliced
+// without re-reading storage.
+let loadedCart      = null;
+let loadedMeta      = {};
+let loadedSrcVal    = '';
+let quoteScope      = '__all__';   // '__all__' | '__pre__' | 'sec_<cartIndex>'
+let quoteScopeLabel = '';          // '' when the whole BOM is quoted
+
 // All columns ever stored — used for export and rate counting
 function allCols() {
   return [
@@ -453,9 +472,106 @@ function populateSourceSelect() {
   }
 }
 
+// Reads a BOM out of storage (or the parent frame for the live project).
+function readSource(val) {
+  let cartData = [], meta = {};
+  if (val === '__current__') {
+    try {
+      if (window.parent && window.parent !== window && Array.isArray(window.parent.cart)) {
+        cartData = window.parent.cart;
+      }
+    } catch(e) {}
+    if (!cartData.length) {
+      try { cartData = JSON.parse(localStorage.getItem(LS_CART) || '{}').cart || []; } catch(e) {}
+    }
+    try { meta = JSON.parse(localStorage.getItem(LS_PI) || '{}'); } catch(e) {}
+  } else if (val) {
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); } catch(e) {}
+    const p = saved.find(s => s.id === val);
+    if (p) { cartData = p.cart || []; meta = p.meta || {}; }
+  }
+  return {cartData, meta};
+}
+
+// Number of rows in a product entry that would become quote lines.
+function quotableCount(entry) {
+  if (!entry || entry._type === 'group' || !Array.isArray(entry.rows)) return 0;
+  let n = 0;
+  for (const r of entry.rows) {
+    if (r.section !== undefined) continue;
+    if (!r.sku) continue;
+    if (r.kind === 'note') continue;
+    const effectiveKind = r._kindOverride !== undefined ? r._kindOverride : r.kind;
+    if (effectiveKind === 'excl') continue;
+    n++;
+  }
+  return n;
+}
+
+// Walks the BOM and returns one descriptor per group header, plus a leading
+// '__pre__' pseudo-section for any items that sit above the first header.
+// Sections are keyed by cart index so BOMs without stable entry ids still work.
+function scanSections(cartData) {
+  const secs = [];
+  let cur = null;   // null until the first item is seen; then the bucket in play
+  for (let i = 0; i < cartData.length; i++) {
+    const e = cartData[i];
+    if (!e) continue;
+    if (e._type === 'group') {
+      cur = {key:'sec_' + i, label:(e.label || '').trim() || 'Untitled section', skus:0};
+      secs.push(cur);
+      continue;
+    }
+    if (!cur) {
+      // Items above the first header belong to a leading pseudo-section.
+      cur = {key:'__pre__', label:'Items before first section', skus:0, pre:true};
+      secs.push(cur);
+    }
+    cur.skus += quotableCount(e);
+  }
+  return secs;
+}
+
+function populateSectionSelect(cartData) {
+  const sel  = el('sec-sel');
+  const grp  = el('sec-grp');
+  const hint = el('sec-hint');
+  const secs = scanSections(cartData);
+  const real = secs.filter(s => !s.pre);
+
+  sel.innerHTML = '';
+  if (!real.length) {
+    grp.style.display  = 'none';
+    hint.style.display = 'none';
+    quoteScope = '__all__';
+    return;
+  }
+
+  const total = secs.reduce((n, s) => n + s.skus, 0);
+  const add = (value, label) => {
+    const o = document.createElement('option');
+    o.value = value;
+    o.textContent = label;
+    sel.appendChild(o);
+  };
+  add('__all__', `Entire BOM — ${total} SKU${total !== 1 ? 's' : ''}`);
+  for (const s of secs) {
+    add(s.key, `${s.pre ? '' : '§ '}${s.label} — ${s.skus} SKU${s.skus !== 1 ? 's' : ''}`);
+  }
+
+  sel.value = '__all__';
+  quoteScope = '__all__';
+  grp.style.display  = '';
+  hint.style.display = '';
+}
+
 function onSrcChange() {
   const val = el('src-sel').value;
   el('load-btn').disabled = !val;
+
+  const {cartData} = readSource(val);
+  populateSectionSelect(val ? cartData : []);
 
   const meta = el('src-meta');
   if (val === '__current__') {
@@ -479,39 +595,69 @@ function onSrcChange() {
   }
 }
 
+// Re-slice the already-loaded BOM when the scope changes; if nothing is loaded
+// yet the new scope simply applies on the next Load BOM.
+function onSectionChange() {
+  quoteScope = el('sec-sel').value || '__all__';
+  if (loadedCart && loadedSrcVal === el('src-sel').value) {
+    buildQuoteRows(loadedCart, loadedMeta, quoteScope);
+  }
+}
+
+// Returns only the product entries that belong to the requested scope.
+function sliceBySection(cartData, scope) {
+  if (!scope || scope === '__all__') return cartData;
+  const out = [];
+  let curKey = '__pre__';
+  for (let i = 0; i < cartData.length; i++) {
+    const e = cartData[i];
+    if (!e) continue;
+    if (e._type === 'group') { curKey = 'sec_' + i; continue; }
+    if (curKey === scope) out.push(e);
+  }
+  return out;
+}
+
+function sectionLabel(cartData, scope) {
+  if (!scope || scope === '__all__') return '';
+  if (scope === '__pre__') return 'Items before first section';
+  const idx = parseInt(scope.slice(4), 10);
+  const e = cartData[idx];
+  return (e && (e.label || '').trim()) || 'Untitled section';
+}
+
 function loadBOM() {
   const val = el('src-sel').value;
   if (!val) return;
 
-  let cartData = [], meta = {};
+  const {cartData, meta} = readSource(val);
+  loadedCart   = cartData;
+  loadedMeta   = meta;
+  loadedSrcVal = val;
 
-  if (val === '__current__') {
-    try {
-      if (window.parent && window.parent !== window && Array.isArray(window.parent.cart)) {
-        cartData = window.parent.cart;
-      }
-    } catch(e) {}
-    if (!cartData.length) {
-      try { cartData = JSON.parse(localStorage.getItem(LS_CART) || '{}').cart || []; } catch(e) {}
-    }
-    try { meta = JSON.parse(localStorage.getItem(LS_PI) || '{}'); } catch(e) {}
-  } else {
-    let saved = [];
-    try { saved = JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); } catch(e) {}
-    const p = saved.find(s => s.id === val);
-    if (p) { cartData = p.cart || []; meta = p.meta || {}; }
-  }
-
-  buildQuoteRows(cartData, meta);
+  buildQuoteRows(cartData, meta, el('sec-grp').style.display === 'none' ? '__all__' : (el('sec-sel').value || '__all__'));
 }
 
 // ── BUILD QUOTE ───────────────────────────────────────────────────────────────
 
-function buildQuoteRows(cartData, meta) {
+function buildQuoteRows(cartData, meta, scope) {
   quoteRows = [];
   const term = meta?.term || 'DD';
 
-  for (const entry of cartData) {
+  quoteScope      = scope || '__all__';
+  quoteScopeLabel = sectionLabel(cartData, quoteScope);
+  const scoped    = sliceBySection(cartData, quoteScope);
+
+  const scopeBadge = el('q-scope');
+  if (quoteScopeLabel) {
+    scopeBadge.textContent   = quoteScopeLabel;
+    scopeBadge.title         = `Quoting only the "${quoteScopeLabel}" section of this BOM`;
+    scopeBadge.style.display = '';
+  } else {
+    scopeBadge.style.display = 'none';
+  }
+
+  for (const entry of scoped) {
     if (!entry || entry._type === 'group') continue;
     if (!Array.isArray(entry.rows)) continue;
 
@@ -536,8 +682,12 @@ function buildQuoteRows(cartData, meta) {
 
   if (!quoteRows.length) {
     el('q-empty').style.display = '';
-    el('q-empty').querySelector('h3').textContent = 'BOM has no quotable SKUs';
-    el('q-empty').querySelector('p').textContent  = 'All items may be excluded, or the selected BOM contains no SKU rows.';
+    el('q-empty').querySelector('h3').textContent = quoteScopeLabel
+      ? `"${quoteScopeLabel}" has no quotable SKUs`
+      : 'BOM has no quotable SKUs';
+    el('q-empty').querySelector('p').textContent = quoteScopeLabel
+      ? 'Every item in this section may be excluded, or the section contains no SKU rows. Switch the scope to quote a different section.'
+      : 'All items may be excluded, or the selected BOM contains no SKU rows.';
     el('q-wrap').style.display   = 'none';
     el('exp-card').style.display = 'none';
     return;
@@ -556,7 +706,8 @@ function buildQuoteRows(cartData, meta) {
   }
 
   renderQuoteTable();
-  toast(`✓ Loaded ${quoteRows.length} SKU${quoteRows.length !== 1 ? 's' : ''}${missing ? ' (' + missing + ' unpriced)' : ''}`);
+  const scopeTxt = quoteScopeLabel ? ` from "${quoteScopeLabel}"` : '';
+  toast(`✓ Loaded ${quoteRows.length} SKU${quoteRows.length !== 1 ? 's' : ''}${scopeTxt}${missing ? ' (' + missing + ' unpriced)' : ''}`);
 }
 
 function applyTerm(sku, term) {
@@ -742,9 +893,13 @@ function highlightMatrixCol() {
 }
 
 function updateExpNote() {
-  if (!selectedPartner) { el('exp-note').textContent = ''; return; }
-  const p = PARTNERS.find(p => p.key === selectedPartner);
-  el('exp-note').textContent = p ? `· ${p.label} discount schedule` : `· ${selectedPartner}`;
+  const parts = [];
+  if (selectedPartner) {
+    const p = PARTNERS.find(p => p.key === selectedPartner);
+    parts.push(p ? `${p.label} discount schedule` : selectedPartner);
+  }
+  if (quoteScopeLabel) parts.push(`section "${quoteScopeLabel}" only`);
+  el('exp-note').textContent = parts.length ? '· ' + parts.join(' · ') : '';
 }
 
 // ── DISCOUNT MATRIX ───────────────────────────────────────────────────────────
@@ -1035,8 +1190,11 @@ function exportSFDC(region) {
     rows.push([`${row.sku}${region}`, row.qty ?? 1, distiDisc, noteText]);
   }
   const csv = rows.map(r => r.map(c => String(c).replace(/,/g,'')).join(',')).join('\r\n');
-  dl(new Blob([csv], {type:'text/csv;charset=utf-8;'}), `SFDC_${region}_${new Date().toISOString().slice(0,10)}.csv`);
-  toast(`✓ SFDC-${region} exported (${rows.length - 1} rows)`);
+  const slug = quoteScopeLabel
+    ? '_' + quoteScopeLabel.replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)
+    : '';
+  dl(new Blob([csv], {type:'text/csv;charset=utf-8;'}), `SFDC_${region}${slug}_${new Date().toISOString().slice(0,10)}.csv`);
+  toast(`✓ SFDC-${region} exported (${rows.length - 1} rows)${quoteScopeLabel ? ' — ' + quoteScopeLabel : ''}`);
 }
 
 // ── UTILITIES ─────────────────────────────────────────────────────────────────
