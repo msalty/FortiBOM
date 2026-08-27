@@ -42,6 +42,7 @@ Designed to be run entirely offline. Install it as a web app on most modern brow
 - **Auto-applied pricing** — matched prices appear inline; SKUs with no price match are flagged automatically
 - **Group pricing totals** — optionally display a subtotal on each group header
 - **Quote scope** — in Pricing & Quotes, quote the entire Project BOM or just one section header, so a multi-phase BOM can be priced and exported per phase / site
+- **Discount matrix columns** — add, rename, re-type, and remove extra partner-type and named-account columns directly in the Discount Matrix; no CSV round trip needed, and rates carry over on rename
 
 ### Export & Sharing
 - **Export as CSV** — flat export with resolved term suffixes applied to all SKUs

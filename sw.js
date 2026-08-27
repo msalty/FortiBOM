@@ -12,7 +12,7 @@
 // '/' at a domain root, '/a/b/app/' from a nested path. Never hardcoded.
 const SCOPE_DIR = new URL('./', self.location).pathname;
 
-const VERSION = 'v1.0.3.3.6';
+const VERSION = 'v1.0.3.3.7';
 
 // The directory is percent-encoded so it cannot contain the '|' delimiter.
 // That keeps namespaces of nested installs disjoint as string prefixes: a root
