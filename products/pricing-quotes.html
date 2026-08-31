@@ -102,9 +102,25 @@
   .empty h3{font-size:15px;font-weight:600;color:var(--text);margin:10px 0 6px;}
   .empty p{font-size:12px;}
 
-  /* Customer column delete button */
-  .cust-del{margin-left:6px;background:none;border:none;cursor:pointer;color:var(--textm);font-size:13px;line-height:1;padding:0 1px;border-radius:2px;vertical-align:middle;}
-  .cust-del:hover{color:var(--red);}
+  /* Custom column header controls */
+  .col-hd{display:flex;align-items:center;justify-content:center;gap:3px;}
+  .col-name{white-space:nowrap;}
+  .col-kind{display:block;font-size:8px;font-weight:600;color:var(--textm);letter-spacing:.06em;margin-top:2px;text-transform:uppercase;}
+  .cust-del,.cust-edit{background:none;border:none;cursor:pointer;color:var(--textm);font-size:12px;line-height:1;padding:1px 2px;border-radius:2px;vertical-align:middle;font-family:inherit;}
+  .cust-del{font-size:13px;}
+  .cust-del:hover{color:var(--red);background:#fff;}
+  .cust-edit:hover{color:var(--info-t);background:#fff;}
+
+  /* ADD / EDIT COLUMN FORM */
+  .colform{margin-top:10px;border:1px solid var(--border);border-radius:4px;background:var(--sh);padding:11px 13px;}
+  .colform .row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;}
+  .colform input[type=text]{min-width:190px;}
+  .colform .lbl{margin-bottom:1px;}
+  .colform-err{margin-top:7px;font-size:11px;color:var(--red);display:none;}
+  .colform-hint{margin-top:7px;font-size:11px;color:var(--textm);}
+  .colcount{font-size:11px;color:var(--text2);}
+  .showall{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);cursor:pointer;user-select:none;white-space:nowrap;}
+  .showall input{cursor:pointer;margin:0;}
 
   /* PARTNER HEADER ROW */
   .ph-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
@@ -156,6 +172,10 @@
           <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="onMatrixFileChosen(this)">
         </div>
         <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;justify-content:center">
+          <button class="btn bp bsm" onclick="openAddCol()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Add Column
+          </button>
           <button class="btn bs bsm" onclick="exportMatrix()">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v8M3 6l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 9.5v1A.5.5 0 001.5 11h9a.5.5 0 00.5-.5v-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
             Export CSV
@@ -166,14 +186,44 @@
           </button>
         </div>
       </div>
+
+      <!-- Add / edit column form -->
+      <div class="colform" id="colform" style="display:none">
+        <div class="row">
+          <div class="grp">
+            <label class="lbl" for="colform-name" id="colform-lbl">Column name</label>
+            <input type="text" id="colform-name" maxlength="40" placeholder="e.g. Acme Corp"
+                   onkeydown="onColFormKey(event)" oninput="clearColFormErr()">
+          </div>
+          <div class="grp">
+            <label class="lbl" for="colform-type">Column type</label>
+            <select id="colform-type">
+              <option value="customer">Customer (named account)</option>
+              <option value="partner">Partner type</option>
+            </select>
+          </div>
+          <button class="btn bp bsm" id="colform-save" onclick="saveColForm()" style="margin-bottom:1px">Add column</button>
+          <button class="btn bs bsm" onclick="closeColForm()" style="margin-bottom:1px">Cancel</button>
+        </div>
+        <div class="colform-err" id="colform-err"></div>
+        <div class="colform-hint">Custom columns are saved in this browser and round-trip through the CSV export / import.</div>
+      </div>
+
       <div id="matrix-msg" style="display:none;margin-top:10px"></div>
     </div>
 
     <div class="cb" style="padding:12px 18px">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">
+        <span class="colcount" id="col-count"></span>
+        <label class="showall" id="showall-wrap" style="display:none;margin-left:auto">
+          <input type="checkbox" id="showall-cb" onchange="onShowAllChange()">
+          Show all customer columns
+        </label>
+      </div>
       <div class="dm-wrap">
         <table class="dmt" id="dmt"></table>
       </div>
-      <p style="margin-top:8px;font-size:11px;color:var(--textm)">Enter discount percentages (0–100). Changes save automatically. The <em>Exception</em> column sets the per-category default when "Exception" is the active partner type.</p>
+      <p style="margin-top:8px;font-size:11px;color:var(--textm)">Enter discount percentages (0–100). Changes save automatically. The <em>Exception</em> column sets the per-category default when "Exception" is the active partner type. Use <strong>Add Column</strong> for extra partner types or named accounts — hover a custom column header to rename (✎) or remove (×) it.</p>
     </div>
   </div>
 </div>
@@ -222,12 +272,6 @@
       <label class="lbl" style="margin:0;white-space:nowrap;text-transform:none;letter-spacing:0;font-size:12px;font-weight:500;color:var(--text2)">Partner type:</label>
       <select id="partner-sel" style="font-size:12px;padding:4px 8px" onchange="onPartnerChange()">
         <option value="">— Select —</option>
-        <option value="advocate">Advocate</option>
-        <option value="select">Select</option>
-        <option value="advanced">Advanced</option>
-        <option value="expert_global">Expert / Global</option>
-        <option value="registered_opp">Registered Opp</option>
-        <option value="exception">Exception (Manual)</option>
       </select>
     </div>
   </div>
@@ -328,23 +372,33 @@ const PARTNERS = [
   {key:'advanced',       label:'Advanced'},
   {key:'expert_global',  label:'Expert / Global'},
   {key:'registered_opp', label:'Registered Opp'},
-  {key:'exception',      label:'Exception'}
+  {key:'exception',      label:'Exception',      selLabel:'Exception (Manual)'}
 ];
 
 const LS_MATRIX    = 'fabricbom_discount_matrix';
-const LS_CUSTOMERS = 'fabricbom_qcust';
+const LS_COLUMNS   = 'fabricbom_qcols';    // [{name, type}] — user-defined matrix columns
+const LS_CUSTOMERS = 'fabricbom_qcust';    // legacy ["name", …] — migrated from, kept in sync
+const LS_SHOWALL   = 'fabricbom_qcolsall';
 const LS_CART      = 'fortibom_cart';
 const LS_SAVED     = 'fortibom_saved';
 const LS_PI        = 'fortibom_pi';
 
+const COL_TYPES = {partner:'Partner', customer:'Customer'};
+const MAX_COL_NAME = 40;
+
 // ── STATE ─────────────────────────────────────────────────────────────────────
 
 let discountMatrix  = {};
-let customerNames   = [];   // named accounts loaded from CSV (kept separate from PARTNERS)
+// User-defined columns beyond the six built-in partner types. Each is
+// {name, type} where type is 'partner' (extra partner tier) or 'customer'
+// (named account). The name doubles as the matrix key and the CSV header.
+let customCols      = [];
 let quoteRows       = [];
 let selectedPartner = '';
 let priceMap        = new Map();
 let catMap          = new Map();
+let showAllCustomers = true;
+let colFormEdit     = null;   // name of the column being edited, or null when adding
 
 // BOM currently loaded into the quote — kept so the scope can be re-sliced
 // without re-reading storage.
@@ -354,20 +408,40 @@ let loadedSrcVal    = '';
 let quoteScope      = '__all__';   // '__all__' | '__pre__' | 'sec_<cartIndex>'
 let quoteScopeLabel = '';          // '' when the whole BOM is quoted
 
-// All columns ever stored — used for export and rate counting
+// ── COLUMN MODEL ──────────────────────────────────────────────────────────────
+
+function customPartnerCols() { return customCols.filter(c => c.type === 'partner'); }
+function customerCols()      { return customCols.filter(c => c.type !== 'partner'); }
+function findCustomCol(name) { return customCols.find(c => c.name === name) || null; }
+function isBuiltIn(key)      { return !!PARTNERS.find(p => p.key === key); }
+
+function colLabel(key) {
+  const p = PARTNERS.find(p => p.key === key);
+  return p ? p.label : key;
+}
+
+// All columns ever stored — used for export and rate counting.
+// Order: built-in partner types, extra partner types, then named accounts.
 function allCols() {
   return [
     ...PARTNERS.map(p => ({key: p.key, label: p.label})),
-    ...customerNames.map(n => ({key: n, label: n}))
+    ...customPartnerCols().map(c => ({key: c.name, label: c.name, type: 'partner'})),
+    ...customerCols().map(c => ({key: c.name, label: c.name, type: 'customer'}))
   ];
 }
 
-// Columns currently visible in the matrix table:
-// always the 6 standard partner types, plus the active customer column if one is selected
+// Columns currently visible in the matrix table: the 6 standard partner types
+// and every extra partner type, plus customer columns when "show all" is on —
+// the active customer column is always shown so its rates stay editable.
 function visibleCols() {
-  const cols = PARTNERS.map(p => ({key: p.key, label: p.label}));
-  if (selectedPartner && !PARTNERS.find(p => p.key === selectedPartner) && customerNames.includes(selectedPartner)) {
-    cols.push({key: selectedPartner, label: selectedPartner});
+  const cols = [
+    ...PARTNERS.map(p => ({key: p.key, label: p.label})),
+    ...customPartnerCols().map(c => ({key: c.name, label: c.name, type: 'partner'}))
+  ];
+  for (const c of customerCols()) {
+    if (showAllCustomers || c.name === selectedPartner) {
+      cols.push({key: c.name, label: c.name, type: 'customer'});
+    }
   }
   return cols;
 }
@@ -375,7 +449,7 @@ function visibleCols() {
 // ── BOOT ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async () => {
-  loadCustomers();     // must come before loadMatrix so customer keys are seeded
+  loadColumns();       // must come before loadMatrix so custom column keys are seeded
   loadMatrix();
   renderMatrix();
   updateMatrixSummary();
@@ -392,9 +466,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     onMatrixCell(inp.dataset.cat, inp.dataset.partner, inp.value);
   });
   el('dmt').addEventListener('click', e => {
-    const btn = e.target.closest('.cust-del');
-    if (!btn) return;
-    deleteCustomer(btn.dataset.cust);
+    const del = e.target.closest('.cust-del');
+    if (del) { deleteColumn(del.dataset.col); return; }
+    const edit = e.target.closest('.cust-edit');
+    if (edit) openEditCol(edit.dataset.col);
   });
 });
 
@@ -895,8 +970,10 @@ function highlightMatrixCol() {
 function updateExpNote() {
   const parts = [];
   if (selectedPartner) {
-    const p = PARTNERS.find(p => p.key === selectedPartner);
-    parts.push(p ? `${p.label} discount schedule` : selectedPartner);
+    const custom = findCustomCol(selectedPartner);
+    parts.push(custom && custom.type === 'customer'
+      ? `${custom.name} discount schedule (customer)`
+      : `${colLabel(selectedPartner)} discount schedule`);
   }
   if (quoteScopeLabel) parts.push(`section "${quoteScopeLabel}" only`);
   el('exp-note').textContent = parts.length ? '· ' + parts.join(' · ') : '';
@@ -908,19 +985,44 @@ function emptyMatrix() {
   const m = {};
   for (const cat of CATEGORIES) {
     m[cat] = {};
-    for (const p of PARTNERS) m[cat][p.key] = '';
-    for (const n of customerNames) m[cat][n] = '';
+    for (const col of allCols()) m[cat][col.key] = '';
   }
   return m;
 }
 
-function loadCustomers() {
-  try { customerNames = JSON.parse(localStorage.getItem(LS_CUSTOMERS) || '[]'); }
-  catch(e) { customerNames = []; }
+// Reads the custom column list, migrating the legacy flat array of customer
+// names ("fabricbom_qcust") written by earlier versions of this page.
+function loadColumns() {
+  let raw = null;
+  try { raw = JSON.parse(localStorage.getItem(LS_COLUMNS) || 'null'); } catch(e) {}
+  if (!Array.isArray(raw)) {
+    let legacy = [];
+    try { legacy = JSON.parse(localStorage.getItem(LS_CUSTOMERS) || '[]'); } catch(e) {}
+    raw = (Array.isArray(legacy) ? legacy : []).map(n => ({name: n, type: 'customer'}));
+  }
+
+  const seen = new Set();
+  customCols = [];
+  for (const c of raw) {
+    const name = typeof c === 'string' ? c.trim() : String(c?.name ?? '').trim();
+    if (!name) continue;
+    const lower = name.toLowerCase();
+    if (seen.has(lower)) continue;                     // drop duplicates
+    if (PARTNERS.some(p => p.key === lower || p.label.toLowerCase() === lower)) continue;
+    seen.add(lower);
+    customCols.push({name, type: c?.type === 'partner' ? 'partner' : 'customer'});
+  }
+
+  try { showAllCustomers = localStorage.getItem(LS_SHOWALL) !== '0'; } catch(e) {}
+  const cb = el('showall-cb');
+  if (cb) cb.checked = showAllCustomers;
 }
 
-function saveCustomers() {
-  localStorage.setItem(LS_CUSTOMERS, JSON.stringify(customerNames));
+function saveColumns() {
+  localStorage.setItem(LS_COLUMNS, JSON.stringify(customCols));
+  // Keep the legacy key in sync so an older cached copy of this page still
+  // sees the named accounts.
+  localStorage.setItem(LS_CUSTOMERS, JSON.stringify(customerCols().map(c => c.name)));
 }
 
 function loadMatrix() {
@@ -930,13 +1032,15 @@ function loadMatrix() {
   } catch(e) {
     discountMatrix = emptyMatrix();
   }
+  seedMatrixCols();
+}
+
+// Makes sure every category row has a cell for every known column.
+function seedMatrixCols() {
   for (const cat of CATEGORIES) {
     if (!discountMatrix[cat]) discountMatrix[cat] = {};
-    for (const p of PARTNERS) {
-      if (discountMatrix[cat][p.key] === undefined) discountMatrix[cat][p.key] = '';
-    }
-    for (const n of customerNames) {
-      if (discountMatrix[cat][n] === undefined) discountMatrix[cat][n] = '';
+    for (const col of allCols()) {
+      if (discountMatrix[cat][col.key] === undefined) discountMatrix[cat][col.key] = '';
     }
   }
 }
@@ -950,10 +1054,19 @@ function renderMatrix() {
   const tbl  = el('dmt');
   let h = '<thead><tr><th class="catcol">Category</th>';
   cols.forEach(col => {
-    const isCustomer = !PARTNERS.find(p => p.key === col.key);
-    h += isCustomer
-      ? `<th style="white-space:nowrap">${esc(col.label)}<button class="cust-del" data-cust="${esc(col.key)}" title="Remove ${esc(col.label)}">×</button></th>`
-      : `<th>${esc(col.label)}</th>`;
+    if (isBuiltIn(col.key)) {
+      h += `<th>${esc(col.label)}</th>`;
+      return;
+    }
+    const kind = COL_TYPES[col.type] || COL_TYPES.customer;
+    h += `<th>
+      <div class="col-hd">
+        <span class="col-name">${esc(col.label)}</span>
+        <button class="cust-edit" data-col="${esc(col.key)}" title="Rename or re-type ${esc(col.label)}">✎</button>
+        <button class="cust-del" data-col="${esc(col.key)}" title="Remove ${esc(col.label)}">×</button>
+      </div>
+      <span class="col-kind">${esc(kind)}</span>
+    </th>`;
   });
   h += '</tr></thead><tbody>';
   for (const cat of CATEGORIES) {
@@ -974,6 +1087,30 @@ function renderMatrix() {
   h += '</tbody>';
   tbl.innerHTML = h;
   highlightMatrixCol();
+  renderColControls();
+}
+
+// Column counter + the "show all customers" toggle above the table.
+function renderColControls() {
+  const custs  = customerCols();
+  const extras = customPartnerCols();
+  const wrap   = el('showall-wrap');
+  const cb     = el('showall-cb');
+  if (cb) cb.checked = showAllCustomers;
+  if (wrap) wrap.style.display = custs.length ? '' : 'none';
+
+  const parts = [`${PARTNERS.length + extras.length} partner type${PARTNERS.length + extras.length !== 1 ? 's' : ''}`];
+  if (custs.length) {
+    const hidden = showAllCustomers ? 0 : custs.filter(c => c.name !== selectedPartner).length;
+    parts.push(`${custs.length} customer column${custs.length !== 1 ? 's' : ''}${hidden ? ` (${hidden} hidden)` : ''}`);
+  }
+  el('col-count').textContent = parts.join(' · ');
+}
+
+function onShowAllChange() {
+  showAllCustomers = el('showall-cb').checked;
+  try { localStorage.setItem(LS_SHOWALL, showAllCustomers ? '1' : '0'); } catch(e) {}
+  renderMatrix();
 }
 
 function onMatrixCell(cat, partnerKey, val) {
@@ -984,19 +1121,151 @@ function onMatrixCell(cat, partnerKey, val) {
   if (quoteRows.length) renderQuoteTable();
 }
 
-function deleteCustomer(name) {
-  customerNames = customerNames.filter(n => n !== name);
-  for (const cat of CATEGORIES) {
-    if (discountMatrix[cat]) delete discountMatrix[cat][name];
-  }
-  saveCustomers();
+// ── COLUMN CRUD ───────────────────────────────────────────────────────────────
+
+// Applies every side effect of a column list change in one place.
+function afterColumnChange() {
+  seedMatrixCols();
+  saveColumns();
   saveMatrix();
-  selectedPartner = '';
-  el('partner-sel').value = '';
   renderMatrix();
   updateMatrixSummary();
   populatePartnerSelect();
   if (quoteRows.length) renderQuoteTable();
+  updateExpNote();
+}
+
+// Names double as matrix keys and CSV headers, so they must be unique, free of
+// CSV-breaking characters, and must not shadow a built-in partner type.
+function validateColName(raw, exceptName) {
+  const name = String(raw || '').trim().replace(/\s+/g, ' ');
+  if (!name)                       return {ok:false, error:'Enter a column name.'};
+  if (name.length > MAX_COL_NAME)  return {ok:false, error:`Keep the name under ${MAX_COL_NAME} characters.`};
+  if (/[,"\r\n]/.test(name))       return {ok:false, error:'Commas and quotes are not allowed — they break the CSV export.'};
+
+  const lower = name.toLowerCase();
+  if (lower === 'category_code')   return {ok:false, error:'"category_code" is reserved for the CSV key column.'};
+  if (PARTNERS.some(p => p.key === lower.replace(/\s+/g,'_') || p.label.toLowerCase() === lower))
+    return {ok:false, error:`"${name}" is a built-in partner type — pick a different name.`};
+  if (customCols.some(c => c.name.toLowerCase() === lower && c.name !== exceptName))
+    return {ok:false, error:`A column named "${name}" already exists.`};
+
+  return {ok:true, name};
+}
+
+function openAddCol() {
+  colFormEdit = null;
+  openMatrix();
+  el('colform-lbl').textContent  = 'Column name';
+  el('colform-name').value       = '';
+  el('colform-type').value       = 'customer';
+  el('colform-save').textContent = 'Add column';
+  clearColFormErr();
+  el('colform').style.display = '';
+  el('colform-name').focus();
+}
+
+function openEditCol(name) {
+  const col = findCustomCol(name);
+  if (!col) return;
+  colFormEdit = col.name;
+  openMatrix();
+  el('colform-lbl').textContent  = `Rename "${col.name}"`;
+  el('colform-name').value       = col.name;
+  el('colform-type').value       = col.type;
+  el('colform-save').textContent = 'Save changes';
+  clearColFormErr();
+  el('colform').style.display = '';
+  el('colform-name').focus();
+  el('colform-name').select();
+}
+
+function closeColForm() {
+  el('colform').style.display = 'none';
+  colFormEdit = null;
+  clearColFormErr();
+}
+
+function clearColFormErr() {
+  el('colform-err').style.display = 'none';
+}
+
+function colFormErr(msg) {
+  const d = el('colform-err');
+  d.textContent = msg;
+  d.style.display = 'block';   // the class hides it by default
+}
+
+function onColFormKey(e) {
+  if (e.key === 'Enter')  { e.preventDefault(); saveColForm(); }
+  if (e.key === 'Escape') { e.preventDefault(); closeColForm(); }
+}
+
+function saveColForm() {
+  const type = el('colform-type').value === 'partner' ? 'partner' : 'customer';
+  const res  = validateColName(el('colform-name').value, colFormEdit);
+  if (!res.ok) { colFormErr(res.error); return; }
+
+  colFormEdit === null ? addColumn(res.name, type) : updateColumn(colFormEdit, res.name, type);
+  closeColForm();
+}
+
+function addColumn(name, type) {
+  customCols.push({name, type});
+  for (const cat of CATEGORIES) {
+    if (!discountMatrix[cat]) discountMatrix[cat] = {};
+    discountMatrix[cat][name] = '';
+  }
+  // A new customer column is invisible while "show all" is off — turn it on so
+  // the rates can be filled in straight away.
+  if (type === 'customer' && !showAllCustomers && name !== selectedPartner) {
+    showAllCustomers = true;
+    try { localStorage.setItem(LS_SHOWALL, '1'); } catch(e) {}
+  }
+  afterColumnChange();
+  toast(`✓ Added ${COL_TYPES[type].toLowerCase()} column "${name}"`);
+}
+
+// Renames a column and/or changes its type, carrying the stored rates over.
+function updateColumn(oldName, newName, type) {
+  const col = findCustomCol(oldName);
+  if (!col) return;
+
+  const renamed = oldName !== newName;
+  if (renamed) {
+    for (const cat of CATEGORIES) {
+      const row = discountMatrix[cat];
+      if (!row) continue;
+      row[newName] = row[oldName] ?? '';
+      delete row[oldName];
+    }
+    if (selectedPartner === oldName) selectedPartner = newName;
+  }
+  col.name = newName;
+  col.type = type;
+
+  afterColumnChange();   // repopulates the dropdown and restores the selection
+  toast(renamed ? `✓ Renamed "${oldName}" → "${newName}"` : `✓ Updated "${newName}"`);
+}
+
+function deleteColumn(name) {
+  const col = findCustomCol(name);
+  if (!col) return;
+  const set = CATEGORIES.filter(cat => (discountMatrix[cat]?.[name] ?? '') !== '').length;
+  const warn = set ? `\n\n${set} discount rate${set !== 1 ? 's' : ''} will be lost.` : '';
+  if (!confirm(`Remove the "${name}" column?${warn}`)) return;
+
+  customCols = customCols.filter(c => c.name !== name);
+  for (const cat of CATEGORIES) {
+    if (discountMatrix[cat]) delete discountMatrix[cat][name];
+  }
+  if (selectedPartner === name) {
+    selectedPartner = '';
+    el('partner-sel').value = '';
+  }
+  if (colFormEdit === name) closeColForm();
+
+  afterColumnChange();
   toast(`Removed "${name}"`);
 }
 
@@ -1008,25 +1277,43 @@ function updateMatrixSummary() {
   el('matrix-summary').textContent = filled ? `${filled} of ${total} rates set` : '';
 }
 
-// Rebuilds the partner-type dropdown, appending any loaded named accounts below a separator
+// Rebuilds the partner-type dropdown: built-in tiers and any custom partner
+// types first, then named accounts in their own group.
 function populatePartnerSelect() {
-  const sel = el('partner-sel');
-  // Remove previously injected customer options and separator
-  sel.querySelectorAll('option[data-cust], option[data-sep]').forEach(o => o.remove());
-  if (!customerNames.length) return;
-  const sep = document.createElement('option');
-  sep.disabled = true;
-  sep.dataset.sep = '1';
-  sep.textContent = '──────────────────';
-  sel.appendChild(sep);
-  const sorted = [...customerNames].sort((a, b) => a.localeCompare(b));
-  for (const name of sorted) {
-    const opt = document.createElement('option');
-    opt.value = name;
-    opt.textContent = name;
-    opt.dataset.cust = '1';
-    sel.appendChild(opt);
-  }
+  const sel  = el('partner-sel');
+  const prev = selectedPartner;
+  sel.innerHTML = '';
+
+  const blank = document.createElement('option');
+  blank.value = '';
+  blank.textContent = '— Select —';
+  sel.appendChild(blank);
+
+  const addGroup = (label, items) => {
+    if (!items.length) return;
+    const grp = document.createElement('optgroup');
+    grp.label = label;
+    for (const it of items) {
+      const opt = document.createElement('option');
+      opt.value = it.value;
+      opt.textContent = it.text;
+      grp.appendChild(opt);
+    }
+    sel.appendChild(grp);
+  };
+
+  addGroup('Partner Types', [
+    ...PARTNERS.map(p => ({value: p.key, text: p.selLabel || p.label})),
+    ...customPartnerCols().map(c => ({value: c.name, text: c.name}))
+  ]);
+  addGroup('Customers',
+    [...customerCols()].sort((a, b) => a.name.localeCompare(b.name))
+      .map(c => ({value: c.name, text: c.name})));
+
+  // Keep the current selection if that column still exists.
+  const stillThere = prev && (isBuiltIn(prev) || !!findCustomCol(prev));
+  selectedPartner = stillThere ? prev : '';
+  sel.value = selectedPartner;
 }
 
 function toggleMatrix() {
@@ -1043,17 +1330,13 @@ function closeMatrix() {
 }
 
 function resetMatrix() {
-  if (!confirm('Reset all discount rates and remove all customers?')) return;
-  customerNames   = [];
-  discountMatrix  = emptyMatrix();
+  if (!confirm('Reset all discount rates and remove all custom columns?')) return;
+  customCols      = [];
   selectedPartner = '';
   el('partner-sel').value = '';
-  saveCustomers();
-  saveMatrix();
-  renderMatrix();
-  updateMatrixSummary();
-  populatePartnerSelect();
-  if (quoteRows.length) renderQuoteTable();
+  closeColForm();
+  discountMatrix  = emptyMatrix();
+  afterColumnChange();
   toast('Discount matrix reset');
 }
 
@@ -1090,31 +1373,20 @@ function importMatrixFile(file) {
       const result = parseMatrixCSV(e.target.result);
       if (!result.ok) { showMatrixMsg(result.error, 'al-warn'); return; }
 
-      // Merge any newly discovered named accounts
-      if (result.newCustomers?.length) {
-        for (const n of result.newCustomers) {
-          if (!customerNames.includes(n)) customerNames.push(n);
-        }
-        saveCustomers();
-        // Seed matrix rows for new customers
-        for (const cat of CATEGORIES) {
-          if (!discountMatrix[cat]) discountMatrix[cat] = {};
-          for (const n of customerNames) {
-            if (discountMatrix[cat][n] === undefined) discountMatrix[cat][n] = '';
-          }
-        }
+      // Columns the file introduced that aren't known yet arrive as customers;
+      // their type can be changed afterwards from the column header.
+      for (const n of (result.newCols || [])) {
+        if (!findCustomCol(n)) customCols.push({name: n, type: 'customer'});
       }
 
       for (const [cat, vals] of Object.entries(result.data)) {
         if (!discountMatrix[cat]) discountMatrix[cat] = {};
         Object.assign(discountMatrix[cat], vals);
       }
-      saveMatrix();
-      renderMatrix();
-      updateMatrixSummary();
-      populatePartnerSelect();
-      if (quoteRows.length) renderQuoteTable();
-      showMatrixMsg(`✓ Imported ${result.rowCount} categories from ${file.name}`, 'al-ok');
+      afterColumnChange();
+      const added = (result.newCols || []).length;
+      showMatrixMsg(`✓ Imported ${result.rowCount} categories from ${file.name}` +
+        (added ? ` · added ${added} customer column${added !== 1 ? 's' : ''}` : ''), 'al-ok');
       toast(`✓ Matrix imported: ${file.name}`);
     } catch(err) {
       showMatrixMsg('Parse error: ' + err.message, 'al-warn');
@@ -1141,10 +1413,13 @@ function parseMatrixCSV(text) {
   const catIdx   = hdrs.indexOf('category_code');
   if (catIdx < 0) return {ok:false, error:'Missing "category_code" column header'};
 
-  const cols          = [];
-  const newCustomers  = [];  // column names that don't match any standard partner key
+  const cols    = [];
+  const newCols = [];        // headers that match neither a partner type nor an existing column
+  const seen    = new Set(); // guards against a header repeated inside one file
   for (let i = 0; i < hdrs.length; i++) {
     if (i === catIdx) continue;
+    const header = origHdrs[i].trim();
+    if (!header) continue;
     const rawKey = hdrs[i].replace(/\s+/g,'_');
     const matched = PARTNERS.find(p =>
       p.key === rawKey ||
@@ -1153,12 +1428,21 @@ function parseMatrixCSV(text) {
     );
     if (matched) {
       cols.push({idx:i, partnerKey: matched.key});
-    } else {
-      // Unknown column → named account; preserve original casing
-      const custName = origHdrs[i].trim();
-      cols.push({idx:i, partnerKey: custName});
-      newCustomers.push(custName);
+      continue;
     }
+    // Not a built-in — reuse an existing custom column when the header matches
+    // one (ignoring case) so a round-tripped file doesn't duplicate it.
+    const existing = customCols.find(c => c.name.toLowerCase() === header.toLowerCase());
+    let name = existing ? existing.name : null;
+    if (!name) {
+      const v = validateColName(header);
+      if (!v.ok) continue;                   // unusable header — leave that column out
+      name = v.name;
+    }
+    if (seen.has(name.toLowerCase())) continue;
+    seen.add(name.toLowerCase());
+    cols.push({idx:i, partnerKey: name});
+    if (!existing) newCols.push(name);
   }
 
   const data = {};
@@ -1174,7 +1458,7 @@ function parseMatrixCSV(text) {
     }
     rowCount++;
   }
-  return {ok:true, data, rowCount, newCustomers};
+  return {ok:true, data, rowCount, newCols};
 }
 
 // ── SFDC EXPORT ───────────────────────────────────────────────────────────────
