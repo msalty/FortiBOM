@@ -3711,7 +3711,11 @@ function checkBOMFragment() {
 // ── PRICING (IndexedDB — toolbox_shared) ─────────────────────────────────────
 let _sharedDb = null;
 
-const PRICING_REQUIRED_HEADERS = [
+// Every column Fortinet has shipped in a price list we know about. Import does
+// NOT require all of them, and does not care about their order — Fortinet adds
+// and drops columns between releases (recent lists come through 38 wide where
+// older ones were 39). This list only supplies canonical names for matching.
+const PRICING_KNOWN_HEADERS = [
   'Comments','Identifier','Product Family Group','Product','Product Type','Item','SKU',
   'Description #1','Description #2','Price','Category','Fx Translated Price','UPC Code',
   'FED','GSA','COO','Single Pack Weight (lbs.)','Single Pack Length (in.)',
@@ -3722,6 +3726,67 @@ const PRICING_REQUIRED_HEADERS = [
   'Air Pallet Quantity','Air Pallet Weight (lbs.)','Air Pallet Length (in.)',
   'Air Pallet Width (in.)','Air Pallet Height (in.)','AutoStart','E-Rate','Pillar','Term (Month)'
 ];
+
+// The only columns the app actually reads to do its job. Anything else missing
+// just leaves those cells blank in the SKU browser.
+const PRICING_ESSENTIAL_HEADERS = ['SKU','Description #1','Price'];
+
+// Spelling variants that should map onto a canonical name. Keys are compared
+// after normalizePricingHeader(), so case, spaces and punctuation don't matter
+// ("Description 1", "description #1" and "DESCRIPTION1" are one key).
+const PRICING_HEADER_ALIASES = {
+  'description no 1': 'Description #1',
+  'description no 2': 'Description #2',
+  'list price': 'Price',
+  'unit price': 'Price',
+  'term months': 'Term (Month)',
+  'product family': 'Product Family Group',
+  'upc': 'UPC Code'
+};
+
+// Case/punctuation/whitespace-insensitive key for header matching.
+function normalizePricingHeader(h) {
+  return String(h == null ? '' : h).toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+const _PRICING_CANONICAL_BY_NORM = (() => {
+  const m = new Map();
+  PRICING_KNOWN_HEADERS.forEach(h => m.set(normalizePricingHeader(h), h));
+  Object.keys(PRICING_HEADER_ALIASES).forEach(k => {
+    m.set(normalizePricingHeader(k), PRICING_HEADER_ALIASES[k]);
+  });
+  return m;
+})();
+
+// Map a raw header row onto canonical names. Unknown columns are kept under
+// their own (trimmed) name so nothing is silently dropped; trailing blanks are
+// discarded and interior blanks get a positional placeholder so row objects
+// never collide on an empty key. A duplicate name is suffixed rather than
+// overwriting the first occurrence.
+function canonicalizePricingHeaders(raw) {
+  const headers = raw.map(h => String(h == null ? '' : h).trim());
+  while (headers.length && !headers[headers.length - 1]) headers.pop();
+  const seen = new Set();
+  const named = headers.map((h, i) => {
+    let name = _PRICING_CANONICAL_BY_NORM.get(normalizePricingHeader(h)) || h || `Column ${i + 1}`;
+    if (seen.has(name)) {
+      let n = 2;
+      while (seen.has(`${name} (${n})`)) n++;
+      name = `${name} (${n})`;
+    }
+    seen.add(name);
+    return name;
+  });
+
+  // Last resort for the description column, which the BOM generators look items
+  // up by: if nothing matched "Description #1" exactly, adopt the first other
+  // description-ish column (e.g. "Product Description") under that name.
+  if (!seen.has('Description #1')) {
+    const i = named.findIndex(n => n !== 'Description #2' && /description/.test(normalizePricingHeader(n)));
+    if (i !== -1) named[i] = 'Description #1';
+  }
+  return named;
+}
 
 function openSharedDB() {
   if (_sharedDb) return Promise.resolve(_sharedDb);
@@ -4051,14 +4116,24 @@ function parsePricingLine(line) {
   return cells;
 }
 
+// A preamble row is the header row when it names the columns we need. Older
+// lists start it with "Comments"; that is treated as a hint, not a requirement,
+// so a layout that drops or renames the first column still imports.
+function looksLikePricingHeaderRow(cells) {
+  const norm = new Set(cells.map(normalizePricingHeader).filter(Boolean));
+  return norm.has('sku') && (norm.has('price') || norm.has('description1'));
+}
+
+// Validate by name, not by count or position: a price list is importable as
+// long as the columns we read are present. Extra, missing-optional or reordered
+// columns are all fine, so old and new Fortinet layouts both import.
 function validatePricingHeaders(headers) {
-  if (headers.length !== PRICING_REQUIRED_HEADERS.length) {
-    return `Expected ${PRICING_REQUIRED_HEADERS.length} columns, found ${headers.length}.`;
-  }
-  for (let i = 0; i < PRICING_REQUIRED_HEADERS.length; i++) {
-    if (headers[i] !== PRICING_REQUIRED_HEADERS[i]) {
-      return `Column ${i + 1} mismatch: expected "${PRICING_REQUIRED_HEADERS[i]}", found "${headers[i]}".`;
-    }
+  if (!headers.length) return 'The header row is empty.';
+  const present = new Set(headers);
+  const missing = PRICING_ESSENTIAL_HEADERS.filter(h => !present.has(h));
+  if (missing.length) {
+    return `Missing required column${missing.length > 1 ? 's' : ''}: ` +
+           missing.map(m => `"${m}"`).join(', ') + `. Found ${headers.length} columns.`;
   }
   return null;
 }
@@ -4095,9 +4170,8 @@ function parsePricingCSV(text) {
       name = first;
       continue;
     }
-    // Header row: first cell is "Comments" and row contains "SKU"
-    const lc = cells.map(c => c.trim().toLowerCase());
-    if (lc[0] === 'comments' && lc.includes('sku')) {
+    // Header row: names the columns we read (older lists lead with "Comments")
+    if (looksLikePricingHeaderRow(cells)) {
       headerRowIdx = i;
       break;
     }
@@ -4107,7 +4181,7 @@ function parsePricingCSV(text) {
     return { ok: false, error: 'Could not find the pricing header row. Please verify this is a Fortinet price list CSV.' };
   }
 
-  const headers = parsePricingLine(rawLines[headerRowIdx]).map(h => h.trim());
+  const headers = canonicalizePricingHeaders(parsePricingLine(rawLines[headerRowIdx]));
   const headerErr = validatePricingHeaders(headers);
   if (headerErr) return { ok: false, error: 'Header validation failed: ' + headerErr };
 
@@ -4156,21 +4230,19 @@ function parsePricingXLSX(arrayBuffer, filename) {
           name = cell;
         }
       }
-      // Header row: first non-empty cell is "Comments" and row contains "SKU"
-      const firstNonEmpty = cells.find(c => c);
-      if (firstNonEmpty === 'Comments' && cells.includes('SKU')) {
+      // Header row: names the columns we read (older lists lead with "Comments")
+      if (looksLikePricingHeaderRow(cells)) {
         headerRowIdx = i;
         break;
       }
     }
 
     if (headerRowIdx === -1) {
-      return { ok: false, error: 'Could not find the pricing header row in the DataSet tab. Expected a row starting with "Comments" and containing "SKU".' };
+      return { ok: false, error: 'Could not find the pricing header row in the DataSet tab. Expected a row containing "SKU" and "Price".' };
     }
 
-    // Strip trailing empty columns before validating
-    const headers = allRows[headerRowIdx].map(h => String(h || '').trim());
-    while (headers.length && !headers[headers.length - 1]) headers.pop();
+    // Canonicalize names and strip trailing empty columns before validating
+    const headers = canonicalizePricingHeaders(allRows[headerRowIdx]);
 
     const headerErr = validatePricingHeaders(headers);
     if (headerErr) return { ok: false, error: 'Header validation failed: ' + headerErr };
